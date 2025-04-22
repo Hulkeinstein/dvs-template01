@@ -1,0 +1,69 @@
+{
+  "feature": [
+    {
+      "id": 1,
+      "title": "Master of Science in Biomedical Consultancy",
+      "description": "The Master of Science in Biomedical Communication is a two-year.",
+      "icon": "/images/icons/f-icon-01.png",
+      "bgColor": "bg-color-pink",
+      "wdt": 40,
+      "htd": 40
+    },
+    {
+      "id": 2,
+      "title": "Graduate Diploma in Health Research",
+      "description": "The College of Health Sciences recognizes that it is imperative to evaluate.",
+      "icon": "/images/icons/f-icon-02.png",
+      "bgColor": "bg-color-primary",
+      "wdt": 32,
+      "htd": 34
+    },
+    {
+      "id": 3,
+      "title": "Summer Undergraduate Research Program",
+      "description": "Undergraduate BSC students and medical students (who do not hold a graduate)",
+      "icon": "/images/icons/f-icon-03.png",
+      "bgColor": "bg-color-secondary",
+      "wdt": 34,
+      "htd": 40
+    }
+  ],
+  "galleryItems": [
+    {
+      "href": "/images/gallery/health-gallery-01.png",
+      "src": "/images/gallery/health-gallery-01.png",
+      "alt": "Gallery Image 1",
+      "classes": "child-gallery-single col-lg-6 col-md-6 col-sm-8 col-12"
+    },
+    {
+      "href": "/images/gallery/health-gallery-02.jpg",
+      "src": "/images/gallery/health-gallery-02.jpg",
+      "alt": "Gallery Image 2",
+      "classes": "child-gallery-single col-lg-3 col-md-3 col-sm-4 col-6"
+    },
+    {
+      "href": "/images/gallery/health-gallery-03.jpg",
+      "src": "/images/gallery/health-gallery-03.jpg",
+      "alt": "Gallery Image 3",
+      "classes": "child-gallery-single col-lg-3 col-md-3 col-sm-4 col-6"
+    },
+    {
+      "href": "/images/gallery/health-gallery-04.jpg",
+      "src": "/images/gallery/health-gallery-04.jpg",
+      "alt": "Gallery Image 4",
+      "classes": "child-gallery-single col-lg-3 col-md-3 col-sm-4 col-6"
+    },
+    {
+      "href": "/images/gallery/health-gallery-05.png",
+      "src": "/images/gallery/health-gallery-05.png",
+      "alt": "Gallery Image 5",
+      "classes": "child-gallery-single col-lg-6 col-md-6 col-sm-8 col-12"
+    },
+    {
+      "href": "/images/gallery/health-gallery-06.jpg",
+      "src": "/images/gallery/health-gallery-06.jpg",
+      "alt": "Gallery Image 6",
+      "classes": "child-gallery-single col-lg-3 col-md-3 col-sm-4 col-6"
+    }
+  ]
+}

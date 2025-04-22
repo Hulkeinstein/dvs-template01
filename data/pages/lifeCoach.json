@@ -1,0 +1,59 @@
+{
+    "coachFeature":[
+      {
+        "id": 1,
+        "title": "Positivity Online Course",
+        "description": "The Master of Science in Biomedical Communication is a two-year.",
+        "icon": "/images/icons/f-icon-01.png",
+        "bgColor": "bg-color-pink",
+        "wdt": 40,
+        "htd": 40
+      },
+      {
+        "id": 2,
+        "title": "Beauty Healthcare Class",
+        "description": "The College of Health Sciences recognizes that it is imperative to evaluate.",
+        "icon": "/images/icons/f-icon-02.png",
+        "bgColor": "bg-color-primary",
+        "wdt": 32,
+        "htd": 34
+      },
+      {
+        "id": 3,
+        "title": "Online Book Library",
+        "description": "It is a long established fact that a reader will be distracted by this on readable.",
+        "icon": "/images/icons/f-icon-03.png",
+        "bgColor": "bg-color-secondary",
+        "wdt": 34,
+        "htd": 40
+      },
+      {
+        "id": 4,
+        "title": "Time Management System",
+        "description": "It is a long established fact that a reader will be distracted by this on readable.",
+        "icon": "/images/icons/f-icon-04.png",
+        "bgColor": "bg-color-warning",
+        "wdt": 40,
+        "htd": 33
+      },
+      {
+        "id": 5,
+        "title": "Marriage Consultations",
+        "description": "It is a long established fact that a reader will be distracted by this on readable.",
+        "icon": "/images/icons/f-icon-05.png",
+        "bgColor": "bg-color-success",
+        "wdt": 36,
+        "htd": 34
+      },
+      {
+        "id": 6,
+        "title": "Self-Care Psychology",
+        "description": "It is a long established fact that a reader will be distracted by this on readable.",
+        "icon": "/images/icons/f-icon-06.png",
+        "bgColor": "bg-color-info",
+        "wdt": 40,
+        "htd": 44
+      }
+    ]
+
+}
