@@ -1,6 +1,5 @@
-"use client";
-
-import React, { useEffect } from "react";
+import { cookies } from 'next/headers';
+import React from "react";
 
 import "bootstrap/scss/bootstrap.scss";
 import "../public/scss/default/euclid-circulara.scss";
@@ -20,14 +19,17 @@ import "swiper/css/thumbs";
 // ========= Plugins CSS END =========
 
 import "../public/scss/styles.scss";
+import BootstrapClient from './bootstrap-client';
 
 export default function RootLayout({ children }) {
-  useEffect(() => {
-    require("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
+  // 서버에서 쿠키를 읽어 테마 결정
+  const theme = cookies().get('theme')?.value || 'light';
+  const isDark = theme === 'dark';
+
   return (
-    <html lang="en" dir="ltr">
-      <body className="" suppressHydrationWarning={true}>
+    <html lang="en" dir="ltr" data-theme={theme}>
+      <body className={isDark ? "active-dark-mode" : ""} suppressHydrationWarning={true}>
+        <BootstrapClient />
         {children}
       </body>
     </html>

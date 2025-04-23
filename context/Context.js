@@ -7,6 +7,20 @@ export const CreateContext = createContext();
 
 export const useAppContext = () => useContext(CreateContext);
 
+// 쿠키 설정 함수
+const setCookie = (name, value, days = 365) => {
+  const maxAge = days * 24 * 60 * 60;
+  document.cookie = `${name}=${value}; path=/; max-age=${maxAge}`;
+};
+
+// 쿠키 읽기 함수
+const getCookie = (name) => {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+};
+
 const Context = ({ children }) => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.CartReducer);
@@ -27,20 +41,25 @@ const Context = ({ children }) => {
   }, [cart]);
 
   useEffect(() => {
-    const themeType = localStorage.getItem("histudy-theme");
+    // 최초 로드 시 쿠키에서 테마 읽기
+    const themeType = getCookie("theme") || localStorage.getItem("histudy-theme");
     if (themeType === "dark") {
       setLightTheme(false);
-      document.body.classList.add("active-dark-mode");
+      // body 클래스는 여기서 설정하지 않음 (서버에서 이미 설정함)
     }
   }, []);
 
   useEffect(() => {
     if (isLightTheme) {
       document.body.classList.remove("active-dark-mode");
-      localStorage.setItem("histudy-theme", "light");
+      document.documentElement.setAttribute('data-theme', 'light');
+      setCookie("theme", "light");
+      localStorage.setItem("histudy-theme", "light"); // 이전 호환성 유지
     } else {
       document.body.classList.add("active-dark-mode");
-      localStorage.setItem("histudy-theme", "dark");
+      document.documentElement.setAttribute('data-theme', 'dark');
+      setCookie("theme", "dark");
+      localStorage.setItem("histudy-theme", "dark"); // 이전 호환성 유지
     }
   }, [isLightTheme]);
 
