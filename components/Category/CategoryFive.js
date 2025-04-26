@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { IconComponent } from "../Common/IconComponent";
 
 import CourseDetails from "../../data/course-details/courseData.json";
 
@@ -29,7 +30,7 @@ const CategoryFive = () => {
                   </h5>
                   <div className="read-more-btn">
                     <Link href={`/course-filter-one-toggle/${item.category}`}>
-                      <i className="feather-arrow-right"></i>
+                      <IconComponent iconName="feather-arrow-right" />
                     </Link>
                   </div>
                 </div>

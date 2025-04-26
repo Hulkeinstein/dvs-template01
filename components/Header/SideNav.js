@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Link as ScrollLink } from "react-scroll";
+import { X, Mail, Phone, Facebook, Twitter, Instagram, Linkedin } from "react-feather";
 
 import logo from "../../public/images/logo/logo.png";
 import { useAppContext } from "@/context/Context";
@@ -69,7 +70,7 @@ const SideNav = () => {
                   className="rbt-round-btn"
                   onClick={() => setMobile(!mobile)}
                 >
-                  <i className="feather-x"></i>
+                  <X />
                 </button>
               </div>
             </div>
@@ -80,12 +81,12 @@ const SideNav = () => {
             <ul className="navbar-top-left rbt-information-list justify-content-start">
               <li>
                 <a href="mailto:hello@example.com">
-                  <i className="feather-mail"></i>example@gmail.com
+                  <Mail />example@gmail.com
                 </a>
               </li>
               <li>
                 <a href="#">
-                  <i className="feather-phone"></i>(302) 555-0107
+                  <Phone />(302) 555-0107
                 </a>
               </li>
             </ul>
@@ -116,22 +117,22 @@ const SideNav = () => {
             <ul className="social-icon social-default transparent-with-border justify-content-start mt--20">
               <li>
                 <a href="https://www.facebook.com/">
-                  <i className="feather-facebook"></i>
+                  <Facebook />
                 </a>
               </li>
               <li>
                 <a href="https://www.twitter.com">
-                  <i className="feather-twitter"></i>
+                  <Twitter />
                 </a>
               </li>
               <li>
                 <a href="https://www.instagram.com/">
-                  <i className="feather-instagram"></i>
+                  <Instagram />
                 </a>
               </li>
               <li>
                 <a href="https://www.linkdin.com/">
-                  <i className="feather-linkedin"></i>
+                  <Linkedin />
                 </a>
               </li>
             </ul>

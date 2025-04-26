@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FaFacebookF, FaLinkedinIn, FaTwitter } from "react-icons/fa";
 
 import TeamData from "../../data/elements/team.json";
 import TeamHead from "./TeamHead";
@@ -34,17 +35,17 @@ const TeamSeven = () => {
                     <ul className="social-icon">
                       <li>
                         <Link href="#">
-                          <i className="fab fa-facebook-f"></i>
+                          <FaFacebookF />
                         </Link>
                       </li>
                       <li>
                         <Link href="#">
-                          <i className="fab fa-linkedin-in"></i>
+                          <FaLinkedinIn />
                         </Link>
                       </li>
                       <li>
                         <Link href="#">
-                          <i className="fab fa-twitter"></i>
+                          <FaTwitter />
                         </Link>
                       </li>
                     </ul>

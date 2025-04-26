@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { X, Mail, Phone, Facebook, Twitter, Instagram, Linkedin } from "react-feather";
 
 import logo from "../../public/images/logo/logo.png";
 
@@ -33,7 +34,7 @@ const MobileMenu = () => {
                   className="close-button rbt-round-btn"
                   onClick={() => setMobile(!mobile)}
                 >
-                  <i className="feather-x"></i>
+                  <X />
                 </button>
               </div>
             </div>
@@ -43,12 +44,12 @@ const MobileMenu = () => {
             <ul className="navbar-top-left rbt-information-list justify-content-start">
               <li>
                 <Link href="mailto:hello@example.com">
-                  <i className="feather-mail"></i>example@gmail.com
+                  <Mail />example@gmail.com
                 </Link>
               </li>
               <li>
                 <Link href="#">
-                  <i className="feather-phone"></i>(302) 555-0107
+                  <Phone />(302) 555-0107
                 </Link>
               </li>
             </ul>
@@ -71,22 +72,22 @@ const MobileMenu = () => {
               <ul className="social-icon social-default transparent-with-border justify-content-start mt--20">
                 <li>
                   <Link href="https://www.facebook.com/">
-                    <i className="feather-facebook"></i>
+                    <Facebook />
                   </Link>
                 </li>
                 <li>
                   <Link href="https://www.twitter.com">
-                    <i className="feather-twitter"></i>
+                    <Twitter />
                   </Link>
                 </li>
                 <li>
                   <Link href="https://www.instagram.com/">
-                    <i className="feather-instagram"></i>
+                    <Instagram />
                   </Link>
                 </li>
                 <li>
                   <Link href="https://www.linkdin.com/">
-                    <i className="feather-linkedin"></i>
+                    <Linkedin />
                   </Link>
                 </li>
               </ul>

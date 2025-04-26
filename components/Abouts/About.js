@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Heart, Book, Monitor } from "react-feather";
 
 import AboutData from "../../data/elements/about.json";
 import { useParallax } from "react-scroll-parallax";
@@ -9,6 +10,18 @@ import { useParallax } from "react-scroll-parallax";
 import aboutImg7 from "../../public/images/about/about-07.jpg";
 import aboutImg8 from "../../public/images/about/about-08.jpg";
 import aboutImg9 from "../../public/images/about/about-09.jpg";
+
+// 동적 아이콘 매핑 함수
+const IconComponent = ({ iconName }) => {
+  const iconMap = {
+    "feather-heart": <Heart />,
+    "feather-book": <Book />,
+    "feather-monitor": <Monitor />
+    // 필요에 따라 더 많은 아이콘을 여기에 추가할 수 있습니다
+  };
+
+  return iconMap[iconName] || null;
+};
 
 const About = () => {
   const { ref: ref1, style: style1 } = useParallax({
@@ -74,7 +87,7 @@ const About = () => {
                           : "bg-pink-opacity"
                       }`}
                     >
-                      <i className={item.icon}></i>
+                      <IconComponent iconName={item.icon} />
                     </div>
                     <div className="feature-content">
                       <h6 className="feature-title">{item.title}</h6>
@@ -92,10 +105,10 @@ const About = () => {
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">More About Us</span>
                     <span className="btn-icon">
-                      <i className="feather-arrow-right"></i>
+                      <ArrowRight />
                     </span>
                     <span className="btn-icon">
-                      <i className="feather-arrow-right"></i>
+                      <ArrowRight />
                     </span>
                   </span>
                 </Link>

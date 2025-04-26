@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import CourseDetails from "../../data/course-details/courseData.json";
 import useCategoryCount from "@/context/useCategoryCount";
+import { IconComponent } from "../Common/IconComponent";
 
 const CategoryOne = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -35,7 +36,7 @@ const CategoryOne = () => {
                     <div className="read-more-btn">
                       <span className="rbt-btn-link">
                         {count} Course{count !== 1 ? "s" : ""}
-                        <i className="feather-arrow-right"></i>
+                        <IconComponent iconName="feather-arrow-right" />
                       </span>
                     </div>
                   </div>

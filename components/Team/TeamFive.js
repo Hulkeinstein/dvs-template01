@@ -1,10 +1,11 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { IconComponent } from "../Common/IconComponent";
 
 import TeamHead from "./TeamHead";
 
 import TeamData from "../../data/elements/team.json";
-import Link from "next/link";
 
 const TeamFive = () => {
   return (
@@ -34,24 +35,24 @@ const TeamFive = () => {
                         <h2 className="title">{item.name}</h2>
                         <h6 className="subtitle theme-gradient">{item.type}</h6>
                         <span className="team-form">
-                          <i className="feather-map-pin"></i>
+                          <IconComponent iconName="feather-map-pin" />
                           <span className="location">{item.location}</span>
                         </span>
                         <p className="description">{item.desc}</p>
                         <ul className="social-icon social-default icon-naked mt--20">
                           <li>
                             <Link href="https://www.facebook.com/">
-                              <i className="feather-facebook"></i>
+                              <IconComponent iconName="feather-facebook" />
                             </Link>
                           </li>
                           <li>
                             <Link href="https://www.twitter.com">
-                              <i className="feather-twitter"></i>
+                              <IconComponent iconName="feather-twitter" />
                             </Link>
                           </li>
                           <li>
                             <Link href="https://www.instagram.com/">
-                              <i className="feather-instagram"></i>
+                              <IconComponent iconName="feather-instagram" />
                             </Link>
                           </li>
                         </ul>

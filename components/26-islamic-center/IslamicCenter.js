@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "react-feather";
+import { FaFacebookF, FaLinkedinIn, FaTwitter } from "react-icons/fa";
 
 import BlogGrid from "../Blogs/BlogGrid";
 import TestimonialFour from "../Testimonials/Testimonial-Four";
@@ -423,17 +425,17 @@ const IslamicCenter = ({ blogdata }) => {
                         <ul className="social-icon">
                           <li>
                             <Link href="#">
-                              <i className="fab fa-facebook-f"></i>
+                              <FaFacebookF />
                             </Link>
                           </li>
                           <li>
                             <Link href="#">
-                              <i className="fab fa-linkedin-in"></i>
+                              <FaLinkedinIn />
                             </Link>
                           </li>
                           <li>
                             <Link href="#">
-                              <i className="fab fa-twitter"></i>
+                              <FaTwitter />
                             </Link>
                           </li>
                         </ul>
@@ -551,10 +553,10 @@ const IslamicCenter = ({ blogdata }) => {
                     <span className="icon-reverse-wrapper">
                       <span className="btn-text">View All Posts</span>
                       <span className="btn-icon">
-                        <i className="feather-arrow-right"></i>
+                        <ArrowRight />
                       </span>
                       <span className="btn-icon">
-                        <i className="feather-arrow-right"></i>
+                        <ArrowRight />
                       </span>
                     </span>
                   </Link>

@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { Phone, ChevronDown, Plus } from "react-feather";
+import { FaInstagram, FaFacebookSquare, FaFacebookF, FaTwitter, FaLinkedinIn } from "react-icons/fa";
 
 import HeaderTopData from "../../../data/headerTop";
 import { useAppContext } from "@/context/Context";
@@ -36,7 +38,7 @@ const HeaderTopEight = ({
                       <ul className="rbt-information-list">
                         <li>
                           <Link href="#">
-                            <i className="fab fa-instagram"></i>
+                            <FaInstagram />
                             {item.insFollowers}k
                             <span className="d-none d-xxl-block">
                               {item.type}
@@ -45,7 +47,7 @@ const HeaderTopEight = ({
                         </li>
                         <li>
                           <Link href="#">
-                            <i className="fab fa-facebook-square"></i>
+                            <FaFacebookSquare />
                             {item.fbFollowers}k
                             <span className="d-none d-xxl-block">
                               {item.type}
@@ -57,7 +59,7 @@ const HeaderTopEight = ({
                         ) : (
                           <li>
                             <Link href="#">
-                              <i className="feather-phone"></i>
+                              <Phone />
                               {item.phone}
                             </Link>
                           </li>
@@ -99,22 +101,22 @@ const HeaderTopEight = ({
                         <ul className="social-share-transparent">
                           <li>
                             <Link href="#">
-                              <i className="fab fa-facebook-f"></i>
+                              <FaFacebookF />
                             </Link>
                           </li>
                           <li>
                             <Link href="#">
-                              <i className="fab fa-twitter"></i>
+                              <FaTwitter />
                             </Link>
                           </li>
                           <li>
                             <Link href="#">
-                              <i className="fab fa-linkedin-in"></i>
+                              <FaLinkedinIn />
                             </Link>
                           </li>
                           <li>
                             <Link href="#">
-                              <i className="fab fa-instagram"></i>
+                              <FaInstagram />
                             </Link>
                           </li>
                         </ul>
@@ -141,7 +143,7 @@ const HeaderTopEight = ({
                               <span className="menu-item">
                                 {lng.defaultTitle}
                               </span>
-                              <i className="right-icon feather-chevron-down"></i>
+                              <ChevronDown className="right-icon" />
                             </Link>
 
                             <ul className="sub-menu">
@@ -175,7 +177,7 @@ const HeaderTopEight = ({
                               <span className="menu-item">
                                 {curnc.defaultCurrency}
                               </span>
-                              <i className="right-icon feather-chevron-down"></i>
+                              <ChevronDown className="right-icon" />
                             </Link>
                             <ul className="sub-menu hover-reverse">
                               {curnc.subCurr.map((sub, subIndex) => (
@@ -202,7 +204,7 @@ const HeaderTopEight = ({
                 className="topbar-expend-button rbt-round-btn"
                 onClick={() => setToggle(!toggle)}
               >
-                <i className="feather-plus"></i>
+                <Plus />
               </button>
             </div>
           </div>

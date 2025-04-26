@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MapPin, Facebook, Twitter, Instagram, Phone, Mail } from "react-feather";
 
 import TeamData from "../../data/elements/team.json";
 
@@ -40,7 +41,7 @@ const TeamTwo = () => {
                             {item.type}
                           </span>
                           <span className="team-form">
-                            <i className="feather-map-pin"></i>
+                            <MapPin />
                             <span className="location">{item.location}</span>
                           </span>
                         </div>
@@ -48,30 +49,30 @@ const TeamTwo = () => {
                         <ul className="social-icon social-default mt--20 justify-content-start">
                           <li>
                             <Link href="https://www.facebook.com/">
-                              <i className="feather-facebook"></i>
+                              <Facebook />
                             </Link>
                           </li>
                           <li>
                             <Link href="https://www.twitter.com">
-                              <i className="feather-twitter"></i>
+                              <Twitter />
                             </Link>
                           </li>
                           <li>
                             <Link href="https://www.instagram.com/">
-                              <i className="feather-instagram"></i>
+                              <Instagram />
                             </Link>
                           </li>
                         </ul>
                         <ul className="rbt-information-list mt--25">
                           <li>
                             <Link href="#">
-                              <i className="feather-phone"></i>
+                              <Phone />
                               {item.phone}
                             </Link>
                           </li>
                           <li>
                             <Link href="mailto:hello@example.com">
-                              <i className="feather-mail"></i>
+                              <Mail />
                               {item.email}
                             </Link>
                           </li>

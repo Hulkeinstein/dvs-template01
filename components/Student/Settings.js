@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { IconComponent } from "../Common/IconComponent";
 
 const Setting = () => {
   const [textareaText, setTextareaText] = useState(
@@ -88,7 +89,7 @@ const Setting = () => {
                       />
                       <div className="rbt-edit-photo-inner">
                         <button className="rbt-edit-photo" title="Upload Photo">
-                          <i className="feather-camera" />
+                          <IconComponent iconName="feather-camera" />
                         </button>
                       </div>
                     </div>
@@ -248,7 +249,7 @@ const Setting = () => {
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="facebook">
-                      <i className="feather-facebook"></i> Facebook
+                      <IconComponent iconName="feather-facebook" /> Facebook
                     </label>
                     <input
                       id="facebook"
@@ -260,7 +261,7 @@ const Setting = () => {
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="twitter">
-                      <i className="feather-twitter"></i> Twitter
+                      <IconComponent iconName="feather-twitter" /> Twitter
                     </label>
                     <input
                       id="twitter"
@@ -272,7 +273,7 @@ const Setting = () => {
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="linkedin">
-                      <i className="feather-linkedin"></i> Linkedin
+                      <IconComponent iconName="feather-linkedin" /> Linkedin
                     </label>
                     <input
                       id="linkedin"
@@ -284,7 +285,7 @@ const Setting = () => {
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="website">
-                      <i className="feather-globe"></i> Website
+                      <IconComponent iconName="feather-globe" /> Website
                     </label>
                     <input
                       id="website"
@@ -296,7 +297,7 @@ const Setting = () => {
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="github">
-                      <i className="feather-github"></i> Github
+                      <IconComponent iconName="feather-github" /> Github
                     </label>
                     <input
                       id="github"

@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { ChevronDown, ArrowRight, FolderMinus, ChevronRight } from "react-feather";
 
 import { useState } from "react";
 
@@ -35,7 +36,7 @@ const Nav = () => {
             href="#"
           >
             Home
-            <i className="feather-chevron-down"></i>
+            <ChevronDown />
           </Link>
           <div
             className={`rbt-megamenu menu-skin-dark ${
@@ -93,7 +94,7 @@ const Nav = () => {
                                         ""
                                       )}
                                       <span className="btn-icon">
-                                        <i className="feather-arrow-right"></i>
+                                        <ArrowRight />
                                       </span>
                                     </Link>
                                   </h4>
@@ -139,7 +140,7 @@ const Nav = () => {
             onClick={() => toggleMenuItem("courses")}
           >
             Courses
-            <i className="feather-chevron-down"></i>
+            <ChevronDown />
           </Link>
 
           <div
@@ -196,7 +197,7 @@ const Nav = () => {
                             (value, innerIndex) => (
                               <li key={innerIndex}>
                                 <Link href={value.link}>
-                                  <i className="feather-folder-minus"></i>
+                                  <FolderMinus />
                                   {value.title}
                                 </Link>
                               </li>
@@ -218,7 +219,7 @@ const Nav = () => {
             onClick={() => toggleMenuItem("dashboard")}
           >
             Dashboard
-            <i className="feather-chevron-down"></i>
+            <ChevronDown />
           </Link>
           <ul
             className={`submenu ${
@@ -262,7 +263,7 @@ const Nav = () => {
             onClick={() => toggleMenuItem("pages")}
           >
             Pages
-            <i className="feather-chevron-down"></i>
+            <ChevronDown />
           </Link>
           <div
             className={`rbt-megamenu grid-item-4 ${
@@ -315,7 +316,7 @@ const Nav = () => {
                                   </div>
                                   <Link href={value.link}>
                                     <span>{value.title}</span>
-                                    <i className="feather-chevron-right"></i>
+                                    <ChevronRight />
                                   </Link>
                                 </div>
                               </div>
@@ -337,7 +338,7 @@ const Nav = () => {
             onClick={() => toggleMenuItem("elements")}
           >
             Elements
-            <i className="feather-chevron-down"></i>
+            <ChevronDown />
           </Link>
           <div
             className={`rbt-megamenu grid-item-3 ${
@@ -375,10 +376,10 @@ const Nav = () => {
                       <span className="icon-reverse-wrapper">
                         <span className="btn-text">Visit Histudy Template</span>
                         <span className="btn-icon">
-                          <i className="feather-arrow-right"></i>
+                          <ArrowRight />
                         </span>
                         <span className="btn-icon">
-                          <i className="feather-arrow-right"></i>
+                          <ArrowRight />
                         </span>
                       </span>
                     </Link>
@@ -395,7 +396,7 @@ const Nav = () => {
             onClick={() => toggleMenuItem("blog")}
           >
             Blog
-            <i className="feather-chevron-down"></i>
+            <ChevronDown />
           </Link>
           <div
             className={`rbt-megamenu grid-item-3 ${

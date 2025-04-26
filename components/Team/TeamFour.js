@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { IconComponent } from "../Common/IconComponent";
 
 import TeamHead from "./TeamHead";
 
@@ -38,7 +39,7 @@ const TeamFour = ({ isHead }) => {
                         <h2 className="title">{item.name}</h2>
                         <h6 className="subtitle theme-gradient">{item.type}</h6>
                         <span className="team-form">
-                          <i className="feather-map-pin"></i>
+                          <IconComponent iconName="feather-map-pin" />
                           <span className="location">{item.location}</span>
                         </span>
                       </div>

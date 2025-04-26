@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import Image from "next/image";
 import Link from "next/link";
+import { Bookmark, Book, Users, ArrowRight } from "react-feather";
+import { FaStar } from "react-icons/fa";
 
 import { useAppContext } from "@/context/Context";
 import Pagination from "@/components/Common/Pagination";
@@ -64,11 +66,11 @@ const CourseFilterOneOpen = ({ course }) => {
                   <div className="rbt-card-top">
                     <div className="rbt-review">
                       <div className="rating">
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
-                        <i className="fas fa-star"></i>
+                        <FaStar />
+                        <FaStar />
+                        <FaStar />
+                        <FaStar />
+                        <FaStar />
                       </div>
                       <span className="rating-count">
                         ({data.review} Reviews)
@@ -76,7 +78,7 @@ const CourseFilterOneOpen = ({ course }) => {
                     </div>
                     <div className="rbt-bookmark-btn">
                       <Link className="rbt-round-btn" title="Bookmark" href="#">
-                        <i className="feather-bookmark"></i>
+                        <Bookmark />
                       </Link>
                     </div>
                   </div>
@@ -89,11 +91,11 @@ const CourseFilterOneOpen = ({ course }) => {
 
                   <ul className="rbt-meta">
                     <li>
-                      <i className="feather-book"></i>
+                      <Book />
                       {data.lesson} Lessons
                     </li>
                     <li>
-                      <i className="feather-users"></i>
+                      <Users />
                       {data.student} Students
                     </li>
                   </ul>
@@ -125,7 +127,7 @@ const CourseFilterOneOpen = ({ course }) => {
                       className="rbt-btn-link"
                       href={`/course-details/${data.id}`}
                     >
-                      Learn More<i className="feather-arrow-right"></i>
+                      Learn More<ArrowRight />
                     </Link>
                   </div>
                 </div>

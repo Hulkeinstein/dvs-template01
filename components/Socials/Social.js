@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import { Facebook, Twitter, Instagram, Linkedin } from "react-feather";
 
 const Social = ({ classOne, classList }) => {
   return (
@@ -10,22 +11,22 @@ const Social = ({ classOne, classList }) => {
             <ul className={classList}>
               <li>
                 <Link href="https://www.facebook.com/">
-                  <i className="feather-facebook"></i>
+                  <Facebook />
                 </Link>
               </li>
               <li>
                 <Link href="https://www.twitter.com">
-                  <i className="feather-twitter"></i>
+                  <Twitter />
                 </Link>
               </li>
               <li>
                 <Link href="https://www.instagram.com/">
-                  <i className="feather-instagram"></i>
+                  <Instagram />
                 </Link>
               </li>
               <li>
                 <Link href="https://www.linkdin.com/">
-                  <i className="feather-linkedin"></i>
+                  <Linkedin />
                 </Link>
               </li>
             </ul>

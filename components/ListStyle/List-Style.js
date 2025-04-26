@@ -1,4 +1,5 @@
 import React from "react";
+import { Check, X, Heart, Flag, Eye, Edit2, BatteryCharging, Book, Monitor } from "react-feather";
 
 const ListStyle = () => {
   return (
@@ -7,30 +8,30 @@ const ListStyle = () => {
         <div className="col-lg-6 col-md-12 col-12">
           <ul className="rbt-list-style-1">
             <li>
-              <i className="feather-check"></i>Become an advanced, confident.
+              <Check />Become an advanced, confident.
             </li>
             <li>
-              <i className="feather-check"></i>Have an intermediate skill level
+              <Check />Have an intermediate skill level
               of.
             </li>
             <li>
-              <i className="feather-check"></i>Have a portfolio of various data.
+              <Check />Have a portfolio of various data.
             </li>
             <li>
-              <i className="feather-check"></i>Use the numpy library to create.
+              <Check />Use the numpy library to create.
             </li>
           </ul>
         </div>
         <div className="col-lg-6 col-md-12 col-12">
           <ul className="rbt-list-style-2">
             <li>
-              <i className="feather-check"></i>No Cridit Card
+              <Check />No Cridit Card
             </li>
             <li>
-              <i className="feather-check"></i>14 Days Trial
+              <Check />14 Days Trial
             </li>
             <li>
-              <i className="feather-check"></i>Free For Teachers
+              <Check />Free For Teachers
             </li>
           </ul>
         </div>
@@ -50,44 +51,44 @@ const ListStyle = () => {
         <div className="col-lg-4 col-md-6 col-12">
           <ul className="plan-offer-list">
             <li>
-              <i className="feather-check"></i> 5 PPC Campaigns
+              <Check /> 5 PPC Campaigns
             </li>
             <li>
-              <i className="feather-check"></i> Digital Marketing
+              <Check /> Digital Marketing
             </li>
             <li>
-              <i className="feather-check"></i> Marketing Agency
+              <Check /> Marketing Agency
             </li>
             <li>
-              <i className="feather-check"></i> Seo Friendly
+              <Check /> Seo Friendly
             </li>
             <li>
-              <i className="feather-check"></i> App Development
+              <Check /> App Development
             </li>
             <li className="off">
-              <i className="feather-x"></i> 24/7 Dedicated Support
+              <X /> 24/7 Dedicated Support
             </li>
           </ul>
         </div>
         <div className="col-lg-4 col-md-6 col-12">
           <ul className="plan-offer-list rbt-list-primary-opacity">
             <li>
-              <i className="feather-check"></i> 5 PPC Campaigns
+              <Check /> 5 PPC Campaigns
             </li>
             <li>
-              <i className="feather-check"></i> Digital Marketing
+              <Check /> Digital Marketing
             </li>
             <li>
-              <i className="feather-check"></i> Marketing Agency
+              <Check /> Marketing Agency
             </li>
             <li>
-              <i className="feather-check"></i> Seo Friendly
+              <Check /> Seo Friendly
             </li>
             <li>
-              <i className="feather-check"></i> App Development
+              <Check /> App Development
             </li>
             <li className="off">
-              <i className="feather-x"></i> 24/7 Dedicated Support
+              <X /> 24/7 Dedicated Support
             </li>
           </ul>
         </div>
@@ -95,22 +96,22 @@ const ListStyle = () => {
           <div className="bg-gradient-7 rbt-shadow-box">
             <ul className="plan-offer-list rbt-list-white-opacity ">
               <li className="color-white">
-                <i className="feather-check"></i> 5 PPC Campaigns
+                <Check /> 5 PPC Campaigns
               </li>
               <li className="color-white">
-                <i className="feather-check"></i> Digital Marketing
+                <Check /> Digital Marketing
               </li>
               <li className="color-white">
-                <i className="feather-check"></i> Marketing Agency
+                <Check /> Marketing Agency
               </li>
               <li className="color-white">
-                <i className="feather-check"></i> Seo Friendly
+                <Check /> Seo Friendly
               </li>
               <li className="color-white">
-                <i className="feather-check"></i> App Development
+                <Check /> App Development
               </li>
               <li className="off color-white">
-                <i className="feather-x"></i> 24/7 Dedicated Support
+                <X /> 24/7 Dedicated Support
               </li>
             </ul>
           </div>
@@ -118,19 +119,19 @@ const ListStyle = () => {
         <div className="col-lg-6 col-md-6 col-12">
           <ul className="rbt-list-style-3">
             <li>
-              <i className="feather-heart"></i> Health and Wellness
+              <Heart /> Health and Wellness
             </li>
             <li>
-              <i className="feather-flag"></i> Literacy and Language
+              <Flag /> Literacy and Language
             </li>
             <li>
-              <i className="feather-eye"></i> Social-Emotional Learning
+              <Eye /> Social-Emotional Learning
             </li>
             <li>
-              <i className="feather-edit-2"></i> Visual and Creative Arts
+              <Edit2 /> Visual and Creative Arts
             </li>
             <li>
-              <i className="feather-battery-charging"></i> Thinking and Learning
+              <BatteryCharging /> Thinking and Learning
             </li>
           </ul>
         </div>
@@ -141,7 +142,7 @@ const ListStyle = () => {
           <div className="rbt-feature-wrapper">
             <div className="rbt-feature feature-style-1">
               <div className="icon bg-pink-opacity">
-                <i className="feather-heart"></i>
+                <Heart />
               </div>
               <div className="feature-content">
                 <h6 className="feature-title">Flexible Classes</h6>
@@ -154,7 +155,7 @@ const ListStyle = () => {
 
             <div className="rbt-feature feature-style-1">
               <div className="icon bg-primary-opacity">
-                <i className="feather-book"></i>
+                <Book />
               </div>
               <div className="feature-content">
                 <h6 className="feature-title">Learn From Anywhere</h6>
@@ -167,7 +168,7 @@ const ListStyle = () => {
 
             <div className="rbt-feature feature-style-1">
               <div className="icon bg-coral-opacity">
-                <i className="feather-monitor"></i>
+                <Monitor />
               </div>
               <div className="feature-content">
                 <h6 className="feature-title">
@@ -185,7 +186,7 @@ const ListStyle = () => {
           <div className="rbt-feature-wrapper">
             <div className="rbt-feature feature-style-2">
               <div className="icon bg-pink-opacity">
-                <i className="feather-heart"></i>
+                <Heart />
               </div>
               <div className="feature-content">
                 <h6 className="feature-title">Flexible Classes</h6>
@@ -198,7 +199,7 @@ const ListStyle = () => {
 
             <div className="rbt-feature feature-style-2">
               <div className="icon bg-primary-opacity">
-                <i className="feather-book"></i>
+                <Book />
               </div>
               <div className="feature-content">
                 <h6 className="feature-title">Learn From Anywhere</h6>
@@ -211,7 +212,7 @@ const ListStyle = () => {
 
             <div className="rbt-feature feature-style-2">
               <div className="icon bg-coral-opacity">
-                <i className="feather-monitor"></i>
+                <Monitor />
               </div>
               <div className="feature-content">
                 <h6 className="feature-title">

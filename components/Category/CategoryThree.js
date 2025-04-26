@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import CourseDetails from "../../data/course-details/courseData.json";
 import useCategoryCount from "@/context/useCategoryCount";
+import { IconComponent } from "../Common/IconComponent";
 
 const CategoryThree = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -48,7 +49,7 @@ const CategoryThree = () => {
                         href={`/course-filter-one-toggle/${item.category}`}
                       >
                         {count} Course{count !== 1 ? "s" : ""}
-                        <i className="feather-arrow-right"></i>
+                        <IconComponent iconName="feather-arrow-right" />
                       </Link>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { IconComponent } from "../Common/IconComponent";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 
@@ -65,7 +66,7 @@ const TeamNine = () => {
                                 {item.type}
                               </h6>
                               <span className="team-form">
-                                <i className="feather-map-pin"></i>
+                                <IconComponent iconName="feather-map-pin" />
                                 <span className="location">
                                   {item.location}
                                 </span>

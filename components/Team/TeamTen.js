@@ -1,179 +1,177 @@
-import Image from "next/image";
+import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { IconComponent } from "../Common/IconComponent";
+
+import { useAppContext } from "@/context/Context";
 
 import TeamData from "../../data/elements/team.json";
 
 const TeamTen = () => {
+  const { team, setTeam } = useAppContext();
   return (
     <>
-      <div className="container">
-        <div className="row mb--60 g-5 align-items-end">
-          <div className="col-lg-6 col-md-6 col-12">
-            <div className="section-title text-start">
-              <span className="subtitle bg-white-opacity">Our Instructor</span>
-              <h2 className="title color-white">Expert Instructor</h2>
-            </div>
-          </div>
-          <div className="col-lg-6 col-md-6 col-12">
-            <div className="read-more-btn text-start text-md-end">
-              <Link
-                className="rbt-btn hover-icon-reverse radius-round btn-white"
-                href="#"
-              >
-                <div className="icon-reverse-wrapper">
-                  <span className="btn-text">BECAME A INSTRUCTOR</span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
-                  </span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
-                  </span>
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-lg-12">
+            <div className="section-title text-center mb--60">
+              <h2 className="theme-gradient rbt-display-1">
+                Our <strong>Experts</strong>
+              </h2>
+              <p className="description has-medium-font-size mt--20">
+                Find the instructor that&apos;s right for you. Through the
+                platform you <br />
+                can connect with thousands of statistics instructors.
+              </p>
+              <div className="row">
+                <div className="col-lg-12">
+                  <div className="section-action-btn text-center mt--40">
+                    <Link
+                      className="rbt-btn btn-gradient hover-icon-reverse"
+                      href="#"
+                    >
+                      <span className="icon-reverse-wrapper">
+                        <span className="btn-text">See All Instructor</span>
+                        <span className="btn-icon">
+                          <IconComponent iconName="feather-arrow-right" />
+                        </span>
+                        <span className="btn-icon">
+                          <IconComponent iconName="feather-arrow-right" />
+                        </span>
+                      </span>
+                    </Link>
+                  </div>
                 </div>
-              </Link>
+              </div>
             </div>
           </div>
         </div>
         <div className="row g-5">
           {TeamData &&
-            TeamData.team.map((data, index) => (
+            TeamData.team.slice(0, 4).map((data, index) => (
               <div
-                className={`${
-                  data.isLarge
-                    ? "col-lg-3 col-md-6 col-sm-6 col-12"
-                    : "col-lg-2 col-md-3 col-sm-4 col-12"
-                }`}
+                className="col-lg-3 col-md-6 col-sm-6 col-12"
                 key={index}
+                data-sal-delay="150"
+                data-sal="slide-up"
+                data-sal-duration="800"
               >
-                <div className="rbt-team-modal-thumb nav nav-tabs">
-                  <Link
-                    className="rbt-team-thumbnail w-100"
-                    href="#"
+                {data.details.map((item, innerIndex) => (
+                  <div
+                    className="rbt-team-modal-thumb h-100"
+                    key={innerIndex}
                     data-bs-toggle="modal"
                     data-bs-target={`#exampleModal${index}`}
+                    onClick={() => setTeam(item.id)}
                   >
                     <div className="thumb">
                       <Image
-                        className="w-100"
-                        src={data.img}
-                        width={data.isLarge ? 284 : 173}
-                        height={data.isLarge ? 379 : 231}
-                        priority
+                        src={item.img}
+                        width={415}
+                        height={555}
                         alt="Testimonial Images"
                       />
                     </div>
-                  </Link>
-                </div>
+                  </div>
+                ))}
               </div>
             ))}
         </div>
+      </div>
 
-        {TeamData.team.map((data, index) => (
-          <div
-            className="rbt-team-modal modal fade rbt-modal-default"
-            id={`exampleModal${index}`}
-            tabIndex="-1"
-            aria-labelledby={`exampleModal${index}`}
-            aria-hidden="true"
-            key={index}
-          >
-            {data.details.map((item, innerIndex) => (
-              <div
-                className="modal-dialog modal-dialog-centered"
-                key={innerIndex}
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <button
-                      type="button"
-                      className="rbt-round-btn"
-                      data-bs-dismiss="modal"
-                      aria-label="Close"
-                    >
-                      <i className="feather-x"></i>
-                    </button>
-                  </div>
-
-                  <div className="modal-body">
-                    <div className="inner">
-                      <div className="row g-5 row--30 align-items-center">
-                        <div className="col-lg-4">
-                          <div className="rbt-team-thumbnail">
-                            <div className="thumb">
-                              <Image
-                                className="w-100"
-                                src={item.img}
-                                width={415}
-                                height={555}
-                                priority
-                                alt="Testimonial Images"
-                              />
+      <div className={team ? "team-details-popup open" : "team-details-popup"}>
+        <div className="thumbnail thumbnail-popup">
+          <div className="close-popup">
+            <button
+              className="rbt-round-btn"
+              onClick={() => setTeam("")}
+            >
+              <IconComponent iconName="feather-x" />
+            </button>
+          </div>
+          {TeamData &&
+            TeamData.team.map((data, index) => (
+              <div key={index}>
+                {data.details.map(
+                  (item, innerIndex) =>
+                    team === item.id && (
+                      <div className="inner" key={innerIndex}>
+                        <div className="row g-5 row--30 align-items-center">
+                          <div className="col-lg-6">
+                            <div className="rbt-team-thumbnail">
+                              <div className="thumb">
+                                <Image
+                                  src={item.img}
+                                  width={415}
+                                  height={555}
+                                  alt="Corporate Template"
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="col-lg-8">
-                          <div className="rbt-team-details">
-                            <div className="author-info">
-                              <h4 className="title">{item.name}</h4>
-                              <span className="designation theme-gradient">
-                                {item.type}
-                              </span>
-                              <span className="team-form">
-                                <i className="feather-map-pin"></i>
-                                <span className="location">
-                                  {item.location}
+                          <div className="col-lg-6">
+                            <div className="rbt-team-details">
+                              <div className="author-info">
+                                <h4 className="title">{item.name}</h4>
+                                <span className="designation theme-gradient">
+                                  {item.type}
                                 </span>
-                              </span>
-                            </div>
-                            <p className="mb--15">{item.desc}</p>
+                                <span className="team-form">
+                                  <IconComponent iconName="feather-map-pin" />
+                                  <span className="location">
+                                    {item.location}
+                                  </span>
+                                </span>
+                              </div>
+                              <p className="mb--15">{item.desc}</p>
 
-                            <p>{item.descTwo}</p>
-                            <ul className="social-icon social-default mt--20 justify-content-start">
-                              <li>
-                                <Link href="https://www.facebook.com/">
-                                  <i className="feather-facebook"></i>
-                                </Link>
-                              </li>
-                              <li>
-                                <Link href="https://www.twitter.com">
-                                  <i className="feather-twitter"></i>
-                                </Link>
-                              </li>
-                              <li>
-                                <Link href="https://www.instagram.com/">
-                                  <i className="feather-instagram"></i>
-                                </Link>
-                              </li>
-                              <li>
-                                <Link href="https://www.linkdin.com/">
-                                  <i className="feather-linkedin"></i>
-                                </Link>
-                              </li>
-                            </ul>
-                            <ul className="rbt-information-list mt--25">
-                              <li>
-                                <Link href="#">
-                                  <i className="feather-phone"></i>
-                                  {item.phone}
-                                </Link>
-                              </li>
-                              <li>
-                                <Link href="mailto:hello@example.com">
-                                  <i className="feather-mail"></i>
-                                  {item.email}
-                                </Link>
-                              </li>
-                            </ul>
+                              <p>{item.desc}</p>
+                              <ul className="social-icon social-default mt--20 justify-content-start">
+                                <li>
+                                  <Link href="https://www.facebook.com/">
+                                    <IconComponent iconName="feather-facebook" />
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link href="https://www.twitter.com">
+                                    <IconComponent iconName="feather-twitter" />
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link href="https://www.instagram.com/">
+                                    <IconComponent iconName="feather-instagram" />
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link href="https://www.linkdin.com/">
+                                    <IconComponent iconName="feather-linkedin" />
+                                  </Link>
+                                </li>
+                              </ul>
+                              <ul className="rbt-information-list mt--25">
+                                <li>
+                                  <Link href="#">
+                                    <IconComponent iconName="feather-phone" />
+                                    {item.phone}
+                                  </Link>
+                                </li>
+                                <li>
+                                  <Link href="mailto:hello@example.com">
+                                    <IconComponent iconName="feather-mail" />
+                                    {item.email}
+                                  </Link>
+                                </li>
+                              </ul>
+                            </div>
                           </div>
                         </div>
+                        <div className="top-circle-shape"></div>
                       </div>
-                      <div className="top-circle-shape"></div>
-                    </div>
-                  </div>
-                </div>
+                    )
+                )}
               </div>
             ))}
-          </div>
-        ))}
+        </div>
       </div>
     </>
   );

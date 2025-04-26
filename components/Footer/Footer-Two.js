@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FaFacebookF, FaLinkedinIn, FaTwitter, FaInstagram } from "react-icons/fa";
 
 import logo from "../../public/images/logo/logo.png";
 import logoLight from "../../public/images/dark/logo/logo-light.png";
@@ -39,22 +40,22 @@ const FooterTwo = () => {
                 <ul className="social-icon social-default">
                   <li>
                     <Link href="#">
-                      <i className="fab fa-facebook-f"></i>
+                      <FaFacebookF />
                     </Link>
                   </li>
                   <li>
                     <Link href="#">
-                      <i className="fab fa-linkedin-in"></i>
+                      <FaLinkedinIn />
                     </Link>
                   </li>
                   <li>
                     <Link href="#">
-                      <i className="fab fa-twitter"></i>
+                      <FaTwitter />
                     </Link>
                   </li>
                   <li>
                     <Link href="#">
-                      <i className="fab fa-instagram"></i>
+                      <FaInstagram />
                     </Link>
                   </li>
                 </ul>

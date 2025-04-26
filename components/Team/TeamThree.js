@@ -1,6 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { MapPin, Facebook, Twitter, Instagram } from "react-feather";
 
 import TeamHead from "./TeamHead";
 
@@ -35,24 +36,24 @@ const TeamThree = () => {
                         <h2 className="title">{item.name}</h2>
                         <h6 className="subtitle theme-gradient">{item.type}</h6>
                         <span className="team-form">
-                          <i className="feather-map-pin"></i>
+                          <MapPin />
                           <span className="location">{item.location}</span>
                         </span>
                         <p className="description">{item.desc}</p>
                         <ul className="social-icon social-default icon-naked mt--20">
                           <li>
                             <Link href="https://www.facebook.com/">
-                              <i className="feather-facebook"></i>
+                              <Facebook />
                             </Link>
                           </li>
                           <li>
                             <Link href="https://www.twitter.com">
-                              <i className="feather-twitter"></i>
+                              <Twitter />
                             </Link>
                           </li>
                           <li>
                             <Link href="https://www.instagram.com/">
-                              <i className="feather-instagram"></i>
+                              <Instagram />
                             </Link>
                           </li>
                         </ul>
