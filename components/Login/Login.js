@@ -1,126 +1,59 @@
-import Link from "next/link";
+"use client";
+
 import React from "react";
+import { signIn } from "next-auth/react";
 
 const Login = () => {
   return (
-    <>
+    <div className="row gy-5 row--30">
+      {/* 왼쪽: 로그인 영역 */}
       <div className="col-lg-6">
         <div className="rbt-contact-form contact-form-style-1 max-width-auto">
           <h3 className="title">Login</h3>
-          <form className="max-width-auto">
-            <div className="form-group">
-              <input
-                name="con_name"
-                type="text"
-                placeholder="Username or email *"
-              />
-              <span className="focus-border"></span>
-            </div>
-            <div className="form-group">
-              <input
-                name="con_email"
-                type="password"
-                placeholder="Password *"
-              />
-              <span className="focus-border"></span>
-            </div>
+          <p className="description mb--20 text-muted">
+            <span className="text-secondary">Google 계정으로 로그인</span>해 주세요.<br />
+            정회원이 되시면{" "}
+            <strong className="text-secondary">@danielvisionschool.org</strong>{" "}
+            계정을 발급받게 됩니다.
+          </p>
 
-            <div className="row mb--30">
-              <div className="col-lg-6">
-                <div className="rbt-checkbox">
-                  <input type="checkbox" id="rememberme" name="rememberme" />
-                  <label htmlFor="rememberme">Remember me</label>
-                </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="rbt-lost-password text-end">
-                  <Link className="rbt-btn-link" href="#">
-                    Lost your password?
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="form-submit-group">
-              <button
-                type="submit"
-                className="rbt-btn btn-md btn-gradient hover-icon-reverse w-100"
-              >
-                <span className="icon-reverse-wrapper">
-                  <span className="btn-text">Log In</span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
-                  </span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
-                  </span>
+          <div className="form-submit-group">
+            <button
+              type="button"
+              className="rbt-btn btn-md btn-gradient hover-icon-reverse w-100"
+              onClick={() => signIn("google", { callbackUrl: "/" })}
+            >
+              <span className="icon-reverse-wrapper">
+                <span className="btn-text">Google 계정으로 로그인</span>
+                <span className="btn-icon">
+                  <i className="feather-arrow-right"></i>
                 </span>
-              </button>
-            </div>
-          </form>
+                <span className="btn-icon">
+                  <i className="feather-arrow-right"></i>
+                </span>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* 오른쪽: 정회원 안내 영역 */}
       <div className="col-lg-6">
         <div className="rbt-contact-form contact-form-style-1 max-width-auto">
-          <h3 className="title">Register</h3>
-          <form className="max-width-auto">
-            <div className="form-group">
-              <input
-                name="register-email"
-                type="email"
-                placeholder="Email address *"
-              />
-              <span className="focus-border"></span>
-            </div>
-
-            <div className="form-group">
-              <input
-                name="register_user"
-                type="text"
-                placeholder="Username *"
-              />
-              <span className="focus-border"></span>
-            </div>
-
-            <div className="form-group">
-              <input
-                name="register_password"
-                type="password"
-                placeholder="Password *"
-              />
-              <span className="focus-border"></span>
-            </div>
-
-            <div className="form-group">
-              <input
-                name="register_conpassword"
-                type="password"
-                placeholder="Confirm Password *"
-              />
-              <span className="focus-border"></span>
-            </div>
-
-            <div className="form-submit-group">
-              <button
-                type="submit"
-                className="rbt-btn btn-md btn-gradient hover-icon-reverse w-100"
-              >
-                <span className="icon-reverse-wrapper">
-                  <span className="btn-text">Register</span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
-                  </span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
-                  </span>
-                </span>
-              </button>
-            </div>
-          </form>
+          <h3 className="title">정회원 안내</h3>
+          <p className="description text-muted">
+            유료 등록 시 <strong className="text-secondary">danielvisionschool.org</strong> 도메인 계정을 통해<br />
+            <span className="text-secondary">프리미엄 강의</span> 및{" "}
+            <span className="text-secondary">특화된 콘텐츠</span>를 이용하실 수 있습니다.
+          </p>
+          <ul className="rbt-list-style-1 mt--20">
+            <li>📘 프리미엄 훈련 과정</li>
+            <li>📁 개인 대시보드</li>
+            <li>🎓 수료 증명서 발급</li>
+          </ul>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

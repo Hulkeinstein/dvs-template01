@@ -1,3 +1,25 @@
+:root:not([data-theme="dark"]) {
+    .rbt-contact-form.contact-form-style-1 {
+        .description {
+            color: #333333 !important;
+            
+            .text-secondary {
+                color: #8B5CF6 !important;
+            }
+            
+            strong {
+                color: #8B5CF6 !important;
+            }
+        }
+        
+        .rbt-list-style-1 {
+            li {
+                color: #333333 !important;
+            }
+        }
+    }
+}
+
 .active-dark-mode,
 html[data-theme="dark"] {
     background: var(--color-darker);
@@ -1042,6 +1064,24 @@ html[data-theme="dark"] {
         &.contact-form-style-1 {
             background: var(--color-bodyest);
             box-shadow: var(--dark-shadow-1);
+            
+            .description {
+                color: var(--color-white) !important;
+                
+                .text-secondary {
+                    color: var(--color-primary) !important;
+                }
+                
+                strong {
+                    color: var(--color-primary) !important;
+                }
+            }
+            
+            .rbt-list-style-1 {
+                li {
+                    color: var(--color-white) !important;
+                }
+            }
         }
     }
 
