@@ -1,26 +1,22 @@
 "use client";
 
 import Link from "next/link";
-
 import { useSelector } from "react-redux";
-
-import User from "../Offcanvas/User";
 import { useAppContext } from "@/context/Context";
+import User from "../Offcanvas/User";
+import { useSession } from "next-auth/react"; // ← 추가
 
-const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
-  const { mobile, setMobile, search, setSearch, cartToggle, setCart } =
-    useAppContext();
-
+const HeaderRightTwo = ({ btnClass, btnText }) => {
+  const { mobile, setMobile, search, setSearch, cartToggle, setCart } = useAppContext();
   const { total_items } = useSelector((state) => state.CartReducer);
+  const { data: session, status } = useSession(); // ← 추가
 
   return (
     <div className="header-right">
       <ul className="quick-access">
         <li className="access-icon">
           <Link
-            className={`search-trigger-active rbt-round-btn ${
-              search ? "" : "open"
-            }`}
+            className={`search-trigger-active rbt-round-btn ${search ? "" : "open"}`}
             href="#"
             onClick={() => setSearch(!search)}
           >
@@ -40,15 +36,15 @@ const HeaderRightTwo = ({ btnClass, btnText, userType }) => {
         </li>
 
         <li className="account-access rbt-user-wrapper d-none d-xl-block">
-          <Link href="#">
+          <Link href={session ? "/dashboard" : "/login"}>
             <i className="feather-user"></i>
-            {userType}
+            {status === "loading" ? "..." : session ? session.user.name : "Login"}
           </Link>
           <User />
         </li>
 
         <li className="access-icon rbt-user-wrapper d-block d-xl-none">
-          <Link className="rbt-round-btn" href="#">
+          <Link className="rbt-round-btn" href={session ? "/dashboard" : "/login"}>
             <i className="feather-user"></i>
           </Link>
           <User />

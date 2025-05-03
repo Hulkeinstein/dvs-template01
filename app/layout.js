@@ -3,6 +3,8 @@ import React from "react";
 
 import "bootstrap/scss/bootstrap.scss";
 import "../public/scss/default/euclid-circulara.scss";
+import Providers from './Providers'; 
+
 
 // ========= Plugins CSS START =========
 import "../node_modules/sal.js/dist/sal.css";
@@ -30,7 +32,9 @@ export default function RootLayout({ children }) {
     <html lang="en" dir="ltr" data-theme={theme}>
       <body className={isDark ? "active-dark-mode" : ""} suppressHydrationWarning={true}>
         <BootstrapClient />
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

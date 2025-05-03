@@ -405,6 +405,37 @@
     }
 }
 
+.user-list-wrapper li .logout-button {
+    display: flex;
+    padding: 5px 12px;
+    align-items: center;
+    border-radius: 3px;
+    color: var(--color-body);
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.user-list-wrapper li .logout-button i {
+    max-height: 17px;
+    margin-right: 7px;
+    font-size: 17px;
+}
+
+.user-list-wrapper li .logout-button span {
+    font-size: 14px;
+}
+
+.user-list-wrapper li:hover .logout-button,
+.user-list-wrapper li .logout-button:hover {
+    color: var(--color-primary);
+    background: var(--black-opacity);
+}
 
 
 

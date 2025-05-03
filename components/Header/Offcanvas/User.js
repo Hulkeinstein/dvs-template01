@@ -1,9 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 import UserData from "../../../data/user.json";
 
 const User = () => {
+  const { data: session, status } = useSession(); 
+  if (!session) return null;  
   return (
     <>
       <div className="rbt-user-menu-list-wrapper">
@@ -57,10 +61,10 @@ const User = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/">
-                    <i className="feather-log-out"></i>
+                <button onClick={() => signOut({ callbackUrl: "/" })} className="logout-button">
+                  <i className="feather-log-out" />
                     <span>Logout</span>
-                  </Link>
+                </button>
                 </li>
               </ul>
             </div>
