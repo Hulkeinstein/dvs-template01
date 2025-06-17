@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react"; // useState, useEffect 추가
 import Image from "next/image";
 import Link from "next/link";
 
@@ -9,7 +10,19 @@ import Nav from "./Nav";
 import { useAppContext } from "@/context/Context";
 
 const MobileMenu = () => {
+  // mobile 상태와 함께 mounted 상태도 가져오거나, 여기서 직접 생성합니다.
+  // 여기서는 직접 생성하는 방식을 보여드립니다.
   const { mobile, setMobile } = useAppContext();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // 마운트되기 전에는 렌더링하지 않아 Hydration 오류를 방지합니다.
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
