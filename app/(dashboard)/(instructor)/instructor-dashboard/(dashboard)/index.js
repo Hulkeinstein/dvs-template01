@@ -13,6 +13,9 @@ import Store from "@/redux/store";
 import React from "react";
 import { Provider } from "react-redux";
 
+// RoleProtection 컴포넌트를 import 합니다.
+import RoleProtection from "@/components/Auth/RoleProtection";
+
 const InstructorDashboard = () => {
   return (
     <>
@@ -29,17 +32,21 @@ const InstructorDashboard = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <InstructorDashboardHeader />
+                  {/* --- 핵심 수정 사항 --- */}
+                  {/* RoleProtection으로 실제 대시보드 UI 부분만 감쌉니다. */}
+                  <RoleProtection allowedRoles={["instructor"]}>
+                    <InstructorDashboardHeader />
 
-                  <div className="row g-5">
-                    <div className="col-lg-3">
-                      <InstructorDashboardSidebar />
-                    </div>
+                    <div className="row g-5">
+                      <div className="col-lg-3">
+                        <InstructorDashboardSidebar />
+                      </div>
 
-                    <div className="col-lg-9">
-                      <Dashboard />
+                      <div className="col-lg-9">
+                        <Dashboard />
+                      </div>
                     </div>
-                  </div>
+                  </RoleProtection>
                 </div>
               </div>
             </div>

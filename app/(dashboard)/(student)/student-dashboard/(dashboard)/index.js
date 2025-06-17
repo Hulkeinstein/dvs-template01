@@ -13,6 +13,9 @@ import Dashboard from "@/components/Student/Dashboard";
 import StudentDashboardHeader from "@/components/Student/StudentDashboardHeader";
 import StudentDashboardSidebar from "@/components/Student/StudentDashboardSidebar";
 
+// RoleProtection 컴포넌트를 import 합니다.
+import RoleProtection from "@/components/Auth/RoleProtection";
+
 const StudentDashboard = () => {
   return (
     <>
@@ -29,17 +32,21 @@ const StudentDashboard = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <StudentDashboardHeader />
+                  {/* --- 핵심 수정 사항 --- */}
+                  {/* RoleProtection으로 실제 대시보드 UI 부분만 감쌉니다. */}
+                  <RoleProtection allowedRoles={["student"]}>
+                    <StudentDashboardHeader />
 
-                  <div className="row g-5">
-                    <div className="col-lg-3">
-                      <StudentDashboardSidebar />
-                    </div>
+                    <div className="row g-5">
+                      <div className="col-lg-3">
+                        <StudentDashboardSidebar />
+                      </div>
 
-                    <div className="col-lg-9">
-                      <Dashboard />
+                      <div className="col-lg-9">
+                        <Dashboard />
+                      </div>
                     </div>
-                  </div>
+                  </RoleProtection>
                 </div>
               </div>
             </div>
