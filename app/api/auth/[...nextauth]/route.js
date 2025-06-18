@@ -22,63 +22,82 @@ export const authOptions = {
   callbacks: {
     /**
      * 사용자가 로그인에 성공했을 때 호출됩니다.
-     * 여기서 DB에 사용자 정보를 추가하거나 업데이트(upsert)합니다.
+     * <<<--- 역할 초기화 문제를 해결하기 위해 이 부분을 수정했습니다. ---<<<
      */
     async signIn({ user, account, profile }) {
       try {
-        const { error } = await supabase
-          .from('user') // DB 테이블 이름 'user'(단수형)으로 수정
-          .upsert({
-            email: user.email,
-            name: user.name,
-            photo_url: user.image, // DB 필드명 'photo_url'로 수정
-            // 처음 가입하는 사용자는 기본적으로 'student' 역할을 가집니다.
-            // onConflict: 'email'은 이미 해당 이메일이 존재할 경우 업데이트합니다.
-            role: 'student' 
-          }, {
-            onConflict: 'email', // 이메일이 중복될 경우 업데이트
-            ignoreDuplicates: false,
-          });
-
-        if (error) {
-          console.error('Supabase upsert error:', error);
+        // 1. 먼저 이메일로 기존 사용자가 있는지 확인합니다.
+        const { data: existingUser, error: fetchError } = await supabase
+          .from('user')
+          .select('email') // 어떤 필드든 상관없지만, 가볍게 이메일만 확인합니다.
+          .eq('email', user.email)
+          .single();
+        
+        // "행을 찾을 수 없음" (PGRST116) 이외의 에러가 발생하면 로그인을 중단합니다.
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('Supabase select user error:', fetchError);
           return false;
         }
 
-        return true; // 로그인 성공
+        // 2. 기존 사용자가 있는 경우
+        if (existingUser) {
+          // 역할(role)을 제외한 다른 정보만 업데이트합니다.
+          const { error: updateError } = await supabase
+            .from('user')
+            .update({
+              name: user.name,
+              photo_url: user.image,
+              // 'role' 필드는 여기에 포함하지 않아 기존 역할을 보존합니다.
+            })
+            .eq('email', user.email);
+
+          if (updateError) {
+            console.error('Supabase update error:', updateError);
+            return false; // 업데이트 실패 시 로그인 중단
+          }
+        } 
+        // 3. 신규 사용자인 경우
+        else {
+          // 새로운 사용자를 추가하면서, 이때만 기본 역할 'student'를 설정합니다.
+          const { error: insertError } = await supabase
+            .from('user')
+            .insert({
+              email: user.email,
+              name: user.name,
+              photo_url: user.image,
+              role: 'student' // 신규 가입 시에만 역할 설정
+            });
+
+          if (insertError) {
+            console.error('Supabase insert error:', insertError);
+            return false; // 추가 실패 시 로그인 중단
+          }
+        }
+
+        return true; // 모든 과정이 성공하면 로그인 허용
       } catch (e) {
-        console.error('Sign in callback error:', e);
-        return false; // 예외 발생 시 로그인 실패 처리
+        console.error('Sign in callback unexpected error:', e);
+        return false;
       }
     },
     
-    /**
-     * JWT 토큰이 생성되거나 업데이트될 때 호출됩니다.
-     */
     async jwt({ token, user }) {
+      // DB에서 최신 역할 정보를 가져오는 로직 (기존과 동일)
       try {
-        const { data, error } = await supabase
-          .from('user') // DB 테이블 이름 'user'(단수형)으로 수정
-          .select('role') // 역할 필드명은 'role'으로 일치합니다.
-          .eq('email', token.email) 
+        const { data } = await supabase
+          .from('user')
+          .select('role')
+          .eq('email', token.email)
           .single();
-
-        if (error || !data) {
-          token.role = 'student'; 
-        } else {
-          token.role = data.role;
-        }
+        token.role = data?.role || 'student';
       } catch (e) {
-        console.error("Role lookup error:", e);
         token.role = 'student';
       }
       return token;
     },
 
-    /**
-     * 클라이언트 측에서 세션을 확인할 때 호출됩니다.
-     */
     async session({ session, token }) {
+      // 세션에 역할 정보를 포함시키는 로직 (기존과 동일)
       if (token && session.user) {
           session.user.role = token.role;
       }
