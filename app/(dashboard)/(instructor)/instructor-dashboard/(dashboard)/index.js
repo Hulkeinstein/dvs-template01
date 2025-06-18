@@ -12,11 +12,11 @@ import Context from "@/context/Context";
 import Store from "@/redux/store";
 import React from "react";
 import { Provider } from "react-redux";
-
-// RoleProtection 컴포넌트를 import 합니다.
 import RoleProtection from "@/components/Auth/RoleProtection";
 
-const InstructorDashboard = () => {
+// --- 핵심 수정 사항 ---
+// 이 컴포넌트는 이제 부모(page.js)로부터 stats prop을 전달받습니다.
+const InstructorDashboard = ({ stats }) => {
   return (
     <>
       <Provider store={Store}>
@@ -32,18 +32,15 @@ const InstructorDashboard = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  {/* --- 핵심 수정 사항 --- */}
-                  {/* RoleProtection으로 실제 대시보드 UI 부분만 감쌉니다. */}
                   <RoleProtection allowedRoles={["instructor"]}>
                     <InstructorDashboardHeader />
-
                     <div className="row g-5">
                       <div className="col-lg-3">
                         <InstructorDashboardSidebar />
                       </div>
-
                       <div className="col-lg-9">
-                        <Dashboard />
+                        {/* 전달받은 통계 데이터(stats)를 Dashboard 컴포넌트에 넘겨줍니다. */}
+                        <Dashboard stats={stats} />
                       </div>
                     </div>
                   </RoleProtection>
