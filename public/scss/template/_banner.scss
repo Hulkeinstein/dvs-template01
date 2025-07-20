@@ -3541,7 +3541,7 @@
 
         .content-wrapper {
             .row {
-                align-items: end;
+                align-items: flex-end;
 
                 @media #{$lg-layout, $md-layout, $sm-layout, $large-mobile} {
                     align-items: start;
