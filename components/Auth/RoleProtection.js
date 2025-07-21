@@ -31,10 +31,8 @@ const RoleProtection = ({ allowedRoles, children }) => {
     // 3. 로그인이 완료되었다면, 역할을 확인하고 리디렉션합니다.
     const userRole = session.user?.role;
     if (!allowedRoles.includes(userRole)) {
-      const redirectPath = userRole === 'instructor' 
-        ? '/instructor-dashboard'
-        : '/student-dashboard';
-      router.push(redirectPath);
+      // 통합 대시보드로 리다이렉트
+      router.push('/dashboard');
     }
   }, [isMounted, status, session, router, allowedRoles]);
 

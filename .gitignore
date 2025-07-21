@@ -21,3 +21,27 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-lock.yaml
+
+# Claude & Cursor
+.claude/
+cursor.config.json
+
+# IDE settings
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Swap/temp/backup files
+*.swp
+*.swo
+*.bak
+*.old
+*.tmp
+
+# Coverage and cache
+coverage/
+.cache/
+.tmp/

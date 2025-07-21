@@ -3,24 +3,17 @@
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-
 import { useState } from "react";
-
 import MenuData from "../../data/MegaMenu.json";
-
 import CourseLayout from "./NavProps/CourseLayout";
 import PageLayout from "./NavProps/PageLayout";
 import ElementsLayout from "./NavProps/ElementsLayout";
-
 import addImage from "../../public/images/service/mobile-cat.jpg";
 
 const Nav = () => {
   const [activeMenuItem, setActiveMenuItem] = useState(null);
-
   const pathname = usePathname();
-
   const isActive = (href) => pathname.startsWith(href);
-
   const toggleMenuItem = (item) => {
     setActiveMenuItem(activeMenuItem === item ? null : item);
   };
@@ -211,49 +204,13 @@ const Nav = () => {
             </div>
           </div>
         </li>
-        <li className="has-dropdown has-menu-child-item">
+        <li>
           <Link
-            className={`${activeMenuItem === "dashboard" ? "open" : ""}`}
-            href="#"
-            onClick={() => toggleMenuItem("dashboard")}
+            className={isActive("/dashboard") ? "active" : ""}
+            href="/dashboard"
           >
             Dashboard
-            <i className="feather-chevron-down"></i>
           </Link>
-          <ul
-            className={`submenu ${
-              activeMenuItem === "dashboard" ? "active d-block" : ""
-            }`}
-          >
-            {MenuData &&
-              MenuData.menuData.map((data, index) => {
-                if (data.menuType === "default-dropdown") {
-                  const elements = data.menuItems?.map((value, innerIndex) => (
-                    <li className="has-dropdown" key={innerIndex}>
-                      <Link href="#">{value.title}</Link>
-                      <ul className="submenu">
-                        {value.submenuItems?.map(
-                          (submenuItem, submenuItemIndex) => (
-                            <li key={submenuItemIndex}>
-                              <Link
-                                className={
-                                  isActive(submenuItem.link) ? "active" : ""
-                                }
-                                href={submenuItem.link}
-                              >
-                                {submenuItem.title}
-                              </Link>
-                            </li>
-                          )
-                        )}
-                      </ul>
-                    </li>
-                  ));
-                  return elements;
-                }
-                return null;
-              })}
-          </ul>
         </li>
         <li className="with-megamenu has-menu-child-item position-static">
           <Link
