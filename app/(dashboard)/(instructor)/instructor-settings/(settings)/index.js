@@ -12,7 +12,7 @@ import Context from "@/context/Context";
 import Store from "@/redux/store";
 import { Provider } from "react-redux";
 
-const SettingPage = () => {
+const SettingPage = ({ userProfile }) => {
   return (
     <>
       <Provider store={Store}>
@@ -36,7 +36,7 @@ const SettingPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <Setting />
+                      <Setting userProfile={userProfile} />
                     </div>
                   </div>
                 </div>

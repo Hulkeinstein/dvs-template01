@@ -14,7 +14,7 @@ import Store from "@/redux/store";
 import React from "react";
 import { Provider } from "react-redux";
 
-const InstructorProfile = () => {
+const InstructorProfile = ({ userProfile }) => {
   return (
     <>
       <Provider store={Store}>
@@ -38,7 +38,7 @@ const InstructorProfile = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <Profile />
+                      <Profile userProfile={userProfile} />
                     </div>
                   </div>
                 </div>

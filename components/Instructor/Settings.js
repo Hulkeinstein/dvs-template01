@@ -1,13 +1,126 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
-const Setting = () => {
-  const [textareaText, setTextareaText] = useState(
-    "I'm the Front-End Developer for #Rainbow IT in Bangladesh, OR. I have serious passion for UI effects, animations and creating intuitive, dynamic user experiences."
-  );
+const Setting = ({ userProfile }) => {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  
+  // Form data state
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    username: '',
+    phone: '',
+    skill_occupation: '',
+    bio: '',
+    facebook_url: '',
+    twitter_url: '',
+    linkedin_url: '',
+    website_url: '',
+    github_url: ''
+  });
+
+  // Initialize form with user data
+  useEffect(() => {
+    if (userProfile) {
+      const nameParts = userProfile.name ? userProfile.name.split(' ') : ['', ''];
+      setFormData({
+        first_name: userProfile.first_name || nameParts[0] || '',
+        last_name: userProfile.last_name || nameParts.slice(1).join(' ') || '',
+        username: userProfile.username || '',
+        phone: userProfile.phone || '',
+        skill_occupation: userProfile.skill_occupation || '',
+        bio: userProfile.bio || '',
+        facebook_url: userProfile.facebook_url || '',
+        twitter_url: userProfile.twitter_url || '',
+        linkedin_url: userProfile.linkedin_url || '',
+        website_url: userProfile.website_url || '',
+        github_url: userProfile.github_url || ''
+      });
+    }
+  }, [userProfile]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          name: `${formData.first_name} ${formData.last_name}`.trim()
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        // Update session if needed
+        if (session) {
+          await fetch('/api/auth/session?update');
+        }
+      } else {
+        setMessage({ type: 'error', text: result.error || 'Failed to update profile' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          facebook_url: formData.facebook_url,
+          twitter_url: formData.twitter_url,
+          linkedin_url: formData.linkedin_url,
+          website_url: formData.website_url,
+          github_url: formData.github_url
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Social links updated successfully!' });
+      } else {
+        setMessage({ type: 'error', text: result.error || 'Failed to update social links' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -16,6 +129,12 @@ const Setting = () => {
           <div className="section-title">
             <h4 className="rbt-title-style-3">Settings</h4>
           </div>
+
+          {message.text && (
+            <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'} mb-4`} role="alert">
+              {message.text}
+            </div>
+          )}
 
           <div className="advance-tab-button mb--30">
             <ul
@@ -83,7 +202,7 @@ const Setting = () => {
                       <Image
                         width={300}
                         height={300}
-                        src="/images/team/avatar.jpg"
+                        src={userProfile?.photo_url || session?.user?.image || "/images/team/avatar.jpg"}
                         alt="Instructor"
                       />
                       <div className="rbt-edit-photo-inner">
@@ -106,59 +225,87 @@ const Setting = () => {
                 </div>
               </div>
               <form
-                action="#"
+                onSubmit={handleProfileSubmit}
                 className="rbt-profile-row rbt-default-form row row--15"
               >
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="firstname">First Name</label>
-                    <input id="firstname" type="text" defaultValue="John" />
+                    <label htmlFor="first_name">First Name</label>
+                    <input
+                      id="first_name"
+                      name="first_name"
+                      type="text"
+                      value={formData.first_name}
+                      onChange={handleInputChange}
+                      placeholder="First Name"
+                    />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="lastname">Last Name</label>
-                    <input id="lastname" type="text" defaultValue="Due" />
+                    <label htmlFor="last_name">Last Name</label>
+                    <input
+                      id="last_name"
+                      name="last_name"
+                      type="text"
+                      value={formData.last_name}
+                      onChange={handleInputChange}
+                      placeholder="Last Name"
+                    />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="username">User Name</label>
-                    <input id="username" type="text" defaultValue="johndue" />
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="phonenumber">Phone Number</label>
                     <input
-                      id="phonenumber"
-                      type="tel"
-                      defaultValue="+1-202-555-0174"
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="skill">Skill/Occupation</label>
-                    <input
-                      id="skill"
+                      id="username"
+                      name="username"
                       type="text"
-                      defaultValue="Full Stack Developer"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      placeholder="User Name"
+                      required
                     />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="filter-select rbt-modern-select">
-                    <label htmlFor="displayname" className="">
-                      Display name publicly as
-                    </label>
-                    <select id="displayname" className="w-100">
-                      <option>John Due</option>
-                      <option>John</option>
-                      <option>Due</option>
-                      <option>Due John</option>
-                      <option>johndue</option>
-                    </select>
+                  <div className="rbt-form-group">
+                    <label htmlFor="phone">Phone Number</label>
+                    <input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="+1-202-555-0174"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
+                  <div className="rbt-form-group">
+                    <label htmlFor="skill_occupation">Skill/Occupation</label>
+                    <input
+                      id="skill_occupation"
+                      name="skill_occupation"
+                      type="text"
+                      value={formData.skill_occupation}
+                      onChange={handleInputChange}
+                      placeholder="Application Developer"
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
+                  <div className="rbt-form-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={userProfile?.email || ''}
+                      placeholder="example@gmail.com"
+                      disabled
+                    />
+                    <small className="text-muted">Email cannot be changed</small>
                   </div>
                 </div>
                 <div className="col-12">
@@ -166,18 +313,24 @@ const Setting = () => {
                     <label htmlFor="bio">Bio</label>
                     <textarea
                       id="bio"
+                      name="bio"
                       cols="20"
                       rows="5"
-                      value={textareaText}
-                      onChange={(e) => setTextareaText(e.target.value)}
+                      value={formData.bio}
+                      onChange={handleInputChange}
+                      placeholder="Write something about yourself..."
                     ></textarea>
                   </div>
                 </div>
                 <div className="col-12 mt--20">
                   <div className="rbt-form-group">
-                    <Link className="rbt-btn btn-gradient" href="#">
-                      Update Info
-                    </Link>
+                    <button
+                      className="rbt-btn btn-gradient"
+                      type="submit"
+                      disabled={loading}
+                    >
+                      {loading ? 'Updating...' : 'Update Profile'}
+                    </button>
                   </div>
                 </div>
               </form>
@@ -189,10 +342,7 @@ const Setting = () => {
               role="tabpanel"
               aria-labelledby="password-tab"
             >
-              <form
-                action="#"
-                className="rbt-profile-row rbt-default-form row row--15"
-              >
+              <form action="#" className="rbt-profile-row rbt-default-form row row--15">
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="currentpassword">Current Password</label>
@@ -206,18 +356,12 @@ const Setting = () => {
                 <div className="col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="newpassword">New Password</label>
-                    <input
-                      id="newpassword"
-                      type="password"
-                      placeholder="New Password"
-                    />
+                    <input id="newpassword" type="password" placeholder="New Password" />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="retypenewpassword">
-                      Re-type New Password
-                    </label>
+                    <label htmlFor="retypenewpassword">Re-type New Password</label>
                     <input
                       id="retypenewpassword"
                       type="password"
@@ -227,9 +371,9 @@ const Setting = () => {
                 </div>
                 <div className="col-12 mt--10">
                   <div className="rbt-form-group">
-                    <Link className="rbt-btn btn-gradient" href="#">
+                    <button className="rbt-btn btn-gradient" type="submit">
                       Update Password
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </form>
@@ -241,75 +385,91 @@ const Setting = () => {
               role="tabpanel"
               aria-labelledby="social-tab"
             >
-              <form
-                action="#"
-                className="rbt-profile-row rbt-default-form row row--15"
-              >
+              <form onSubmit={handleSocialSubmit} className="rbt-profile-row rbt-default-form row row--15">
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="facebook">
+                    <label htmlFor="facebook_url">
                       <i className="feather-facebook"></i> Facebook
                     </label>
                     <input
-                      id="facebook"
+                      id="facebook_url"
+                      name="facebook_url"
                       type="text"
-                      placeholder="https://facebook.com/"
+                      value={formData.facebook_url}
+                      onChange={handleInputChange}
+                      placeholder="https://facebook.com/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="twitter">
+                    <label htmlFor="twitter_url">
                       <i className="feather-twitter"></i> Twitter
                     </label>
                     <input
-                      id="twitter"
+                      id="twitter_url"
+                      name="twitter_url"
                       type="text"
-                      placeholder="https://twitter.com/"
+                      value={formData.twitter_url}
+                      onChange={handleInputChange}
+                      placeholder="https://twitter.com/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="linkedin">
+                    <label htmlFor="linkedin_url">
                       <i className="feather-linkedin"></i> Linkedin
                     </label>
                     <input
-                      id="linkedin"
+                      id="linkedin_url"
+                      name="linkedin_url"
                       type="text"
-                      placeholder="https://linkedin.com/"
+                      value={formData.linkedin_url}
+                      onChange={handleInputChange}
+                      placeholder="https://linkedin.com/in/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="website">
+                    <label htmlFor="website_url">
                       <i className="feather-globe"></i> Website
                     </label>
                     <input
-                      id="website"
+                      id="website_url"
+                      name="website_url"
                       type="text"
-                      placeholder="https://website.com/"
+                      value={formData.website_url}
+                      onChange={handleInputChange}
+                      placeholder="https://yourwebsite.com"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="github">
+                    <label htmlFor="github_url">
                       <i className="feather-github"></i> Github
                     </label>
                     <input
-                      id="github"
+                      id="github_url"
+                      name="github_url"
                       type="text"
-                      placeholder="https://github.com/"
+                      value={formData.github_url}
+                      onChange={handleInputChange}
+                      placeholder="https://github.com/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12 mt--10">
                   <div className="rbt-form-group">
-                    <Link className="rbt-btn btn-gradient" href="#">
-                      Update Profile
-                    </Link>
+                    <button
+                      className="rbt-btn btn-gradient"
+                      type="submit"
+                      disabled={loading}
+                    >
+                      {loading ? 'Updating...' : 'Update Social Links'}
+                    </button>
                   </div>
                 </div>
               </form>

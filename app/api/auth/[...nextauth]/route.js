@@ -2,16 +2,15 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { createClient } from '@supabase/supabase-js';
 
-// 환경 변수 확인 (초기 로드 시 한 번만)
-if (!global._nextAuthInitialized) {
-  console.log('NextAuth Configuration Check:');
-  console.log('GOOGLE_CLIENT_ID exists:', !!process.env.GOOGLE_CLIENT_ID);
-  console.log('GOOGLE_CLIENT_SECRET exists:', !!process.env.GOOGLE_CLIENT_SECRET);
-  console.log('NEXTAUTH_SECRET exists:', !!process.env.NEXTAUTH_SECRET);
-  console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-  console.log('SUPABASE_SERVICE_ROLE_KEY exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
-  global._nextAuthInitialized = true;
-}
+// 환경 변수 확인 로그 제거 - 필요 시 주석 해제
+// if (process.env.NODE_ENV === 'development') {
+//   console.log('NextAuth Configuration Check:');
+//   console.log('GOOGLE_CLIENT_ID exists:', !!process.env.GOOGLE_CLIENT_ID);
+//   console.log('GOOGLE_CLIENT_SECRET exists:', !!process.env.GOOGLE_CLIENT_SECRET);
+//   console.log('NEXTAUTH_SECRET exists:', !!process.env.NEXTAUTH_SECRET);
+//   console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+//   console.log('SUPABASE_SERVICE_ROLE_KEY exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
+// }
 
 // Supabase 클라이언트 생성
 let supabase = null;
@@ -92,20 +91,23 @@ export const authOptions = {
         try {
           const { data, error } = await supabase
             .from('user')
-            .select('id, role')
+            .select('id, role, is_profile_complete')
             .eq('email', user.email)
             .single();
 
           if (error || !data) {
             console.error('JWT callback - user fetch error:', error);
             token.role = 'student';
+            token.isProfileComplete = false;
           } else {
             token.id = data.id;
             token.role = data.role;
+            token.isProfileComplete = data.is_profile_complete || false;
           }
         } catch (e) {
           console.error('JWT callback error:', e);
           token.role = 'student';
+          token.isProfileComplete = false;
         }
       }
       return token;
@@ -115,6 +117,7 @@ export const authOptions = {
       if (token && session.user) {
           session.user.id = token.id;
           session.user.role = token.role;
+          session.user.isProfileComplete = token.isProfileComplete;
       }
       return session;
     },
