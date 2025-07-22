@@ -23,7 +23,6 @@ const Setting = ({ userProfile }) => {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
-    username: '',
     phone: '',
     skill_occupation: '',
     bio: ''
@@ -36,7 +35,6 @@ const Setting = ({ userProfile }) => {
       setFormData({
         first_name: userProfile.first_name || nameParts[0] || '',
         last_name: userProfile.last_name || nameParts.slice(1).join(' ') || '',
-        username: userProfile.username || '',
         phone: userProfile.phone || '',
         skill_occupation: userProfile.skill_occupation || '',
         bio: userProfile.bio || ''
@@ -322,20 +320,6 @@ const Setting = ({ userProfile }) => {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="username">User Name</label>
-                    <input
-                      id="username"
-                      name="username"
-                      type="text"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      placeholder="User Name"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="rbt-form-group">
                     <label htmlFor="phone">
                       Phone Number
                       {phoneVerified ? (
@@ -412,11 +396,6 @@ const Setting = ({ userProfile }) => {
                         )}
                       </div>
                     </div>
-                    {!phoneVerified && (
-                      <small className="text-muted mt-1 d-block">
-                        Verify your phone to enable SMS notifications and enhance account security
-                      </small>
-                    )}
                     
                     {/* OTP Input Section */}
                     {showOtpInput && !phoneVerified && (
@@ -433,14 +412,14 @@ const Setting = ({ userProfile }) => {
                           />
                           <button
                             type="button"
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-primary"
                             onClick={handleVerifyOTP}
                             disabled={otpLoading || !otpValue}
                           >
                             {otpLoading ? 'Verifying...' : 'Verify Code'}
                           </button>
                           {otpTimer > 0 ? (
-                            <span className="text-muted">
+                            <span className="text-muted ms-2">
                               {Math.floor(otpTimer / 60)}:{(otpTimer % 60).toString().padStart(2, '0')}
                             </span>
                           ) : (

@@ -71,25 +71,25 @@ export async function PUT(request) {
     // 업데이트할 필드 준비
     const updateData = {};
     
-    // 필수 필드 검증
+    // Username 필드 처리 (선택사항)
     if (data.username !== undefined) {
-      if (!data.username.trim()) {
-        return NextResponse.json({ error: 'Username is required' }, { status: 400 });
+      // Username이 제공되면 중복 체크
+      if (data.username.trim()) {
+        const { data: existingUser } = await supabase
+          .from('user')
+          .select('id')
+          .eq('username', data.username)
+          .neq('id', userId)
+          .single();
+        
+        if (existingUser) {
+          return NextResponse.json({ error: 'Username already taken' }, { status: 400 });
+        }
+        updateData.username = data.username.trim();
+      } else {
+        // 빈 문자열이면 null로 설정
+        updateData.username = null;
       }
-      
-      // 유저네임 중복 체크
-      const { data: existingUser } = await supabase
-        .from('user')
-        .select('id')
-        .eq('username', data.username)
-        .neq('id', userId)
-        .single();
-      
-      if (existingUser) {
-        return NextResponse.json({ error: 'Username already taken' }, { status: 400 });
-      }
-      
-      updateData.username = data.username.trim();
     }
 
     if (data.phone !== undefined) {

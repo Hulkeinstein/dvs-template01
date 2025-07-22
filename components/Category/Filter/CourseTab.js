@@ -86,7 +86,7 @@ const CourseTab = ({ course, start, end }) => {
                     </Link>
                   </div>
                   <div className="rbt-author-info">
-                    By <Link href={`/profile/${data.id}`}>{data.userName}</Link>
+                    By <Link href={`/profile/${data.id}`}>{data.name || data.instructor || 'Instructor'}</Link>
                     In <Link href="#">{data.userCategory}</Link>
                   </div>
                 </div>

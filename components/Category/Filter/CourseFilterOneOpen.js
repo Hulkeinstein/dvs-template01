@@ -112,7 +112,7 @@ const CourseFilterOneOpen = ({ course }) => {
                     </div>
                     <div className="rbt-author-info">
                       By
-                      <Link href={`/profile/${data.id}`}>{data.userName}</Link>
+                      <Link href={`/profile/${data.id}`}>{data.name || data.instructor || 'Instructor'}</Link>
                       In <Link href="#">{data.userCategory}</Link>
                     </div>
                   </div>

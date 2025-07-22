@@ -16,9 +16,8 @@ const ProfileCompletionBanner = ({ userProfile }) => {
   if (!userProfile?.skill_occupation) missingFields.push("skill/occupation");
   if (!userProfile?.bio) missingFields.push("biography");
 
-  // 모든 필수 필드가 있지만 선택 필드가 누락된 경우에만 배너 표시
-  if (!userProfile?.username || !userProfile?.phone) {
-    // 필수 필드가 누락된 경우는 온보딩으로 리다이렉트되므로 배너 불필요
+  // 전화번호가 없는 경우 배너를 표시하지 않음
+  if (!userProfile?.phone) {
     return null;
   }
 

@@ -86,7 +86,7 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                     </div>
                     <div className="rbt-author-info">
                       By
-                      <Link className="px-1" href={`/profile/${data.id}`}>{data.userName}</Link>
+                      <Link className="px-1" href={`/profile/${data.id}`}>{data.name || data.instructor || 'Instructor'}</Link>
                       In <Link href="#">{data.userCategory}</Link>
                     </div>
                   </div>

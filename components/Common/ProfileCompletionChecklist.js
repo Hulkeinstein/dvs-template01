@@ -12,14 +12,6 @@ const ProfileCompletionChecklist = ({ userProfile }) => {
     if (userProfile) {
       const items = [
         {
-          id: 'username',
-          label: 'Choose a username',
-          completed: !!userProfile.username,
-          required: true,
-          link: '#', // Same page since we're already in settings
-          icon: 'feather-user'
-        },
-        {
           id: 'phone',
           label: 'Verify phone number',
           completed: !!userProfile.is_phone_verified,
@@ -91,7 +83,7 @@ const ProfileCompletionChecklist = ({ userProfile }) => {
                   <span className="progress-number">{completionPercentage}%</span>
                 </div>
                 {incompleteCount > 0 && isCollapsed && (
-                  <p className="text-muted small mt-2 mb-0">
+                  <p className="text-muted mt-2 mb-0">
                     {incompleteCount} {incompleteCount === 1 ? 'item' : 'items'} remaining
                   </p>
                 )}
@@ -153,7 +145,7 @@ const ProfileCompletionChecklist = ({ userProfile }) => {
                     <i className="feather-info me-2"></i>
                     <div>
                       <strong>Why verify your phone?</strong>
-                      <p className="mb-0 small">
+                      <p className="mb-0">
                         Phone verification enhances account security and enables features like SMS notifications 
                         for important updates and course announcements.
                       </p>
