@@ -9,6 +9,9 @@
 - `bio`
 - 기타 프로필 관련 필드들
 
+### 전화번호 인증 오류 (Error saving OTP: {})
+`phone_verifications` 테이블이 존재하지 않아서 OTP 저장 시 오류가 발생합니다.
+
 ## 해결 방법
 
 ### 1. Supabase Dashboard를 통한 실행 (권장)
@@ -21,6 +24,11 @@
    - `/supabase/migrations/complete_user_profile_fields.sql` (있는 경우)
    - `/supabase/migrations/add_phone_verification_status.sql`
    - `/supabase/migrations/20241222_add_missing_user_columns.sql`
+   - `/supabase/migrations/add_missing_social_and_name_columns.sql` (최신 - 누락된 컬럼만 추가)
+   - `/supabase/migrations/create_phone_verifications_table.sql` (전화번호 인증 테이블)
+
+### 빠른 해결 - 전화번호 인증 오류
+전화번호 인증 오류만 해결하려면 `/supabase/migrations/run_all_phone_migrations.sql` 파일의 내용을 실행하세요.
 
 ### 2. Supabase CLI를 통한 실행
 
@@ -76,6 +84,19 @@ FROM information_schema.columns
 WHERE table_name = 'user' 
 ORDER BY ordinal_position;
 ```
+
+## 빠른 실행 (누락된 컬럼만)
+
+최신 마이그레이션 파일만 실행하려면:
+
+```sql
+-- /supabase/migrations/add_missing_social_and_name_columns.sql 파일 내용을 복사하여 실행
+```
+
+이 마이그레이션은 다음 컬럼들을 추가합니다:
+- `updated_at` (자동 업데이트 트리거 포함)
+- `first_name`, `last_name`
+- `facebook_url`, `twitter_url`, `linkedin_url`, `website_url`, `github_url`
 
 ## 주의사항
 

@@ -29,13 +29,16 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
     }
   }, [otpTimer]);
 
-  // Reset form when modal closes
+  // Reset form when modal closes or opens
   useEffect(() => {
     if (!isOpen) {
       setFormData({ phone: userProfile?.phone || '', otp: '' });
       setErrors({});
       setOtpSent(false);
       setOtpTimer(0);
+    } else {
+      // When modal opens, set the phone number from props
+      setFormData(prev => ({ ...prev, phone: userProfile?.phone || '' }));
     }
   }, [isOpen, userProfile]);
 

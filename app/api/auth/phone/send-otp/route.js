@@ -98,7 +98,21 @@ export async function POST(request) {
 
     if (insertError) {
       console.error('Error saving OTP:', insertError);
-      return NextResponse.json({ error: 'Failed to generate OTP' }, { status: 500 });
+      console.error('Insert error full object:', JSON.stringify(insertError, null, 2));
+      
+      // The error is likely a table not found error
+      if (!insertError.message && !insertError.code) {
+        console.error('Table phone_verifications likely does not exist');
+        return NextResponse.json({ 
+          error: 'Database table not found. Please run migrations.', 
+          details: 'The phone_verifications table needs to be created in Supabase'
+        }, { status: 500 });
+      }
+      
+      return NextResponse.json({ 
+        error: 'Failed to generate OTP', 
+        details: insertError.message || insertError.toString()
+      }, { status: 500 });
     }
 
     // SMS 전송

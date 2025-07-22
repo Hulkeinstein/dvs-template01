@@ -1,0 +1,270 @@
+// Phone Input Custom Styles
+// Custom styles for react-phone-input-2 to match design system
+
+.phone-input-wrapper {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.phone-input-container {
+  width: 100%;
+  position: relative;
+
+  .react-tel-input {
+    width: 100%;
+    position: relative;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 50px;
+  }
+
+  // Hide special label
+  .react-tel-input .special-label {
+    display: none !important;
+  }
+
+  // Main input styling to match User Name input
+  .form-control,
+  input[type="tel"] {
+    height: 50px !important;
+    padding: 0 90px 0 48px !important;
+    border: 2px solid var(--color-border) !important;
+    border-radius: var(--radius) !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    color: var(--color-body) !important;
+    background-color: transparent !important;
+    box-shadow: var(--shadow-10) !important;
+    transition: all 0.3s;
+    width: 100%;
+    box-sizing: border-box;
+    line-height: 28px !important;
+
+    &:focus {
+      border: 2px solid var(--color-primary) !important;
+      outline: none;
+      box-shadow: var(--shadow-10) !important;
+    }
+
+    &.error {
+      border: 2px solid #dc3545 !important;
+    }
+
+    &::placeholder {
+      color: #999;
+      font-size: 14px;
+      opacity: 1;
+    }
+  }
+
+  // Remove all default borders and outlines
+  .react-tel-input,
+  .react-tel-input .form-control,
+  .react-tel-input input[type="tel"],
+  input,
+  .form-control {
+    outline: none !important;
+    
+    &:focus {
+      outline: none !important;
+    }
+  }
+}
+
+// Flag dropdown styling
+.react-tel-input {
+  .flag-dropdown {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    background-color: transparent;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius) 0 0 var(--radius);
+    border-right: none;
+    width: 48px;
+    height: 50px;
+    transition: border-color 0.3s;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+  }
+
+  .selected-flag {
+    width: 100%;
+    height: 50px;
+    padding: 0 0 0 8px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+
+    &:hover,
+    &.open {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .flag {
+      zoom: 1;
+      margin-right: 4px;
+    }
+
+    // Hide arrow
+    .arrow {
+      display: none;
+    }
+
+    .country-code {
+      font-size: 14px;
+      color: #666;
+      margin-left: 5px;
+    }
+  }
+
+  // Country list dropdown
+  .country-list {
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 300px !important;
+    max-width: 90vw;
+    margin-top: 10px;
+    background: white;
+    position: absolute;
+    z-index: 1000;
+    max-height: 300px;
+    overflow: hidden;
+    left: 0;
+
+    .search {
+      padding: 15px;
+      background: #f8f9fa;
+      position: sticky;
+      top: 0;
+      border-bottom: 1px solid var(--color-border);
+      z-index: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      font-size: 14px;
+      box-sizing: border-box;
+      background: white;
+
+      &:focus {
+        outline: none;
+        border-color: var(--color-primary);
+      }
+    }
+
+    .country {
+      padding: 12px 15px;
+      font-size: 14px;
+      transition: background-color 0.2s;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+
+      &:hover,
+      &.highlight {
+        background-color: #f5f5f5;
+      }
+
+      .flag {
+        margin-right: 12px;
+        width: 20px;
+      }
+
+      .country-name {
+        margin-right: auto;
+        flex: 1;
+        font-weight: 400;
+      }
+
+      .dial-code {
+        color: #666;
+        font-size: 13px;
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+// Focus state for phone input container
+.phone-input-container {
+  // When any input inside the container has focus
+  &:focus-within {
+    .react-tel-input .flag-dropdown {
+      border-color: var(--color-primary) !important;
+      border-right: none !important;
+    }
+  }
+  
+  // Specifically when the phone input has focus
+  .react-tel-input input[type="tel"]:focus {
+    & ~ .flag-dropdown {
+      border-color: var(--color-primary) !important;
+      border-right: none !important;
+    }
+  }
+}
+
+// Make flag dropdown and input appear as one unit on focus
+.react-tel-input:has(input:focus) .flag-dropdown {
+  border-color: var(--color-primary) !important;
+  border-right: none !important;
+}
+
+// Verify button styles
+.send-code-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 30px;
+  padding: 0 20px;
+  min-width: 100px;
+  font-size: 13px;
+  z-index: 1;
+  line-height: 30px;
+}
+
+.timer-badge {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #f0f0f0;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  z-index: 1;
+}
+
+// Mobile responsive
+@media (max-width: 576px) {
+  .phone-input-wrapper {
+    flex-direction: column;
+  }
+  
+  .send-code-btn {
+    position: relative;
+    width: 100%;
+    margin-top: 15px;
+    transform: none;
+  }
+  
+  .react-tel-input .country-list {
+    width: 300px !important;
+  }
+  
+  .phone-input-container .form-control {
+    padding-right: 30px !important;
+  }
+}

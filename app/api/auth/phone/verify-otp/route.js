@@ -41,7 +41,15 @@ export async function POST(request) {
       .limit(1)
       .single();
 
-    if (fetchError || !verificationData) {
+    if (fetchError) {
+      console.error('Error fetching verification:', JSON.stringify(fetchError, null, 2));
+      return NextResponse.json({ 
+        error: 'Database error. Please ensure phone_verifications table exists.',
+        details: fetchError.message
+      }, { status: 500 });
+    }
+    
+    if (!verificationData) {
       return NextResponse.json({ 
         error: 'No verification code found. Please request a new one.' 
       }, { status: 404 });

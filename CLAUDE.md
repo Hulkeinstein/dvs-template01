@@ -7,6 +7,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - The development server is already running on port 3000. DO NOT start a new dev server.
 - If you need to restart the server, ask the user first.
 
+## Critical Development Rules
+- **NEVER modify CSS files directly**. This project uses SCSS exclusively.
+- **ALWAYS use SCSS files** for styling. CSS files are generated automatically from SCSS.
+- When making style changes:
+  1. Find or create the appropriate SCSS file in `/public/scss/`
+  2. Import new SCSS files in `/public/scss/styles.scss`
+  3. Remove any CSS imports from component files
+- Do NOT import CSS files in `app/layout.js` or component files
+
 ## Development Commands
 
 ### Core Commands
