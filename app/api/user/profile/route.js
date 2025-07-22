@@ -38,7 +38,30 @@ export async function PUT(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = session.user.id;
+    // session.user.id가 없으면 email로 사용자 찾기
+    let userId = session.user.id;
+    
+    if (!userId && session.user.email) {
+      console.log('User ID not in session, fetching by email:', session.user.email);
+      const { data: userData, error: userError } = await supabase
+        .from('user')
+        .select('id')
+        .eq('email', session.user.email)
+        .single();
+      
+      if (userError || !userData) {
+        console.error('Failed to fetch user by email:', userError);
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+      
+      userId = userData.id;
+      console.log('Found user ID:', userId);
+    }
+    
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
+    }
+
     const data = await request.json();
 
     // 현재 존재하는 컬럼 확인
@@ -115,12 +138,30 @@ export async function PUT(request) {
       }
     }
 
-    // 업데이트할 필드가 없으면 에러
+    // 업데이트할 필드가 없으면 성공으로 처리 (Skip 기능을 위해)
     if (Object.keys(updateData).length === 0) {
-      return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 });
+      console.log('No fields to update, returning current user data');
+      
+      // 현재 사용자 정보 반환
+      const { data: currentUser, error: fetchError } = await supabase
+        .from('user')
+        .select('*')
+        .eq('id', userId)
+        .single();
+        
+      if (fetchError) {
+        return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 });
+      }
+      
+      return NextResponse.json({ 
+        success: true, 
+        user: currentUser,
+        profileComplete: currentUser.is_profile_complete || false
+      });
     }
 
     console.log('Updating with data:', updateData);
+    console.log('User ID for update:', userId);
 
     // 사용자 정보 업데이트
     const { data: updatedUser, error } = await supabase
@@ -137,6 +178,8 @@ export async function PUT(request) {
         details: error.message 
       }, { status: 500 });
     }
+
+    console.log('Update successful:', updatedUser);
 
     return NextResponse.json({ 
       success: true, 
@@ -157,10 +200,31 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // session.user.id가 없으면 email로 사용자 찾기
+    let userId = session.user.id;
+    
+    if (!userId && session.user.email) {
+      const { data: userData, error: userError } = await supabase
+        .from('user')
+        .select('id')
+        .eq('email', session.user.email)
+        .single();
+      
+      if (userError || !userData) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+      
+      userId = userData.id;
+    }
+    
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
+    }
+
     const { data: user, error } = await supabase
       .from('user')
       .select('*')
-      .eq('id', session.user.id)
+      .eq('id', userId)
       .single();
 
     if (error) {

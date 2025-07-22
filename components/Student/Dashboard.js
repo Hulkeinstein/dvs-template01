@@ -1,6 +1,5 @@
 import CounterWidget from "../Instructor/Dashboard-Section/widgets/CounterWidget";
 
-
 const Dashboard = () => {
   return (
     <>

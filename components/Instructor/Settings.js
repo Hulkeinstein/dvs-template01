@@ -4,11 +4,17 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
+import ProfileCompletionChecklist from "@/components/Common/ProfileCompletionChecklist";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const Setting = ({ userProfile }) => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -42,6 +48,7 @@ const Setting = ({ userProfile }) => {
         website_url: userProfile.website_url || '',
         github_url: userProfile.github_url || ''
       });
+      setPhoneVerified(userProfile.is_phone_verified || false);
     }
   }, [userProfile]);
 
@@ -124,6 +131,9 @@ const Setting = ({ userProfile }) => {
 
   return (
     <>
+      {/* Profile Completion Checklist */}
+      {userProfile && <ProfileCompletionChecklist userProfile={{...userProfile, phone: formData.phone, is_phone_verified: phoneVerified}} />}
+      
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
           <div className="section-title">
@@ -270,16 +280,73 @@ const Setting = ({ userProfile }) => {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="phone">Phone Number</label>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="+1-202-555-0174"
-                      required
-                    />
+                    <label htmlFor="phone">
+                      Phone Number
+                      {phoneVerified ? (
+                        <span className="badge bg-success ms-2">
+                          <i className="feather-check me-1"></i>Verified
+                        </span>
+                      ) : formData.phone ? (
+                        <span className="badge bg-warning ms-2">Not Verified</span>
+                      ) : null}
+                    </label>
+                    <div className="phone-input-wrapper position-relative">
+                      {phoneVerified ? (
+                        <input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          placeholder="+1-202-555-0174"
+                          disabled
+                          className="bg-light"
+                        />
+                      ) : (
+                        <PhoneInput
+                          country={'us'}
+                          value={formData.phone}
+                          onChange={(phone) => {
+                            setFormData(prev => ({ ...prev, phone: phone ? '+' + phone : '' }));
+                          }}
+                          disabled={loading}
+                          inputStyle={{
+                            width: '100%',
+                            height: '50px',
+                            fontSize: '14px',
+                            paddingLeft: '48px',
+                            border: '1px solid #e5e5e5',
+                            borderRadius: '4px'
+                          }}
+                          buttonStyle={{
+                            border: '1px solid #e5e5e5',
+                            borderRadius: '4px 0 0 4px',
+                            background: 'transparent'
+                          }}
+                          dropdownStyle={{
+                            borderRadius: '8px'
+                          }}
+                          containerClass="w-100"
+                          enableSearch={true}
+                          searchPlaceholder="Search countries"
+                          preferredCountries={['us', 'kr', 'jp', 'cn', 'gb', 'ca', 'au']}
+                        />
+                      )}
+                      {!phoneVerified && formData.phone && (
+                        <button
+                          type="button"
+                          className="rbt-btn btn-xs btn-primary position-absolute"
+                          style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}
+                          onClick={() => setShowPhoneVerificationModal(true)}
+                        >
+                          Verify
+                        </button>
+                      )}
+                    </div>
+                    {!phoneVerified && (
+                      <small className="text-muted mt-1 d-block">
+                        Verify your phone to enable SMS notifications and enhance account security
+                      </small>
+                    )}
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
@@ -477,6 +544,17 @@ const Setting = ({ userProfile }) => {
           </div>
         </div>
       </div>
+      
+      {/* Phone Verification Modal */}
+      <PhoneVerificationModal
+        isOpen={showPhoneVerificationModal}
+        onClose={() => setShowPhoneVerificationModal(false)}
+        onSuccess={() => {
+          setPhoneVerified(true);
+          setMessage({ type: 'success', text: 'Phone number verified successfully!' });
+        }}
+        userProfile={{ ...userProfile, phone: formData.phone }}
+      />
     </>
   );
 };

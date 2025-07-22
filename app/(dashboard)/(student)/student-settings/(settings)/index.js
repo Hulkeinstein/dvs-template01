@@ -11,8 +11,9 @@ import StudentDashboardSidebar from "@/components/Student/StudentDashboardSideba
 import Context from "@/context/Context";
 import Store from "@/redux/store";
 import { Provider } from "react-redux";
+import RoleProtection from "@/components/Auth/RoleProtection";
 
-const StudentSetting = () => {
+const StudentSetting = ({ userProfile }) => {
   return (
     <>
       <Provider store={Store}>
@@ -28,17 +29,19 @@ const StudentSetting = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <StudentDashboardHeader />
+                  <RoleProtection allowedRoles={["student"]}>
+                    <StudentDashboardHeader />
 
-                  <div className="row g-5">
-                    <div className="col-lg-3">
-                      <StudentDashboardSidebar />
-                    </div>
+                    <div className="row g-5">
+                      <div className="col-lg-3">
+                        <StudentDashboardSidebar />
+                      </div>
 
-                    <div className="col-lg-9">
-                      <Setting />
+                      <div className="col-lg-9">
+                        <Setting userProfile={userProfile} />
+                      </div>
                     </div>
-                  </div>
+                  </RoleProtection>
                 </div>
               </div>
             </div>

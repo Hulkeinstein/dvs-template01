@@ -73,11 +73,12 @@ export async function POST(request) {
       .update({ verified: true })
       .eq('id', verificationData.id);
 
-    // 사용자 프로필에 전화번호 업데이트
+    // 사용자 프로필에 전화번호 업데이트 및 인증 상태 설정
     const { error: updateError } = await supabase
       .from('user')
       .update({ 
         phone: normalizedPhone,
+        is_phone_verified: true,  // 전화번호 인증 완료 상태로 업데이트
         is_profile_complete: true,
         onboarding_completed_at: new Date().toISOString()
       })

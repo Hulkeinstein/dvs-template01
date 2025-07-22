@@ -1,21 +1,106 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
+import ProfileCompletionChecklist from "@/components/Common/ProfileCompletionChecklist";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
-const Setting = () => {
-  const [textareaText, setTextareaText] = useState(
-    "I'm the Front-End Developer for #Rainbow IT in Bangladesh, OR. I have serious passion for UI effects, animations and creating intuitive, dynamic user experiences."
-  );
+const Setting = ({ userProfile }) => {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
+  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  
+  // Form data state
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    username: '',
+    phone: '',
+    skill_occupation: '',
+    bio: ''
+  });
+
+  // Initialize form with user data
+  useEffect(() => {
+    if (userProfile) {
+      const nameParts = userProfile.name ? userProfile.name.split(' ') : ['', ''];
+      setFormData({
+        first_name: userProfile.first_name || nameParts[0] || '',
+        last_name: userProfile.last_name || nameParts.slice(1).join(' ') || '',
+        username: userProfile.username || '',
+        phone: userProfile.phone || '',
+        skill_occupation: userProfile.skill_occupation || '',
+        bio: userProfile.bio || ''
+      });
+      setPhoneVerified(userProfile.is_phone_verified || false);
+    }
+  }, [userProfile]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          name: `${formData.first_name} ${formData.last_name}`.trim()
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        // Update session if needed
+        if (session) {
+          await fetch('/api/auth/session?update');
+        }
+      } else {
+        setMessage({ type: 'error', text: result.error || 'Failed to update profile' });
+      }
+    } catch (error) {
+      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
+      {/* Profile Completion Checklist */}
+      {userProfile && <ProfileCompletionChecklist userProfile={{...userProfile, phone: formData.phone, is_phone_verified: phoneVerified}} />}
+      
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
           <div className="section-title">
             <h4 className="rbt-title-style-3">Settings</h4>
           </div>
+
+          {message.text && (
+            <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'} mb-4`} role="alert">
+              {message.text}
+            </div>
+          )}
 
           <div className="advance-tab-button mb--30">
             <ul
@@ -83,8 +168,8 @@ const Setting = () => {
                       <Image
                         width={300}
                         height={300}
-                        src="/images/team/avatar-2.jpg"
-                        alt="Instructor"
+                        src={userProfile?.photo_url || session?.user?.image || "/images/team/avatar-2.jpg"}
+                        alt="Student"
                       />
                       <div className="rbt-edit-photo-inner">
                         <button className="rbt-edit-photo" title="Upload Photo">
@@ -106,59 +191,144 @@ const Setting = () => {
                 </div>
               </div>
               <form
-                action="#"
+                onSubmit={handleProfileSubmit}
                 className="rbt-profile-row rbt-default-form row row--15"
               >
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="firstname">First Name</label>
-                    <input id="firstname" type="text" defaultValue="John" />
+                    <label htmlFor="first_name">First Name</label>
+                    <input
+                      id="first_name"
+                      name="first_name"
+                      type="text"
+                      value={formData.first_name}
+                      onChange={handleInputChange}
+                      placeholder="First Name"
+                    />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="lastname">Last Name</label>
-                    <input id="lastname" type="text" defaultValue="Due" />
+                    <label htmlFor="last_name">Last Name</label>
+                    <input
+                      id="last_name"
+                      name="last_name"
+                      type="text"
+                      value={formData.last_name}
+                      onChange={handleInputChange}
+                      placeholder="Last Name"
+                    />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
                   <div className="rbt-form-group">
                     <label htmlFor="username">User Name</label>
-                    <input id="username" type="text" defaultValue="johndue" />
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="phonenumber">Phone Number</label>
                     <input
-                      id="phonenumber"
-                      type="tel"
-                      defaultValue="+1-202-555-0174"
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="skill">Skill/Occupation</label>
-                    <input
-                      id="skill"
+                      id="username"
+                      name="username"
                       type="text"
-                      defaultValue="Full Stack Developer"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      placeholder="User Name"
+                      required
                     />
                   </div>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-6 col-12">
-                  <div className="filter-select rbt-modern-select">
-                    <label htmlFor="displayname" className="">
-                      Display name publicly as
+                  <div className="rbt-form-group">
+                    <label htmlFor="phone">
+                      Phone Number
+                      {phoneVerified ? (
+                        <span className="badge bg-success ms-2">
+                          <i className="feather-check me-1"></i>Verified
+                        </span>
+                      ) : formData.phone ? (
+                        <span className="badge bg-warning ms-2">Not Verified</span>
+                      ) : null}
                     </label>
-                    <select id="displayname" className="w-100">
-                      <option>John Due</option>
-                      <option>John</option>
-                      <option>Due</option>
-                      <option>Due John</option>
-                      <option>johndue</option>
-                    </select>
+                    <div className="phone-input-wrapper position-relative">
+                      {phoneVerified ? (
+                        <input
+                          id="phone"
+                          name="phone"
+                          type="tel"
+                          value={formData.phone}
+                          placeholder="+1-202-555-0174"
+                          disabled
+                          className="bg-light"
+                        />
+                      ) : (
+                        <PhoneInput
+                          country={'us'}
+                          value={formData.phone}
+                          onChange={(phone) => {
+                            setFormData(prev => ({ ...prev, phone: phone ? '+' + phone : '' }));
+                          }}
+                          disabled={loading}
+                          inputStyle={{
+                            width: '100%',
+                            height: '50px',
+                            fontSize: '14px',
+                            paddingLeft: '48px',
+                            border: '1px solid #e5e5e5',
+                            borderRadius: '4px'
+                          }}
+                          buttonStyle={{
+                            border: '1px solid #e5e5e5',
+                            borderRadius: '4px 0 0 4px',
+                            background: 'transparent'
+                          }}
+                          dropdownStyle={{
+                            borderRadius: '8px'
+                          }}
+                          containerClass="w-100"
+                          enableSearch={true}
+                          searchPlaceholder="Search countries"
+                          preferredCountries={['us', 'kr', 'jp', 'cn', 'gb', 'ca', 'au']}
+                        />
+                      )}
+                      {!phoneVerified && formData.phone && (
+                        <button
+                          type="button"
+                          className="rbt-btn btn-xs btn-primary position-absolute"
+                          style={{ right: '10px', top: '50%', transform: 'translateY(-50%)', zIndex: 10 }}
+                          onClick={() => setShowPhoneVerificationModal(true)}
+                        >
+                          Verify
+                        </button>
+                      )}
+                    </div>
+                    {!phoneVerified && (
+                      <small className="text-muted mt-1 d-block">
+                        Verify your phone to enable SMS notifications and enhance account security
+                      </small>
+                    )}
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
+                  <div className="rbt-form-group">
+                    <label htmlFor="skill_occupation">Skill/Occupation</label>
+                    <input
+                      id="skill_occupation"
+                      name="skill_occupation"
+                      type="text"
+                      value={formData.skill_occupation}
+                      onChange={handleInputChange}
+                      placeholder="Your skill or occupation"
+                    />
+                  </div>
+                </div>
+                <div className="col-lg-6 col-md-6 col-sm-6 col-12">
+                  <div className="rbt-form-group">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={userProfile?.email || ''}
+                      placeholder="example@gmail.com"
+                      disabled
+                    />
+                    <small className="text-muted">Email cannot be changed</small>
                   </div>
                 </div>
                 <div className="col-12">
@@ -166,18 +336,24 @@ const Setting = () => {
                     <label htmlFor="bio">Bio</label>
                     <textarea
                       id="bio"
+                      name="bio"
                       cols="20"
                       rows="5"
-                      value={textareaText}
-                      onChange={(e) => setTextareaText(e.target.value)}
+                      value={formData.bio}
+                      onChange={handleInputChange}
+                      placeholder="Write something about yourself..."
                     ></textarea>
                   </div>
                 </div>
                 <div className="col-12 mt--20">
                   <div className="rbt-form-group">
-                    <Link className="rbt-btn btn-gradient" href="#">
-                      Update Info
-                    </Link>
+                    <button
+                      className="rbt-btn btn-gradient"
+                      type="submit"
+                      disabled={loading}
+                    >
+                      {loading ? 'Updating...' : 'Update Profile'}
+                    </button>
                   </div>
                 </div>
               </form>
@@ -317,6 +493,17 @@ const Setting = () => {
           </div>
         </div>
       </div>
+      
+      {/* Phone Verification Modal */}
+      <PhoneVerificationModal
+        isOpen={showPhoneVerificationModal}
+        onClose={() => setShowPhoneVerificationModal(false)}
+        onSuccess={() => {
+          setPhoneVerified(true);
+          setMessage({ type: 'success', text: 'Phone number verified successfully!' });
+        }}
+        userProfile={{ ...userProfile, phone: formData.phone }}
+      />
     </>
   );
 };

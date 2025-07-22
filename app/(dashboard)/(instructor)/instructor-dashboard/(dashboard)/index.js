@@ -8,7 +8,6 @@ import Cart from "@/components/Header/Offcanvas/Cart";
 import Dashboard from "@/components/Instructor/Dashboard";
 import InstructorDashboardHeader from "@/components/Instructor/InstructorDashboardHeader";
 import InstructorDashboardSidebar from "@/components/Instructor/InstructorDashboardSidebar";
-import ProfileCompletionBanner from "@/components/Common/ProfileCompletionBanner";
 import Context from "@/context/Context";
 import Store from "@/redux/store";
 import React from "react";
@@ -16,8 +15,8 @@ import { Provider } from "react-redux";
 import RoleProtection from "@/components/Auth/RoleProtection";
 
 // --- 핵심 수정 사항 ---
-// 이 컴포넌트는 이제 부모(page.js)로부터 stats와 userProfile props를 전달받습니다.
-const InstructorDashboard = ({ stats, userProfile }) => {
+// 이 컴포넌트는 이제 부모(page.js)로부터 stats prop을 전달받습니다.
+const InstructorDashboard = ({ stats }) => {
   return (
     <>
       <Provider store={Store}>
@@ -35,9 +34,6 @@ const InstructorDashboard = ({ stats, userProfile }) => {
                 <div className="col-lg-12">
                   <RoleProtection allowedRoles={["instructor"]}>
                     <InstructorDashboardHeader />
-                    
-                    {/* 프로필 완성 배너 */}
-                    <ProfileCompletionBanner userProfile={userProfile} />
                     
                     <div className="row g-5">
                       <div className="col-lg-3">

@@ -4,6 +4,9 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Select from "react-select";
+import { useSession } from "next-auth/react";
+import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
+import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
 
 // import CourseData from "../../data/course-details/courseData.json";
 import CreateCourseData from "../../data/createCourse.json";
@@ -20,12 +23,15 @@ import AssignmentModal from "./QuizModals/AssignmentModal";
 import UpdateModal from "./QuizModals/UpdateModal";
 import Lesson from "./lesson/Lesson";
 
-const CreateCourse = () => {
+const CreateCourse = ({ userProfile }) => {
+  const { data: session } = useSession();
   const fileInputRef = useRef(null);
   const [sortVideo, setSortByVideo] = useState({
     value: "Select Video Sources",
     label: "Select Video Sources",
   });
+  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
+  const [showVerificationAlert, setShowVerificationAlert] = useState(false);
 
   const previewImages = CreateCourseData.createCourse[0].landscape.filter(
     (item) => item.type === "preview"
@@ -46,6 +52,21 @@ const CreateCourse = () => {
   };
   const handleFileChange = (event) => {
     const file = event.target.files[0];
+  };
+
+  const handleCreateCourse = (e) => {
+    e.preventDefault();
+    
+    // Check if phone is verified
+    if (!isPhoneVerified(userProfile)) {
+      setShowVerificationAlert(true);
+      setShowPhoneVerificationModal(true);
+      return;
+    }
+    
+    // TODO: Implement actual course creation logic
+    console.log('Creating course...');
+    // Navigate to course creation page or show success message
   };
   return (
     <>
@@ -386,9 +407,9 @@ const CreateCourse = () => {
               </Link>
             </div>
             <div className="col-lg-8">
-              <Link
+              <button
                 className="rbt-btn btn-gradient hover-icon-reverse w-100 text-center"
-                href="#"
+                onClick={handleCreateCourse}
               >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">Create Course</span>
@@ -399,7 +420,7 @@ const CreateCourse = () => {
                     <i className="feather-arrow-right"></i>
                   </span>
                 </span>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -452,6 +473,38 @@ const CreateCourse = () => {
       <LessonModal />
       <QuizModal />
       <AssignmentModal />
+      
+      {/* Phone Verification Modal */}
+      <PhoneVerificationModal
+        isOpen={showPhoneVerificationModal}
+        onClose={() => {
+          setShowPhoneVerificationModal(false);
+          setShowVerificationAlert(false);
+        }}
+        onSuccess={() => {
+          setShowPhoneVerificationModal(false);
+          setShowVerificationAlert(false);
+          // Retry course creation after successful verification
+          handleCreateCourse(new Event('click'));
+        }}
+        userProfile={userProfile}
+      />
+      
+      {/* Verification Alert */}
+      {showVerificationAlert && !showPhoneVerificationModal && (
+        <div className="position-fixed bottom-0 start-50 translate-middle-x mb-4" style={{ zIndex: 1000 }}>
+          <div className="alert alert-warning alert-dismissible fade show" role="alert">
+            <i className="feather-alert-circle me-2"></i>
+            {getVerificationPromptMessage('create_course')}
+            <button
+              type="button"
+              className="btn-close"
+              onClick={() => setShowVerificationAlert(false)}
+              aria-label="Close"
+            ></button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

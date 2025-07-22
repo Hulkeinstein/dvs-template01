@@ -3,6 +3,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Important Notes
+- The development server is already running on port 3000. DO NOT start a new dev server.
+- If you need to restart the server, ask the user first.
+
 ## Development Commands
 
 ### Core Commands

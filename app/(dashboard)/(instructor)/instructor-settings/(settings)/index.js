@@ -11,6 +11,7 @@ import Setting from "@/components/Instructor/Settings";
 import Context from "@/context/Context";
 import Store from "@/redux/store";
 import { Provider } from "react-redux";
+import RoleProtection from "@/components/Auth/RoleProtection";
 
 const SettingPage = ({ userProfile }) => {
   return (
@@ -28,17 +29,19 @@ const SettingPage = ({ userProfile }) => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <InstructorDashboardHeader />
+                  <RoleProtection allowedRoles={["instructor"]}>
+                    <InstructorDashboardHeader />
 
-                  <div className="row g-5">
-                    <div className="col-lg-3">
-                      <InstructorDashboardSidebar />
-                    </div>
+                    <div className="row g-5">
+                      <div className="col-lg-3">
+                        <InstructorDashboardSidebar />
+                      </div>
 
-                    <div className="col-lg-9">
-                      <Setting userProfile={userProfile} />
+                      <div className="col-lg-9">
+                        <Setting userProfile={userProfile} />
+                      </div>
                     </div>
-                  </div>
+                  </RoleProtection>
                 </div>
               </div>
             </div>
