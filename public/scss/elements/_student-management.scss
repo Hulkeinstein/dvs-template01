@@ -1,0 +1,275 @@
+// Student Management Styles
+.rbt-student-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  .rbt-avatar-md {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  .rbt-student-info {
+    h6 {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-heading);
+      margin-bottom: 1px;
+      line-height: 1.3;
+    }
+    
+    small {
+      font-size: 11px;
+      color: var(--color-body);
+      line-height: 1.2;
+    }
+  }
+}
+
+.rbt-contact-info {
+  span {
+    font-size: 12px;
+    color: var(--color-body);
+    line-height: 1.3;
+  }
+  
+  small {
+    font-size: 11px;
+    
+    i {
+      margin-right: 3px;
+      font-size: 10px;
+    }
+  }
+}
+
+.rbt-course-list {
+  span {
+    font-size: 12px;
+    color: var(--color-heading);
+    line-height: 1.3;
+    font-weight: 500;
+  }
+}
+
+.rbt-progress-style-1 {
+  .single-progress {
+    h6 {
+      font-size: 11px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--color-body);
+    }
+    
+    .progress {
+      height: 5px;
+      background-color: var(--color-lightest);
+      border-radius: 2px;
+      overflow: hidden;
+      
+      .progress-bar {
+        background-color: var(--color-primary);
+        transition: width 0.6s ease;
+        
+        &.bar-color-success {
+          background-color: var(--color-success);
+        }
+      }
+    }
+  }
+}
+
+.rbt-date {
+  font-size: 12px;
+  color: var(--color-body);
+  line-height: 1.3;
+}
+
+// Table header font size
+.rbt-dashboard-table {
+  .rbt-table {
+    thead {
+      th {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--color-body);
+      }
+    }
+    
+    tbody {
+      td {
+        font-size: 13px;
+        padding: 15px 10px;
+      }
+    }
+  }
+}
+
+// Mobile responsive adjustments
+@media (max-width: 767px) {
+  .mobile-table-750 {
+    .rbt-table {
+      thead {
+        display: none;
+      }
+      
+      tbody {
+        tr {
+          display: block;
+          margin-bottom: 20px;
+          border: 1px solid var(--color-border);
+          border-radius: 10px;
+          padding: 20px;
+          background-color: var(--color-white);
+          
+          td {
+            display: block;
+            text-align: left;
+            padding: 10px 0;
+            border: none;
+            
+            &:before {
+              content: attr(data-label);
+              font-weight: 600;
+              display: block;
+              margin-bottom: 8px;
+              color: var(--color-heading);
+              font-size: 13px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            
+            &:first-child:before {
+              content: none;
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  .rbt-student-profile {
+    margin-bottom: 10px;
+  }
+}
+
+// Badge styles
+.rbt-badge-5 {
+  font-size: 11px;
+  padding: 3px 10px;
+  font-weight: 500;
+}
+
+// Filter area font sizes
+.course-index {
+  font-size: 13px;
+}
+
+// Filter styles to match course-filter-one-toggle
+.filter-inner {
+  .filter-select-option {
+    // Override default flex-basis for filters
+    flex-basis: 22.5%;
+    
+    @media #{$lg-layout} {
+      flex-basis: 33.33%;
+    }
+    
+    @media #{$md-layout} {
+      flex-basis: 50%;
+    }
+    
+    @media #{$sm-layout} {
+      flex-basis: 50%;
+    }
+    
+    @media #{$large-mobile} {
+      flex-basis: 100%;
+    }
+    
+    // Clear button specific width
+    &:last-child {
+      flex-basis: 10%;
+      
+      @media #{$lg-layout} {
+        flex-basis: 33.33%;
+      }
+      
+      @media #{$md-layout} {
+        flex-basis: 50%;
+      }
+      
+      @media #{$sm-layout} {
+        flex-basis: 50%;
+      }
+      
+      @media #{$large-mobile} {
+        flex-basis: 100%;
+      }
+    }
+    
+    .filter-select {
+      &.rbt-modern-select {
+        label {
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 10px;
+          color: var(--color-heading);
+          font-weight: 600;
+          display: block;
+        }
+        
+        select {
+          font-size: 13px;
+          padding: 10px 15px;
+          height: auto;
+        }
+      }
+    }
+  }
+}
+
+// Clear filter button
+.filter-select-option {
+  .filter-select {
+    button.rbt-btn {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-top: 30px;
+      height: 50px;
+      line-height: 48px;
+      padding: 0 15px;
+      white-space: nowrap;
+      width: auto;
+    }
+  }
+}
+
+// Filter toggle button
+.rbt-btn.btn-border {
+  &.radius-30 {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    
+    .icon {
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+}
