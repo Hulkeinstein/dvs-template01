@@ -47,13 +47,13 @@ const AssignmentModal = () => {
                 <div className="row">
                   <div className="col-lg-12">
                     <form action="#">
-                      <h5 className="modal-title mb--20" id="LessonLabel">
+                      <h5 className="modal-title mb--20" id="AssignmentModalLabel">
                         Assignment
                       </h5>
                       <div className="course-field mb--20">
-                        <label htmlFor="modal-field-1">Assignment Title</label>
+                        <label htmlFor="assignmentModalTitle">Assignment Title</label>
                         <input
-                          id="modal-field-1"
+                          id="assignmentModalTitle"
                           type="text"
                           placeholder="Assignments"
                         />

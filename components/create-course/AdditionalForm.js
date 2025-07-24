@@ -1,6 +1,13 @@
 import React from "react";
 
-const AdditionalForm = () => {
+const AdditionalForm = ({ formData, onFormDataChange }) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    onFormDataChange({
+      ...formData,
+      [name]: value
+    });
+  };
   return (
     <>
       <div
@@ -13,7 +20,13 @@ const AdditionalForm = () => {
           <div className="col-lg-6">
             <div className="course-field mb--15">
               <label htmlFor="startDate">Start Date</label>
-              <input type="date" id="startDate" name="startDate" />
+              <input 
+                type="date" 
+                id="startDate" 
+                name="startDate" 
+                value={formData.startDate || ''}
+                onChange={handleInputChange}
+              />
             </div>
           </div>
 
@@ -21,13 +34,21 @@ const AdditionalForm = () => {
             <div className="course-field mb--15">
               <label htmlFor="language">Language</label>
               <div className="rbt-modern-select bg-transparent height-50 mb--10">
-                <select className="w-100" id="language">
-                  <option>English</option>
-                  <option>Bangla</option>
-                  <option>Japan</option>
-                  <option>Hindi</option>
-                  <option>Frence</option>
-                  <option>Garmani</option>
+                <select 
+                  className="w-100" 
+                  id="language"
+                  name="language"
+                  value={formData.language || 'English'}
+                  onChange={handleInputChange}
+                >
+                  <option value="English">English</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Chinese">Chinese</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Korean">Korean</option>
+                  <option value="Hindi">Hindi</option>
                 </select>
               </div>
             </div>
@@ -38,8 +59,11 @@ const AdditionalForm = () => {
               <label htmlFor="whatLearn">Requirements</label>
               <textarea
                 id="whatLearn"
+                name="requirements"
                 rows="5"
-                placeholder="Add your course benefits here."
+                placeholder="Add your course requirements here."
+                value={formData.requirements || ''}
+                onChange={handleInputChange}
               ></textarea>
               <small className="d-block mt_dec--5">
                 <i className="feather-info"></i> Enter for per line.
@@ -52,8 +76,11 @@ const AdditionalForm = () => {
               <label htmlFor="description">Description</label>
               <textarea
                 id="description"
+                name="description"
                 rows="5"
-                placeholder="Add your course benefits here."
+                placeholder="Add your course description here."
+                value={formData.description || ''}
+                onChange={handleInputChange}
               ></textarea>
               <small className="d-block mt_dec--5">
                 <i className="feather-info"></i> Enter for per line.
@@ -70,13 +97,28 @@ const AdditionalForm = () => {
               <label>Total Course Duration</label>
               <div className="row row--15">
                 <div className="col-lg-6">
-                  <input type="number" placeholder="00" />
+                  <input 
+                    type="number" 
+                    name="totalDurationHours"
+                    placeholder="00" 
+                    value={formData.totalDurationHours || ''}
+                    onChange={handleInputChange}
+                    min="0"
+                  />
                   <small className="d-block mt_dec--5">
                     <i className="feather-info"></i> Hour.
                   </small>
                 </div>
                 <div className="col-lg-6">
-                  <input type="number" placeholder="00" />
+                  <input 
+                    type="number" 
+                    name="totalDurationMinutes"
+                    placeholder="00" 
+                    value={formData.totalDurationMinutes || ''}
+                    onChange={handleInputChange}
+                    min="0"
+                    max="59"
+                  />
                   <small className="d-block mt_dec--5">
                     <i className="feather-info"></i> Minute.
                   </small>
@@ -94,8 +136,11 @@ const AdditionalForm = () => {
               <label htmlFor="courseTag">Course Tags</label>
               <textarea
                 id="courseTag"
+                name="courseTags"
                 rows="5"
-                placeholder="Add your course tag here."
+                placeholder="Add your course tags here."
+                value={formData.courseTags || ''}
+                onChange={handleInputChange}
               ></textarea>
               <small className="d-block mt_dec--5">
                 <i className="feather-info"></i> Maximum of 15 keywords covering
@@ -115,8 +160,11 @@ const AdditionalForm = () => {
               <label htmlFor="targeted">Targeted Audience</label>
               <textarea
                 id="targeted"
+                name="targetedAudience"
                 rows="5"
-                placeholder="Add your course tag here."
+                placeholder="Specify your target audience here."
+                value={formData.targetedAudience || ''}
+                onChange={handleInputChange}
               ></textarea>
               <small className="d-block mt_dec--5">
                 <i className="feather-info"></i> Specify the target audience

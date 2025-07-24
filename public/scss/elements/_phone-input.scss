@@ -61,9 +61,7 @@
   // Remove all default borders and outlines
   .react-tel-input,
   .react-tel-input .form-control,
-  .react-tel-input input[type="tel"],
-  input,
-  .form-control {
+  .react-tel-input input[type="tel"] {
     outline: none !important;
     
     &:focus {

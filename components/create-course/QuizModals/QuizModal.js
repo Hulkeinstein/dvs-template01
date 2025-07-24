@@ -80,7 +80,7 @@ const QuizModal = () => {
               <div className="inner rbt-default-form">
                 <div className="row">
                   <div className="col-lg-12">
-                    <h5 className="modal-title mb--20" id="LessonLabel">
+                    <h5 className="modal-title mb--20" id="QuizModalLabel">
                       Quiz
                     </h5>
                     <div className="course-field quiz-modal mb--40">
@@ -140,16 +140,16 @@ const QuizModal = () => {
                     {currentStep === 1 && (
                       <form className="tabs-1">
                         <div className="course-field mb--20">
-                          <label htmlFor="modal-field-1">Quiz Title</label>
+                          <label htmlFor="quizModalTitle">Quiz Title</label>
                           <input
-                            id="modal-field-1"
+                            id="quizModalTitle"
                             type="text"
                             placeholder="Type your quiz title here"
                           />
                         </div>
                         <div className="course-field mb--20">
-                          <label htmlFor="modal-field-2">Quiz Summary</label>
-                          <textarea id="modal-field-2"></textarea>
+                          <label htmlFor="quizModalSummary">Quiz Summary</label>
+                          <textarea id="quizModalSummary"></textarea>
                           <small>
                             <i className="feather-info"></i> Add a summary of
                             short text to prepare students for the activities

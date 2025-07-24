@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 
 import img from "../../../public/images/others/thumbnail-placeholder.svg";
 
 const LessonModal = () => {
   const fileInputRef = useRef(null);
+  const [featureImagePreview, setFeatureImagePreview] = useState(null);
 
   const handleImportClick = (e) => {
     e.preventDefault();
@@ -15,9 +16,24 @@ const LessonModal = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    // if (file) {
-    //   console.log("Selected file:", file.name);
-    // }
+    
+    if (file) {
+      // Validate file type - more flexible validation
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFeatureImagePreview(reader.result);
+      };
+      reader.onerror = (error) => {
+        alert('Error reading file. Please try again.');
+      };
+      reader.readAsDataURL(file);
+    }
   };
   return (
     <>
@@ -48,8 +64,8 @@ const LessonModal = () => {
                       Add Lesson
                     </h5>
                     <div className="course-field mb--20">
-                      <label htmlFor="modal-field-1">Lesson Name</label>
-                      <input id="modal-field-1" type="text" />
+                      <label htmlFor="lessonModalName">Lesson Name</label>
+                      <input id="lessonModalName" type="text" />
                       <small>
                         <i className="feather-info"></i> Lesson titles are
                         displayed publicly wherever required. Each Lesson may
@@ -57,8 +73,8 @@ const LessonModal = () => {
                       </small>
                     </div>
                     <div className="course-field mb--20">
-                      <label htmlFor="modal-field-2">Lesson Summary</label>
-                      <textarea id="modal-field-2"></textarea>
+                      <label htmlFor="lessonModalSummary">Lesson Summary</label>
+                      <textarea id="lessonModalSummary"></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short
                         text to prepare students for the activities for the
@@ -75,22 +91,25 @@ const LessonModal = () => {
                             data-black-overlay="9"
                           >
                             <input
-                              name="createinputfile"
-                              id="createinputfile"
+                              name="lessonFeatureImage"
+                              id="lessonFeatureImage"
                               type="file"
                               className="inputfile"
+                              accept="image/*"
+                              onChange={handleFileChange}
                             />
                             <Image
-                              id="createfileImage"
-                              src={img}
+                              id="lessonFeatureImagePreview"
+                              src={featureImagePreview || img}
                               width={797}
                               height={262}
                               alt="file image"
+                              style={{ objectFit: 'cover' }}
                             />
 
                             <label
                               className="d-flex"
-                              htmlFor="createinputfile"
+                              htmlFor="lessonFeatureImage"
                               title="No File Choosen"
                             >
                               <i className="feather-upload"></i>

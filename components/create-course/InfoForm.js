@@ -1,27 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 import img from "../../public/images/others/thumbnail-placeholder.svg";
 
-const InfoForm = () => {
-  const [inp, setInp] = useState(100);
+const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    onFormDataChange({
+      ...formData,
+      [name]: type === 'checkbox' ? checked : value
+    });
+  };
+
+  const handleNumberInputChange = (e) => {
     const { value } = e.target;
     // Allow only numeric characters
     const sanitizedValue = value.replace(/[^0-9]/g, "");
-    setInp(sanitizedValue);
+    onFormDataChange({
+      ...formData,
+      maxStudents: sanitizedValue
+    });
   };
 
   const handleIncrement = () => {
-    setInp((prevValue) => prevValue + 1);
+    onFormDataChange({
+      ...formData,
+      maxStudents: parseInt(formData.maxStudents || 0) + 1
+    });
   };
 
   const handleDecrement = () => {
-    setInp((prevValue) => Math.max(0, prevValue - 1));
+    onFormDataChange({
+      ...formData,
+      maxStudents: Math.max(0, parseInt(formData.maxStudents || 0) - 1)
+    });
+  };
+
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.match(/^image\/(jpg|jpeg|png|gif|webp)$/i)) {
+        alert('Please select a valid image file (JPG, JPEG, PNG, GIF, WEBP)');
+        return;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Pass file to parent component
+      onThumbnailChange(file);
+    }
   };
 
   return (
@@ -29,28 +68,47 @@ const InfoForm = () => {
       <div className="rbt-course-field-wrapper rbt-default-form">
         <div className="course-field mb--15">
           <label htmlFor="field-1">Course Title</label>
-          <input id="field-1" type="text" placeholder="New Course" />
+          <input 
+            id="field-1" 
+            name="title"
+            type="text" 
+            placeholder="New Course" 
+            value={formData.title || ''}
+            onChange={handleInputChange}
+            required
+          />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Title should be 30 charecter.
+            <i className="feather-info"></i> Title should be descriptive and clear.
           </small>
         </div>
         <div className="course-field mb--15">
-          <label htmlFor="field-2">Course Slug</label>
-          <input id="field-2" type="text" placeholder="new-course" />
+          <label htmlFor="field-2">Short Description</label>
+          <input 
+            id="field-2" 
+            name="shortDescription"
+            type="text" 
+            placeholder="Brief description of the course" 
+            value={formData.shortDescription || ''}
+            onChange={handleInputChange}
+            required
+          />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Permalink:
-            <Link href="https://yourdomain.com/new-course">
-              https://yourdomain.com/new-course
-            </Link>
+            <i className="feather-info"></i> A brief summary that appears in course listings.
           </small>
         </div>
 
         <div className="course-field mb--15">
-          <label htmlFor="aboutCourse">About Course</label>
-          <textarea id="aboutCourse" rows="10"></textarea>
+          <label htmlFor="description">Course Description</label>
+          <textarea 
+            id="description" 
+            name="description"
+            rows="10"
+            value={formData.description || ''}
+            onChange={handleInputChange}
+            placeholder="Describe what students will learn in this course..."
+          ></textarea>
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> HTML or plain text allowed, no
-            emoji This field is used for search, so please be descriptive!
+            <i className="feather-info"></i> Detailed description of the course content and objectives.
           </small>
         </div>
 
@@ -109,22 +167,20 @@ const InfoForm = () => {
                         <div className="pro-qty m-0">
                           <span
                             className="dec qtybtn"
-                            onClick={() =>
-                              setInp((prevValue) => Math.max(0, prevValue - 1))
-                            }
+                            onClick={handleDecrement}
                           >
                             -
                           </span>
                           <input
                             id="field-3"
                             type="text"
-                            name="text"
-                            value={inp}
-                            onChange={handleInputChange}
+                            name="maxStudents"
+                            value={formData.maxStudents || 0}
+                            onChange={handleNumberInputChange}
                           />
                           <span
                             className="inc qtybtn"
-                            onClick={() => setInp((prevValue) => prevValue + 1)}
+                            onClick={handleIncrement}
                           >
                             +
                           </span>
@@ -139,12 +195,17 @@ const InfoForm = () => {
                     <div className="course-field mb--20">
                       <label htmlFor="field-4">Difficulty Level</label>
                       <div className="rbt-modern-select bg-transparent height-45 mb--10">
-                        <select className="w-100" id="field-4">
-                          <option>All Levels</option>
-                          <option>Intermediate</option>
-                          <option>Beginner</option>
-                          <option>Advance</option>
-                          <option>Expert</option>
+                        <select 
+                          className="w-100" 
+                          id="field-4"
+                          name="level"
+                          value={formData.level || 'all_levels'}
+                          onChange={handleInputChange}
+                        >
+                          <option value="all_levels">All Levels</option>
+                          <option value="beginner">Beginner</option>
+                          <option value="intermediate">Intermediate</option>
+                          <option value="advanced">Advanced</option>
                         </select>
                       </div>
                       <small>
@@ -155,42 +216,46 @@ const InfoForm = () => {
                     <div className="course-field mb--20">
                       <label
                         className="form-check-label d-inline-block"
-                        htmlFor="flexSwitchCheckDefault"
+                        htmlFor="certificateEnabled"
                       >
-                        Public Course
+                        Enable Certificate
                       </label>
                       <div className="form-check form-switch mb--10">
                         <input
                           className="form-check-input"
                           type="checkbox"
                           role="switch"
-                          id="flexSwitchCheckDefault"
+                          id="certificateEnabled"
+                          name="certificateEnabled"
+                          checked={formData.certificateEnabled || false}
+                          onChange={handleInputChange}
                         />
                       </div>
                       <small>
-                        <i className="feather-info"></i> Make This Course
-                        Public. No enrollment required.
+                        <i className="feather-info"></i> Issue certificates to students who complete the course.
                       </small>
                     </div>
 
                     <div className="course-field mb--20">
                       <label
                         className="form-check-label d-inline-block"
-                        htmlFor="flexSwitchCheckDefault2"
+                        htmlFor="lifetimeAccess"
                       >
-                        Q&A
+                        Lifetime Access
                       </label>
                       <div className="form-check form-switch mb--10">
                         <input
                           className="form-check-input"
                           type="checkbox"
                           role="switch"
-                          id="flexSwitchCheckDefault2"
+                          id="lifetimeAccess"
+                          name="lifetimeAccess"
+                          checked={formData.lifetimeAccess !== false}
+                          onChange={handleInputChange}
                         />
                       </div>
                       <small>
-                        <i className="feather-info"></i> Enable Q&A section for
-                        your course
+                        <i className="feather-info"></i> Students can access the course forever
                       </small>
                     </div>
                   </div>
@@ -206,9 +271,11 @@ const InfoForm = () => {
                         <p className="rbt-checkbox-wrapper mb--5">
                           <input
                             id="rbt-checkbox-1"
-                            name="rbt-checkbox-1"
+                            name="contentDripEnabled"
                             type="checkbox"
-                            defaultValue="yes"
+                            value="yes"
+                            checked={formData.contentDripEnabled || false}
+                            onChange={handleInputChange}
                           />
                           <label htmlFor="rbt-checkbox-1">Enable</label>
                         </p>
@@ -230,8 +297,11 @@ const InfoForm = () => {
                             <input
                               className="form-check-input"
                               type="radio"
-                              name="rbt-radio"
+                              name="contentDripType"
+                              value="by_date"
                               id="rbt-radio-1"
+                              checked={formData.contentDripType === 'by_date'}
+                              onChange={handleInputChange}
                             />
                             <label
                               className="form-check-label"
@@ -244,8 +314,11 @@ const InfoForm = () => {
                             <input
                               className="form-check-input"
                               type="radio"
-                              name="rbt-radio"
+                              name="contentDripType"
+                              value="after_enrollment"
                               id="rbt-radio-2"
+                              checked={formData.contentDripType === 'after_enrollment'}
+                              onChange={handleInputChange}
                             />
                             <label
                               className="form-check-label"
@@ -258,8 +331,11 @@ const InfoForm = () => {
                             <input
                               className="form-check-input"
                               type="radio"
-                              name="rbt-radio"
+                              name="contentDripType"
+                              value="sequential"
                               id="rbt-radio-3"
+                              checked={formData.contentDripType === 'sequential'}
+                              onChange={handleInputChange}
                             />
                             <label
                               className="form-check-label"
@@ -272,8 +348,11 @@ const InfoForm = () => {
                             <input
                               className="form-check-input"
                               type="radio"
-                              name="rbt-radio"
+                              name="contentDripType"
+                              value="after_prerequisites"
                               id="rbt-radio-4"
+                              checked={formData.contentDripType === 'after_prerequisites'}
+                              onChange={handleInputChange}
                             />
                             <label
                               className="form-check-label"
@@ -307,13 +386,14 @@ const InfoForm = () => {
                     <li className="nav-item w-100" role="presentation">
                       <a
                         href="#"
-                        className="active"
+                        className={formData.price > 0 ? "active" : ""}
                         id="paid-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#paid"
                         role="tab"
                         aria-controls="paid"
-                        aria-selected="true"
+                        aria-selected={formData.price > 0}
+                        onClick={() => onFormDataChange({ ...formData, price: formData.price || 1 })}
                       >
                         <span>Paid</span>
                       </a>
@@ -321,12 +401,14 @@ const InfoForm = () => {
                     <li className="nav-item w-100" role="presentation">
                       <a
                         href="#"
+                        className={formData.price === 0 ? "active" : ""}
                         id="free-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#free"
                         role="tab"
                         aria-controls="free"
-                        aria-selected="false"
+                        aria-selected={formData.price === 0}
+                        onClick={() => onFormDataChange({ ...formData, price: 0 })}
                       >
                         <span>Free</span>
                       </a>
@@ -337,17 +419,21 @@ const InfoForm = () => {
               <div className="col-lg-8">
                 <div className="tab-content">
                   <div
-                    className="tab-pane fade advance-tab-content-1 active show"
+                    className={`tab-pane fade advance-tab-content-1 ${formData.price > 0 ? 'active show' : ''}`}
                     id="paid"
                     role="tabpanel"
                     aria-labelledby="paid-tab"
                   >
                     <div className="course-field mb--15">
-                      <label htmlFor="regularPrice-1">Regular Price ($)</label>
+                      <label htmlFor="price-1">Course Price ($)</label>
                       <input
-                        id="regularPrice-1"
+                        id="price-1"
+                        name="price"
                         type="number"
-                        placeholder="$ Regular Price"
+                        placeholder="$ Course Price"
+                        value={formData.price || ''}
+                        onChange={handleInputChange}
+                        required
                       />
                       <small className="d-block mt_dec--5">
                         <i className="feather-info"></i> The Course Price
@@ -356,13 +442,16 @@ const InfoForm = () => {
                     </div>
 
                     <div className="course-field mb--15">
-                      <label htmlFor="discountedPrice-1">
-                        Discounted Price ($)
+                      <label htmlFor="discountPrice-1">
+                        Discount Price ($)
                       </label>
                       <input
-                        id="discountedPrice-1"
+                        id="discountPrice-1"
+                        name="discountPrice"
                         type="number"
-                        placeholder="$ Discounted Price"
+                        placeholder="$ Discount Price"
+                        value={formData.discountPrice || ''}
+                        onChange={handleInputChange}
                       />
                       <small className="d-block mt_dec--5">
                         <i className="feather-info"></i> The Course Price
@@ -372,7 +461,7 @@ const InfoForm = () => {
                   </div>
 
                   <div
-                    className="tab-pane fade advance-tab-content-1"
+                    className={`tab-pane fade advance-tab-content-1 ${formData.price === 0 ? 'active show' : ''}`}
                     id="free"
                     role="tabpanel"
                     aria-labelledby="free-tab"
@@ -390,15 +479,22 @@ const InfoForm = () => {
         <div className="course-field mb--20">
           <h6>Choose Categories</h6>
           <div className="rbt-modern-select bg-transparent height-45 w-100 mb--10">
-            <select className="w-100">
-              <option>Web Developer</option>
-              <option>App Developer</option>
-              <option>Javascript</option>
-              <option>React</option>
-              <option>WordPress</option>
-              <option>jQuery</option>
-              <option>Vue Js</option>
-              <option>Angular</option>
+            <select 
+              className="w-100"
+              name="category"
+              value={formData.category || ''}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="web-development">Web Development</option>
+              <option value="mobile-development">Mobile Development</option>
+              <option value="programming">Programming Languages</option>
+              <option value="data-science">Data Science</option>
+              <option value="business">Business</option>
+              <option value="design">Design</option>
+              <option value="marketing">Marketing</option>
+              <option value="personal-development">Personal Development</option>
             </select>
           </div>
         </div>
@@ -413,13 +509,17 @@ const InfoForm = () => {
                   id="createinputfile"
                   type="file"
                   className="inputfile"
+                  accept="image/*"
+                  onChange={handleThumbnailChange}
+                  ref={fileInputRef}
                 />
                 <Image
                   id="createfileImage"
-                  src={img}
+                  src={thumbnailPreview || img}
                   width={797}
                   height={262}
                   alt="file image"
+                  style={{ objectFit: 'cover' }}
                 />
 
                 <label

@@ -17,7 +17,7 @@ import CreateCourseData from "../../data/createCourse.json";
 import svgImg from "../../public/images/icons/certificate-none.svg";
 import svgImg2 from "../../public/images/icons/certificate-none-portrait.svg";
 
-import InfoFormNew from "./InfoFormNew";
+import InfoForm from "./InfoForm";
 import TopicModal from "./QuizModals/TopicModal";
 import AdditionalForm from "./AdditionalForm";
 import LessonModal from "./QuizModals/LessonModal";
@@ -175,7 +175,7 @@ const CreateCourse = ({ userProfile }) => {
                   data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body">
-                    <InfoFormNew 
+                    <InfoForm 
                       formData={formData}
                       onFormDataChange={handleFormDataChange}
                       onThumbnailChange={handleThumbnailChange}
@@ -285,7 +285,7 @@ const CreateCourse = ({ userProfile }) => {
                       className="rbt-btn btn-md btn-gradient hover-icon-reverse"
                       type="button"
                       data-bs-toggle="modal"
-                      data-bs-target="#exampleModal"
+                      data-bs-target="#topicModal"
                     >
                       <span className="icon-reverse-wrapper">
                         <span className="btn-text">Add New Topic</span>

@@ -5,9 +5,9 @@ const TopicModal = () => {
     <>
       <div
         className="rbt-default-modal modal fade"
-        id="exampleModal"
+        id="topicModal"
         tabIndex="-1"
-        aria-labelledby="exampleModalLabel"
+        aria-labelledby="topicModalLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
@@ -26,12 +26,12 @@ const TopicModal = () => {
               <div className="inner rbt-default-form">
                 <div className="row">
                   <div className="col-lg-12">
-                    <h5 className="modal-title mb--20" id="exampleModalLabel">
+                    <h5 className="modal-title mb--20" id="topicModalLabel">
                       Add Topic
                     </h5>
                     <div className="course-field mb--20">
-                      <label htmlFor="modal-field-1">Topic Name</label>
-                      <input id="modal-field-1" type="text" />
+                      <label htmlFor="topicModalName">Topic Name</label>
+                      <input id="topicModalName" type="text" />
                       <small>
                         <i className="feather-info"></i> Topic titles are
                         displayed publicly wherever required. Each topic may
@@ -39,8 +39,8 @@ const TopicModal = () => {
                       </small>
                     </div>
                     <div className="course-field mb--20">
-                      <label htmlFor="modal-field-2">Topic Summary</label>
-                      <textarea id="modal-field-2"></textarea>
+                      <label htmlFor="topicModalSummary">Topic Summary</label>
+                      <textarea id="topicModalSummary"></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short
                         text to prepare students for the activities for the

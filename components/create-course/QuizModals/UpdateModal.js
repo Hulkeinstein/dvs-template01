@@ -33,8 +33,8 @@ const UpdateModal = () => {
                       Update Topic
                     </h5>
                     <div className="course-field mb--20">
-                      <label htmlFor="modal-field-1">Topic Name</label>
-                      <input id="modal-field-1" type="text" />
+                      <label htmlFor="updateModalTopicName">Topic Name</label>
+                      <input id="updateModalTopicName" type="text" />
                       <small>
                         <i className="feather-info"></i> Topic titles are
                         displayed publicly wherever required. Each topic may
@@ -42,8 +42,8 @@ const UpdateModal = () => {
                       </small>
                     </div>
                     <div className="course-field mb--20">
-                      <label htmlFor="modal-field-2">Topic Summary</label>
-                      <textarea id="modal-field-2"></textarea>
+                      <label htmlFor="updateModalTopicSummary">Topic Summary</label>
+                      <textarea id="updateModalTopicSummary"></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short
                         text to prepare students for the activities for the
