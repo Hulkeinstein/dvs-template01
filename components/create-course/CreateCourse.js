@@ -5,8 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import Select from "react-select";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
 import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
+import { createCourse } from "@/app/lib/actions/courseActions";
+import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
 
 // import CourseData from "../../data/course-details/courseData.json";
 import CreateCourseData from "../../data/createCourse.json";
@@ -14,7 +17,7 @@ import CreateCourseData from "../../data/createCourse.json";
 import svgImg from "../../public/images/icons/certificate-none.svg";
 import svgImg2 from "../../public/images/icons/certificate-none-portrait.svg";
 
-import InfoForm from "./InfoForm";
+import InfoFormNew from "./InfoFormNew";
 import TopicModal from "./QuizModals/TopicModal";
 import AdditionalForm from "./AdditionalForm";
 import LessonModal from "./QuizModals/LessonModal";
@@ -25,6 +28,7 @@ import Lesson from "./lesson/Lesson";
 
 const CreateCourse = ({ userProfile }) => {
   const { data: session } = useSession();
+  const router = useRouter();
   const fileInputRef = useRef(null);
   const [sortVideo, setSortByVideo] = useState({
     value: "Select Video Sources",
@@ -32,6 +36,40 @@ const CreateCourse = ({ userProfile }) => {
   });
   const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
   const [showVerificationAlert, setShowVerificationAlert] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+  
+  // Form data state
+  const [formData, setFormData] = useState({
+    // Basic info
+    title: '',
+    shortDescription: '',
+    description: '',
+    category: '',
+    level: 'all_levels',
+    maxStudents: 0,
+    
+    // Video
+    introVideoUrl: '',
+    
+    // Pricing
+    price: 0,
+    discountPrice: null,
+    
+    // Additional info
+    startDate: '',
+    endDate: '',
+    enrollmentDeadline: '',
+    language: 'English',
+    duration: 0,
+    
+    // Certificate
+    certificateEnabled: false,
+    certificateTitle: '',
+    passingGrade: 70,
+    lifetimeAccess: true
+  });
 
   const previewImages = CreateCourseData.createCourse[0].landscape.filter(
     (item) => item.type === "preview"
@@ -54,7 +92,7 @@ const CreateCourse = ({ userProfile }) => {
     const file = event.target.files[0];
   };
 
-  const handleCreateCourse = (e) => {
+  const handleCreateCourse = async (e) => {
     e.preventDefault();
     
     // Check if phone is verified
@@ -64,9 +102,52 @@ const CreateCourse = ({ userProfile }) => {
       return;
     }
     
-    // TODO: Implement actual course creation logic
-    console.log('Creating course...');
-    // Navigate to course creation page or show success message
+    // Validate required fields
+    if (!formData.title || !formData.category || !formData.shortDescription) {
+      setError('Please fill in all required fields');
+      return;
+    }
+    
+    if (formData.price === '' || formData.price < 0) {
+      setError('Please set a valid price (0 for free courses)');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      // Create course first
+      const result = await createCourse(formData);
+      
+      if (result.success) {
+        // Upload thumbnail if provided
+        if (thumbnailFile) {
+          const uploadResult = await uploadCourseThumbnail(result.courseId, thumbnailFile);
+          if (!uploadResult.success) {
+            console.error('Failed to upload thumbnail:', uploadResult.error);
+          }
+        }
+        
+        // Success - redirect to instructor courses page
+        router.push('/instructor/dashboard');
+      } else {
+        setError(result.error || 'Failed to create course');
+      }
+    } catch (error) {
+      console.error('Error creating course:', error);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  const handleFormDataChange = (newData) => {
+    setFormData(newData);
+  };
+  
+  const handleThumbnailChange = (file) => {
+    setThumbnailFile(file);
   };
   return (
     <>
@@ -94,7 +175,11 @@ const CreateCourse = ({ userProfile }) => {
                   data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body">
-                    <InfoForm />
+                    <InfoFormNew 
+                      formData={formData}
+                      onFormDataChange={handleFormDataChange}
+                      onThumbnailChange={handleThumbnailChange}
+                    />
                   </div>
                 </div>
               </div>
@@ -125,7 +210,7 @@ const CreateCourse = ({ userProfile }) => {
                           instanceId="sortBySelect"
                           className="react-select"
                           classNamePrefix="react-select"
-                          defaultValue={sortVideo}
+                          value={sortVideo}
                           onChange={setSortByVideo}
                           options={sortByVideoOptions}
                         />
@@ -136,8 +221,11 @@ const CreateCourse = ({ userProfile }) => {
                       <label htmlFor="videoUrl">Add Your Video URL</label>
                       <input
                         id="videoUrl"
+                        name="introVideoUrl"
                         type="text"
                         placeholder="Add Your Video URL here."
+                        value={formData.introVideoUrl || ''}
+                        onChange={(e) => handleFormDataChange({ ...formData, introVideoUrl: e.target.value })}
                       />
                       <small className="d-block mt_dec--5">
                         Example:
@@ -226,7 +314,10 @@ const CreateCourse = ({ userProfile }) => {
                     Additional Information
                   </button>
                 </h2>
-                <AdditionalForm />
+                <AdditionalForm 
+                  formData={formData}
+                  onFormDataChange={handleFormDataChange}
+                />
               </div>
 
               <div className="accordion-item card">
@@ -300,8 +391,10 @@ const CreateCourse = ({ userProfile }) => {
                                   <input
                                     type="radio"
                                     id="option1"
-                                    name="radio-group"
-                                    defaultValue="option1"
+                                    name="certificateTemplate"
+                                    value="none"
+                                    checked={formData.certificateTemplate === 'none'}
+                                    onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
                                   />
                                   <label htmlFor="option1">
                                     <Image
@@ -318,8 +411,10 @@ const CreateCourse = ({ userProfile }) => {
                                       <input
                                         type="radio"
                                         id={`option${index + 2}`}
-                                        name="radio-group"
-                                        defaultValue={`option${index + 2}`}
+                                        name="certificateTemplate"
+                                        value={`template${index + 1}`}
+                                        checked={formData.certificateTemplate === `template${index + 1}`}
+                                        onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
                                       />
                                       <label htmlFor={`option${index + 2}`}>
                                         <Image
@@ -347,8 +442,10 @@ const CreateCourse = ({ userProfile }) => {
                                   <input
                                     type="radio"
                                     id="optionport1"
-                                    name="radio-group"
-                                    defaultValue="optionport1"
+                                    name="certificateTemplate"
+                                    value="none"
+                                    checked={formData.certificateTemplate === 'none'}
+                                    onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
                                   />
                                   <label htmlFor="optionport1">
                                     <Image
@@ -365,8 +462,10 @@ const CreateCourse = ({ userProfile }) => {
                                       <input
                                         type="radio"
                                         id={`optionport${index + 3}`}
-                                        name="radio-group"
-                                        defaultValue={`optionport${index + 3}`}
+                                        name="certificateTemplate"
+                                        value={`template${index + 1}`}
+                                        checked={formData.certificateTemplate === `template${index + 1}`}
+                                        onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
                                       />
                                       <label htmlFor={`optionport${index + 3}`}>
                                         <Image
@@ -410,19 +509,30 @@ const CreateCourse = ({ userProfile }) => {
               <button
                 className="rbt-btn btn-gradient hover-icon-reverse w-100 text-center"
                 onClick={handleCreateCourse}
+                disabled={isSubmitting}
               >
                 <span className="icon-reverse-wrapper">
-                  <span className="btn-text">Create Course</span>
-                  <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
+                  <span className="btn-text">
+                    {isSubmitting ? 'Creating Course...' : 'Create Course'}
                   </span>
                   <span className="btn-icon">
-                    <i className="feather-arrow-right"></i>
+                    <i className={isSubmitting ? "feather-loader" : "feather-arrow-right"}></i>
+                  </span>
+                  <span className="btn-icon">
+                    <i className={isSubmitting ? "feather-loader" : "feather-arrow-right"}></i>
                   </span>
                 </span>
               </button>
             </div>
           </div>
+          
+          {/* Error message */}
+          {error && (
+            <div className="alert alert-danger mt-3" role="alert">
+              <i className="feather-alert-circle me-2"></i>
+              {error}
+            </div>
+          )}
         </div>
 
         <div className="col-lg-4">
