@@ -20,7 +20,7 @@ const customJestConfig = {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(jose|openid-client|next-auth|@panva|oidc-token-hash))',
+    '/node_modules/(?!(jose|openid-client|next-auth|@panva|oidc-token-hash|@supabase|@supabase/supabase-js|@supabase/realtime-js|@supabase/auth-js|@supabase/auth-helpers-core|@supabase/functions-js|@supabase/postgrest-js|@supabase/storage-js))',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
 }

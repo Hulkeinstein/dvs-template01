@@ -3,14 +3,43 @@
 import { supabase } from '@/app/lib/supabase/client'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { base64ToBlob } from '@/app/lib/utils/fileUpload'
 
-// Upload course thumbnail
-export async function uploadCourseThumbnail(courseId, file) {
+// Upload course thumbnail - now accepts base64 data
+export async function uploadCourseThumbnail(base64Data, fileName) {
   try {
+    // Validate input
+    if (!base64Data) {
+      return { success: false, error: 'No file data provided' }
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+    let fileType = 'image/jpeg' // default
+    
+    if (base64Data.includes('data:')) {
+      const matches = base64Data.match(/data:([^;]+);/)
+      if (matches) {
+        fileType = matches[1]
+        if (!allowedTypes.includes(fileType)) {
+          return { success: false, error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.' }
+        }
+      }
+    }
+
+    // Validate file size (approximate check for base64)
+    // Base64 increases size by ~33%, so 5MB file ≈ 6.67MB base64
+    const base64Size = base64Data.length * 0.75 // approximate size in bytes
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    
+    if (base64Size > maxSize) {
+      return { success: false, error: `File size exceeds ${maxSize / 1024 / 1024}MB limit` }
+    }
+
     const session = await getServerSession(authOptions)
     
     if (!session?.user?.email) {
-      return { error: 'You must be logged in to upload files' }
+      return { success: false, error: 'You must be logged in to upload files' }
     }
 
     // Get user ID
@@ -21,60 +50,41 @@ export async function uploadCourseThumbnail(courseId, file) {
       .single()
 
     if (!userData) {
-      return { error: 'User not found' }
+      return { success: false, error: 'User not found' }
     }
 
-    // Verify course ownership
-    const { data: course } = await supabase
-      .from('courses')
-      .select('instructor_id')
-      .eq('id', courseId)
-      .single()
+    // Convert base64 to blob
+    const blob = base64ToBlob(base64Data, fileType)
 
-    if (!course || course.instructor_id !== userData.id) {
-      return { error: 'You do not have permission to upload files for this course' }
-    }
-
-    // Generate unique filename
-    const fileExt = file.name.split('.').pop()
-    const fileName = `${courseId}-${Date.now()}.${fileExt}`
-    const filePath = `course-thumbnails/${fileName}`
+    // Sanitize filename
+    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '-')
+    const fileExt = sanitizedFileName.split('.').pop() || 'jpg'
+    const uniqueFileName = `${Date.now()}-${sanitizedFileName}`
+    const filePath = `course-thumbnails/${uniqueFileName}`
 
     // Upload to Supabase Storage
-    const { error: uploadError } = await supabase.storage
-      .from('courses')
-      .upload(filePath, file, {
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('course-images')
+      .upload(filePath, blob, {
         cacheControl: '3600',
-        upsert: false
+        upsert: false,
+        contentType: fileType
       })
 
     if (uploadError) {
       console.error('Upload error:', uploadError)
-      return { error: 'Failed to upload file' }
+      return { success: false, error: 'Failed to upload file' }
     }
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('courses')
+      .from('course-images')
       .getPublicUrl(filePath)
-
-    // Update course thumbnail URL
-    const { error: updateError } = await supabase
-      .from('courses')
-      .update({ thumbnail_url: publicUrl })
-      .eq('id', courseId)
-
-    if (updateError) {
-      console.error('Update error:', updateError)
-      // Try to delete uploaded file
-      await supabase.storage.from('courses').remove([filePath])
-      return { error: 'Failed to update course thumbnail' }
-    }
 
     return { success: true, url: publicUrl }
   } catch (error) {
     console.error('Unexpected error:', error)
-    return { error: 'An unexpected error occurred' }
+    return { success: false, error: 'An unexpected error occurred' }
   }
 }
 
@@ -148,7 +158,7 @@ export async function uploadLessonVideo(courseId, lessonId, file) {
     return { success: true, url: publicUrl }
   } catch (error) {
     console.error('Unexpected error:', error)
-    return { error: 'An unexpected error occurred' }
+    return { success: false, error: 'An unexpected error occurred' }
   }
 }
 
@@ -173,7 +183,7 @@ export async function deleteFile(filePath) {
     return { success: true }
   } catch (error) {
     console.error('Unexpected error:', error)
-    return { error: 'An unexpected error occurred' }
+    return { success: false, error: 'An unexpected error occurred' }
   }
 }
 
@@ -205,6 +215,6 @@ export async function createStorageBucket() {
     return { success: true }
   } catch (error) {
     console.error('Unexpected error:', error)
-    return { error: 'An unexpected error occurred' }
+    return { success: false, error: 'An unexpected error occurred' }
   }
 }

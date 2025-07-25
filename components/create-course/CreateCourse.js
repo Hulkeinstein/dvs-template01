@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
 import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
-import { createCourse } from "@/app/lib/actions/courseActions";
+import { createCourse, updateCourse } from "@/app/lib/actions/courseActions";
 import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
 
 // import CourseData from "../../data/course-details/courseData.json";
@@ -39,6 +39,7 @@ const CreateCourse = ({ userProfile }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [thumbnailBase64, setThumbnailBase64] = useState(null);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -122,9 +123,15 @@ const CreateCourse = ({ userProfile }) => {
       
       if (result.success) {
         // Upload thumbnail if provided
-        if (thumbnailFile) {
-          const uploadResult = await uploadCourseThumbnail(result.courseId, thumbnailFile);
-          if (!uploadResult.success) {
+        if (thumbnailBase64 && thumbnailFile) {
+          const uploadResult = await uploadCourseThumbnail(thumbnailBase64, thumbnailFile.name);
+          if (uploadResult.success) {
+            // Update course with thumbnail URL
+            const updateResult = await updateCourse(result.courseId, { thumbnail_url: uploadResult.url });
+            if (!updateResult.success) {
+              console.error('Failed to update course with thumbnail:', updateResult.error);
+            }
+          } else {
             console.error('Failed to upload thumbnail:', uploadResult.error);
           }
         }
@@ -146,8 +153,11 @@ const CreateCourse = ({ userProfile }) => {
     setFormData(newData);
   };
   
-  const handleThumbnailChange = (file) => {
-    setThumbnailFile(file);
+  const handleThumbnailChange = (data) => {
+    if (data && data.file && data.base64) {
+      setThumbnailFile(data.file);
+      setThumbnailBase64(data.base64);
+    }
   };
   return (
     <>

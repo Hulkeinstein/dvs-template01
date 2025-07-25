@@ -1,5 +1,5 @@
 import Courses from "../../data/dashboard/instructor/instructor.json";
-import CourseWidgets from "./Dashboard-Section/widgets/CourseWidget";
+import CourseWidget from "./Dashboard-Section/widgets/CourseWidget";
 
 const Wishlist = () => {
   return (
@@ -15,7 +15,7 @@ const Wishlist = () => {
                 className="col-lg-4 col-md-6 col-12"
                 key={`course-wishlist-${index}`}
               >
-                <CourseWidgets
+                <CourseWidget
                   data={slide}
                   courseStyle="two"
                   isCompleted={false}

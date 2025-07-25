@@ -198,11 +198,11 @@ const CourseWidget = ({
               </div>
 
               {isEdit ? (
-                <Link className="rbt-btn-link left-icon" href="#">
+                <Link className="rbt-btn-link left-icon" href={`/instructor/courses/${data.id}/edit`}>
                   <i className="feather-edit"></i> Edit
                 </Link>
               ) : (
-                <Link className="rbt-btn-link" href="#">
+                <Link className="rbt-btn-link" href={`/courses/${data.id}`}>
                   Learn More
                   <i className="feather-arrow-right" />
                 </Link>

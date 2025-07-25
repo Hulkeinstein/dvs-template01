@@ -3,11 +3,13 @@
 import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { fileToBase64, validateFileSize, validateFileType } from '@/app/lib/utils/fileUpload';
 
 import img from "../../public/images/others/thumbnail-placeholder.svg";
 
 const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(formData.thumbnailPreview || null);
+  const [fileError, setFileError] = useState('');
   const fileInputRef = useRef(null);
 
   const handleInputChange = (e) => {
@@ -42,24 +44,48 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
     });
   };
 
-  const handleThumbnailChange = (e) => {
+  const handleThumbnailChange = async (e) => {
     const file = e.target.files[0];
+    setFileError('');
+    
     if (file) {
       // Validate file type
-      if (!file.type.match(/^image\/(jpg|jpeg|png|gif|webp)$/i)) {
-        alert('Please select a valid image file (JPG, JPEG, PNG, GIF, WEBP)');
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!validateFileType(file, allowedTypes)) {
+        setFileError('Only image files (JPEG, PNG, GIF, WebP) are allowed');
+        e.target.value = '';
         return;
       }
 
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setThumbnailPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      // Validate file size (5MB limit)
+      if (!validateFileSize(file, 5)) {
+        setFileError('File size must be less than 5MB');
+        e.target.value = '';
+        return;
+      }
 
-      // Pass file to parent component
-      onThumbnailChange(file);
+      try {
+        // Convert to base64
+        const base64 = await fileToBase64(file);
+        
+        // Set preview
+        setThumbnailPreview(base64);
+        
+        // Pass both file and base64 to parent
+        onThumbnailChange({
+          file: file,
+          base64: base64
+        });
+        
+        // Update form data with preview
+        onFormDataChange({
+          ...formData,
+          thumbnailPreview: base64
+        });
+      } catch (error) {
+        setFileError('Failed to process the image file');
+        console.error('File processing error:', error);
+      }
     }
   };
 
@@ -72,7 +98,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
             id="field-1" 
             name="title"
             type="text" 
-            placeholder="New Course" 
+            placeholder="Course Title*" 
             value={formData.title || ''}
             onChange={handleInputChange}
             required
@@ -94,6 +120,38 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
           />
           <small className="d-block mt_dec--5">
             <i className="feather-info"></i> A brief summary that appears in course listings.
+          </small>
+        </div>
+
+        <div className="course-field mb--15">
+          <label htmlFor="field-slug">Course Slug</label>
+          <input 
+            id="field-slug" 
+            name="slug"
+            type="text" 
+            placeholder="Course Slug*" 
+            value={formData.slug || ''}
+            onChange={handleInputChange}
+            required
+          />
+          <small className="d-block mt_dec--5">
+            <i className="feather-info"></i> URL-friendly version of the course name.
+          </small>
+        </div>
+
+        <div className="course-field mb--15">
+          <label htmlFor="field-duration">Course Duration (hours)</label>
+          <input 
+            id="field-duration" 
+            name="duration"
+            type="number" 
+            placeholder="Course Duration*" 
+            value={formData.duration || ''}
+            onChange={handleInputChange}
+            required
+          />
+          <small className="d-block mt_dec--5">
+            <i className="feather-info"></i> Total duration of the course in hours.
           </small>
         </div>
 
@@ -430,7 +488,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                         id="price-1"
                         name="price"
                         type="number"
-                        placeholder="$ Course Price"
+                        placeholder="Course Price*"
                         value={formData.price || ''}
                         onChange={handleInputChange}
                         required
@@ -500,7 +558,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
         </div>
 
         <div className="course-field mb--20">
-          <h6>Course Thumbnail</h6>
+          <label htmlFor="createinputfile">Course Thumbnail*</label>
           <div className="rbt-create-course-thumbnail upload-area">
             <div className="upload-area">
               <div className="brows-file-wrapper" data-black-overlay="9">
@@ -538,6 +596,11 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
             <i className="feather-info"></i> <b>Size:</b> 700x430 pixels,
             <b>File Support:</b> JPG, JPEG, PNG, GIF, WEBP
           </small>
+          {fileError && (
+            <div className="alert alert-danger mt-2" role="alert">
+              {fileError}
+            </div>
+          )}
         </div>
       </div>
     </>

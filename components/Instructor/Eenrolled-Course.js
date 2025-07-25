@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Courses from "../../data/dashboard/instructor/instructor.json";
-import CourseWidgets from "./Dashboard-Section/widgets/CourseWidget";
+import CourseWidget from "./Dashboard-Section/widgets/CourseWidget";
 
 const EnrolledCourses = () => {
   return (
@@ -74,7 +74,7 @@ const EnrolledCourses = () => {
                     className="col-lg-4 col-md-6 col-12"
                     key={`course-enrolled-${index}`}
                   >
-                    <CourseWidgets
+                    <CourseWidget
                       data={slide}
                       courseStyle="two"
                       isProgress={true}
@@ -100,7 +100,7 @@ const EnrolledCourses = () => {
                     className="col-lg-4 col-md-6 col-12"
                     key={`course-active-${index}`}
                   >
-                    <CourseWidgets
+                    <CourseWidget
                       data={slide}
                       courseStyle="two"
                       isCompleted={false}
@@ -126,7 +126,7 @@ const EnrolledCourses = () => {
                     className="col-lg-4 col-md-6 col-12"
                     key={`course-completed-${index}`}
                   >
-                    <CourseWidgets
+                    <CourseWidget
                       data={slide}
                       courseStyle="two"
                       isCompleted={true}

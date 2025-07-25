@@ -1,8 +1,95 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import Courses from "../../data/dashboard/instructor/instructor.json";
-import CourseWidgets from "./Dashboard-Section/widgets/CourseWidget";
+import CourseWidget from "./Dashboard-Section/widgets/CourseWidget";
+import { getInstructorCourses } from "@/app/lib/actions/courseActions";
 
 const MyCourses = () => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const result = await getInstructorCourses();
+        
+        if (result.error) {
+          setError(result.error);
+        } else {
+          setCourses(result.courses || []);
+        }
+      } catch (err) {
+        setError('Failed to fetch courses');
+        console.error('Error fetching courses:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  const publishedCourses = courses.filter(course => course.status === 'published');
+  const pendingCourses = courses.filter(course => course.status === 'pending');
+  const draftCourses = courses.filter(course => course.status === 'draft');
+
+  const formatCourseData = (course) => ({
+    id: course.id,
+    courseImage: course.thumbnail_url || '/images/course/course-placeholder.jpg',
+    courseTitle: course.title,
+    courseShortDescription: course.short_description,
+    coursePrice: course.price,
+    offerPrice: course.discount_price ? ((course.price - course.discount_price) / course.price * 100) : 0,
+    courseDuration: course.duration_hours ? `${course.duration_hours} hours` : 'TBD',
+    courseLecture: course.lessons?.[0]?.count || 0,
+    courseEnrolled: course.enrollments?.[0]?.count || 0,
+    courseLevel: course.level,
+    rating: { average: 0 },
+    reviews: {
+      oneStar: 0,
+      twoStar: 0,
+      threeStar: 0,
+      fourStar: 0,
+      fiveStar: 0
+    }
+  });
+
+  if (loading) {
+    return (
+      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
+        <div className="content">
+          <div className="section-title">
+            <h4 className="rbt-title-style-3">My Courses</h4>
+          </div>
+          <div className="text-center py-5">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Loading your courses...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
+        <div className="content">
+          <div className="section-title">
+            <h4 className="rbt-title-style-3">My Courses</h4>
+          </div>
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
@@ -27,7 +114,7 @@ const MyCourses = () => {
                   aria-controls="publish-4"
                   aria-selected="true"
                 >
-                  <span className="title">Publish</span>
+                  <span className="title">Published ({publishedCourses.length})</span>
                 </Link>
               </li>
               <li role="presentation">
@@ -41,7 +128,7 @@ const MyCourses = () => {
                   aria-controls="pending-4"
                   aria-selected="false"
                 >
-                  <span className="title">Pending</span>
+                  <span className="title">Pending ({pendingCourses.length})</span>
                 </Link>
               </li>
               <li role="presentation">
@@ -55,7 +142,7 @@ const MyCourses = () => {
                   aria-controls="draft-4"
                   aria-selected="false"
                 >
-                  <span className="title">Draft</span>
+                  <span className="title">Draft ({draftCourses.length})</span>
                 </Link>
               </li>
             </ul>
@@ -68,22 +155,31 @@ const MyCourses = () => {
               aria-labelledby="publish-tab-4"
             >
               <div className="row g-5">
-                {Courses.slice(0, 3)?.map((slide, index) => (
-                  <div
-                    className="col-lg-4 col-md-6 col-12"
-                    key={`course-published-${index}`}
-                  >
-                    <CourseWidgets
-                      data={slide}
-                      courseStyle="two"
-                      isEdit={true}
-                      isCompleted={false}
-                      isProgress={false}
-                      showDescription={false}
-                      showAuthor={false}
-                    />
+                {publishedCourses.length > 0 ? (
+                  publishedCourses.map((course, index) => (
+                    <div
+                      className="col-lg-4 col-md-6 col-12"
+                      key={`course-published-${index}`}
+                    >
+                      <CourseWidget
+                        data={formatCourseData(course)}
+                        courseStyle="two"
+                        isEdit={true}
+                        isCompleted={false}
+                        isProgress={false}
+                        showDescription={false}
+                        showAuthor={false}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-12">
+                    <div className="text-center py-5">
+                      <h5>No published courses yet</h5>
+                      <p className="text-muted">Your published courses will appear here once they go live.</p>
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 
@@ -94,22 +190,31 @@ const MyCourses = () => {
               aria-labelledby="pending-tab-4"
             >
               <div className="row g-5">
-                {Courses.slice(0, 3)?.map((slide, index) => (
-                  <div
-                    className="col-lg-4 col-md-6 col-12"
-                    key={`course-pending-${index}`}
-                  >
-                    <CourseWidgets
-                      data={slide}
-                      courseStyle="two"
-                      isEdit={true}
-                      isCompleted={false}
-                      isProgress={false}
-                      showDescription={false}
-                      showAuthor={false}
-                    />
+                {pendingCourses.length > 0 ? (
+                  pendingCourses.map((course, index) => (
+                    <div
+                      className="col-lg-4 col-md-6 col-12"
+                      key={`course-pending-${index}`}
+                    >
+                      <CourseWidget
+                        data={formatCourseData(course)}
+                        courseStyle="two"
+                        isEdit={true}
+                        isCompleted={false}
+                        isProgress={false}
+                        showDescription={false}
+                        showAuthor={false}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-12">
+                    <div className="text-center py-5">
+                      <h5>No pending courses</h5>
+                      <p className="text-muted">Courses waiting for approval will appear here.</p>
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 
@@ -117,25 +222,45 @@ const MyCourses = () => {
               className="tab-pane fade"
               id="draft-4"
               role="tabpanel"
-              aria-labelledby="draft-tab-4"
+              aria-labelledby="draft-4"
             >
               <div className="row g-5">
-                {Courses.slice(0, 3)?.map((slide, index) => (
-                  <div
-                    className="col-lg-4 col-md-6 col-12"
-                    key={`course-draft-${index}`}
-                  >
-                    <CourseWidgets
-                      data={slide}
-                      courseStyle="two"
-                      isEdit={true}
-                      isCompleted={false}
-                      isProgress={false}
-                      showDescription={false}
-                      showAuthor={false}
-                    />
+                {draftCourses.length > 0 ? (
+                  draftCourses.map((course, index) => (
+                    <div
+                      className="col-lg-4 col-md-6 col-12"
+                      key={`course-draft-${index}`}
+                    >
+                      <CourseWidget
+                        data={formatCourseData(course)}
+                        courseStyle="two"
+                        isEdit={true}
+                        isCompleted={false}
+                        isProgress={false}
+                        showDescription={false}
+                        showAuthor={false}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-12">
+                    <div className="text-center py-5">
+                      <h5>No draft courses</h5>
+                      <p className="text-muted">Create a new course to get started!</p>
+                      <Link href="/create-course" className="rbt-btn btn-gradient hover-icon-reverse">
+                        <span className="icon-reverse-wrapper">
+                          <span className="btn-text">Create Course</span>
+                          <span className="btn-icon">
+                            <i className="feather-arrow-right"></i>
+                          </span>
+                          <span className="btn-icon">
+                            <i className="feather-arrow-right"></i>
+                          </span>
+                        </span>
+                      </Link>
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
