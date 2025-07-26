@@ -6,10 +6,10 @@ export const metadata = {
   description: "Online Courses & Education NEXTJS14 Template",
 };
 
-const CreateCourseLayout = () => {
+const CreateCourseLayout = ({ searchParams }) => {
   return (
     <>
-      <CreateCoursePage />
+      <CreateCoursePage searchParams={searchParams} />
 
       <BackToTop />
     </>

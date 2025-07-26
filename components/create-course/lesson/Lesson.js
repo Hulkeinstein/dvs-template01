@@ -22,6 +22,10 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 import SingleLesson from "./SingleLesson";
+import LessonModal from "../QuizModals/LessonModal";
+import QuizModal from "../QuizModals/QuizModal";
+import AssignmentModal from "../QuizModals/AssignmentModal";
+import UpdateModal from "../QuizModals/UpdateModal";
 
 const Lesson = ({
   handleFileChange,
@@ -33,10 +37,25 @@ const Lesson = ({
   start,
   end,
   id,
+  topicData,
+  onDeleteTopic,
+  onUpdateTopic,
+  onAddLesson,
+  onAddQuiz,
+  onAddAssignment,
+  onDeleteLesson,
+  onEditLesson,
+  onUploadLesson,
 }) => {
-  const [courseList, setCourseList] = useState(CourseData.courseDetails);
+  const [courseList, setCourseList] = useState(topicData?.lessons || []);
   const [hydrated, setHydrated] = useState(false);
-  const [toggle, setToggle] = useState(false);
+  const [toggle, setToggle] = useState(expanded || false);
+  const [editingLesson, setEditingLesson] = useState(null);
+  
+  // Update courseList when topicData changes
+  useEffect(() => {
+    setCourseList(topicData?.lessons || []);
+  }, [topicData]);
 
   useEffect(() => {
     setHydrated(true);
@@ -75,7 +94,7 @@ const Lesson = ({
           onClick={() => setToggle(!toggle)}
         >
           <button
-            className="accordion-button"
+            className={`accordion-button ${!toggle ? 'collapsed' : ''}`}
             type="button"
             data-bs-toggle="collapse"
             data-bs-target={`#${target}`}
@@ -87,9 +106,13 @@ const Lesson = ({
           <span
             className="rbt-course-icon rbt-course-edit"
             data-bs-toggle="modal"
-            data-bs-target="#UpdateTopic"
+            data-bs-target={`#UpdateTopic${id}`}
           ></span>
-          <span className="rbt-course-icon rbt-course-del"></span>
+          <span 
+            className="rbt-course-icon rbt-course-del"
+            onClick={onDeleteTopic}
+            style={{ cursor: 'pointer' }}
+          ></span>
         </h2>
         <div
           id={target}
@@ -98,21 +121,62 @@ const Lesson = ({
           data-bs-parent="#tutionaccordionExamplea12"
         >
           <div className="accordion-body card-body">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis]}
-            >
-              <SortableContext
-                items={courseList}
-                strategy={verticalListSortingStrategy}
+            {topicData?.summary && (
+              <div className="mb-3">
+                <p className="text-muted">{topicData.summary}</p>
+                <hr />
+              </div>
+            )}
+            
+            {courseList.length === 0 ? (
+              <div className="text-center py-3 mb-3">
+                <p className="text-muted">
+                  <i className="feather-info"></i> No lessons added yet. Click the "Lesson" button below to add your first lesson.
+                </p>
+              </div>
+            ) : (
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                modifiers={[restrictToVerticalAxis]}
               >
-                {courseList.slice(start, end).map((course) => (
-                  <SingleLesson key={course.id} course={course} />
-                ))}
-              </SortableContext>
-            </DndContext>
+                <SortableContext
+                  items={courseList}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {courseList.map((course) => (
+                    <SingleLesson 
+                      key={course.id} 
+                      course={course}
+                      topicId={id}
+                      onDelete={(lessonId) => {
+                        if (onDeleteLesson) {
+                          onDeleteLesson(id, lessonId);
+                        } else {
+                          // 로컬 삭제
+                          setCourseList(courseList.filter(c => c.id !== lessonId));
+                        }
+                      }}
+                      onEdit={(lesson) => {
+                        setEditingLesson(lesson);
+                        if (onEditLesson) {
+                          onEditLesson(id, lesson);
+                        }
+                      }}
+                      onUpload={(lessonId) => {
+                        if (onUploadLesson) {
+                          onUploadLesson(id, lessonId);
+                        } else {
+                          console.log('레슨 업로드:', lessonId);
+                          // 업로드 기능 구현
+                        }
+                      }}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            )}
 
             <div className="d-flex flex-wrap justify-content-between align-items-center">
               <div className="gap-3 d-flex flex-wrap">
@@ -120,7 +184,7 @@ const Lesson = ({
                   className="rbt-btn btn-border hover-icon-reverse rbt-sm-btn"
                   type="button"
                   data-bs-toggle="modal"
-                  data-bs-target="#Lesson"
+                  data-bs-target={`#LessonModal${id}`}
                 >
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">Lesson</span>
@@ -136,7 +200,7 @@ const Lesson = ({
                   className="rbt-btn btn-border hover-icon-reverse rbt-sm-btn"
                   type="button"
                   data-bs-toggle="modal"
-                  data-bs-target="#Quiz"
+                  data-bs-target={`#QuizModal${id}`}
                 >
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">Quiz</span>
@@ -152,7 +216,7 @@ const Lesson = ({
                   className="rbt-btn btn-border hover-icon-reverse rbt-sm-btn"
                   type="button"
                   data-bs-toggle="modal"
-                  data-bs-target="#Assignment"
+                  data-bs-target={`#AssignmentModal${id}`}
                 >
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">Assignments </span>
@@ -191,6 +255,33 @@ const Lesson = ({
           </div>
         </div>
       </div>
+      
+      {/* Lesson Modal for this topic */}
+      <LessonModal 
+        modalId={`LessonModal${id}`}
+        onAddLesson={onAddLesson}
+        editingLesson={editingLesson}
+        onEditComplete={() => setEditingLesson(null)}
+      />
+      
+      {/* Quiz Modal for this topic */}
+      <QuizModal 
+        modalId={`QuizModal${id}`}
+        onAddQuiz={onAddQuiz}
+      />
+      
+      {/* Assignment Modal for this topic */}
+      <AssignmentModal 
+        modalId={`AssignmentModal${id}`}
+        onAddAssignment={onAddAssignment}
+      />
+      
+      {/* Update Modal for this topic */}
+      <UpdateModal 
+        modalId={`UpdateTopic${id}`}
+        topicData={topicData}
+        onUpdateTopic={onUpdateTopic}
+      />
     </>
   );
 };

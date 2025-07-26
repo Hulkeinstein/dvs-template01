@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
 import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
-import { createCourse, updateCourse } from "@/app/lib/actions/courseActions";
+import { createCourse, updateCourse, getCourseById } from "@/app/lib/actions/courseActions";
 import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
 
 // import CourseData from "../../data/course-details/courseData.json";
@@ -26,7 +26,8 @@ import AssignmentModal from "./QuizModals/AssignmentModal";
 import UpdateModal from "./QuizModals/UpdateModal";
 import Lesson from "./lesson/Lesson";
 
-const CreateCourse = ({ userProfile }) => {
+const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
+  console.log('CreateCourse component rendered:', { editMode, courseId });
   const { data: session } = useSession();
   const router = useRouter();
   const fileInputRef = useRef(null);
@@ -40,6 +41,7 @@ const CreateCourse = ({ userProfile }) => {
   const [error, setError] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailBase64, setThumbnailBase64] = useState(null);
+  const [loading, setLoading] = useState(false);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -69,8 +71,77 @@ const CreateCourse = ({ userProfile }) => {
     certificateEnabled: false,
     certificateTitle: '',
     passingGrade: 70,
-    lifetimeAccess: true
+    lifetimeAccess: true,
+    
+    // Course content
+    topics: []
   });
+
+  // Load course data in edit mode
+  useEffect(() => {
+    console.log('useEffect triggered:', { editMode, courseId });
+    if (editMode && courseId) {
+      loadCourseData();
+    }
+  }, [editMode, courseId]);
+
+  const loadCourseData = async () => {
+    try {
+      console.log('Loading course with ID:', courseId);
+      setLoading(true);
+      const result = await getCourseById(courseId);
+      console.log('getCourseById result:', result);
+      
+      if (result.course) {
+        const course = result.course;
+        console.log('Course data loaded:', {
+          id: course.id,
+          title: course.title,
+          thumbnail_url: course.thumbnail_url,
+          hasThumbnail: !!course.thumbnail_url
+        });
+        console.log('Full thumbnail URL:', course.thumbnail_url);
+        
+        // Map database fields to form fields
+        setFormData({
+          title: course.title || '',
+          shortDescription: course.description || '',
+          description: course.about_course || '',
+          category: course.category || '',
+          level: course.difficulty_level || 'all_levels',
+          maxStudents: course.max_students || 0,
+          introVideoUrl: course.intro_video_url || '',
+          price: course.regular_price || 0,
+          discountPrice: course.discounted_price || null,
+          startDate: course.start_date || '',
+          endDate: course.end_date || '',
+          enrollmentDeadline: course.enrollment_deadline || '',
+          language: course.language || 'English',
+          duration: course.total_duration_hours || 0,
+          certificateEnabled: course.course_settings?.[0]?.certificate_enabled || false,
+          certificateTitle: course.course_settings?.[0]?.certificate_title || '',
+          passingGrade: course.course_settings?.[0]?.passing_grade || 70,
+          lifetimeAccess: course.course_settings?.[0]?.allow_lifetime_access !== false,
+          thumbnailPreview: course.thumbnail_url || null, // 썸네일 미리보기 추가
+          slug: course.slug || '', // slug 추가
+          topics: [] // TODO: Load topics and lessons
+        });
+        
+        if (course.thumbnail_url) {
+          // 편집 모드에서는 기존 썸네일 URL을 base64로 설정
+          // 새로운 썸네일을 업로드하지 않으면 이 URL이 그대로 사용됨
+          setThumbnailBase64(course.thumbnail_url);
+        }
+      } else {
+        setError('Course not found');
+      }
+    } catch (error) {
+      console.error('Error loading course:', error);
+      setError('Failed to load course data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const previewImages = CreateCourseData.createCourse[0].landscape.filter(
     (item) => item.type === "preview"
@@ -118,26 +189,58 @@ const CreateCourse = ({ userProfile }) => {
     setError(null);
     
     try {
-      // Create course first
-      const result = await createCourse(formData);
+      // Handle thumbnail
+      let thumbnailUrl = null;
       
-      if (result.success) {
-        // Upload thumbnail if provided
-        if (thumbnailBase64 && thumbnailFile) {
-          const uploadResult = await uploadCourseThumbnail(thumbnailBase64, thumbnailFile.name);
-          if (uploadResult.success) {
-            // Update course with thumbnail URL
-            const updateResult = await updateCourse(result.courseId, { thumbnail_url: uploadResult.url });
-            if (!updateResult.success) {
-              console.error('Failed to update course with thumbnail:', updateResult.error);
-            }
-          } else {
-            console.error('Failed to upload thumbnail:', uploadResult.error);
+      // Case 1: Keep existing thumbnail (edit mode, no new file selected)
+      if (!thumbnailFile && formData.thumbnailPreview) {
+        thumbnailUrl = formData.thumbnailPreview;
+        console.log('Keeping existing thumbnail:', thumbnailUrl);
+      }
+      // Case 2: Upload new thumbnail
+      else if (thumbnailBase64 && thumbnailFile) {
+        console.log('Uploading new thumbnail:', { 
+          hasBase64: !!thumbnailBase64, 
+          fileName: thumbnailFile.name,
+          base64Length: thumbnailBase64?.length 
+        });
+        
+        const uploadResult = await uploadCourseThumbnail(thumbnailBase64, thumbnailFile.name);
+        console.log('Thumbnail upload result:', uploadResult);
+        
+        if (uploadResult.success) {
+          thumbnailUrl = uploadResult.url;
+          console.log('New thumbnail uploaded successfully:', thumbnailUrl);
+        } else {
+          console.error('Failed to upload thumbnail:', uploadResult.error);
+          // If we have an existing thumbnail, keep it
+          if (formData.thumbnailPreview) {
+            thumbnailUrl = formData.thumbnailPreview;
+            console.log('Upload failed, keeping existing thumbnail');
           }
         }
-        
+      }
+      
+      console.log('Final thumbnail URL:', thumbnailUrl);
+      
+      // Include thumbnail URL in formData
+      const courseData = {
+        ...formData,
+        thumbnail_url: thumbnailUrl
+      };
+      
+      let result;
+      if (editMode && courseId) {
+        // Update existing course
+        result = await updateCourse(courseId, courseData);
+      } else {
+        // Create new course
+        result = await createCourse(courseData);
+      }
+      
+      if (result.success) {
         // Success - redirect to instructor courses page
-        router.push('/instructor/dashboard');
+        router.push('/instructor-personal-courses');
       } else {
         setError(result.error || 'Failed to create course');
       }
@@ -154,10 +257,131 @@ const CreateCourse = ({ userProfile }) => {
   };
   
   const handleThumbnailChange = (data) => {
+    console.log('handleThumbnailChange called:', {
+      hasData: !!data,
+      hasFile: !!data?.file,
+      hasBase64: !!data?.base64,
+      fileName: data?.file?.name
+    });
+    
     if (data && data.file && data.base64) {
       setThumbnailFile(data.file);
       setThumbnailBase64(data.base64);
+      console.log('Thumbnail state updated');
     }
+  };
+  
+  const handleAddTopic = (topicData) => {
+    const newTopic = {
+      id: Date.now(), // Simple ID generation
+      name: topicData.name,
+      summary: topicData.summary,
+      lessons: [],
+      quizzes: [],
+      assignments: []
+    };
+    
+    setFormData({
+      ...formData,
+      topics: [...formData.topics, newTopic]
+    });
+  };
+  
+  const handleDeleteTopic = (topicId) => {
+    setFormData({
+      ...formData,
+      topics: formData.topics.filter(topic => topic.id !== topicId)
+    });
+  };
+  
+  const handleUpdateTopic = (topicId, updatedData) => {
+    setFormData({
+      ...formData,
+      topics: formData.topics.map(topic =>
+        topic.id === topicId ? { ...topic, ...updatedData } : topic
+      )
+    });
+  };
+  
+  const handleAddLesson = (topicId, lessonData) => {
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      topics: prevFormData.topics.map(topic => {
+        if (topic.id === topicId) {
+          // 편집 모드인지 확인 (lessonData에 id가 있으면 편집)
+          if (lessonData.id) {
+            return {
+              ...topic,
+              lessons: topic.lessons.map(lesson =>
+                lesson.id === lessonData.id ? lessonData : lesson
+              )
+            };
+          } else {
+            // 새 레슨 추가
+            const newLesson = {
+              id: Date.now(),
+              ...lessonData
+            };
+            return { ...topic, lessons: [...topic.lessons, newLesson] };
+          }
+        }
+        return topic;
+      })
+    }));
+  };
+  
+  const handleAddQuiz = (topicId, quizData) => {
+    const newQuiz = {
+      id: Date.now(),
+      ...quizData
+    };
+    
+    setFormData({
+      ...formData,
+      topics: formData.topics.map(topic =>
+        topic.id === topicId 
+          ? { ...topic, quizzes: [...topic.quizzes, newQuiz] }
+          : topic
+      )
+    });
+  };
+  
+  const handleAddAssignment = (topicId, assignmentData) => {
+    const newAssignment = {
+      id: Date.now(),
+      ...assignmentData
+    };
+    
+    setFormData({
+      ...formData,
+      topics: formData.topics.map(topic =>
+        topic.id === topicId 
+          ? { ...topic, assignments: [...topic.assignments, newAssignment] }
+          : topic
+      )
+    });
+  };
+  
+  const handleDeleteLesson = (topicId, lessonId) => {
+    console.log('레슨 삭제:', topicId, lessonId);
+    setFormData({
+      ...formData,
+      topics: formData.topics.map(topic =>
+        topic.id === topicId 
+          ? { ...topic, lessons: topic.lessons.filter(lesson => lesson.id !== lessonId) }
+          : topic
+      )
+    });
+  };
+  
+  const handleEditLesson = (topicId, lesson) => {
+    console.log('레슨 편집:', topicId, lesson);
+    // 편집 모달 열기 로직 추가 필요
+  };
+  
+  const handleUploadLesson = (topicId, lessonId) => {
+    console.log('레슨 업로드:', topicId, lessonId);
+    // 업로드 기능 구현 필요
   };
   return (
     <>
@@ -268,28 +492,35 @@ const CreateCourse = ({ userProfile }) => {
                   data-bs-parent="#tutionaccordionExamplea12"
                 >
                   <div className="accordion-body card-body">
-                    <Lesson
-                      handleFileChange={handleFileChange}
-                      handleImportClick={handleImportClick}
-                      fileInputRef={fileInputRef}
-                      id="accOne1"
-                      target="accCollapseOne1"
-                      expanded={true}
-                      text="Lesson One"
-                      start={0}
-                      end={4}
-                    />
-                    <Lesson
-                      handleFileChange={handleFileChange}
-                      handleImportClick={handleImportClick}
-                      fileInputRef={fileInputRef}
-                      id="accOne2"
-                      target="accCollapseOne2"
-                      expanded={false}
-                      text="Lesson Two"
-                      start={4}
-                      end={8}
-                    />
+                    {formData.topics.length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-muted mb-3">No topics added yet. Start by adding your first topic.</p>
+                      </div>
+                    ) : (
+                      formData.topics.map((topic, index) => (
+                        <Lesson
+                          key={topic.id}
+                          handleFileChange={handleFileChange}
+                          handleImportClick={handleImportClick}
+                          fileInputRef={fileInputRef}
+                          id={`accOne${topic.id}`}
+                          target={`accCollapseOne${topic.id}`}
+                          expanded={false}
+                          text={topic.name}
+                          topicData={topic}
+                          onDeleteTopic={() => handleDeleteTopic(topic.id)}
+                          onUpdateTopic={(data) => handleUpdateTopic(topic.id, data)}
+                          onAddLesson={(lessonData) => handleAddLesson(topic.id, lessonData)}
+                          onAddQuiz={(quizData) => handleAddQuiz(topic.id, quizData)}
+                          onAddAssignment={(assignmentData) => handleAddAssignment(topic.id, assignmentData)}
+                          onDeleteLesson={handleDeleteLesson}
+                          onEditLesson={handleEditLesson}
+                          onUploadLesson={handleUploadLesson}
+                          start={0}
+                          end={4}
+                        />
+                      ))
+                    )}
 
                     <button
                       className="rbt-btn btn-md btn-gradient hover-icon-reverse"
@@ -498,6 +729,18 @@ const CreateCourse = ({ userProfile }) => {
               </div>
             </div>
           </div>
+          
+          {loading && (
+            <div className="text-center py-5">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <p className="mt-3">Loading course data...</p>
+            </div>
+          )}
+          
+          {!loading && (
+          <>
           <div className="mt--10 row g-5">
             <div className="col-lg-4">
               <Link
@@ -523,7 +766,7 @@ const CreateCourse = ({ userProfile }) => {
               >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">
-                    {isSubmitting ? 'Creating Course...' : 'Create Course'}
+                    {isSubmitting ? (editMode ? 'Updating Course...' : 'Creating Course...') : (editMode ? 'Update Course' : 'Create Course')}
                   </span>
                   <span className="btn-icon">
                     <i className={isSubmitting ? "feather-loader" : "feather-arrow-right"}></i>
@@ -542,6 +785,8 @@ const CreateCourse = ({ userProfile }) => {
               <i className="feather-alert-circle me-2"></i>
               {error}
             </div>
+          )}
+          </>
           )}
         </div>
 
@@ -588,7 +833,7 @@ const CreateCourse = ({ userProfile }) => {
           </div>
         </div>
       </div>
-      <TopicModal />
+      <TopicModal onAddTopic={handleAddTopic} />
       <UpdateModal />
       <LessonModal />
       <QuizModal />

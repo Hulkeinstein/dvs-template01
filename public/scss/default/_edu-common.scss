@@ -43,9 +43,9 @@
 -------------------------*/
 
 .rbt-round-btn {
-    width: 40px;
-    height: 40px;
-    line-height: 41px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
     text-align: center;
     border-radius: 100%;
     position: relative;
@@ -56,9 +56,9 @@
     display: block;
 
     @media #{$sm-layout} {
-        width: 30px;
-        height: 30px;
-        line-height: 30px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
     }
 
     i {
@@ -105,6 +105,16 @@
 
     &:hover {
         transform: scale(1.02);
+    }
+}
+
+.rbt-btn-link-hover {
+    &:hover {
+        color: var(--color-primary) !important;
+        
+        i {
+            color: var(--color-primary) !important;
+        }
     }
 }
 

@@ -13,6 +13,16 @@ const nextConfig = {
         hostname: '*.googleusercontent.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'datvqaemqzhgitxxfvar.supabase.co',
+        pathname: '/**',
+      },
     ],
   },
 };

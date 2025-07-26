@@ -13,6 +13,27 @@ export async function createCourse(formData) {
     if (!session?.user?.email) {
       return { error: 'You must be logged in to create a course' }
     }
+    
+    // 테이블 스키마 디버깅
+    try {
+      // 빈 쿼리로 테이블 구조 확인
+      const { data: sampleData, error: sampleError } = await supabase
+        .from('courses')
+        .select('*')
+        .limit(1)
+      
+      if (sampleData && sampleData.length >= 0) {
+        const columns = sampleData.length > 0 ? Object.keys(sampleData[0]) : [];
+        console.log('Courses table actual columns:', columns);
+      }
+      
+      // 에러 정보에서도 힌트를 얻을 수 있음
+      if (sampleError) {
+        console.log('Sample query error:', sampleError);
+      }
+    } catch (debugError) {
+      console.log('Debug error:', debugError);
+    }
 
     // Get user ID from Supabase
     const { data: userData, error: userError } = await supabase
@@ -29,24 +50,62 @@ export async function createCourse(formData) {
       return { error: 'Only instructors can create courses' }
     }
 
-    // Create course
+    // slug 생성 (title에서 자동 생성)
+    const createSlug = (title) => {
+      return title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .substring(0, 100) + '-' + Date.now();
+    };
+
+    // Create course - 필수 필드 포함
     const courseData = {
       instructor_id: userData.id,
       title: formData.title,
-      short_description: formData.shortDescription,
-      description: formData.description,
-      price: parseFloat(formData.price) || 0,
-      discount_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
-      duration_hours: formData.duration ? parseInt(formData.duration) : null,
-      language: formData.language,
-      level: formData.level,
-      status: 'draft'
+      slug: createSlug(formData.title),
+      status: 'draft',
+      is_free: formData.price === 0,
+      regular_price: parseFloat(formData.price) || 0,
+      difficulty_level: formData.level || 'All Levels',
+      language: formData.language || 'English',
+      total_duration_hours: 0,
+      total_duration_minutes: 0,
+      is_public: false,
+      enable_qa: false
+    };
+    
+    // 선택적 필드들을 조건부로 추가
+    if (formData.shortDescription) {
+      // courses 테이블에는 short_description이 없으므로 description에 저장
+      courseData.description = formData.shortDescription;
     }
     
-    // Add category only if it's provided (temporary workaround)
-    if (formData.category) {
-      courseData.category = formData.category
+    if (formData.description) {
+      courseData.about_course = formData.description;
     }
+    
+    if (formData.discountPrice) {
+      courseData.discounted_price = parseFloat(formData.discountPrice);
+    }
+    
+    if (formData.duration) {
+      courseData.total_duration_hours = parseInt(formData.duration);
+    }
+    
+    if (formData.category) {
+      courseData.category = formData.category;
+    }
+    
+    // Add thumbnail_url if provided
+    if (formData.thumbnail_url) {
+      courseData.thumbnail_url = formData.thumbnail_url;
+    }
+    
+    console.log('Course data to insert:', {
+      ...courseData,
+      thumbnail_url: courseData.thumbnail_url ? `[URL: ${courseData.thumbnail_url.substring(0, 50)}...]` : 'none'
+    });
 
     const { data: course, error: courseError } = await supabase
       .from('courses')
@@ -85,6 +144,56 @@ export async function createCourse(formData) {
     if (settingsError) {
       console.error('Settings creation error:', settingsError)
       // Don't fail the whole operation if settings fail
+    }
+
+    // Create topics and lessons
+    if (formData.topics && formData.topics.length > 0) {
+      for (let topicIndex = 0; topicIndex < formData.topics.length; topicIndex++) {
+        const topic = formData.topics[topicIndex];
+        
+        // Create topic
+        const { data: topicData, error: topicError } = await supabase
+          .from('course_topics')
+          .insert({
+            course_id: course.id,
+            title: topic.name,
+            description: topic.summary,
+            sort_order: topicIndex + 1
+          })
+          .select()
+          .single()
+        
+        if (topicError) {
+          console.error('Topic creation error:', topicError)
+          continue;
+        }
+        
+        // Create lessons for this topic
+        if (topic.lessons && topic.lessons.length > 0) {
+          for (let lessonIndex = 0; lessonIndex < topic.lessons.length; lessonIndex++) {
+            const lesson = topic.lessons[lessonIndex];
+            
+            const { error: lessonError } = await supabase
+              .from('lessons')
+              .insert({
+                course_id: course.id,
+                topic_id: topicData.id,
+                title: lesson.title,
+                description: lesson.description,
+                video_url: lesson.videoUrl,
+                video_source: lesson.videoSource || 'youtube',
+                duration_minutes: Math.floor(lesson.duration / 60) || 0,
+                sort_order: lessonIndex + 1,
+                is_preview: lesson.enablePreview || false,
+                content_type: 'video'
+              })
+            
+            if (lessonError) {
+              console.error('Lesson creation error:', lessonError)
+            }
+          }
+        }
+      }
     }
 
     revalidatePath('/instructor/courses')
@@ -128,23 +237,44 @@ export async function updateCourse(courseId, formData) {
       return { error: 'You do not have permission to update this course' }
     }
 
-    // Update course
+    // Update course - 실제 테이블 컬럼에 맞게 매핑
     const courseData = {
       title: formData.title,
-      short_description: formData.shortDescription,
-      description: formData.description,
-      price: parseFloat(formData.price) || 0,
-      discount_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
-      duration_hours: formData.duration ? parseInt(formData.duration) : null,
+      description: formData.shortDescription,  // shortDescription을 description 컬럼에 저장
+      about_course: formData.description,      // description을 about_course 컬럼에 저장
+      regular_price: parseFloat(formData.price) || 0,
+      discounted_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
+      total_duration_hours: formData.duration ? parseInt(formData.duration) : 0,
       language: formData.language,
-      level: formData.level
+      difficulty_level: formData.level || 'All Levels',
+      max_students: formData.maxStudents || 0,
+      intro_video_url: formData.introVideoUrl || null,
+      is_free: formData.price === 0
+    }
+    
+    // Add slug if provided
+    if (formData.slug) {
+      courseData.slug = formData.slug
     }
     
     // Add category only if it's provided (temporary workaround)
     if (formData.category) {
       courseData.category = formData.category
     }
+    
+    // Add thumbnail_url if provided (null means remove, undefined means don't change)
+    if (formData.thumbnail_url !== undefined) {
+      courseData.thumbnail_url = formData.thumbnail_url
+      console.log('Setting thumbnail_url:', formData.thumbnail_url ? 'URL provided' : 'null (removing)')
+    } else {
+      console.log('Thumbnail_url not provided, keeping existing')
+    }
 
+    console.log('Updating course with data:', {
+      ...courseData,
+      thumbnail_url: courseData.thumbnail_url ? `[URL: ${courseData.thumbnail_url.substring(0, 50)}...]` : 'none'
+    });
+    
     const { error: updateError } = await supabase
       .from('courses')
       .update(courseData)
@@ -412,27 +542,31 @@ export async function getInstructorCourses() {
 // Get single course details
 export async function getCourseById(courseId) {
   try {
+    console.log('getCourseById called with ID:', courseId);
+    
     const { data: course, error } = await supabase
       .from('courses')
       .select(`
         *,
         course_settings (*),
-        lessons (*),
-        user:instructor_id (
-          name,
-          email,
-          avatar_url
-        )
+        lessons (*)
       `)
       .eq('id', courseId)
-      .order('lessons.order_index', { ascending: true })
       .single()
 
     if (error) {
-      console.error('Fetch course error:', error)
-      return { error: 'Failed to fetch course' }
+      console.error('Fetch course error - Full details:', {
+        error: error,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+        courseId: courseId
+      })
+      return { error: `Failed to fetch course: ${error.message || 'Unknown error'}` }
     }
 
+    console.log('Course found:', course?.id, course?.title);
     return { course }
   } catch (error) {
     console.error('Unexpected error:', error)

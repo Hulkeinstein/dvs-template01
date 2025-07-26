@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fileToBase64, validateFileSize, validateFileType } from '@/app/lib/utils/fileUpload';
@@ -8,9 +8,18 @@ import { fileToBase64, validateFileSize, validateFileType } from '@/app/lib/util
 import img from "../../public/images/others/thumbnail-placeholder.svg";
 
 const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
+  console.log('InfoForm rendered with thumbnailPreview:', formData.thumbnailPreview);
   const [thumbnailPreview, setThumbnailPreview] = useState(formData.thumbnailPreview || null);
   const [fileError, setFileError] = useState('');
   const fileInputRef = useRef(null);
+
+  // formData.thumbnailPreview가 변경될 때 로컬 상태 업데이트
+  useEffect(() => {
+    console.log('useEffect - thumbnailPreview changed:', formData.thumbnailPreview);
+    if (formData.thumbnailPreview) {
+      setThumbnailPreview(formData.thumbnailPreview);
+    }
+  }, [formData.thumbnailPreview]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

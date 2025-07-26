@@ -14,10 +14,11 @@ import Separator from "@/components/Common/Separator";
 import FooterTwo from "@/components/Footer/Footer-Two";
 import CreateCourse from "@/components/create-course/CreateCourse";
 
-const CreateCoursePage = () => {
+const CreateCoursePage = ({ searchParams }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [userProfile, setUserProfile] = useState(null);
+  const editCourseId = searchParams?.edit || null;
 
   useEffect(() => {
     // Redirect if not authenticated or not an instructor
@@ -64,7 +65,7 @@ const CreateCoursePage = () => {
                   </div>
                 </div>
               ) : session && userProfile ? (
-                <CreateCourse userProfile={userProfile} />
+                <CreateCourse userProfile={userProfile} editMode={!!editCourseId} courseId={editCourseId} />
               ) : null}
             </div>
           </div>

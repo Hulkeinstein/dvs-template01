@@ -1,6 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 
-const TopicModal = () => {
+const TopicModal = ({ onAddTopic }) => {
+  const [topicData, setTopicData] = useState({
+    name: '',
+    summary: ''
+  });
+
+  const handleSubmit = () => {
+    if (topicData.name.trim()) {
+      onAddTopic(topicData);
+      // Reset form
+      setTopicData({ name: '', summary: '' });
+      // Close modal using Bootstrap's modal API
+      const modal = document.getElementById('topicModal');
+      const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+      if (modalInstance) {
+        modalInstance.hide();
+      }
+    }
+  };
+
   return (
     <>
       <div
@@ -31,7 +50,12 @@ const TopicModal = () => {
                     </h5>
                     <div className="course-field mb--20">
                       <label htmlFor="topicModalName">Topic Name</label>
-                      <input id="topicModalName" type="text" />
+                      <input 
+                        id="topicModalName" 
+                        type="text"
+                        value={topicData.name}
+                        onChange={(e) => setTopicData({ ...topicData, name: e.target.value })}
+                      />
                       <small>
                         <i className="feather-info"></i> Topic titles are
                         displayed publicly wherever required. Each topic may
@@ -40,7 +64,11 @@ const TopicModal = () => {
                     </div>
                     <div className="course-field mb--20">
                       <label htmlFor="topicModalSummary">Topic Summary</label>
-                      <textarea id="topicModalSummary"></textarea>
+                      <textarea 
+                        id="topicModalSummary"
+                        value={topicData.summary}
+                        onChange={(e) => setTopicData({ ...topicData, summary: e.target.value })}
+                      ></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short
                         text to prepare students for the activities for the
@@ -60,6 +88,14 @@ const TopicModal = () => {
                 data-bs-dismiss="modal"
               >
                 Cancel
+              </button>
+              <button
+                type="button"
+                className="rbt-btn btn-gradient btn-md"
+                onClick={handleSubmit}
+                data-bs-dismiss="modal"
+              >
+                Add Topic
               </button>
             </div>
           </div>

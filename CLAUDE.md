@@ -2,6 +2,18 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Language Preference
+- 사용자는 한국인이므로 모든 대화는 한국어로 진행하세요
+- 기술 용어나 코드 관련 용어는 영어를 그대로 사용해도 됩니다
+- 설명과 응답은 한국어로 작성하세요
+
+## UI Development Rules
+- **템플릿 UI를 반드시 유지하고 사용하세요** - 기존 UI 컴포넌트와 스타일을 그대로 활용
+- **모든 기능을 완전히 구현하세요** - UI에 있는 모든 버튼, 입력 필드, 기능을 작동하도록 구현
+- **절대 UI 요소를 삭제하지 마세요** - 사용자의 명시적 지시 없이는 어떤 UI 요소도 제거 금지
+- **기존 템플릿의 디자인 패턴을 따르세요** - 새로운 기능 추가 시에도 템플릿의 스타일 가이드 준수
+- **하드코딩된 데이터는 동적으로 변경하되, UI 구조는 유지하세요**
+
 ## Important Notes
 - The development server is already running on port 3000. DO NOT start a new dev server.
 - If you need to restart the server, ask the user first.
@@ -231,6 +243,16 @@ const blob = base64ToBlob(base64Data)
 - `/components/Instructor/Eenrolled-Course.js`
 - `/components/Instructor/Wishlist.js`
 
+### 5. Role-based UI Enhancement (2025-01-26)
+**Feature**: CourseWidget에 역할별 UI 차별화
+**Implementation**:
+- `userRole` prop 추가 (student/instructor)
+- 학생: 북마크 버튼 + Hot 배지 표시
+- 교사: Hot 배지만 표시
+**Files**:
+- `/components/Instructor/Dashboard-Section/widgets/CourseWidget.js`
+- `/components/Instructor/MyCourses.js`
+
 ## Testing Guide
 
 ### Manual Testing Checklist
@@ -271,3 +293,167 @@ const blob = base64ToBlob(base64Data)
 - Verify course ID is passed correctly
 - Check route exists: `/instructor/courses/[id]/edit`
 - Verify user owns the course
+
+## Development Roadmap (2025-01-26)
+
+### Phase 1: Core Platform Completion (Week 1-2) - CURRENT PRIORITY
+**목표**: 학생과 교사가 실제로 사용할 수 있는 핵심 기능 완성
+
+#### Week 1: Student Core Features
+- **Day 1-2**: Course Enrollment Process
+  - [ ] Course detail page for students (`/courses/[id]`)
+  - [ ] **Bookmark functionality (add/remove)**
+  - [ ] Enrollment/Purchase flow
+  - [ ] Payment integration (Stripe/Local payment)
+  
+- **Day 3-4**: Learning System
+  - [ ] Lesson viewer page (`/lesson/[id]`)
+  - [ ] Video player with progress tracking
+  - [ ] Lesson completion logic
+  
+- **Day 5**: Student Dashboard Completion
+  - [ ] Display enrolled courses (real data)
+  - [ ] **Display bookmarked courses section**
+  - [ ] Progress tracking UI
+  - [ ] Next lesson recommendations
+
+#### Week 2: Supporting Features
+- **Day 1-2**: Review & Rating System
+  - [ ] Review submission form
+  - [ ] Rating display on courses
+  - [ ] Instructor review management
+  
+- **Day 3**: Search & Discovery
+  - [ ] Course search functionality
+  - [ ] Category/Level filters
+  - [ ] Featured courses section
+  
+- **Day 4-5**: Testing & Bug Fixes
+  - [ ] Full user journey testing
+  - [ ] Payment flow verification
+  - [ ] Performance optimization
+
+### Phase 2: Admin System Integration (Week 3)
+**목표**: PreSkool 템플릿을 활용한 관리자 대시보드 구축
+
+- **Day 1**: PreSkool Setup
+  - [ ] Install PreSkool React TS version
+  - [ ] Configure subdomain (admin.domain.com)
+  
+- **Day 2-3**: Authentication Integration
+  - [ ] Implement SSO between main app and PreSkool
+  - [ ] Admin role verification
+  
+- **Day 4-5**: Data Integration
+  - [ ] API endpoints for PreSkool
+  - [ ] **Badge management system (Hot/New/Featured)**
+  - [ ] **Database fields for badge states**
+  - [ ] Data synchronization
+  
+- **Day 6-7**: Testing & Deployment
+  - [ ] Integration testing
+  - [ ] Production deployment
+
+### Phase 3: Enhancement & Optimization (Week 4+)
+- Mobile app consideration
+- Advanced analytics
+- AI-powered recommendations
+- Multi-language support
+
+## Priority Matrix
+
+### P0 - Critical (Must have for launch)
+- [ ] Student course enrollment
+- [ ] Payment processing
+- [ ] Lesson viewing
+- [ ] Progress tracking
+- [ ] Basic admin dashboard
+
+### P1 - Important (Should have)
+- [ ] Review system
+- [ ] Course search
+- [ ] Email notifications
+- [ ] Certificate generation
+- [ ] Advanced analytics
+
+### P2 - Nice to have
+- [ ] Social features
+- [ ] Mobile app
+- [ ] AI recommendations
+- [ ] Gamification
+- [ ] Multi-language
+
+## Technical Decisions
+
+### Admin Dashboard Strategy
+**Decision**: Use PreSkool template as separate admin system
+**Rationale**: 
+- Faster implementation (1 week vs 4-6 weeks)
+- Professional UI/UX out of the box
+- Cost-effective ($59 one-time)
+- Focus on core platform first
+
+### Integration Approach
+- Subdomain deployment (admin.domain.com)
+- Shared Supabase database
+- JWT-based SSO
+- API-based data sync
+
+## Overall Project Status (2025-01-26)
+
+### Completed ✅
+- Instructor dashboard (90%)
+- Course creation/editing
+- Lesson management
+- Basic authentication
+- Database schema
+
+### In Progress 🚧
+- Student enrollment system
+- Payment integration
+- Learning experience
+
+### Not Started ❌
+- Admin dashboard
+- Review system
+- Mobile app
+- Advanced analytics
+
+### Estimated Completion
+- **Core Platform**: 2 weeks
+- **Admin System**: 1 week
+- **Full MVP**: 3-4 weeks
+
+## Planned Features
+
+### Badge System (Week 3)
+**Database Changes**:
+```sql
+ALTER TABLE courses 
+ADD COLUMN is_hot BOOLEAN DEFAULT false,
+ADD COLUMN is_new BOOLEAN DEFAULT false,
+ADD COLUMN is_featured BOOLEAN DEFAULT false,
+ADD COLUMN badge_text VARCHAR(50);
+```
+
+**Admin Features**:
+- Toggle badges on course list
+- Bulk badge operations
+- Auto-badge rules (e.g., new courses < 7 days)
+
+### Bookmark System (Week 1)
+**Database Changes**:
+```sql
+CREATE TABLE bookmarks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES user(id) ON DELETE CASCADE,
+  course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, course_id)
+);
+```
+
+**Features**:
+- Add/Remove bookmark API
+- My Bookmarks section in student dashboard
+- Bookmark count on courses

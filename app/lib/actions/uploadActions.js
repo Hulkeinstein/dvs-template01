@@ -62,23 +62,47 @@ export async function uploadCourseThumbnail(base64Data, fileName) {
     const uniqueFileName = `${Date.now()}-${sanitizedFileName}`
     const filePath = `course-thumbnails/${uniqueFileName}`
 
-    // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('course-images')
+    // List available buckets for debugging
+    console.log('Uploading file:', {
+      fileName: uniqueFileName,
+      filePath: filePath,
+      blobSize: blob.size,
+      fileType: fileType
+    });
+    
+    // Upload to Supabase Storage - try 'courses' bucket first
+    let bucketName = 'courses';
+    let uploadData, uploadError;
+    
+    ({ data: uploadData, error: uploadError } = await supabase.storage
+      .from(bucketName)
       .upload(filePath, blob, {
         cacheControl: '3600',
         upsert: false,
         contentType: fileType
-      })
+      }));
+    
+    // If failed, try 'course-images' bucket
+    if (uploadError && uploadError.message?.includes('bucket')) {
+      console.log('Trying alternative bucket: course-images');
+      bucketName = 'course-images';
+      ({ data: uploadData, error: uploadError } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, blob, {
+          cacheControl: '3600',
+          upsert: false,
+          contentType: fileType
+        }));
+    }
 
     if (uploadError) {
       console.error('Upload error:', uploadError)
-      return { success: false, error: 'Failed to upload file' }
+      return { success: false, error: `Failed to upload file: ${uploadError.message}` }
     }
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('course-images')
+      .from(bucketName)
       .getPublicUrl(filePath)
 
     return { success: true, url: publicUrl }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { updateCourseStatus } from "@/app/lib/actions/courseActions";
 
 const CourseWidget = ({
   data,
@@ -12,6 +13,8 @@ const CourseWidget = ({
   isProgress,
   isCompleted,
   isEdit,
+  userRole = 'student', // 기본값은 student
+  onStatusChange, // 상태 변경 핸들러
 }) => {
   const [discountPercentage, setDiscountPercentage] = useState("");
   const [totalReviews, setTotalReviews] = useState("");
@@ -43,6 +46,110 @@ const CourseWidget = ({
     getTotalRating();
   });
 
+  const handleStatusChange = async (newStatus) => {
+    const result = await updateCourseStatus(data.id, newStatus);
+    if (result.success && onStatusChange) {
+      onStatusChange();
+    }
+  };
+
+  const renderStatusDropdown = () => {
+    const status = data.status || 'draft';
+    
+    const getStatusActions = () => {
+      switch (status) {
+        case 'draft':
+          return [
+            { 
+              action: 'pending', 
+              icon: 'feather-send', 
+              text: 'Submit',
+              className: 'text-primary'
+            }
+          ];
+        case 'pending':
+          return [
+            { 
+              action: 'draft', 
+              icon: 'feather-edit-3', 
+              text: 'Move to Draft',
+              className: 'text-warning'
+            }
+          ];
+        case 'published':
+          return [
+            { 
+              action: 'unpublished', 
+              icon: 'feather-eye-off', 
+              text: 'Unpublish Course',
+              className: 'text-danger'
+            }
+          ];
+        case 'unpublished':
+          return [
+            { 
+              action: 'published', 
+              icon: 'feather-eye', 
+              text: 'Publish Course',
+              className: 'text-success'
+            },
+            { 
+              action: 'archived', 
+              icon: 'feather-archive', 
+              text: 'Archive Course',
+              className: 'text-secondary'
+            }
+          ];
+        case 'archived':
+          return [
+            { 
+              action: 'draft', 
+              icon: 'feather-refresh-cw', 
+              text: 'Restore to Draft',
+              className: 'text-info'
+            }
+          ];
+        default:
+          return [];
+      }
+    };
+
+    const actions = getStatusActions();
+    
+    if (actions.length === 0) return null;
+    
+    return (
+      <div className="dropdown">
+        <button 
+          className="btn btn-link p-0 text-muted text-decoration-none rbt-btn-link-hover" 
+          type="button"
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+          title="Course actions"
+        >
+          <i className="feather-more-vertical fs-1"></i>
+        </button>
+        <ul className="dropdown-menu dropdown-menu-end">
+          {actions.map((action, index) => (
+            <li key={index}>
+              <a 
+                className={`dropdown-item ${action.className} fs-3`}
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleStatusChange(action.action);
+                }}
+              >
+                <i className={`${action.icon} me-2 fs-3`}></i>
+                {action.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return (
     <>
       <div className="rbt-card variation-01 rbt-hover">
@@ -54,10 +161,17 @@ const CourseWidget = ({
               src={data.courseThumbnail}
               alt={data.title}
             />
-            <div className="rbt-badge-3 bg-white">
-              <span>{`-${discountPercentage}%`}</span>
-              <span>Off</span>
-            </div>
+            {data.status === 'unpublished' && (
+              <div className="rbt-badge-3 bg-dark">
+                <span>Unpublished</span>
+              </div>
+            )}
+            {data.status !== 'unpublished' && discountPercentage > 0 && (
+              <div className="rbt-badge-3 bg-white">
+                <span>{`-${discountPercentage}%`}</span>
+                <span>Off</span>
+              </div>
+            )}
           </Link>
         </div>
         <div className="rbt-card-body">
@@ -72,10 +186,27 @@ const CourseWidget = ({
                   </div>
                   <span className="rating-count">({totalReviews} Reviews)</span>
                 </div>
-                <div className="rbt-bookmark-btn">
-                  <Link className="rbt-round-btn" title="Bookmark" href="#">
-                    <i className="feather-bookmark" />
-                  </Link>
+                
+                {/* 오른쪽 버튼 영역 */}
+                <div style={{ display: 'flex', gap: '0', alignItems: 'center' }}>
+                  {/* 북마크 버튼 - 학생만 표시 */}
+                  {userRole === 'student' && (
+                    <div className="rbt-bookmark-btn">
+                      <Link className="rbt-round-btn" title="Bookmark" href="#">
+                        <i className="feather-bookmark" />
+                      </Link>
+                    </div>
+                  )}
+                  
+                  {/* Hot 배지 - 모든 사용자에게 표시 (북마크와 동일한 스타일) */}
+                  {/* TODO: data.isHot은 나중에 데이터베이스에서 가져오도록 수정 */}
+                  {data.isHot !== false && (
+                    <div className="rbt-bookmark-btn">
+                      <span className="rbt-round-btn" title="Hot Course" style={{ cursor: 'default' }}>
+                        🔥
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <h4 className="rbt-card-title">
@@ -198,9 +329,12 @@ const CourseWidget = ({
               </div>
 
               {isEdit ? (
-                <Link className="rbt-btn-link left-icon" href={`/instructor/courses/${data.id}/edit`}>
-                  <i className="feather-edit"></i> Edit
-                </Link>
+                <div className="d-flex gap-2 align-items-center">
+                  <Link className="rbt-btn-link left-icon fs-4" href={`/create-course?edit=${data.id}`}>
+                    <i className="feather-edit fs-4"></i> Edit
+                  </Link>
+                  {userRole === 'instructor' && renderStatusDropdown()}
+                </div>
               ) : (
                 <Link className="rbt-btn-link" href={`/courses/${data.id}`}>
                   Learn More

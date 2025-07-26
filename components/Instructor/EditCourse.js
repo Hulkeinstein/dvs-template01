@@ -19,15 +19,36 @@ const EditCourse = ({ courseId, userProfile }) => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   
-  // Course data
+  // Course data - 초기값을 명확히 설정
   const [course, setCourse] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    title: '',
+    shortDescription: '',
+    description: '',
+    category: '',
+    level: 'all_levels',
+    price: 0,
+    discountPrice: null,
+    language: 'English',
+    duration: 0,
+    maxStudents: 0,
+    startDate: '',
+    endDate: '',
+    enrollmentDeadline: '',
+    certificateEnabled: false,
+    certificateTitle: '',
+    passingGrade: 70,
+    lifetimeAccess: true
+  });
   const [lessons, setLessons] = useState([]);
   
   // Modal states
   const [showAddLessonModal, setShowAddLessonModal] = useState(false);
   const [showEditLessonModal, setShowEditLessonModal] = useState(false);
   const [editingLesson, setEditingLesson] = useState(null);
+  
+  // Hydration 완료 상태 추가
+  const [isHydrated, setIsHydrated] = useState(false);
   
   // Drag and drop sensors
   const sensors = useSensors(
@@ -37,9 +58,16 @@ const EditCourse = ({ courseId, userProfile }) => {
     })
   );
 
+  // Hydration 완료 체크
   useEffect(() => {
-    fetchCourseData();
-  }, [courseId]);
+    setIsHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (isHydrated && courseId) {
+      fetchCourseData();
+    }
+  }, [courseId, isHydrated]);
 
   const fetchCourseData = async () => {
     try {
@@ -210,7 +238,8 @@ const EditCourse = ({ courseId, userProfile }) => {
     }
   };
 
-  if (loading) {
+  // Hydration 안전을 위해 로딩 상태 체크
+  if (!isHydrated || loading) {
     return (
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
@@ -305,7 +334,7 @@ const EditCourse = ({ courseId, userProfile }) => {
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext 
-                  items={lessons.map(l => l.id)}
+                  items={lessons.map(l => l.id || '')}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="rbt-dashboard-table table-responsive">

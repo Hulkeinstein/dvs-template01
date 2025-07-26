@@ -10,43 +10,49 @@ const MyCourses = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true);
-        const result = await getInstructorCourses();
-        
-        if (result.error) {
-          setError(result.error);
-        } else {
-          setCourses(result.courses || []);
-        }
-      } catch (err) {
-        setError('Failed to fetch courses');
-        console.error('Error fetching courses:', err);
-      } finally {
-        setLoading(false);
+  const fetchCourses = async () => {
+    try {
+      setLoading(true);
+      const result = await getInstructorCourses();
+      
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setCourses(result.courses || []);
       }
-    };
+    } catch (err) {
+      setError('Failed to fetch courses');
+      console.error('Error fetching courses:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCourses();
   }, []);
 
-  const publishedCourses = courses.filter(course => course.status === 'published');
+  const publishedCourses = courses.filter(course => course.status === 'published' || course.status === 'unpublished');
   const pendingCourses = courses.filter(course => course.status === 'pending');
   const draftCourses = courses.filter(course => course.status === 'draft');
+  const archivedCourses = courses.filter(course => course.status === 'archived');
 
   const formatCourseData = (course) => ({
     id: course.id,
-    courseImage: course.thumbnail_url || '/images/course/course-placeholder.jpg',
+    courseThumbnail: course.thumbnail_url || '/images/course/course-01.jpg',
+    title: course.title,
     courseTitle: course.title,
-    courseShortDescription: course.short_description,
-    coursePrice: course.price,
-    offerPrice: course.discount_price ? ((course.price - course.discount_price) / course.price * 100) : 0,
-    courseDuration: course.duration_hours ? `${course.duration_hours} hours` : 'TBD',
+    shortDescription: course.description || '',
+    courseShortDescription: course.description || '',
+    coursePrice: course.regular_price || 0,
+    offerPrice: course.discounted_price || course.regular_price || 0,
+    courseDuration: course.total_duration_hours ? `${course.total_duration_hours} hours` : 'TBD',
+    lectures: course.lessons?.[0]?.count || 0,
     courseLecture: course.lessons?.[0]?.count || 0,
+    enrolledStudent: course.enrollments?.[0]?.count || 0,
     courseEnrolled: course.enrollments?.[0]?.count || 0,
-    courseLevel: course.level,
+    courseLevel: course.difficulty_level || 'All Levels',
+    status: course.status,
     rating: { average: 0 },
     reviews: {
       oneStar: 0,
@@ -145,6 +151,20 @@ const MyCourses = () => {
                   <span className="title">Draft ({draftCourses.length})</span>
                 </Link>
               </li>
+              <li role="presentation">
+                <Link
+                  href="#"
+                  className="tab-button"
+                  id="archived-tab-4"
+                  data-bs-toggle="tab"
+                  data-bs-target="#archived-4"
+                  role="tab"
+                  aria-controls="archived-4"
+                  aria-selected="false"
+                >
+                  <span className="title">Archived ({archivedCourses.length})</span>
+                </Link>
+              </li>
             </ul>
           </div>
           <div className="tab-content">
@@ -169,6 +189,8 @@ const MyCourses = () => {
                         isProgress={false}
                         showDescription={false}
                         showAuthor={false}
+                        userRole="instructor"
+                        onStatusChange={() => fetchCourses()}
                       />
                     </div>
                   ))
@@ -204,6 +226,8 @@ const MyCourses = () => {
                         isProgress={false}
                         showDescription={false}
                         showAuthor={false}
+                        userRole="instructor"
+                        onStatusChange={() => fetchCourses()}
                       />
                     </div>
                   ))
@@ -239,6 +263,8 @@ const MyCourses = () => {
                         isProgress={false}
                         showDescription={false}
                         showAuthor={false}
+                        userRole="instructor"
+                        onStatusChange={() => fetchCourses()}
                       />
                     </div>
                   ))
@@ -258,6 +284,43 @@ const MyCourses = () => {
                           </span>
                         </span>
                       </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div
+              className="tab-pane fade"
+              id="archived-4"
+              role="tabpanel"
+              aria-labelledby="archived-tab-4"
+            >
+              <div className="row g-5">
+                {archivedCourses.length > 0 ? (
+                  archivedCourses.map((course, index) => (
+                    <div
+                      className="col-lg-4 col-md-6 col-12"
+                      key={`course-archived-${index}`}
+                    >
+                      <CourseWidget
+                        data={formatCourseData(course)}
+                        courseStyle="two"
+                        isEdit={true}
+                        isCompleted={false}
+                        isProgress={false}
+                        showDescription={false}
+                        showAuthor={false}
+                        userRole="instructor"
+                        onStatusChange={() => fetchCourses()}
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-12">
+                    <div className="text-center py-5">
+                      <h5>No archived courses</h5>
+                      <p className="text-muted">Archived courses will appear here.</p>
                     </div>
                   </div>
                 )}

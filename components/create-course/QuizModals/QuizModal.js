@@ -6,12 +6,23 @@ import Settings from "../QuizTab/Settings";
 import Question from "../QuizTab/Question";
 import QuestionType from "../QuizTab/QuestionType";
 
-const QuizModal = () => {
+const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
   const [selectedOption, setSelectedOption] = useState("True/False");
   const [currentStep, setCurrentStep] = useState(1);
   const [toggle, setToggle] = useState(true);
   const [content, setContent] = useState("");
   const [answer, setAnswer] = useState("");
+  const [quizData, setQuizData] = useState({
+    title: '',
+    summary: '',
+    questions: [],
+    settings: {
+      timeLimit: 0,
+      passingScore: 70,
+      randomizeQuestions: false,
+      showAnswers: true
+    }
+  });
   const editor = useRef(null);
   const answerEditor = useRef(null);
 
@@ -59,9 +70,9 @@ const QuizModal = () => {
     <>
       <div
         className="rbt-default-modal modal fade m-auto"
-        id="Quiz"
+        id={modalId}
         tabIndex="-1"
-        aria-labelledby="QuizLabel"
+        aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
@@ -80,8 +91,8 @@ const QuizModal = () => {
               <div className="inner rbt-default-form">
                 <div className="row">
                   <div className="col-lg-12">
-                    <h5 className="modal-title mb--20" id="QuizModalLabel">
-                      Quiz
+                    <h5 className="modal-title mb--20" id={`${modalId}Label`}>
+                      Add Quiz
                     </h5>
                     <div className="course-field quiz-modal mb--40">
                       <div className="d-flex justify-content-between">
@@ -145,11 +156,17 @@ const QuizModal = () => {
                             id="quizModalTitle"
                             type="text"
                             placeholder="Type your quiz title here"
+                            value={quizData.title}
+                            onChange={(e) => setQuizData({ ...quizData, title: e.target.value })}
                           />
                         </div>
                         <div className="course-field mb--20">
                           <label htmlFor="quizModalSummary">Quiz Summary</label>
-                          <textarea id="quizModalSummary"></textarea>
+                          <textarea 
+                            id="quizModalSummary"
+                            value={quizData.summary}
+                            onChange={(e) => setQuizData({ ...quizData, summary: e.target.value })}
+                          ></textarea>
                           <small>
                             <i className="feather-info"></i> Add a summary of
                             short text to prepare students for the activities
@@ -235,7 +252,40 @@ const QuizModal = () => {
                 >
                   Back
                 </button>
-                {toggle ? (
+                {currentStep === 3 ? (
+                  <button
+                    type="button"
+                    className="rbt-btn btn-gradient btn-md"
+                    onClick={() => {
+                      if (quizData.title.trim() && onAddQuiz) {
+                        onAddQuiz(quizData);
+                        // Reset form
+                        setQuizData({
+                          title: '',
+                          summary: '',
+                          questions: [],
+                          settings: {
+                            timeLimit: 0,
+                            passingScore: 70,
+                            randomizeQuestions: false,
+                            showAnswers: true
+                          }
+                        });
+                        setCurrentStep(1);
+                        setToggle(true);
+                        
+                        // Close modal
+                        const modal = document.getElementById(modalId);
+                        const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+                        if (modalInstance) {
+                          modalInstance.hide();
+                        }
+                      }
+                    }}
+                  >
+                    Add Quiz
+                  </button>
+                ) : toggle ? (
                   <button
                     type="button"
                     className="rbt-btn btn-md btn-2"

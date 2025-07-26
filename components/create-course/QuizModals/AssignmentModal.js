@@ -4,8 +4,18 @@ import React, { useState, useRef } from "react";
 
 import TextEditorWrapper from "../TextEditorWrapper";
 
-const AssignmentModal = () => {
+const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
   const [content, setContent] = useState("");
+  const [assignmentData, setAssignmentData] = useState({
+    title: '',
+    summary: '',
+    attachments: [],
+    timeLimit: { value: 0, unit: 'weeks' },
+    totalPoints: 100,
+    passingPoints: 70,
+    maxUploads: 1,
+    maxFileSize: 10
+  });
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -25,9 +35,9 @@ const AssignmentModal = () => {
     <>
       <div
         className="rbt-default-modal modal fade"
-        id="Assignment"
+        id={modalId}
         tabIndex="-1"
-        aria-labelledby="AssignmentLabel"
+        aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
@@ -47,8 +57,8 @@ const AssignmentModal = () => {
                 <div className="row">
                   <div className="col-lg-12">
                     <form action="#">
-                      <h5 className="modal-title mb--20" id="AssignmentModalLabel">
-                        Assignment
+                      <h5 className="modal-title mb--20" id={`${modalId}Label`}>
+                        Add Assignment
                       </h5>
                       <div className="course-field mb--20">
                         <label htmlFor="assignmentModalTitle">Assignment Title</label>
@@ -56,14 +66,16 @@ const AssignmentModal = () => {
                           id="assignmentModalTitle"
                           type="text"
                           placeholder="Assignments"
+                          value={assignmentData.title}
+                          onChange={(e) => setAssignmentData({ ...assignmentData, title: e.target.value })}
                         />
                       </div>
                       <div className="course-field mb--30">
                         <label htmlFor="modal-field-3">Summary</label>
                         <TextEditorWrapper
                           ref={editorRef}
-                          value={content}
-                          onChange={(newContent) => setContent(newContent)}
+                          value={assignmentData.summary}
+                          onChange={(newContent) => setAssignmentData({ ...assignmentData, summary: newContent })}
                         />
                       </div>
                       <div className="course-field mb--20">
@@ -101,13 +113,26 @@ const AssignmentModal = () => {
                               className="shadow-none"
                               type="number"
                               placeholder="00"
+                              value={assignmentData.timeLimit.value}
+                              onChange={(e) => setAssignmentData({ 
+                                ...assignmentData, 
+                                timeLimit: { ...assignmentData.timeLimit, value: parseInt(e.target.value) || 0 }
+                              })}
                             />
                           </div>
                           <div className="col-sm-5 col-lg-4">
-                            <select className="w-75" style={{ height: "50px" }}>
-                              <option>Weaks</option>
-                              <option>Day</option>
-                              <option>Hour</option>
+                            <select 
+                              className="w-75" 
+                              style={{ height: "50px" }}
+                              value={assignmentData.timeLimit.unit}
+                              onChange={(e) => setAssignmentData({ 
+                                ...assignmentData, 
+                                timeLimit: { ...assignmentData.timeLimit, unit: e.target.value }
+                              })}
+                            >
+                              <option value="weeks">Weeks</option>
+                              <option value="days">Days</option>
+                              <option value="hours">Hours</option>
                             </select>
                           </div>
                         </div>
@@ -120,6 +145,8 @@ const AssignmentModal = () => {
                               className="shadow-none"
                               type="number"
                               placeholder="0"
+                              value={assignmentData.totalPoints}
+                              onChange={(e) => setAssignmentData({ ...assignmentData, totalPoints: parseInt(e.target.value) || 0 })}
                             />
                             <small>
                               <i className="feather-info pr--5"></i>
@@ -136,6 +163,8 @@ const AssignmentModal = () => {
                               className="shadow-none"
                               type="number"
                               placeholder="0"
+                              value={assignmentData.passingPoints}
+                              onChange={(e) => setAssignmentData({ ...assignmentData, passingPoints: parseInt(e.target.value) || 0 })}
                             />
                           </div>
                           <small>
@@ -153,6 +182,8 @@ const AssignmentModal = () => {
                               className="shadow-none"
                               type="number"
                               placeholder="0"
+                              value={assignmentData.maxUploads}
+                              onChange={(e) => setAssignmentData({ ...assignmentData, maxUploads: parseInt(e.target.value) || 0 })}
                             />
                           </div>
                           <small>
@@ -171,6 +202,8 @@ const AssignmentModal = () => {
                               className="shadow-none"
                               type="number"
                               placeholder="0"
+                              value={assignmentData.maxFileSize}
+                              onChange={(e) => setAssignmentData({ ...assignmentData, maxFileSize: parseInt(e.target.value) || 0 })}
                             />
                           </div>
                           <small>
@@ -193,8 +226,35 @@ const AssignmentModal = () => {
               >
                 Cancel
               </button>
-              <button type="button" className="rbt-btn btn-md">
-                Save & Next
+              <button 
+                type="button" 
+                className="rbt-btn btn-gradient btn-md"
+                onClick={() => {
+                  if (assignmentData.title.trim() && onAddAssignment) {
+                    onAddAssignment(assignmentData);
+                    // Reset form
+                    setAssignmentData({
+                      title: '',
+                      summary: '',
+                      attachments: [],
+                      timeLimit: { value: 0, unit: 'weeks' },
+                      totalPoints: 100,
+                      passingPoints: 70,
+                      maxUploads: 1,
+                      maxFileSize: 10
+                    });
+                    setContent('');
+                    
+                    // Close modal
+                    const modal = document.getElementById(modalId);
+                    const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+                    if (modalInstance) {
+                      modalInstance.hide();
+                    }
+                  }
+                }}
+              >
+                Add Assignment
               </button>
             </div>
           </div>

@@ -5,7 +5,9 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 const SingleLesson = (props) => {
-  const { id, courseTitle } = props.course;
+  const { onDelete, onEdit, onUpload } = props;
+  const { id, courseTitle, title } = props.course;
+  const displayTitle = courseTitle || title || 'Untitled Lesson';
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -21,26 +23,44 @@ const SingleLesson = (props) => {
         ref={setNodeRef}
         style={style}
         {...attributes}
-        {...listeners}
       >
-        <div className="col-10 inner d-flex align-items-center gap-2">
-          <i className="feather-menu cursor-scroll"></i>
-          <h6 className="rbt-title mb-0">{courseTitle}</h6>
+        <div className="col-9 inner d-flex align-items-center gap-2">
+          <i className="feather-menu cursor-scroll" {...listeners}></i>
+          <h6 className="rbt-title mb-0">{displayTitle}</h6>
         </div>
-        <div className="col-2 inner">
-          <ul className="rbt-list-style-1 rbt-course-list d-flex gap-2">
+        <div className="col-3 inner">
+          <ul className="rbt-list-style-1 rbt-course-list d-flex gap-1 justify-content-end">
             <li>
-              <i className="feather-trash"></i>
+              <i 
+                className="feather-trash"
+                onClick={() => {
+                  if (onDelete && confirm('이 레슨을 삭제하시겠습니까?')) {
+                    onDelete(id);
+                  }
+                }}
+              ></i>
             </li>
             <li>
               <i
                 className="feather-edit"
                 data-bs-toggle="modal"
-                data-bs-target="#Quiz"
+                data-bs-target={`#LessonModal${props.topicId}`}
+                onClick={() => {
+                  if (onEdit) {
+                    onEdit(props.course);
+                  }
+                }}
               ></i>
             </li>
             <li>
-              <i className="feather-upload"></i>
+              <i 
+                className="feather-upload"
+                onClick={() => {
+                  if (onUpload) {
+                    onUpload(id);
+                  }
+                }}
+              ></i>
             </li>
           </ul>
         </div>
