@@ -328,7 +328,7 @@ const CourseWidget = ({
                 <span className="off-price">${data.coursePrice}</span>
               </div>
 
-              {isEdit ? (
+              {(isEdit || data.status === 'unpublished') ? (
                 <div className="d-flex gap-2 align-items-center">
                   <Link className="rbt-btn-link left-icon fs-4" href={`/create-course?edit=${data.id}`}>
                     <i className="feather-edit fs-4"></i> Edit
@@ -336,10 +336,12 @@ const CourseWidget = ({
                   {userRole === 'instructor' && renderStatusDropdown()}
                 </div>
               ) : (
-                <Link className="rbt-btn-link" href={`/courses/${data.id}`}>
-                  Learn More
-                  <i className="feather-arrow-right" />
-                </Link>
+                userRole === 'instructor' ? renderStatusDropdown() : (
+                  <Link className="rbt-btn-link" href={`/courses/${data.id}`}>
+                    Learn More
+                    <i className="feather-arrow-right" />
+                  </Link>
+                )
               )}
             </div>
           ) : (
