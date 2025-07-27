@@ -253,6 +253,39 @@ const blob = base64ToBlob(base64Data)
 - `/components/Instructor/Dashboard-Section/widgets/CourseWidget.js`
 - `/components/Instructor/MyCourses.js`
 
+## Admin Features Guidelines (To Be Implemented)
+
+### Admin 구현 시 필요한 체크리스트
+
+#### 1. 권한 시스템
+- [ ] Admin role 정의 및 데이터베이스 스키마 업데이트
+- [ ] 역할 기반 접근 제어(RBAC) 시스템 설계
+- [ ] Admin 전용 미들웨어/가드 구현
+
+#### 2. Admin 전용 기능
+- [ ] 모든 코스 상태에서 편집 권한
+- [ ] 일반 워크플로우 우회 권한
+- [ ] 사용자 관리 (role 변경, 계정 활성화/비활성화)
+- [ ] 시스템 전체 통계 및 모니터링
+- [ ] 긴급 콘텐츠 수정 권한
+
+#### 3. 보안 고려사항
+- [ ] 서버 사이드 권한 검증 필수
+- [ ] Admin 액션 로깅 시스템
+- [ ] 2단계 인증 고려
+- [ ] IP 화이트리스트 고려
+
+#### 4. UI/UX 고려사항
+- [ ] Admin 전용 대시보드 필요 여부
+- [ ] 일반 사용자 UI에서 Admin 기능 표시 방법
+- [ ] Admin 모드 토글 기능
+- [ ] 위험한 액션에 대한 확인 다이얼로그
+
+#### 5. 데이터베이스 고려사항
+- [ ] Admin 액션 로그 테이블
+- [ ] 권한 관리 테이블 구조
+- [ ] 감사(Audit) 추적 기능
+
 ## Testing Guide
 
 ### Manual Testing Checklist
