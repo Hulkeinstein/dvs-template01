@@ -164,7 +164,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     const file = event.target.files[0];
   };
 
-  const handleCreateCourse = async (e) => {
+  const handleCreateCourse = async (e, saveAsDraft = false) => {
     e.preventDefault();
     
     // Check if phone is verified
@@ -223,10 +223,11 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       
       console.log('Final thumbnail URL:', thumbnailUrl);
       
-      // Include thumbnail URL in formData
+      // Include thumbnail URL and status in formData
       const courseData = {
         ...formData,
-        thumbnail_url: thumbnailUrl
+        thumbnail_url: thumbnailUrl,
+        status: saveAsDraft ? 'draft' : formData.status || 'draft'
       };
       
       let result;
@@ -239,8 +240,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       }
       
       if (result.success) {
-        // Success - redirect to instructor courses page
-        router.push('/instructor-personal-courses');
+        if (saveAsDraft && !editMode) {
+          // If saving as draft for new course, redirect to edit mode with new ID
+          router.push(`/create-course?edit=${result.courseId}`);
+        } else {
+          // Success - redirect to instructor courses page
+          router.push('/instructor-personal-courses');
+        }
       } else {
         setError(result.error || 'Failed to create course');
       }
@@ -743,20 +749,41 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           <>
           <div className="mt--10 row g-5">
             <div className="col-lg-4">
-              <Link
-                className="rbt-btn hover-icon-reverse bg-primary-opacity w-100 text-center"
-                href="/course-details"
-              >
-                <span className="icon-reverse-wrapper">
-                  <span className="btn-text">Preview</span>
-                  <span className="btn-icon">
-                    <i className="feather-eye"></i>
+              {editMode && courseId ? (
+                <Link
+                  className="rbt-btn hover-icon-reverse bg-primary-opacity w-100 text-center"
+                  href={`/course-details/${courseId}?preview=true`}
+                  target="_blank"
+                >
+                  <span className="icon-reverse-wrapper">
+                    <span className="btn-text">Preview</span>
+                    <span className="btn-icon">
+                      <i className="feather-eye"></i>
+                    </span>
+                    <span className="btn-icon">
+                      <i className="feather-eye"></i>
+                    </span>
                   </span>
-                  <span className="btn-icon">
-                    <i className="feather-eye"></i>
+                </Link>
+              ) : (
+                <button
+                  className="rbt-btn hover-icon-reverse bg-secondary-opacity w-100 text-center"
+                  onClick={(e) => handleCreateCourse(e, true)}
+                  disabled={isSubmitting}
+                >
+                  <span className="icon-reverse-wrapper">
+                    <span className="btn-text">
+                      {isSubmitting ? 'Saving...' : 'Save as Draft'}
+                    </span>
+                    <span className="btn-icon">
+                      <i className="feather-save"></i>
+                    </span>
+                    <span className="btn-icon">
+                      <i className="feather-save"></i>
+                    </span>
                   </span>
-                </span>
-              </Link>
+                </button>
+              )}
             </div>
             <div className="col-lg-8">
               <button
@@ -793,41 +820,63 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         <div className="col-lg-4">
           <div className="rbt-create-course-sidebar course-sidebar sticky-top rbt-shadow-box rbt-gradient-border">
             <div className="inner">
-              <div className="section-title mb--30">
-                <h4 className="title">Course Upload Tips</h4>
-              </div>
-              <div className="rbt-course-upload-tips">
-                <ul className="rbt-list-style-1">
-                  <li>
-                    <i className="feather-check"></i> Set the Course Price
-                    option or make it free.
-                  </li>
-                  <li>
-                    <i className="feather-check"></i> Standard size for the
-                    course thumbnail is 700x430.
-                  </li>
-                  <li>
-                    <i className="feather-check"></i> Video section controls the
-                    course overview video.
-                  </li>
-                  <li>
-                    <i className="feather-check"></i> Course Builder is where
-                    you create & organize a course.
-                  </li>
-                  <li>
-                    <i className="feather-check"></i> Add Topics in the Course
-                    Builder section to create lessons, quizzes, and assignments.
-                  </li>
-                  <li>
-                    <i className="feather-check"></i> Prerequisites refers to
-                    the fundamental courses to complete before taking this
-                    particular course.
-                  </li>
-                  <li>
-                    <i className="feather-check"></i> Information from the
-                    Additional Data section shows up on the course single page.
-                  </li>
-                </ul>
+              <div className="rbt-accordion-style rbt-accordion-01 rbt-accordion-06 accordion">
+                <div className="accordion" id="courseUploadTipsAccordion">
+                  <div className="accordion-item card" style={{boxShadow: 'none'}}>
+                    <h2 className="accordion-header card-header" id="accTips">
+                      <button
+                        className="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#accCollapseTips"
+                        aria-expanded="false"
+                        aria-controls="accCollapseTips"
+                      >
+                        Course Upload Tips
+                      </button>
+                    </h2>
+                    <div
+                      id="accCollapseTips"
+                      className="accordion-collapse collapse"
+                      aria-labelledby="accTips"
+                      data-bs-parent="#courseUploadTipsAccordion"
+                    >
+                      <div className="accordion-body card-body" style={{borderTop: 'none'}}>
+                        <ul className="rbt-list-style-1">
+                          <li>
+                            <i className="feather-check"></i> Set the Course Price
+                            option or make it free.
+                          </li>
+                          <li>
+                            <i className="feather-check"></i> Standard size for the
+                            course thumbnail is 700x430.
+                          </li>
+                          <li>
+                            <i className="feather-check"></i> Video section controls the
+                            course overview video.
+                          </li>
+                          <li>
+                            <i className="feather-check"></i> Course Builder is where
+                            you create & organize a course.
+                          </li>
+                          <li>
+                            <i className="feather-check"></i> Add Topics in the Course
+                            Builder section to create lessons, quizzes, and assignments.
+                          </li>
+                          <li>
+                            <i className="feather-check"></i> Prerequisites refers to
+                            the fundamental courses to complete before taking this
+                            particular course.
+                          </li>
+                          <li>
+                            <i className="feather-check"></i> Information from the
+                            Additional Data section shows up on the course single page.
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -118,6 +118,30 @@
     }
 }
 
+.rbt-preview-banner {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    padding: 15px 0;
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+    
+    h6 {
+        color: white;
+        font-weight: 500;
+    }
+    
+    .rbt-btn {
+        &.btn-white {
+            background: white;
+            color: var(--color-primary);
+            
+            &:hover {
+                background: rgba(255, 255, 255, 0.9);
+            }
+        }
+    }
+}
+
 .rbt-hover-02 {
     transition: var(--transition-2);
 
