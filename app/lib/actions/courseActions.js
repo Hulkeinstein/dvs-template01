@@ -549,7 +549,23 @@ export async function getCourseById(courseId) {
       .select(`
         *,
         course_settings (*),
-        lessons (*)
+        lessons!lessons_course_id_fkey (
+          id,
+          title,
+          description,
+          video_url,
+          duration_minutes,
+          order_index,
+          is_preview
+        ),
+        instructor:user!courses_instructor_id_fkey (
+          id,
+          email,
+          name,
+          role,
+          avatar_url,
+          bio
+        )
       `)
       .eq('id', courseId)
       .single()
@@ -567,6 +583,12 @@ export async function getCourseById(courseId) {
     }
 
     console.log('Course found:', course?.id, course?.title);
+    
+    // Sort lessons by order_index
+    if (course && course.lessons) {
+      course.lessons.sort((a, b) => a.order_index - b.order_index);
+    }
+    
     return { course }
   } catch (error) {
     console.error('Unexpected error:', error)

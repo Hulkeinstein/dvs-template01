@@ -1,17 +1,15 @@
 "use client";
 
-import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-const CourseLayout = ({ params }) => {
+export default function CourseDetailsPage() {
   const router = useRouter();
-  const postId = params.courseId;
-
+  
   useEffect(() => {
-    if (postId === undefined) {
-      router.push("/course-details/1");
-    }
-  }, []);
-};
-
-export default CourseLayout;
+    // 코스 목록 페이지로 리다이렉트
+    router.push("/course-filter-one-toggle");
+  }, [router]);
+  
+  return null;
+}
