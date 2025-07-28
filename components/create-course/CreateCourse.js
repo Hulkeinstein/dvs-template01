@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
 import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
 import { createCourse, updateCourse, getCourseById } from "@/app/lib/actions/courseActions";
+import { getLessonsByCourse } from "@/app/lib/actions/lessonActions";
 import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
 
 // import CourseData from "../../data/course-details/courseData.json";
@@ -124,13 +125,46 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           lifetimeAccess: course.course_settings?.[0]?.allow_lifetime_access !== false,
           thumbnailPreview: course.thumbnail_url || null, // 썸네일 미리보기 추가
           slug: course.slug || '', // slug 추가
-          topics: [] // TODO: Load topics and lessons
+          topics: [] // Will be loaded separately
         });
         
         if (course.thumbnail_url) {
           // 편집 모드에서는 기존 썸네일 URL을 base64로 설정
           // 새로운 썸네일을 업로드하지 않으면 이 URL이 그대로 사용됨
           setThumbnailBase64(course.thumbnail_url);
+        }
+        
+        // Load lessons and convert to topics structure
+        const lessonsResult = await getLessonsByCourse(courseId);
+        if (lessonsResult.success && lessonsResult.lessons) {
+          const lessonsWithoutTopic = lessonsResult.lessons.filter(lesson => !lesson.topic_id);
+          
+          if (lessonsWithoutTopic.length > 0) {
+            // Create a "General" topic for lessons without topic_id
+            const generalTopic = {
+              id: 'general-topic',
+              name: 'Course Content',
+              summary: 'Main course content',
+              lessons: lessonsWithoutTopic.map(lesson => ({
+                id: lesson.id,
+                title: lesson.title,
+                description: lesson.description || '',
+                videoUrl: lesson.video_url || '',
+                videoSource: 'youtube',
+                duration: lesson.duration_minutes || 0,
+                enablePreview: lesson.is_preview || false
+              })),
+              quizzes: [],
+              assignments: []
+            };
+            
+            setFormData(prev => ({
+              ...prev,
+              topics: [generalTopic]
+            }));
+          }
+          
+          // TODO: If using course_topics table in the future, load topics with their lessons
         }
       } else {
         setError('Course not found');

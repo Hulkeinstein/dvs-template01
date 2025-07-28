@@ -337,7 +337,7 @@ const CourseWidget = ({
                 </div>
               ) : (
                 userRole === 'instructor' ? renderStatusDropdown() : (
-                  <Link className="rbt-btn-link" href={`/courses/${data.id}`}>
+                  <Link className="rbt-btn-link" href={`/course-details/${data.id}`}>
                     Learn More
                     <i className="feather-arrow-right" />
                   </Link>

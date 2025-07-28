@@ -258,8 +258,8 @@
           "link": "/course-with-sidebar"
         },
         {
-          "title": "Course Details",
-          "link": "/course-details"
+          "title": "Course Details (Demo)",
+          "link": "/course-details/1"
         },
         {
           "title": "Course Details Two",

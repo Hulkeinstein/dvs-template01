@@ -7,8 +7,8 @@ export default function CourseDetailsPage() {
   const router = useRouter();
   
   useEffect(() => {
-    // 코스 목록 페이지로 리다이렉트
-    router.push("/course-filter-one-toggle");
+    // 데모 코스로 리다이렉트
+    router.push("/course-details/1");
   }, [router]);
   
   return null;
