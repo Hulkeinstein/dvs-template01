@@ -310,6 +310,7 @@ export async function updateCourse(courseId, formData) {
 
     revalidatePath(`/courses/${courseId}`)
     revalidatePath('/instructor/courses')
+    revalidatePath('/create-course')
     
     return { success: true }
   } catch (error) {
