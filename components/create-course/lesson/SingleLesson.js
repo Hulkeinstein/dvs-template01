@@ -47,6 +47,13 @@ const SingleLesson = (props) => {
                 data-bs-target={`#LessonModal${props.topicId}`}
                 onClick={() => {
                   if (onEdit) {
+                    console.log('[SingleLesson.js] Edit clicked, passing course:', {
+                      id: props.course.id,
+                      title: props.course.title || props.course.courseTitle,
+                      hasThumbnail: !!props.course.thumbnail,
+                      hasAttachments: !!props.course.attachments,
+                      fullCourse: props.course
+                    });
                     onEdit(props.course);
                   }
                 }}

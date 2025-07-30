@@ -92,7 +92,7 @@ const SingleCourse = ({ getParams }) => {
           
           {/* Preview Mode Banner */}
           {isPreview && course && (
-            <div className="rbt-preview-banner bg-gradient-1 text-white">
+            <div className="rbt-preview-banner">
               <div className="container">
                 <div className="row align-items-center py-3">
                   <div className="col-lg-8">

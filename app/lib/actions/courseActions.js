@@ -4,6 +4,7 @@ import { supabase } from '@/app/lib/supabase/client'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { revalidatePath } from 'next/cache'
+import { mapFormDataToDB, mapFormDataToSettings, logUnmappedFields } from '@/app/lib/utils/courseDataMapper'
 
 // Create a new course
 export async function createCourse(formData) {
@@ -59,48 +60,16 @@ export async function createCourse(formData) {
         .substring(0, 100) + '-' + Date.now();
     };
 
-    // Create course - 필수 필드 포함
+    // Create course - mapper를 사용하여 데이터 변환
+    const mappedData = mapFormDataToDB(formData);
     const courseData = {
       instructor_id: userData.id,
-      title: formData.title,
       slug: createSlug(formData.title),
       status: 'draft',
-      is_free: formData.price === 0,
-      regular_price: parseFloat(formData.price) || 0,
-      difficulty_level: formData.level || 'All Levels',
-      language: formData.language || 'English',
-      total_duration_hours: 0,
-      total_duration_minutes: 0,
       is_public: false,
-      enable_qa: false
+      enable_qa: false,
+      ...mappedData
     };
-    
-    // 선택적 필드들을 조건부로 추가
-    if (formData.shortDescription) {
-      // courses 테이블에는 short_description이 없으므로 description에 저장
-      courseData.description = formData.shortDescription;
-    }
-    
-    if (formData.description) {
-      courseData.about_course = formData.description;
-    }
-    
-    if (formData.discountPrice) {
-      courseData.discounted_price = parseFloat(formData.discountPrice);
-    }
-    
-    if (formData.duration) {
-      courseData.total_duration_hours = parseInt(formData.duration);
-    }
-    
-    if (formData.category) {
-      courseData.category = formData.category;
-    }
-    
-    // Add thumbnail_url if provided
-    if (formData.thumbnail_url) {
-      courseData.thumbnail_url = formData.thumbnail_url;
-    }
     
     console.log('Course data to insert:', {
       ...courseData,
@@ -124,18 +93,11 @@ export async function createCourse(formData) {
       return { error: `Failed to create course: ${courseError.message || 'Unknown error'}` }
     }
 
-    // Create course settings
+    // Create course settings - mapper를 사용하여 데이터 변환
     const settingsData = {
       course_id: course.id,
-      certificate_enabled: formData.certificateEnabled || false,
-      certificate_title: formData.certificateTitle,
-      passing_grade: formData.passingGrade ? parseInt(formData.passingGrade) : 70,
-      max_students: formData.maxStudents ? parseInt(formData.maxStudents) : null,
-      enrollment_deadline: formData.enrollmentDeadline,
-      start_date: formData.startDate,
-      end_date: formData.endDate,
-      allow_lifetime_access: formData.lifetimeAccess !== false
-    }
+      ...mapFormDataToSettings(formData)
+    };
 
     const { error: settingsError } = await supabase
       .from('course_settings')
@@ -158,7 +120,7 @@ export async function createCourse(formData) {
             course_id: course.id,
             title: topic.name,
             description: topic.summary,
-            sort_order: topicIndex + 1
+            sort_order: topicIndex + 1 + 1
           })
           .select()
           .single()
@@ -237,37 +199,12 @@ export async function updateCourse(courseId, formData) {
       return { error: 'You do not have permission to update this course' }
     }
 
-    // Update course - 실제 테이블 컬럼에 맞게 매핑
-    const courseData = {
-      title: formData.title,
-      description: formData.shortDescription,  // shortDescription을 description 컬럼에 저장
-      about_course: formData.description,      // description을 about_course 컬럼에 저장
-      regular_price: parseFloat(formData.price) || 0,
-      discounted_price: formData.discountPrice ? parseFloat(formData.discountPrice) : null,
-      total_duration_hours: formData.duration ? parseInt(formData.duration) : 0,
-      language: formData.language,
-      difficulty_level: formData.level || 'All Levels',
-      max_students: formData.maxStudents || 0,
-      intro_video_url: formData.introVideoUrl || null,
-      is_free: formData.price === 0
-    }
+    // Update course - mapper를 사용하여 데이터 변환
+    const courseData = mapFormDataToDB(formData);
     
-    // Add slug if provided
-    if (formData.slug) {
-      courseData.slug = formData.slug
-    }
-    
-    // Add category only if it's provided (temporary workaround)
-    if (formData.category) {
-      courseData.category = formData.category
-    }
-    
-    // Add thumbnail_url if provided (null means remove, undefined means don't change)
-    if (formData.thumbnail_url !== undefined) {
-      courseData.thumbnail_url = formData.thumbnail_url
-      console.log('Setting thumbnail_url:', formData.thumbnail_url ? 'URL provided' : 'null (removing)')
-    } else {
-      console.log('Thumbnail_url not provided, keeping existing')
+    // 디버깅: 매핑되지 않은 필드 확인
+    if (process.env.NODE_ENV === 'development') {
+      logUnmappedFields(formData, courseData);
     }
 
     console.log('Updating course with data:', {
@@ -291,22 +228,155 @@ export async function updateCourse(courseId, formData) {
       return { error: `Failed to update course: ${updateError.message || 'Unknown error'}` }
     }
 
-    // Update settings
-    const settingsData = {
-      certificate_enabled: formData.certificateEnabled || false,
-      certificate_title: formData.certificateTitle,
-      passing_grade: formData.passingGrade ? parseInt(formData.passingGrade) : 70,
-      max_students: formData.maxStudents ? parseInt(formData.maxStudents) : null,
-      enrollment_deadline: formData.enrollmentDeadline,
-      start_date: formData.startDate,
-      end_date: formData.endDate,
-      allow_lifetime_access: formData.lifetimeAccess !== false
-    }
+    // Update settings - mapper를 사용하여 데이터 변환
+    const settingsData = mapFormDataToSettings(formData);
 
     await supabase
       .from('course_settings')
       .update(settingsData)
       .eq('course_id', courseId)
+
+    // Update topics and lessons
+    if (formData.topics && formData.topics.length > 0) {
+      console.log('Updating topics and lessons. Topics count:', formData.topics.length);
+      
+      // Get existing topics
+      const { data: existingTopics } = await supabase
+        .from('course_topics')
+        .select('id')
+        .eq('course_id', courseId)
+      
+      // Delete existing topics (and their lessons will be deleted by cascade)
+      if (existingTopics && existingTopics.length > 0) {
+        console.log('Deleting existing topics:', existingTopics.length);
+        const { error: deleteError } = await supabase
+          .from('course_topics')
+          .delete()
+          .eq('course_id', courseId)
+          
+        if (deleteError) {
+          console.error('Error deleting topics:', deleteError);
+        }
+      }
+      
+      // Also delete any orphan lessons (lessons without topic_id)
+      const { error: deleteOrphanError } = await supabase
+        .from('lessons')
+        .delete()
+        .eq('course_id', courseId)
+        .is('topic_id', null)
+        
+      if (deleteOrphanError) {
+        console.error('Error deleting orphan lessons:', deleteOrphanError);
+      }
+      
+      // Create new topics and lessons
+      for (let topicIndex = 0; topicIndex < formData.topics.length; topicIndex++) {
+        const topic = formData.topics[topicIndex];
+        console.log(`Creating topic ${topicIndex + 1}:`, topic.name, 'with', topic.lessons?.length || 0, 'lessons');
+        
+        // Skip general-topic as it's a placeholder
+        if (topic.id === 'general-topic') {
+          // Create lessons without topic_id for general topics
+          if (topic.lessons && topic.lessons.length > 0) {
+            for (let lessonIndex = 0; lessonIndex < topic.lessons.length; lessonIndex++) {
+              const lesson = topic.lessons[lessonIndex];
+              console.log(`Creating lesson without topic: ${lesson.title}`);
+              
+              const lessonData = {
+                course_id: courseId,
+                topic_id: null,
+                title: lesson.title,
+                description: lesson.description || '',
+                video_url: lesson.videoUrl || '',
+                video_source: lesson.videoSource || 'youtube',
+                duration_minutes: typeof lesson.duration === 'number' ? lesson.duration : 0,
+                sort_order: lessonIndex + 1,
+                is_preview: lesson.enablePreview || false,
+                content_type: 'video',
+                thumbnail_url: lesson.thumbnail || null,
+                attachments: lesson.attachments || []
+              };
+              
+              console.log('Lesson data to insert:', lessonData);
+              
+              const { data: lessonResult, error: lessonError } = await supabase
+                .from('lessons')
+                .insert(lessonData)
+                .select()
+                .single()
+              
+              if (lessonError) {
+                console.error('Lesson creation error:', lessonError);
+                console.error('Failed lesson data:', lessonData);
+              } else {
+                console.log('Lesson created successfully:', lessonResult.id);
+              }
+            }
+          }
+          continue;
+        }
+        
+        // Create topic
+        const { data: topicData, error: topicError } = await supabase
+          .from('course_topics')
+          .insert({
+            course_id: courseId,
+            title: topic.name,
+            description: topic.summary || '',
+            sort_order: topicIndex + 1
+          })
+          .select()
+          .single()
+        
+        if (topicError) {
+          console.error('Topic creation error:', topicError);
+          continue;
+        }
+        
+        console.log('Topic created:', topicData.id);
+        
+        // Create lessons for this topic
+        if (topic.lessons && topic.lessons.length > 0) {
+          for (let lessonIndex = 0; lessonIndex < topic.lessons.length; lessonIndex++) {
+            const lesson = topic.lessons[lessonIndex];
+            console.log(`Creating lesson ${lessonIndex + 1} for topic:`, lesson.title);
+            
+            const lessonData = {
+              course_id: courseId,
+              topic_id: topicData.id,
+              title: lesson.title,
+              description: lesson.description || '',
+              video_url: lesson.videoUrl || '',
+              video_source: lesson.videoSource || 'youtube',
+              duration_minutes: typeof lesson.duration === 'number' ? lesson.duration : 0,
+              sort_order: lessonIndex,
+              is_preview: lesson.enablePreview || false,
+              content_type: 'video',
+              thumbnail_url: lesson.thumbnail || null,
+              attachments: lesson.attachments || []
+            };
+            
+            console.log('Lesson data to insert:', lessonData);
+            
+            const { data: lessonResult, error: lessonError } = await supabase
+              .from('lessons')
+              .insert(lessonData)
+              .select()
+              .single()
+            
+            if (lessonError) {
+              console.error('Lesson creation error:', lessonError);
+              console.error('Failed lesson data:', lessonData);
+            } else {
+              console.log('Lesson created successfully:', lessonResult.id);
+            }
+          }
+        }
+      }
+      
+      console.log('Topics and lessons update completed');
+    }
 
     revalidatePath(`/courses/${courseId}`)
     revalidatePath('/instructor/courses')
@@ -545,32 +615,16 @@ export async function getCourseById(courseId) {
   try {
     console.log('getCourseById called with ID:', courseId);
     
+    // 1. 먼저 코스 기본 정보 로드
     const { data: course, error } = await supabase
       .from('courses')
       .select(`
         *,
-        course_settings (*),
-        lessons!lessons_course_id_fkey (
-          id,
-          title,
-          description,
-          video_url,
-          duration_minutes,
-          order_index,
-          is_preview
-        ),
-        instructor:user!courses_instructor_id_fkey (
-          id,
-          email,
-          name,
-          role,
-          avatar_url,
-          bio
-        )
+        course_settings (*)
       `)
       .eq('id', courseId)
       .single()
-
+      
     if (error) {
       console.error('Fetch course error - Full details:', {
         error: error,
@@ -582,17 +636,77 @@ export async function getCourseById(courseId) {
       })
       return { error: `Failed to fetch course: ${error.message || 'Unknown error'}` }
     }
-
-    console.log('Course found:', course?.id, course?.title);
     
-    // Sort lessons by order_index
-    if (course && course.lessons) {
-      course.lessons.sort((a, b) => a.order_index - b.order_index);
+    if (!course) {
+      return { error: 'Course not found' }
     }
+    
+    // 2. instructor 정보를 user 테이블에서 로드
+    if (course.instructor_id) {
+      const { data: instructorData, error: instructorError } = await supabase
+        .from('user')
+        .select('id, email, name, role, avatar_url, bio')
+        .eq('id', course.instructor_id)
+        .single()
+        
+      if (!instructorError && instructorData) {
+        course.instructor = instructorData
+        console.log('Instructor loaded:', instructorData.name)
+      } else {
+        console.log('Could not load instructor data:', instructorError)
+        // instructor 정보가 없어도 코스는 반환
+        course.instructor = null
+      }
+    }
+
+    console.log('Course found:', course.id, course.title);
+    
+    // 3. Topics 로드
+    const { data: topics, error: topicsError } = await supabase
+      .from('course_topics')
+      .select('*')
+      .eq('course_id', courseId)
+      .order('sort_order', { ascending: true })
+    
+    if (topicsError) {
+      console.error('Error loading topics:', topicsError)
+      course.topics = []
+    } else {
+      course.topics = topics || []
+    }
+    
+    // 4. 모든 레슨 한번에 로드 (성능 최적화) - thumbnail_url과 attachments 포함
+    const { data: allLessons, error: lessonsError } = await supabase
+      .from('lessons')
+      .select('*')
+      .eq('course_id', courseId)
+      .order('sort_order', { ascending: true })
+    
+    if (lessonsError) {
+      console.error('Error loading lessons:', lessonsError)
+      course.lessons = []
+    } else {
+      course.lessons = allLessons || []
+      
+      // 5. Topics에 레슨 할당
+      if (course.topics && course.topics.length > 0) {
+        for (const topic of course.topics) {
+          topic.lessons = allLessons?.filter(lesson => lesson.topic_id === topic.id) || []
+        }
+      }
+      
+      // 6. Topic에 속하지 않은 레슨들도 유지
+      const orphanLessons = allLessons?.filter(lesson => !lesson.topic_id) || []
+      if (orphanLessons.length > 0) {
+        console.log('Found lessons without topics:', orphanLessons.length)
+      }
+    }
+    
+    console.log('Course loaded successfully with', course.topics?.length || 0, 'topics and', course.lessons?.length || 0, 'lessons')
     
     return { course }
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('Unexpected error in getCourseById:', error)
     return { error: 'An unexpected error occurred' }
   }
 }

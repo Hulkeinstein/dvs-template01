@@ -75,7 +75,7 @@ export class DatabaseCourseProvider extends CourseProvider {
       courseOverview: [{
         title: "What you'll learn",
         desc: rawData.about_course || rawData.description || "No overview available",
-        descTwo: "This course provides comprehensive knowledge and practical skills to help you master the subject.",
+        descTwo: rawData.targeted_audience ? `Target Audience: ${rawData.targeted_audience}` : "This course provides comprehensive knowledge and practical skills to help you master the subject.",
         overviewList: rawData.what_you_will_learn || [
           { listItem: "Understand core concepts and fundamentals" },
           { listItem: "Gain practical hands-on experience" },
@@ -112,11 +112,7 @@ export class DatabaseCourseProvider extends CourseProvider {
       
       courseRequirement: [{
         title: "Requirements",
-        detailsList: rawData.requirements || [
-          { listItem: "Basic computer skills" },
-          { listItem: "Internet connection" },
-          { listItem: "Dedication to learn" }
-        ]
+        detailsList: this.parseRequirements(rawData.requirements)
       }],
       
       courseInstructor: rawData.instructor ? [{
@@ -170,6 +166,32 @@ export class DatabaseCourseProvider extends CourseProvider {
       relatedCourse: [],
       similarCourse: []
     };
+  }
+
+  /**
+   * Parse requirements string into array format
+   */
+  parseRequirements(requirements) {
+    // If requirements is already an array, return it
+    if (Array.isArray(requirements)) {
+      return requirements;
+    }
+    
+    // If requirements is a string, split by newlines and create array
+    if (typeof requirements === 'string' && requirements.trim()) {
+      return requirements
+        .split('\n')
+        .map(req => req.trim())
+        .filter(req => req.length > 0)
+        .map(req => ({ listItem: req }));
+    }
+    
+    // Default requirements if none provided
+    return [
+      { listItem: "Basic computer skills" },
+      { listItem: "Internet connection" },
+      { listItem: "Dedication to learn" }
+    ];
   }
 
   /**

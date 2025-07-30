@@ -35,7 +35,7 @@ export async function createLesson(lessonData) {
       return { success: false, error: 'You do not have permission to add lessons to this course' }
     }
 
-    // Get current lesson count to determine order_index
+    // Get current lesson count to determine sort_order
     const { data: existingLessons, error: countError } = await supabase
       .from('lessons')
       .select('id')
@@ -56,7 +56,7 @@ export async function createLesson(lessonData) {
         title: lessonData.title,
         description: lessonData.description || '',
         video_url: lessonData.videoUrl || '',
-        order_index: orderIndex,
+        sort_order: orderIndex,
         duration_minutes: lessonData.duration || 0
       })
       .select()
@@ -155,7 +155,7 @@ export async function deleteLesson(lessonId) {
     // Verify lesson ownership and get order info
     const { data: lesson } = await supabase
       .from('lessons')
-      .select('course_id, order_index, courses!inner(instructor_id)')
+      .select('course_id, sort_order, courses!inner(instructor_id)')
       .eq('id', lessonId)
       .single()
 
@@ -177,10 +177,10 @@ export async function deleteLesson(lessonId) {
     // Reorder remaining lessons
     const { data: remainingLessons, error: fetchError } = await supabase
       .from('lessons')
-      .select('id, order_index')
+      .select('id, sort_order')
       .eq('course_id', lesson.course_id)
-      .gt('order_index', lesson.order_index)
-      .order('order_index')
+      .gt('sort_order', lesson.sort_order)
+      .order('sort_order')
 
     if (fetchError) {
       console.error('Error fetching remaining lessons:', fetchError)
@@ -192,7 +192,7 @@ export async function deleteLesson(lessonId) {
     for (const remainingLesson of remainingLessons) {
       await supabase
         .from('lessons')
-        .update({ order_index: remainingLesson.order_index - 1 })
+        .update({ sort_order: remainingLesson.sort_order - 1 })
         .eq('id', remainingLesson.id)
     }
 
@@ -250,7 +250,7 @@ export async function reorderLessons(courseId, lessonOrders) {
     const updatePromises = lessonOrders.map(({ id, order }) =>
       supabase
         .from('lessons')
-        .update({ order_index: order })
+        .update({ sort_order: order })
         .eq('id', id)
     )
 
@@ -276,7 +276,7 @@ export async function getLessonsByCourse(courseId) {
       .from('lessons')
       .select('*')
       .eq('course_id', courseId)
-      .order('order_index', { ascending: true })
+      .order('sort_order', { ascending: true })
 
     if (error) {
       console.error('Error fetching lessons:', error)

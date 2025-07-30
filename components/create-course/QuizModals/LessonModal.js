@@ -2,12 +2,21 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { debugLog, trackError } from "@/app/lib/utils/debugHelper";
+import { fileToBase64 } from "@/app/lib/utils/fileUpload";
+import { uploadLessonAttachment } from "@/app/lib/actions/uploadActions";
 
 import img from "../../../public/images/others/thumbnail-placeholder.svg";
 
 const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditComplete }) => {
   const fileInputRef = useRef(null);
+  const attachmentInputRef = useRef(null);
   const [featureImagePreview, setFeatureImagePreview] = useState(null);
+  const [featureImageUrl, setFeatureImageUrl] = useState(null);
+  const [uploadingFeatureImage, setUploadingFeatureImage] = useState(false);
+  const [attachments, setAttachments] = useState([]);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [attachmentErrors, setAttachmentErrors] = useState([]);
   const [lessonData, setLessonData] = useState({
     title: '',
     description: '',
@@ -23,6 +32,16 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
   // 편집 모드일 때 기존 데이터 로드
   useEffect(() => {
     if (editingLesson) {
+      console.log('[LessonModal.js] Editing lesson data received:', {
+        id: editingLesson.id,
+        title: editingLesson.title,
+        hasThumbnail: !!editingLesson.thumbnail,
+        thumbnailValue: editingLesson.thumbnail,
+        hasAttachments: !!editingLesson.attachments,
+        attachmentsCount: editingLesson.attachments?.length || 0,
+        attachments: editingLesson.attachments
+      });
+      
       const duration = editingLesson.duration || 0;
       const hours = Math.floor(duration / 3600);
       const minutes = Math.floor((duration % 3600) / 60);
@@ -41,7 +60,18 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
       });
       
       if (editingLesson.thumbnail) {
-        setFeatureImagePreview(editingLesson.thumbnail);
+        // URL인 경우 그대로 사용, base64인 경우도 처리
+        if (editingLesson.thumbnail.startsWith('http')) {
+          setFeatureImageUrl(editingLesson.thumbnail);
+          setFeatureImagePreview(editingLesson.thumbnail);
+        } else {
+          setFeatureImagePreview(editingLesson.thumbnail);
+        }
+      }
+      
+      // 기존 attachments 로드
+      if (editingLesson.attachments && Array.isArray(editingLesson.attachments)) {
+        setAttachments(editingLesson.attachments);
       }
     }
   }, [editingLesson]);
@@ -55,8 +85,25 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
       const lessonToAdd = {
         ...lessonData,
         duration: totalDuration,
-        thumbnail: featureImagePreview
+        thumbnail: featureImageUrl || null, // URL만 저장
+        attachments: attachments // 추가
       };
+      
+      debugLog('LessonModal', 'handleSubmit', {
+        isEditing: !!editingLesson,
+        lessonTitle: lessonData.title,
+        hasThumbnail: !!featureImagePreview,
+        thumbnailUrl: featureImageUrl,
+        hasAttachments: attachments.length > 0,
+        attachmentCount: attachments.length,
+        totalDuration: totalDuration,
+        modalId: modalId
+      });
+      
+      console.log('[LessonModal.js] Submitting lesson with data:', {
+        thumbnail: featureImageUrl || null,
+        attachments: attachments
+      });
       
       if (editingLesson) {
         // 편집 모드: 기존 레슨 업데이트
@@ -79,6 +126,9 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
         thumbnail: null
       });
       setFeatureImagePreview(null);
+      setFeatureImageUrl(null);
+      setAttachments([]);
+      setAttachmentErrors([]);
       
       // 편집 완료 콜백
       if (onEditComplete) {
@@ -94,30 +144,148 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
     }
   };
 
-  const handleImportClick = (e) => {
+  const handleFeatureImageClick = (e) => {
     e.preventDefault();
+    debugLog('LessonModal', 'handleFeatureImageClick', { 
+      action: 'Feature image button clicked',
+      modalId: modalId 
+    });
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (event) => {
+  const handleAttachmentClick = (e) => {
+    e.preventDefault();
+    debugLog('LessonModal', 'handleAttachmentClick', { 
+      action: 'Opening file picker for attachments',
+      modalId: modalId
+    });
+    attachmentInputRef.current.click();
+  };
+
+  const handleAttachmentChange = async (event) => {
+    const files = Array.from(event.target.files);
+    
+    debugLog('LessonModal', 'handleAttachmentChange:start', {
+      fileCount: files.length,
+      files: files.map(f => ({ name: f.name, size: f.size, type: f.type }))
+    });
+    
+    setAttachmentErrors([]); // 이전 에러 초기화
+    setUploadingAttachment(true);
+    
+    for (const file of files) {
+      try {
+        // Base64 변환
+        const base64 = await fileToBase64(file);
+        
+        debugLog('LessonModal', 'handleAttachmentChange:uploading', {
+          fileName: file.name,
+          fileSize: file.size
+        });
+        
+        // 업로드
+        const result = await uploadLessonAttachment(base64, file.name);
+        
+        if (result.success) {
+          const newAttachment = {
+            id: Date.now() + Math.random(),
+            name: file.name,
+            url: result.url,
+            size: file.size,
+            type: file.type,
+            uploadedAt: new Date().toISOString()
+          };
+          
+          setAttachments(prev => [...prev, newAttachment]);
+          
+          debugLog('LessonModal', 'handleAttachmentChange:success', {
+            fileName: file.name,
+            attachment: newAttachment
+          });
+        } else {
+          throw new Error(result.error || 'Upload failed');
+        }
+        
+      } catch (error) {
+        const errorInfo = {
+          fileName: file.name,
+          error: error.message,
+          timestamp: new Date().toISOString()
+        };
+        
+        setAttachmentErrors(prev => [...prev, errorInfo]);
+        trackError('LessonModal.handleAttachmentChange', error, { file });
+        
+        // 사용자에게 에러 표시
+        alert(`파일 업로드 실패 (${file.name}): ${error.message}`);
+      }
+    }
+    
+    setUploadingAttachment(false);
+    // 입력 초기화
+    event.target.value = '';
+  };
+
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     
+    debugLog('LessonModal', 'handleFileChange', {
+      fileName: file?.name,
+      fileSize: file?.size,
+      fileType: file?.type,
+      triggeredBy: 'featureImage'
+    });
+    
     if (file) {
-      // Validate file type - more flexible validation
-      if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
-        return;
+      try {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+          alert('Please select a valid image file');
+          return;
+        }
+        
+        setUploadingFeatureImage(true);
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFeatureImagePreview(reader.result);
+          debugLog('LessonModal', 'featureImagePreview:set', {
+            fileName: file.name,
+            previewLength: reader.result?.length
+          });
+        };
+        reader.readAsDataURL(file);
+        
+        // Upload to storage
+        try {
+          const base64 = await fileToBase64(file);
+          debugLog('LessonModal', 'featureImage:uploading', {
+            fileName: file.name,
+            base64Length: base64.length
+          });
+          
+          const result = await uploadLessonAttachment(base64, file.name);
+          
+          if (result.success) {
+            setFeatureImageUrl(result.url);
+            debugLog('LessonModal', 'featureImage:uploaded', {
+              fileName: file.name,
+              url: result.url
+            });
+          } else {
+            throw new Error(result.error || 'Upload failed');
+          }
+        } catch (uploadError) {
+          trackError('LessonModal.handleFileChange:upload', uploadError, { file });
+          alert('Failed to upload image. Please try again.');
+        } finally {
+          setUploadingFeatureImage(false);
+        }
+      } catch (error) {
+        trackError('LessonModal.handleFileChange', error, { file });
+        setUploadingFeatureImage(false);
       }
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFeatureImagePreview(reader.result);
-      };
-      reader.onerror = (error) => {
-        alert('Error reading file. Please try again.');
-      };
-      reader.readAsDataURL(file);
     }
   };
   return (
@@ -212,6 +380,14 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
                           </div>
                         </div>
                       </div>
+                      
+                      {/* 업로드 중 표시 */}
+                      {uploadingFeatureImage && (
+                        <div className="text-center mb-3">
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          <small>이미지 업로드 중...</small>
+                        </div>
+                      )}
 
                       <small>
                         <i className="feather-info"></i> <b>Size:</b> 700x430
@@ -295,7 +471,7 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
                       <div className="rbt-modern-select bg-transparent height-45 w-100 mb--10">
                         <button
                           className="rbt-btn btn-md btn-border hover-icon-reverse"
-                          onClick={handleImportClick}
+                          onClick={handleAttachmentClick}
                         >
                           <span className="icon-reverse-wrapper">
                             <span className="btn-text">Upload Attachments</span>
@@ -313,7 +489,61 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
                           style={{ display: "none" }}
                           onChange={handleFileChange}
                         />
+                        {/* Attachment 파일 input - 별도로 추가 */}
+                        <input
+                          type="file"
+                          ref={attachmentInputRef}
+                          multiple
+                          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,.jpg,.jpeg,.png,.gif,.webp,.bmp"
+                          style={{ display: "none" }}
+                          onChange={handleAttachmentChange}
+                        />
                       </div>
+                      
+                      {/* 업로드 중 표시 */}
+                      {uploadingAttachment && (
+                        <div className="text-center mt-2">
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          <small>파일 업로드 중...</small>
+                        </div>
+                      )}
+                      
+                      {/* 업로드된 파일 목록 */}
+                      {attachments.length > 0 && (
+                        <div className="mt-3">
+                          <h6 className="mb-2">업로드된 파일:</h6>
+                          <div className="uploaded-files-list">
+                            {attachments.map((file) => (
+                              <div key={file.id} className="d-flex align-items-center justify-content-between mb-2 p-2 bg-light rounded">
+                                <div className="d-flex align-items-center">
+                                  <i className="feather-file me-2"></i>
+                                  <small className="text-truncate" style={{ maxWidth: '200px' }}>{file.name}</small>
+                                  <small className="text-muted ms-2">({(file.size / 1024).toFixed(1)} KB)</small>
+                                </div>
+                                <button 
+                                  className="btn btn-link btn-sm text-danger p-0 text-decoration-none"
+                                  onClick={() => {
+                                    setAttachments(prev => prev.filter(f => f.id !== file.id));
+                                    debugLog('LessonModal', 'attachment:removed', { fileName: file.name });
+                                  }}
+                                  title="파일 삭제"
+                                >
+                                  <i className="feather-x"></i>
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* 에러 표시 */}
+                      {attachmentErrors.length > 0 && (
+                        <div className="mt-2">
+                          <small className="text-danger">
+                            업로드 실패: {attachmentErrors.map(e => e.fileName).join(', ')}
+                          </small>
+                        </div>
+                      )}
                     </div>
                     <div className="course-field mb--20">
                       <p className="rbt-checkbox-wrapper mb--5 d-flex">
@@ -354,6 +584,68 @@ const LessonModal = ({ modalId = "Lesson", onAddLesson, editingLesson, onEditCom
           </div>
         </div>
       </div>
+      
+      {/* 개발 모드 디버그 패널 */}
+      {process.env.NODE_ENV === 'development' && (
+        <div 
+          className="position-fixed bottom-0 end-0 m-3 p-3 bg-dark text-white rounded shadow" 
+          style={{ 
+            fontSize: '12px', 
+            maxWidth: '300px',
+            zIndex: 9999,
+            opacity: 0.9
+          }}
+        >
+          <h6 className="text-warning mb-2 d-flex justify-content-between align-items-center">
+            🔍 Attachment Debug
+            <button 
+              className="btn btn-sm btn-link text-white p-0"
+              onClick={() => {
+                const logs = JSON.parse(localStorage.getItem('attachmentDebugLogs') || '[]');
+                console.table(logs.filter(log => log.component === 'LessonModal'));
+                alert('LessonModal logs printed to console');
+              }}
+            >
+              <i className="feather-terminal"></i>
+            </button>
+          </h6>
+          <div className="small">
+            <div>📎 Attachments: {attachments.length}</div>
+            <div>⏳ Uploading: {uploadingAttachment ? 'Yes' : 'No'}</div>
+            <div>❌ Errors: {attachmentErrors.length}</div>
+            <div>🆔 Modal ID: {modalId}</div>
+          </div>
+          {attachments.length > 0 && (
+            <div className="mt-2">
+              <small className="text-muted">Files:</small>
+              {attachments.map((file, idx) => (
+                <div key={idx} className="text-truncate" style={{ fontSize: '10px' }}>
+                  • {file.name}
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-2 d-flex gap-1">
+            <button 
+              className="btn btn-warning btn-sm py-0 px-1"
+              onClick={() => window.attachmentDebug?.print()}
+              style={{ fontSize: '10px' }}
+            >
+              All Logs
+            </button>
+            <button 
+              className="btn btn-danger btn-sm py-0 px-1"
+              onClick={() => {
+                window.attachmentDebug?.clearLogs();
+                alert('Debug logs cleared');
+              }}
+              style={{ fontSize: '10px' }}
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

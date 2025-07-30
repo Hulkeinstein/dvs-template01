@@ -54,8 +54,19 @@ const Lesson = ({
   
   // Update courseList when topicData changes
   useEffect(() => {
+    console.log('[Lesson.js] Setting courseList from topicData:', {
+      topicId: id,
+      lessonsCount: topicData?.lessons?.length || 0,
+      firstLesson: topicData?.lessons?.[0] ? {
+        id: topicData.lessons[0].id,
+        title: topicData.lessons[0].title,
+        hasThumbnail: !!topicData.lessons[0].thumbnail,
+        hasAttachments: !!topicData.lessons[0].attachments,
+        attachmentsCount: topicData.lessons[0].attachments?.length || 0
+      } : null
+    });
     setCourseList(topicData?.lessons || []);
-  }, [topicData]);
+  }, [topicData, id]);
 
   useEffect(() => {
     setHydrated(true);
@@ -159,6 +170,15 @@ const Lesson = ({
                         }
                       }}
                       onEdit={(lesson) => {
+                        console.log('[Lesson.js] onEdit called with lesson:', {
+                          id: lesson.id,
+                          title: lesson.title,
+                          hasThumbnail: !!lesson.thumbnail,
+                          thumbnailValue: lesson.thumbnail,
+                          hasAttachments: !!lesson.attachments,
+                          attachmentsCount: lesson.attachments?.length || 0,
+                          attachments: lesson.attachments
+                        });
                         setEditingLesson(lesson);
                         if (onEditLesson) {
                           onEditLesson(id, lesson);

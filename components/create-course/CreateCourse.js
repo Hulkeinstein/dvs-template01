@@ -11,6 +11,7 @@ import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/p
 import { createCourse, updateCourse, getCourseById } from "@/app/lib/actions/courseActions";
 import { getLessonsByCourse } from "@/app/lib/actions/lessonActions";
 import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
+import { mapDBToFormData } from "@/app/lib/utils/courseDataMapper";
 
 // import CourseData from "../../data/course-details/courseData.json";
 import CreateCourseData from "../../data/createCourse.json";
@@ -93,6 +94,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       const result = await getCourseById(courseId);
       console.log('getCourseById result:', result);
       
+      if (result.error) {
+        console.error('Error from getCourseById:', result.error);
+        setError(result.error);
+        setLoading(false);
+        return;
+      }
+      
       if (result.course) {
         const course = result.course;
         console.log('Course data loaded:', {
@@ -103,30 +111,18 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         });
         console.log('Full thumbnail URL:', course.thumbnail_url);
         
-        // Map database fields to form fields
-        setFormData({
-          title: course.title || '',
-          shortDescription: course.description || '',
-          description: course.about_course || '',
-          category: course.category || '',
-          level: course.difficulty_level || 'all_levels',
-          maxStudents: course.max_students || 0,
-          introVideoUrl: course.intro_video_url || '',
-          price: course.regular_price || 0,
-          discountPrice: course.discounted_price || null,
-          startDate: course.start_date || '',
-          endDate: course.end_date || '',
-          enrollmentDeadline: course.enrollment_deadline || '',
-          language: course.language || 'English',
-          duration: course.total_duration_hours || 0,
-          certificateEnabled: course.course_settings?.[0]?.certificate_enabled || false,
-          certificateTitle: course.course_settings?.[0]?.certificate_title || '',
-          passingGrade: course.course_settings?.[0]?.passing_grade || 70,
-          lifetimeAccess: course.course_settings?.[0]?.allow_lifetime_access !== false,
+        // Map database fields to form fields using centralized mapper
+        const mappedData = mapDBToFormData(course);
+        
+        // Add additional fields that might not be in the mapper
+        const formDataWithExtras = {
+          ...mappedData,
           thumbnailPreview: course.thumbnail_url || null, // 썸네일 미리보기 추가
           slug: course.slug || '', // slug 추가
           topics: [] // Will be loaded separately
-        });
+        };
+        
+        setFormData(formDataWithExtras);
         
         if (course.thumbnail_url) {
           // 편집 모드에서는 기존 썸네일 URL을 base64로 설정
@@ -134,12 +130,41 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           setThumbnailBase64(course.thumbnail_url);
         }
         
-        // Load lessons and convert to topics structure
-        const lessonsResult = await getLessonsByCourse(courseId);
-        if (lessonsResult.success && lessonsResult.lessons) {
-          const lessonsWithoutTopic = lessonsResult.lessons.filter(lesson => !lesson.topic_id);
+        // Load topics from server response
+        const topics = [];
+        
+        if (course.topics && course.topics.length > 0) {
+          // Convert server topics to UI format
+          for (const topicData of course.topics) {
+            const topic = {
+              id: topicData.id,
+              name: topicData.title,
+              summary: topicData.description || '',
+              lessons: (topicData.lessons || []).map(lesson => ({
+                id: lesson.id,
+                title: lesson.title,
+                description: lesson.description || '',
+                videoUrl: lesson.video_url || '',
+                videoSource: lesson.video_source || 'youtube',
+                duration: lesson.duration_minutes || 0,
+                enablePreview: lesson.is_preview || false,
+                thumbnail: lesson.thumbnail_url || null,
+                attachments: lesson.attachments || []
+              })),
+              quizzes: [],
+              assignments: []
+            };
+            
+            topics.push(topic);
+          }
+        }
+        
+        // Also check for lessons without topics (from course.lessons)
+        if (course.lessons && course.lessons.length > 0) {
+          const lessonsWithoutTopic = course.lessons.filter(lesson => !lesson.topic_id);
           
           if (lessonsWithoutTopic.length > 0) {
+            console.log('Found lessons without topics:', lessonsWithoutTopic.length);
             // Create a "General" topic for lessons without topic_id
             const generalTopic = {
               id: 'general-topic',
@@ -150,22 +175,24 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                 title: lesson.title,
                 description: lesson.description || '',
                 videoUrl: lesson.video_url || '',
-                videoSource: 'youtube',
+                videoSource: lesson.video_source || 'youtube',
                 duration: lesson.duration_minutes || 0,
-                enablePreview: lesson.is_preview || false
+                enablePreview: lesson.is_preview || false,
+                thumbnail: lesson.thumbnail_url || null,
+                attachments: lesson.attachments || []
               })),
               quizzes: [],
               assignments: []
             };
             
-            setFormData(prev => ({
-              ...prev,
-              topics: [generalTopic]
-            }));
+            topics.push(generalTopic);
           }
-          
-          // TODO: If using course_topics table in the future, load topics with their lessons
         }
+        
+        setFormData(prev => ({
+          ...prev,
+          topics: topics
+        }));
       } else {
         setError('Course not found');
       }
