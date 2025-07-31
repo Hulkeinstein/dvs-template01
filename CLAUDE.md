@@ -286,6 +286,70 @@ const blob = base64ToBlob(base64Data)
 - [ ] 권한 관리 테이블 구조
 - [ ] 감사(Audit) 추적 기능
 
+## Git Workflow Guide (GitHub Flow)
+
+### 브랜치 전략
+- **main**: 항상 배포 가능한 상태 유지
+- **feature branches**: 모든 새 작업은 main에서 분기
+
+### 브랜치 네이밍 규칙
+- `feature/*` - 새로운 기능 (예: feature/certificate-templates)
+- `fix/*` - 버그 수정 (예: fix/enrollment-error)  
+- `hotfix/*` - 긴급 수정 (예: hotfix/payment-critical)
+- `chore/*` - 유지보수 작업 (예: chore/update-dependencies)
+- `docs/*` - 문서 작업 (예: docs/api-documentation)
+- `refactor/*` - 코드 리팩토링 (예: refactor/course-actions)
+
+### 워크플로우 단계
+1. **브랜치 생성**
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b feature/your-feature-name
+   ```
+
+2. **작업 & 커밋**
+   ```bash
+   git add .
+   git commit -m "feat: Your feature description"
+   ```
+
+3. **main 브랜치와 동기화**
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout feature/your-feature-name
+   git merge main
+   ```
+
+4. **푸시 & PR 생성**
+   ```bash
+   git push origin feature/your-feature-name
+   # GitHub에서 Pull Request 생성
+   ```
+
+5. **머지 후 정리**
+   ```bash
+   git checkout main
+   git pull origin main
+   git branch -d feature/your-feature-name
+   git push origin --delete feature/your-feature-name
+   ```
+
+### 커밋 메시지 컨벤션
+- `feat:` 새로운 기능
+- `fix:` 버그 수정
+- `docs:` 문서 수정
+- `style:` 코드 스타일 변경 (기능 변경 없음)
+- `refactor:` 코드 리팩토링
+- `test:` 테스트 추가/수정
+- `chore:` 빌드, 패키지 등 기타 작업
+
+**예시:**
+- `feat: Add certificate template selection UI`
+- `fix: Resolve course enrollment error`
+- `docs: Update README with setup instructions`
+
 ## Testing Guide
 
 ### Manual Testing Checklist
@@ -431,6 +495,33 @@ const blob = base64ToBlob(base64Data)
 - Shared Supabase database
 - JWT-based SSO
 - API-based data sync
+
+## 수료증 기능 현황 (2025-01-31)
+
+### 구현 완료:
+- ✅ 모듈 구조 (`/app/lib/certificate/`)
+- ✅ PDF 생성 (@react-pdf/renderer)
+- ✅ 데이터베이스 마이그레이션 파일 (`/supabase/migrations/20250131_create_certificates_table.sql`)
+- ✅ 학생 대시보드 UI (My Certificates 페이지)
+- ✅ 검증 시스템 (`/certificate/verify/[code]`)
+
+### 활성화 방법:
+1. 코스 등록/수강 시스템 완성 후
+2. `.env.local`에서 `NEXT_PUBLIC_CERTIFICATE_ENABLED=true`로 변경
+3. Supabase에서 마이그레이션 SQL 실행
+
+### 테스트 방법:
+```javascript
+// 브라우저 콘솔에서 수동 발급 테스트
+import { issueCertificate } from '@/app/lib/certificate/actions/certificateActions';
+await issueCertificate(userId, courseId);
+```
+
+### 남은 작업:
+- 코스 완료 시 자동 발급 (CERTIFICATE_AUTO_ISSUE)
+- 다양한 템플릿 디자인 구현 (현재 기본 템플릿만)
+- QR 코드 추가
+- 이메일 발송 기능
 
 ## Overall Project Status (2025-01-26)
 

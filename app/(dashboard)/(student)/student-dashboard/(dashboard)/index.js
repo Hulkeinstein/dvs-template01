@@ -15,8 +15,10 @@ import StudentDashboardSidebar from "@/components/Student/StudentDashboardSideba
 
 // RoleProtection 컴포넌트를 import 합니다.
 import RoleProtection from "@/components/Auth/RoleProtection";
+import { useSession } from "next-auth/react";
 
 const StudentDashboard = () => {
+  const { data: session } = useSession();
   return (
     <>
       <Provider store={Store}>
@@ -35,7 +37,10 @@ const StudentDashboard = () => {
                   {/* --- 핵심 수정 사항 --- */}
                   {/* RoleProtection으로 실제 대시보드 UI 부분만 감쌉니다. */}
                   <RoleProtection allowedRoles={["student"]}>
-                    <StudentDashboardHeader />
+                    <StudentDashboardHeader 
+                      userId={session?.user?.id} 
+                      userProfile={session?.user}
+                    />
 
                     <div className="row g-5">
                       <div className="col-lg-3">
@@ -43,7 +48,7 @@ const StudentDashboard = () => {
                       </div>
 
                       <div className="col-lg-9">
-                        <Dashboard />
+                        <Dashboard userId={session?.user?.id} />
                       </div>
                     </div>
                   </RoleProtection>

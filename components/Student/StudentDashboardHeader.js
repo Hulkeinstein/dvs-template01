@@ -1,7 +1,32 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { getUserCertificates } from "@/app/lib/certificate/actions/certificateActions";
+import { isFeatureEnabled } from "@/app/lib/certificate/utils/featureFlags";
 
-const StudentDashboardHeader = () => {
+const StudentDashboardHeader = ({ userId, userProfile }) => {
+  const [certificateCount, setCertificateCount] = useState(0);
+  const [enrolledCount, setEnrolledCount] = useState(5); // Default value
+
+  useEffect(() => {
+    if (userId && isFeatureEnabled('CERTIFICATE_ENABLED')) {
+      loadCertificateCount();
+    }
+  }, [userId]);
+
+  const loadCertificateCount = async () => {
+    try {
+      const result = await getUserCertificates(userId);
+      if (result.success) {
+        setCertificateCount(result.certificates.length);
+      }
+    } catch (error) {
+      console.error('Error loading certificate count:', error);
+    }
+  };
+
   return (
     <>
       <div className="rbt-dashboard-content-wrapper">
@@ -17,13 +42,13 @@ const StudentDashboardHeader = () => {
               />
             </div>
             <div className="tutor-content">
-              <h5 className="title">Emily Hannah</h5>
+              <h5 className="title">{userProfile?.full_name || "Student"}</h5>
               <ul className="rbt-meta rbt-meta-white mt--5">
                 <li>
-                  <i className="feather-book"></i>5 Courses Enroled
+                  <i className="feather-book"></i>{enrolledCount} Courses Enrolled
                 </li>
                 <li>
-                  <i className="feather-award"></i>4 Certificate
+                  <i className="feather-award"></i>{certificateCount} Certificate{certificateCount !== 1 ? 's' : ''}
                 </li>
               </ul>
             </div>
