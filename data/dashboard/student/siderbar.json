@@ -36,6 +36,11 @@
       "icon": "feather-shopping-bag"
     },
     {
+      "link": "/student-certificates",
+      "text": "My Certificates",
+      "icon": "feather-award"
+    },
+    {
       "link": "/student-settings",
       "text": "Settings",
       "icon": "feather-settings"
