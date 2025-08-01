@@ -10,6 +10,7 @@ import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
 import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
 import { createCourse, updateCourse, getCourseById } from "@/app/lib/actions/courseActions";
 import { getLessonsByCourse } from "@/app/lib/actions/lessonActions";
+import { createQuizLesson } from "@/app/lib/actions/quizActions";
 import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
 import { mapDBToFormData } from "@/app/lib/utils/courseDataMapper";
 
@@ -397,20 +398,39 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     }));
   };
   
-  const handleAddQuiz = (topicId, quizData) => {
-    const newQuiz = {
-      id: Date.now(),
-      ...quizData
-    };
-    
-    setFormData({
-      ...formData,
-      topics: formData.topics.map(topic =>
-        topic.id === topicId 
-          ? { ...topic, quizzes: [...topic.quizzes, newQuiz] }
-          : topic
-      )
-    });
+  const handleAddQuiz = async (topicId, quizData) => {
+    if (!editMode || !courseId) {
+      // If not in edit mode, just add to local state
+      const newQuiz = {
+        id: Date.now(),
+        ...quizData
+      };
+      
+      setFormData({
+        ...formData,
+        topics: formData.topics.map(topic =>
+          topic.id === topicId 
+            ? { ...topic, quizzes: [...topic.quizzes, newQuiz] }
+            : topic
+        )
+      });
+      return;
+    }
+
+    // In edit mode, save to database
+    try {
+      const result = await createQuizLesson(courseId, topicId, quizData);
+      if (result.success) {
+        // Reload course data to get the updated lessons
+        await loadCourseData();
+        alert('Quiz added successfully!');
+      } else {
+        alert('Failed to add quiz: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error adding quiz:', error);
+      alert('An error occurred while adding the quiz');
+    }
   };
   
   const handleAddAssignment = (topicId, assignmentData) => {

@@ -1,155 +1,199 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { submitQuizAttempt } from "@/app/lib/actions/quizActions";
 
-const LessonQuiz = () => {
-  const [next, updateNext] = useState(false);
+const LessonQuiz = ({ quizData, attemptId, lessonId }) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState({});
+  const [startTime] = useState(new Date());
+  const [submitting, setSubmitting] = useState(false);
+  
+  const questions = quizData?.questions || [];
+  const settings = quizData?.settings || {};
+  const currentQuestion = questions[currentQuestionIndex];
+  const totalQuestions = questions.length;
+  
+  const handleAnswerChange = (value) => {
+    setAnswers({
+      ...answers,
+      [currentQuestion.id]: value
+    });
+  };
+  
+  const handleNext = () => {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
+  };
+  
+  const handlePrevious = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(currentQuestionIndex - 1);
+    }
+  };
+  
+  const handleSubmit = async () => {
+    if (!attemptId) return;
+    
+    try {
+      setSubmitting(true);
+      const result = await submitQuizAttempt(attemptId, answers);
+      
+      if (result.success) {
+        // Redirect to quiz result page
+        window.location.href = `/lesson-quiz-result?attemptId=${attemptId}`;
+      } else {
+        alert('Failed to submit quiz: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error submitting quiz:', error);
+      alert('An error occurred while submitting the quiz');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  
+  if (questions.length === 0) {
+    return <div>No questions available in this quiz.</div>;
+  }
   return (
     <>
       <form id="quiz-form" className="quiz-form-wrapper">
-        <div id="question-1" className={`question ${next ? "d-none" : ""}`}>
-          <div className={`quize-top-meta`}>
-            <div className="quize-top-left">
-              <span>
-                Questions No: <strong>1/5</strong>
-              </span>
-              <span>
-                Attempts Allowed: <strong>1</strong>
-              </span>
-            </div>
-            <div className="quize-top-right">
-              <span>
-                Time remaining: <strong>No Limit</strong>
-              </span>
-            </div>
-          </div>
-          <hr />
-          <div className="rbt-single-quiz">
-            <h4>1. What is the capital of France?</h4>
-            <div className="row g-3 mt--10">
-              <div className="col-lg-6">
-                <p className="rbt-checkbox-wrapper mb--5">
-                  <input
-                    id="rbt-checkbox-1"
-                    name="rbt-checkbox-1"
-                    type="checkbox"
-                    value="yes"
-                  />
-                  <label htmlFor="rbt-checkbox-1">Option One</label>
-                </p>
-              </div>
-              <div className="col-lg-6">
-                <p className="rbt-checkbox-wrapper">
-                  <input
-                    id="rbt-checkbox-2"
-                    name="rbt-checkbox-2"
-                    type="checkbox"
-                    value="yes"
-                  />
-                  <label htmlFor="rbt-checkbox-2">Option Two</label>
-                </p>
-              </div>
-              <div className="col-lg-6">
-                <p className="rbt-checkbox-wrapper">
-                  <input
-                    id="rbt-checkbox-3"
-                    name="rbt-checkbox-3"
-                    type="checkbox"
-                    value="yes"
-                  />
-                  <label htmlFor="rbt-checkbox-3">Option Three</label>
-                </p>
-              </div>
-              <div className="col-lg-6">
-                <p className="rbt-checkbox-wrapper">
-                  <input
-                    id="rbt-checkbox-4"
-                    name="rbt-checkbox-4"
-                    type="checkbox"
-                    value="yes"
-                  />
-                  <label htmlFor="rbt-checkbox-4">Option Four</label>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="question-2" className={`question ${!next ? "d-none" : ""}`}>
+        <div className="question">
           <div className="quize-top-meta">
             <div className="quize-top-left">
               <span>
-                Questions No: <strong>2/5</strong>
-              </span>
-              <span>
-                Attempts Allowed: <strong>2</strong>
+                Questions No: <strong>{currentQuestionIndex + 1}/{totalQuestions}</strong>
               </span>
             </div>
             <div className="quize-top-right">
               <span>
-                Time remaining: <strong>No Limit</strong>
+                Passing Score: <strong>{settings.passingScore}%</strong>
               </span>
             </div>
           </div>
           <hr />
-          <div className="rbt-single-quiz">
-            <h4>2. What is the Javascript?</h4>
-            <div className="row g-3 mt--10">
-              <div className="col-lg-6">
-                <div className="rbt-form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="rbt-radio"
-                    id="rbt-radio-1"
-                  />
-                  <label className="form-check-label" htmlFor="rbt-radio-1">
-                    Option One
-                  </label>
+          
+          {currentQuestion && (
+            <div className="rbt-single-quiz">
+              <h4>{currentQuestionIndex + 1}. {currentQuestion.question}</h4>
+              <div className="text-muted mb-3">{currentQuestion.points} points</div>
+              
+              {/* Render based on question type */}
+              {currentQuestion.type === 'True/False' && (
+                <div className="row g-3 mt--10">
+                  <div className="col-lg-6">
+                    <div className="rbt-form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name={`question-${currentQuestion.id}`}
+                        id={`${currentQuestion.id}-true`}
+                        checked={answers[currentQuestion.id] === true}
+                        onChange={() => handleAnswerChange(true)}
+                      />
+                      <label className="form-check-label" htmlFor={`${currentQuestion.id}-true`}>
+                        True
+                      </label>
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="rbt-form-check">
+                      <input
+                        className="form-check-input"
+                        type="radio"
+                        name={`question-${currentQuestion.id}`}
+                        id={`${currentQuestion.id}-false`}
+                        checked={answers[currentQuestion.id] === false}
+                        onChange={() => handleAnswerChange(false)}
+                      />
+                      <label className="form-check-label" htmlFor={`${currentQuestion.id}-false`}>
+                        False
+                      </label>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="rbt-form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="rbt-radio"
-                    id="rbt-radio-2"
-                  />
-                  <label className="form-check-label" htmlFor="rbt-radio-2">
-                    Option Two
-                  </label>
+              )}
+              
+              {currentQuestion.type === 'Single Choice' && currentQuestion.options && (
+                <div className="row g-3 mt--10">
+                  {currentQuestion.options.map((option, index) => (
+                    <div className="col-lg-6" key={index}>
+                      <div className="rbt-form-check">
+                        <input
+                          className="form-check-input"
+                          type="radio"
+                          name={`question-${currentQuestion.id}`}
+                          id={`${currentQuestion.id}-option-${index}`}
+                          checked={answers[currentQuestion.id] === option}
+                          onChange={() => handleAnswerChange(option)}
+                        />
+                        <label className="form-check-label" htmlFor={`${currentQuestion.id}-option-${index}`}>
+                          {option}
+                        </label>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="rbt-form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="rbt-radio"
-                    id="rbt-radio-3"
-                  />
-                  <label className="form-check-label" htmlFor="rbt-radio-3">
-                    Option Three
-                  </label>
+              )}
+              
+              {currentQuestion.type === 'Multiple Choice' && currentQuestion.options && (
+                <div className="row g-3 mt--10">
+                  {currentQuestion.options.map((option, index) => (
+                    <div className="col-lg-6" key={index}>
+                      <p className="rbt-checkbox-wrapper mb--5">
+                        <input
+                          id={`${currentQuestion.id}-option-${index}`}
+                          type="checkbox"
+                          value={option}
+                          checked={answers[currentQuestion.id]?.includes(option) || false}
+                          onChange={(e) => {
+                            const currentAnswers = answers[currentQuestion.id] || [];
+                            if (e.target.checked) {
+                              handleAnswerChange([...currentAnswers, option]);
+                            } else {
+                              handleAnswerChange(currentAnswers.filter(a => a !== option));
+                            }
+                          }}
+                        />
+                        <label htmlFor={`${currentQuestion.id}-option-${index}`}>
+                          {option}
+                        </label>
+                      </p>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div className="col-lg-6">
-                <div className="rbt-form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="rbt-radio"
-                    id="rbt-radio-4"
+              )}
+              
+              {currentQuestion.type === 'Open Ended' && (
+                <div className="mt-3">
+                  <textarea
+                    className="form-control"
+                    rows="5"
+                    placeholder="Enter your answer here..."
+                    value={answers[currentQuestion.id] || ''}
+                    onChange={(e) => handleAnswerChange(e.target.value)}
                   />
-                  <label className="form-check-label" htmlFor="rbt-radio-4">
-                    Option Four
-                  </label>
                 </div>
-              </div>
+              )}
+              
+              {currentQuestion.type === 'Fill in the Blanks' && (
+                <div className="mt-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter your answer"
+                    value={answers[currentQuestion.id] || ''}
+                    onChange={(e) => handleAnswerChange(e.target.value)}
+                  />
+                </div>
+              )}
+              
+              {/* Add more question types as needed */}
             </div>
-          </div>
+          )}
         </div>
 
         <div className="rbt-quiz-btn-wrapper mt--30">
@@ -157,30 +201,31 @@ const LessonQuiz = () => {
             className="rbt-btn bg-primary-opacity btn-sm"
             id="prev-btn"
             type="button"
-            disabled={!next}
-            onClick={() => updateNext(!next)}
+            disabled={currentQuestionIndex === 0}
+            onClick={handlePrevious}
           >
             Previous
           </button>
-          <button
-            className={`rbt-btn bg-primary-opacity btn-sm ms-2 ${
-              next ? "d-none" : ""
-            }`}
-            id="next-btn"
-            type="button"
-            onClick={() => updateNext(!next)}
-          >
-            Next
-          </button>
-          <Link
-            className={`rbt-btn btn-gradient btn-sm ms-2 ${
-              !next ? "d-none" : ""
-            }`}
-            href="/lesson-quiz-result"
-            id="submit-btn"
-          >
-            Submit
-          </Link>
+          
+          {currentQuestionIndex < totalQuestions - 1 ? (
+            <button
+              className="rbt-btn bg-primary-opacity btn-sm ms-2"
+              id="next-btn"
+              type="button"
+              onClick={handleNext}
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              className="rbt-btn btn-gradient btn-sm ms-2"
+              type="button"
+              onClick={handleSubmit}
+              disabled={submitting}
+            >
+              {submitting ? 'Submitting...' : 'Submit'}
+            </button>
+          )}
         </div>
       </form>
     </>

@@ -6,8 +6,9 @@ import { CSS } from "@dnd-kit/utilities";
 
 const SingleLesson = (props) => {
   const { onDelete, onEdit, onUpload } = props;
-  const { id, courseTitle, title } = props.course;
+  const { id, courseTitle, title, content_type } = props.course;
   const displayTitle = courseTitle || title || 'Untitled Lesson';
+  const isQuiz = content_type === 'quiz';
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -26,7 +27,18 @@ const SingleLesson = (props) => {
       >
         <div className="col-9 inner d-flex align-items-center gap-2">
           <i className="feather-menu cursor-scroll" {...listeners}></i>
-          <h6 className="rbt-title mb-0">{displayTitle}</h6>
+          {isQuiz ? (
+            <>
+              <i className="feather-help-circle text-primary" title="Quiz"></i>
+              <h6 className="rbt-title mb-0">{displayTitle}</h6>
+              <span className="badge bg-primary ms-2">Quiz</span>
+            </>
+          ) : (
+            <>
+              <i className="feather-play-circle" title="Video Lesson"></i>
+              <h6 className="rbt-title mb-0">{displayTitle}</h6>
+            </>
+          )}
         </div>
         <div className="col-3 inner">
           <ul className="rbt-list-style-1 rbt-course-list d-flex gap-1 justify-content-end">

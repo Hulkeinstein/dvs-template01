@@ -300,6 +300,11 @@ const blob = base64ToBlob(base64Data)
 - `docs/*` - 문서 작업 (예: docs/api-documentation)
 - `refactor/*` - 코드 리팩토링 (예: refactor/course-actions)
 
+### Claude Code 작업 규칙
+- **IMPORTANT**: main 브랜치에서 새로운 작업을 시작하기 전에 항상 새 브랜치 생성 여부를 확인
+- main 브랜치에서는 직접 작업하지 않음
+- 브랜치 머지 후 main으로 돌아왔을 때, 다음 작업 시작 전 반드시 새 브랜치 생성 프롬프트 표시
+
 ### 워크플로우 단계
 1. **브랜치 생성**
    ```bash

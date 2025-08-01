@@ -1,33 +1,128 @@
 "use client";
 
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef } from "react";
 
 import Settings from "../QuizTab/Settings";
 import Question from "../QuizTab/Question";
 import QuestionType from "../QuizTab/QuestionType";
+import { convertPlaceholdersToIframes } from "@/app/lib/utils/videoUtils";
 
 const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
   const [selectedOption, setSelectedOption] = useState("True/False");
   const [currentStep, setCurrentStep] = useState(1);
   const [toggle, setToggle] = useState(true);
-  const [content, setContent] = useState("");
-  const [answer, setAnswer] = useState("");
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState({
+    question: '',
+    questionImage: null,
+    type: 'True/False',
+    points: 10,
+    required: true,
+    randomize: false,
+    description: '',
+    correctAnswer: true,
+    options: [],
+    explanation: '',
+    // Fill in the Blanks fields
+    fillInBlanksQuestion: '',
+    fillInBlanksAnswers: '',
+    // Image Matching fields
+    imageMatchingImage: null,
+    imageMatchingText: '',
+    imageMatchingPairs: []
+  });
   const [quizData, setQuizData] = useState({
     title: '',
     summary: '',
     questions: [],
     settings: {
-      timeLimit: 0,
       passingScore: 70,
+      feedbackMode: 'default',
       randomizeQuestions: false,
-      showAnswers: true
+      showAnswersAfterSubmit: true,
+      maxQuestions: 0,
+      maxAttempts: 3,
+      questionLayout: 'random',
+      questionsOrder: 'single_question',
+      hideQuestionNumber: false,
+      shortAnswerLimit: 200,
+      essayAnswerLimit: 500
     }
   });
   const editor = useRef(null);
   const answerEditor = useRef(null);
 
   const handleSelectChange = (e) => {
-    setSelectedOption(e.target.value);
+    const newType = e.target.value;
+    setSelectedOption(newType);
+    // Set appropriate default correctAnswer based on question type
+    const defaultCorrectAnswer = newType === 'True/False' ? true : null;
+    setCurrentQuestion({ ...currentQuestion, type: newType, correctAnswer: defaultCorrectAnswer });
+  };
+
+  const generateQuestionId = () => {
+    return `q_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  const handleAddQuestion = () => {
+    if (!currentQuestion.question.trim()) {
+      alert('Please enter a question');
+      return;
+    }
+
+    const newQuestion = {
+      ...currentQuestion,
+      id: generateQuestionId()
+    };
+
+    if (editingQuestionIndex !== null) {
+      // Update existing question
+      const updatedQuestions = [...quizData.questions];
+      updatedQuestions[editingQuestionIndex] = newQuestion;
+      setQuizData({ ...quizData, questions: updatedQuestions });
+      setEditingQuestionIndex(null);
+    } else {
+      // Add new question
+      setQuizData({
+        ...quizData,
+        questions: [...quizData.questions, newQuestion]
+      });
+    }
+
+    // Reset form
+    setCurrentQuestion({
+      question: '',
+      questionImage: null,
+      type: selectedOption,
+      points: 10,
+      required: true,
+      randomize: false,
+      description: '',
+      correctAnswer: selectedOption === 'True/False' ? true : null,
+      options: [],
+      explanation: '',
+      // Fill in the Blanks fields
+      fillInBlanksQuestion: '',
+      fillInBlanksAnswers: '',
+      // Image Matching fields
+      imageMatchingImage: null,
+      imageMatchingText: '',
+      imageMatchingPairs: []
+    });
+    setToggle(true);
+  };
+
+  const handleEditQuestion = (index) => {
+    const question = quizData.questions[index];
+    setCurrentQuestion(question);
+    setSelectedOption(question.type);
+    setEditingQuestionIndex(index);
+    setToggle(false);
+  };
+
+  const handleDeleteQuestion = (index) => {
+    const updatedQuestions = quizData.questions.filter((_, i) => i !== index);
+    setQuizData({ ...quizData, questions: updatedQuestions });
   };
 
   const handleNextClick = () => {
@@ -38,34 +133,6 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
     setCurrentStep((prevStep) => Math.max(prevStep - 1, 1));
   };
 
-  const config = useMemo(
-    () => ({
-      toolbarAdaptive: false,
-      buttons: ["image", "bold", "about"],
-      filebrowser: {
-        permissionsPresets: {
-          allowFiles: false,
-          allowFileMove: false,
-          allowFileUpload: false,
-          allowFileUploadRemote: false,
-          allowFileRemove: false,
-          allowFileRename: false,
-          allowFolders: false,
-          allowFolderCreate: false,
-          allowFolderMove: false,
-          allowFolderRemove: false,
-          allowFolderRename: false,
-          allowImageResize: false,
-          allowImageCrop: false,
-        },
-        ajax: {
-          url: "https://xdsoft.net/jodit/finder/",
-        },
-      },
-    }),
-    []
-  );
-
   return (
     <>
       <div
@@ -74,8 +141,9 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
         tabIndex="-1"
         aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
+        data-bs-focus="false"
       >
-        <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
               <button
@@ -87,7 +155,7 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
                 <i className="feather-x"></i>
               </button>
             </div>
-            <div className="modal-body">
+            <div className="modal-body" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
               <div className="inner rbt-default-form">
                 <div className="row">
                   <div className="col-lg-12">
@@ -181,27 +249,35 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
                         {toggle ? (
                           <div className="content">
                             <div className="course-field mb--20">
-                              <QuestionType
-                                handleBackClick={handleBackClick}
-                                title="Question No.01"
-                                type="Single Choice"
-                              />
-                              <QuestionType
-                                handleBackClick={handleBackClick}
-                                title="Question No.02"
-                                type="True/False"
-                              />
-                              <QuestionType
-                                handleBackClick={handleBackClick}
-                                title="Question No.03"
-                                type="Multi Choice"
-                              />
+                              {quizData.questions.length === 0 ? (
+                                <div className="text-center py-4">
+                                  <i className="feather-info fs-3 text-muted mb-3 d-block"></i>
+                                  <p className="text-muted">
+                                    No questions added yet. Click "Add Question" to create your first question.
+                                  </p>
+                                </div>
+                              ) : (
+                                quizData.questions.map((question, index) => (
+                                  <QuestionType
+                                    key={question.id}
+                                    title={`Question No.${String(index + 1).padStart(2, '0')}`}
+                                    type={question.type}
+                                    points={question.points}
+                                    question={question.question}
+                                    onEdit={() => handleEditQuestion(index)}
+                                    onDelete={() => handleDeleteQuestion(index)}
+                                  />
+                                ))
+                              )}
                             </div>
                             <div className="course-field">
                               <button
                                 className="rbt-btn btn-border hover-icon-reverse rbt-sm-btn btn-1"
                                 type="button"
-                                onClick={() => setToggle(!toggle)}
+                                onClick={() => {
+                                  setEditingQuestionIndex(null);
+                                  setToggle(!toggle);
+                                }}
                               >
                                 <span className="icon-reverse-wrapper">
                                   <span className="btn-text">Add Question</span>
@@ -220,17 +296,15 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
                             handleSelectChange={handleSelectChange}
                             selectedOption={selectedOption}
                             editor={editor}
-                            content={content}
-                            setContent={setContent}
                             answerEditor={answerEditor}
-                            answer={answer}
-                            setAnswer={setAnswer}
-                            config={config}
+                            currentQuestion={currentQuestion}
+                            setCurrentQuestion={setCurrentQuestion}
+                            isEditing={editingQuestionIndex !== null}
                           />
                         )}
                       </form>
                     )}
-                    {currentStep === 3 && <Settings />}
+                    {currentStep === 3 && <Settings quizData={quizData} setQuizData={setQuizData} />}
                   </div>
                 </div>
               </div>
@@ -257,18 +331,46 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
                     type="button"
                     className="rbt-btn btn-gradient btn-md"
                     onClick={() => {
-                      if (quizData.title.trim() && onAddQuiz) {
-                        onAddQuiz(quizData);
+                      if (quizData.title.trim() && quizData.questions.length > 0 && onAddQuiz) {
+                        // Clean up quiz data before sending
+                        const cleanedQuizData = {
+                          ...quizData,
+                          questions: quizData.questions.map(q => ({
+                            ...q,
+                            // Ensure correctAnswer has appropriate value
+                            correctAnswer: q.correctAnswer === null && q.type === 'True/False' ? true : q.correctAnswer,
+                            // Convert placeholders to iframes for storage
+                            description: convertPlaceholdersToIframes(q.description || ''),
+                            explanation: convertPlaceholdersToIframes(q.explanation || ''),
+                            // Convert options to simple array for Single/Multiple Choice
+                            options: (q.type === 'Single Choice' || q.type === 'Multiple Choice') && q.options
+                              ? q.options.map(opt => opt.text || opt)
+                              : q.options
+                          })),
+                          settings: {
+                            ...quizData.settings,
+                            // If maxQuestions is 0, don't send it
+                            maxQuestions: quizData.settings.maxQuestions === 0 ? undefined : quizData.settings.maxQuestions
+                          }
+                        };
+                        onAddQuiz(cleanedQuizData);
                         // Reset form
                         setQuizData({
                           title: '',
                           summary: '',
                           questions: [],
                           settings: {
-                            timeLimit: 0,
                             passingScore: 70,
+                            feedbackMode: 'default',
                             randomizeQuestions: false,
-                            showAnswers: true
+                            showAnswersAfterSubmit: true,
+                            maxQuestions: 0,
+                            maxAttempts: 3,
+                            questionLayout: 'random',
+                            questionsOrder: 'single_question',
+                            hideQuestionNumber: false,
+                            shortAnswerLimit: 200,
+                            essayAnswerLimit: 500
                           }
                         });
                         setCurrentStep(1);
@@ -280,6 +382,12 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
                         if (modalInstance) {
                           modalInstance.hide();
                         }
+                      } else if (!quizData.title.trim()) {
+                        alert('Please enter a quiz title');
+                        setCurrentStep(1);
+                      } else if (quizData.questions.length === 0) {
+                        alert('Please add at least one question');
+                        setCurrentStep(2);
                       }
                     }}
                   >
@@ -297,9 +405,9 @@ const QuizModal = ({ modalId = "Quiz", onAddQuiz }) => {
                   <button
                     type="button"
                     className="rbt-btn btn-md btn-2"
-                    onClick={() => setToggle(!toggle)}
+                    onClick={handleAddQuestion}
                   >
-                    Add Question
+                    {editingQuestionIndex !== null ? 'Update Question' : 'Add Question'}
                   </button>
                 )}
               </div>

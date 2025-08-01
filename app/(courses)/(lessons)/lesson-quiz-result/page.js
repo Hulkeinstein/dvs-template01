@@ -1,5 +1,5 @@
 import BackToTop from "@/app/backToTop";
-import LessonQuizResultLayout from "./(quiz-result)";
+import QuizResultContent from "./QuizResultContent";
 
 export const metadata = {
   title: "Lesson Quiz Result - Online Courses & Education NEXTJS14 Template",
@@ -9,7 +9,7 @@ export const metadata = {
 const LessonQuizResultPage = () => {
   return (
     <>
-      <LessonQuizResultLayout />
+      <QuizResultContent />
       <BackToTop />
     </>
   );
