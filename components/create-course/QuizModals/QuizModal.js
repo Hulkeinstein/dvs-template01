@@ -693,27 +693,32 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                             if (onEditComplete) {
                               onEditComplete();
                             }
-                            
-                            // 편집 모드에서는 edit 페이지로 이동
-                            if (editingQuiz && editingQuiz.course_id) {
-                              setTimeout(() => {
-                                router.push(`/instructor/courses/${editingQuiz.course_id}/edit`);
-                              }, 500);
-                            }
                           }
                           
-                          // Close modal without resetting state on success
+                          // Close modal first
                           const modalElement = document.getElementById(modalId);
                           if (modalElement && window.bootstrap?.Modal) {
                             const modalInstance = window.bootstrap.Modal.getInstance(modalElement) || new window.bootstrap.Modal(modalElement);
                             modalInstance.hide();
                             
-                            // 성공 후에는 상태를 리셋하지 않고 페이지 새로고침
-                            if (!editingQuiz) {
-                              // 새 퀴즈 추가 성공 후 페이지 새로고침
-                              setTimeout(() => {
+                            // 모달이 완전히 닫힌 후 페이지 이동
+                            modalElement.addEventListener('hidden.bs.modal', function handleHidden() {
+                              modalElement.removeEventListener('hidden.bs.modal', handleHidden);
+                              
+                              if (editingQuiz && editingQuiz.course_id) {
+                                // 편집 모드에서는 페이지 완전 새로고침으로 이동
+                                window.location.href = `/create-course?edit=${editingQuiz.course_id}`;
+                              } else {
+                                // 새 퀴즈 추가 성공 후 페이지 새로고침
                                 window.location.reload();
-                              }, 500);
+                              }
+                            });
+                          } else {
+                            // Bootstrap Modal이 없는 경우 바로 이동
+                            if (editingQuiz && editingQuiz.course_id) {
+                              window.location.href = `/create-course?edit=${editingQuiz.course_id}`;
+                            } else {
+                              window.location.reload();
                             }
                           }
                         } else {

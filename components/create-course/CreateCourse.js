@@ -51,7 +51,17 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   
   // Accordion states - Course Info and Course Builder are open by default
   const [accordionStates, setAccordionStates] = useState(() => {
-    // Load from localStorage if available
+    // 편집 모드일 때는 Course Info만 열기
+    if (editMode) {
+      return {
+        courseInfo: true,
+        courseIntro: false,
+        courseBuilder: false,
+        additionalInfo: false
+      };
+    }
+    
+    // Load from localStorage if available (생성 모드에서만)
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('courseAccordionStates');
       if (saved) {
@@ -70,12 +80,24 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     };
   });
 
-  // Save accordion states to localStorage
+  // Save accordion states to localStorage (생성 모드에서만)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (!editMode && typeof window !== 'undefined') {
       localStorage.setItem('courseAccordionStates', JSON.stringify(accordionStates));
     }
-  }, [accordionStates]);
+  }, [accordionStates, editMode]);
+
+  // 편집 모드일 때 아코디언 상태 강제 설정
+  useEffect(() => {
+    if (editMode) {
+      setAccordionStates({
+        courseInfo: true,
+        courseIntro: false,
+        courseBuilder: false,
+        additionalInfo: false
+      });
+    }
+  }, [editMode]);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -218,7 +240,8 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   id: quiz.id,
                   title: quiz.title,
                   summary: quiz.description,
-                  ...(quiz.content_data || {}),
+                  content_data: quiz.content_data || {},
+                  course_id: course.id, // 코스 ID 추가
                   _pending: false,
                   content_type: 'quiz'
                 })),
@@ -259,7 +282,8 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   id: quiz.id,
                   title: quiz.title,
                   summary: quiz.description,
-                  ...(quiz.content_data || {}),
+                  content_data: quiz.content_data || {},
+                  course_id: course.id, // 코스 ID 추가
                   _pending: false,
                   content_type: 'quiz'
                 })),
