@@ -234,9 +234,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   thumbnail: lesson.thumbnail_url || null,
                   attachments: lesson.attachments || []
                 })),
-              quizzes: (topicData.lessons || [])
-                .filter(lesson => lesson.content_type === 'quiz')
-                .map(quiz => ({
+              quizzes: topicData.quizzes ? 
+                // 새로운 방식: topicData.quizzes가 있으면 직접 사용
+                (topicData.quizzes || []).map(quiz => ({
                   id: quiz.id,
                   title: quiz.title,
                   summary: quiz.description,
@@ -244,7 +244,19 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   course_id: course.id, // 코스 ID 추가
                   _pending: false,
                   content_type: 'quiz'
-                })),
+                })) :
+                // 기존 방식: lessons에서 필터링 (호환성)
+                (topicData.lessons || [])
+                  .filter(lesson => lesson.content_type === 'quiz')
+                  .map(quiz => ({
+                    id: quiz.id,
+                    title: quiz.title,
+                    summary: quiz.description,
+                    content_data: quiz.content_data || {},
+                    course_id: course.id, // 코스 ID 추가
+                    _pending: false,
+                    content_type: 'quiz'
+                  })),
               assignments: []
             };
             
@@ -553,6 +565,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       try {
         logger.log('Creating quiz with:', { courseId, topicId, quizData });
         const result = await createQuizLesson(courseId, topicId, quizData);
+        logger.log('Quiz creation result:', result);
         
         if (result.success) {
           // Step 3: 성공 - 임시 ID를 실제 ID로 교체하고 pending 상태 제거
@@ -578,8 +591,8 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
             )
           }));
           
-          // 전체 데이터 새로고침 제거 - 이미 optimistic UI로 업데이트됨
-          // setTimeout(() => loadCourseData(), 1000);
+          // 전체 데이터 새로고침 - 퀴즈가 lessons 대 quizzes로 올바르게 분리되도록
+          setTimeout(() => loadCourseData(), 1000);
           return { success: true };
         } else {
           throw new Error(result.error || 'Failed to save quiz');

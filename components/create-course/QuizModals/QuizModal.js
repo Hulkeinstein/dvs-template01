@@ -384,6 +384,151 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
     }
   };
 
+  // 개발 환경 전용 - 샘플 퀴즈 데이터 로드 함수
+  const loadSampleQuizData = () => {
+    // 완전히 독립된 샘플 데이터
+    const sampleQuizData = {
+      title: "샘플 퀴즈 - React 기초",
+      summary: "React의 기본 개념을 확인하는 샘플 퀴즈입니다.",
+      questions: [
+        {
+          id: `sample_${Date.now()}_1`,
+          type: "True/False",
+          question: "React는 Facebook에서 개발한 JavaScript 라이브러리입니다.",
+          points: 10,
+          required: true,
+          randomize: false,
+          correctAnswer: true,
+          explanation: "맞습니다. React는 2013년 Facebook(현 Meta)에서 공개했습니다."
+        },
+        {
+          id: `sample_${Date.now()}_2`,
+          type: "Single Choice",
+          question: "다음 중 React의 주요 특징이 아닌 것은?",
+          points: 10,
+          required: true,
+          randomize: true,
+          options: [
+            { id: "s1", text: "가상 DOM 사용" },
+            { id: "s2", text: "컴포넌트 기반 구조" },
+            { id: "s3", text: "단방향 데이터 흐름" },
+            { id: "s4", text: "자동 메모리 관리" }
+          ],
+          correctAnswer: "s4",
+          explanation: "자동 메모리 관리는 React의 특징이 아닙니다."
+        },
+        {
+          id: `sample_${Date.now()}_3`,
+          type: "Multiple Choice",
+          question: "다음 중 JavaScript의 특징을 모두 고르세요.",
+          points: 20,
+          required: true,
+          randomize: true,
+          options: [
+            { id: "mc1", text: "동적 타입 언어" },
+            { id: "mc2", text: "프로토타입 기반" },
+            { id: "mc3", text: "컴파일 언어" },
+            { id: "mc4", text: "비동기 처리 지원" }
+          ],
+          correctAnswer: ["mc1", "mc2", "mc4"],
+          explanation: "JavaScript는 인터프리터 언어이며, 컴파일 언어가 아닙니다."
+        },
+        {
+          id: `sample_${Date.now()}_4`,
+          type: "Open Ended",
+          question: "React의 장점을 3가지 이상 설명하세요.",
+          points: 30,
+          required: true,
+          correctAnswer: null,
+          explanation: "Component 재사용성, Virtual DOM으로 인한 성능 향상, 단방향 데이터 흐름으로 예측 가능한 상태 관리 등이 있습니다."
+        },
+        {
+          id: `sample_${Date.now()}_5`,
+          type: "Fill in the Blanks",
+          question: "React에서 상태를 관리하는 Hook은 [1]이고, 부수 효과를 처리하는 Hook은 [2]입니다.",
+          points: 20,
+          required: true,
+          blanks: [
+            { id: 1, answers: ["useState"], caseSensitive: false },
+            { id: 2, answers: ["useEffect"], caseSensitive: false }
+          ],
+          correctAnswer: {
+            1: ["useState"],
+            2: ["useEffect"]
+          }
+        },
+        {
+          id: `sample_${Date.now()}_6`,
+          type: "Sort Answer",
+          question: "React 컴포넌트 생명주기 순서대로 정렬하세요.",
+          points: 15,
+          required: true,
+          sortItems: [
+            { id: 1, text: "constructor", order: 1 },
+            { id: 2, text: "render", order: 2 },
+            { id: 3, text: "componentDidMount", order: 3 },
+            { id: 4, text: "componentDidUpdate", order: 4 },
+            { id: 5, text: "componentWillUnmount", order: 5 }
+          ],
+          correctAnswer: [1, 2, 3, 4, 5]
+        },
+        {
+          id: `sample_${Date.now()}_7`,
+          type: "Matching",
+          question: "React 개념과 설명을 연결하세요.",
+          points: 25,
+          required: true,
+          randomize: true,
+          matchingPairs: {
+            leftItems: [
+              { id: "left1", text: "useState" },
+              { id: "left2", text: "useEffect" },
+              { id: "left3", text: "props" },
+              { id: "left4", text: "JSX" }
+            ],
+            rightItems: [
+              { id: "right1", text: "상태 관리 Hook" },
+              { id: "right2", text: "부수 효과 처리 Hook" },
+              { id: "right3", text: "컴포넌트 간 데이터 전달" },
+              { id: "right4", text: "JavaScript XML 문법" }
+            ],
+            correctMatches: {
+              "left1": "right1",
+              "left2": "right2",
+              "left3": "right3",
+              "left4": "right4"
+            }
+          },
+          correctAnswer: {
+            "left1": "right1",
+            "left2": "right2",
+            "left3": "right3",
+            "left4": "right4"
+          }
+        }
+      ],
+      settings: {
+        passingScore: 70,
+        feedbackMode: 'reveal',
+        randomizeQuestions: false,
+        showAnswersAfterSubmit: true,
+        maxQuestions: 0,
+        maxAttempts: 3,
+        questionLayout: 'one_per_page',
+        questionsOrder: 'sequential',
+        hideQuestionNumber: false,
+        shortAnswerLimit: 200,
+        essayAnswerLimit: 500
+      }
+    };
+
+    // 기존 데이터를 완전히 교체 (안전한 방식)
+    setQuizData(sampleQuizData);
+    
+    // 사용자에게 알림
+    alert('샘플 퀴즈 데이터가 로드되었습니다. 필요에 따라 수정해서 사용하세요.');
+  };
+
 
   return (
     <>
@@ -583,6 +728,23 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                 >
                   Back
                 </button>
+                
+                {/* 개발 환경에서만 표시되는 샘플 퀴즈 로드 버튼 */}
+                {currentStep === 3 && process.env.NODE_ENV === 'development' && (
+                  <button
+                    type="button"
+                    className="rbt-btn btn-outline-secondary btn-md me-3"
+                    onClick={loadSampleQuizData}
+                    style={{ 
+                      borderStyle: 'dashed',
+                      opacity: 0.8 
+                    }}
+                  >
+                    <i className="feather-download me-2"></i>
+                    샘플 퀴즈 로드 (개발용)
+                  </button>
+                )}
+                
                 {currentStep === 3 ? (
                   <button
                     type="button"
@@ -728,7 +890,9 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                         
                         } catch (error) {
                           console.error('Quiz save error:', error);
-                          alert('퀴즈 저장 중 오류가 발생했습니다: ' + error.message);
+                          // error.message가 없을 수 있으므로 안전하게 처리
+                          const errorMessage = error?.message || error?.toString() || '알 수 없는 오류가 발생했습니다';
+                          alert('퀴즈 저장 중 오류가 발생했습니다: ' + errorMessage);
                         } finally {
                           setIsSaving(false);
                         }

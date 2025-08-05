@@ -673,7 +673,7 @@ export async function getCourseById(courseId) {
       .from('lessons')
       .select('*')
       .eq('course_id', courseId)
-      .order('sort_order', { ascending: true })
+      .order('order_index', { ascending: true })
     
     if (lessonsError) {
       console.error('Error loading lessons:', lessonsError)
@@ -681,10 +681,28 @@ export async function getCourseById(courseId) {
     } else {
       course.lessons = allLessons || []
       
-      // 5. Topics에 레슨 할당
+      // 디버깅: 모든 레슨의 content_type 확인
+      console.log('All lessons content types:', allLessons?.map(l => ({ 
+        title: l.title, 
+        content_type: l.content_type,
+        topic_id: l.topic_id
+      })) || [])
+      
+      // 5. Topics에 레슨 할당 (콘텐츠 타입별로 분리)
       if (course.topics && course.topics.length > 0) {
         for (const topic of course.topics) {
-          topic.lessons = allLessons?.filter(lesson => lesson.topic_id === topic.id) || []
+          const topicContents = allLessons?.filter(lesson => lesson.topic_id === topic.id) || []
+          
+          // content_type에 따라 분리
+          topic.lessons = topicContents.filter(content => content.content_type !== 'quiz')
+          topic.quizzes = topicContents.filter(content => content.content_type === 'quiz')
+          
+          // 호환성을 위해 quizzes에 content_data 추가
+          topic.quizzes = topic.quizzes.map(quiz => ({
+            ...quiz,
+            ...quiz.content_data,
+            type: 'quiz'
+          }))
         }
       }
       
@@ -696,6 +714,16 @@ export async function getCourseById(courseId) {
     }
     
     console.log('Course loaded successfully with', course.topics?.length || 0, 'topics and', course.lessons?.length || 0, 'lessons')
+    
+    // 디버깅: 퀴즈 데이터 확인
+    if (course.topics && course.topics.length > 0) {
+      course.topics.forEach(topic => {
+        console.log(`Topic ${topic.title}: ${topic.lessons?.length || 0} lessons, ${topic.quizzes?.length || 0} quizzes`)
+        if (topic.quizzes && topic.quizzes.length > 0) {
+          console.log('Quiz titles:', topic.quizzes.map(q => q.title).join(', '))
+        }
+      })
+    }
     
     return { course }
   } catch (error) {
