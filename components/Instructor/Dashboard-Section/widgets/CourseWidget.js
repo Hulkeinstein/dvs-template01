@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { updateCourseStatus } from "@/app/lib/actions/courseActions";
+import { updateCourseStatus, deleteCourse } from "@/app/lib/actions/courseActions";
 
 const CourseWidget = ({
   data,
@@ -15,6 +15,7 @@ const CourseWidget = ({
   isEdit,
   userRole = 'student', // 기본값은 student
   onStatusChange, // 상태 변경 핸들러
+  onDeleteCourse, // 코스 삭제 핸들러
 }) => {
   const [discountPercentage, setDiscountPercentage] = useState("");
   const [totalReviews, setTotalReviews] = useState("");
@@ -47,6 +48,15 @@ const CourseWidget = ({
   });
 
   const handleStatusChange = async (newStatus) => {
+    if (newStatus === 'delete') {
+      if (confirm('정말 이 코스를 삭제하시겠습니까?\n모든 레슨과 퀴즈가 함께 삭제됩니다.')) {
+        if (onDeleteCourse) {
+          await onDeleteCourse(data.id);
+        }
+      }
+      return;
+    }
+    
     const result = await updateCourseStatus(data.id, newStatus);
     if (result.success && onStatusChange) {
       onStatusChange();
@@ -116,6 +126,17 @@ const CourseWidget = ({
 
     const actions = getStatusActions();
     
+    // 모든 상태에 Delete 추가
+    if (actions.length > 0) {
+      actions.push({ divider: true }); // 구분선
+    }
+    actions.push({ 
+      action: 'delete', 
+      icon: 'feather-trash-2', 
+      text: 'Delete Course',
+      className: 'text-danger'
+    });
+    
     if (actions.length === 0) return null;
     
     return (
@@ -131,19 +152,23 @@ const CourseWidget = ({
         </button>
         <ul className="dropdown-menu dropdown-menu-end">
           {actions.map((action, index) => (
-            <li key={index}>
-              <a 
-                className={`dropdown-item ${action.className} fs-3`}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleStatusChange(action.action);
-                }}
-              >
-                <i className={`${action.icon} me-2 fs-3`}></i>
-                {action.text}
-              </a>
-            </li>
+            action.divider ? (
+              <li key={index}><hr className="dropdown-divider" /></li>
+            ) : (
+              <li key={index}>
+                <a 
+                  className={`dropdown-item ${action.className} fs-3`}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleStatusChange(action.action);
+                  }}
+                >
+                  <i className={`${action.icon} me-2 fs-3`}></i>
+                  {action.text}
+                </a>
+              </li>
+            )
           ))}
         </ul>
       </div>

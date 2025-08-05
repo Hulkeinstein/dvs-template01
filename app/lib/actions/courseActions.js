@@ -547,6 +547,62 @@ export async function getInstructorCourses() {
   }
 }
 
+// Delete a course
+export async function deleteCourse(courseId) {
+  try {
+    const session = await getServerSession(authOptions)
+    
+    if (!session?.user?.email) {
+      return { error: 'You must be logged in to delete a course' }
+    }
+
+    // Get user ID and verify ownership
+    const { data: userData, error: userError } = await supabase
+      .from('user')
+      .select('id')
+      .eq('email', session.user.email)
+      .single()
+
+    if (userError || !userData) {
+      return { error: 'User not found' }
+    }
+
+    // Verify the user owns this course
+    const { data: courseCheck, error: checkError } = await supabase
+      .from('courses')
+      .select('instructor_id, title')
+      .eq('id', courseId)
+      .single()
+
+    if (checkError || !courseCheck) {
+      return { error: 'Course not found' }
+    }
+
+    if (courseCheck.instructor_id !== userData.id) {
+      return { error: 'You do not have permission to delete this course' }
+    }
+
+    // Delete the course (CASCADE will handle related data)
+    const { error: deleteError } = await supabase
+      .from('courses')
+      .delete()
+      .eq('id', courseId)
+
+    if (deleteError) {
+      console.error('Course deletion error:', deleteError)
+      return { error: 'Failed to delete course' }
+    }
+
+    revalidatePath('/instructor/courses')
+    revalidatePath('/courses')
+    
+    return { success: true, message: `"${courseCheck.title}" 코스가 성공적으로 삭제되었습니다.` }
+  } catch (error) {
+    console.error('Unexpected error in deleteCourse:', error)
+    return { error: 'An unexpected error occurred' }
+  }
+}
+
 // Get single course details
 export async function getCourseById(courseId) {
   try {
