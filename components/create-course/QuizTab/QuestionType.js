@@ -15,27 +15,47 @@ const QuestionType = ({ title, type, points, question, onEdit, onDelete }) => {
         <div className="text-muted small mt-1" style={{ maxWidth: '400px' }}>
           {question && question.length > 50 ? question.substring(0, 50) + '...' : question}
         </div>
-        <div className="inner">
-          <ul className="rbt-list-style-1 rbt-course-list d-flex gap-3 align-items-center">
-            <li>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-primary me-2"
-                onClick={onEdit}
-              >
-                <i className="feather-edit-2"></i> Edit
-              </button>
-            </li>
-            <li>
-              <button
-                type="button"
-                className="btn btn-sm btn-outline-danger"
-                onClick={onDelete}
-              >
-                <i className="feather-trash"></i> Delete
-              </button>
-            </li>
-          </ul>
+        <div className="inner d-flex align-items-center gap-2">
+          <button
+            type="button"
+            className="badge"
+            style={{
+              backgroundColor: '#2f57ef',
+              color: 'white',
+              border: 'none',
+              padding: '6px 16px',
+              fontSize: '14px',
+              fontWeight: '500',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              transition: 'opacity 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.opacity = '0.9'}
+            onMouseOut={(e) => e.target.style.opacity = '1'}
+            onClick={onEdit}
+          >
+            Edit
+          </button>
+          <button
+            type="button"
+            className="badge"
+            style={{
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              padding: '6px 16px',
+              fontSize: '14px',
+              fontWeight: '500',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              transition: 'opacity 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.opacity = '0.9'}
+            onMouseOut={(e) => e.target.style.opacity = '1'}
+            onClick={onDelete}
+          >
+            Delete
+          </button>
         </div>
       </div>
     </>

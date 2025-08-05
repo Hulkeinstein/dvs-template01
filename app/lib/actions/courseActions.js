@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { revalidatePath } from 'next/cache'
 import { mapFormDataToDB, mapFormDataToSettings, logUnmappedFields } from '@/app/lib/utils/courseDataMapper'
+import { saveCourseContent } from './courseContentActions'
 
 // Create a new course
 export async function createCourse(formData) {
@@ -155,6 +156,59 @@ export async function createCourse(formData) {
             }
           }
         }
+        
+        // Create quizzes for this topic
+        if (topic.quizzes && topic.quizzes.length > 0) {
+          for (let quizIndex = 0; quizIndex < topic.quizzes.length; quizIndex++) {
+            const quiz = topic.quizzes[quizIndex];
+            
+            // Extract questions and settings like createQuizLesson does
+            const quizContent = {
+              questions: quiz.questions || [],
+              settings: quiz.settings || {
+                passingScore: 70,
+                feedbackMode: 'default',
+                randomizeQuestions: false,
+                showAnswersAfterSubmit: true,
+                maxQuestions: 0,
+                maxAttempts: 3,
+                questionLayout: 'random',
+                questionsOrder: 'single_question',
+                hideQuestionNumber: false,
+                shortAnswerLimit: 200,
+                essayAnswerLimit: 500
+              }
+            };
+            
+            // Calculate metadata
+            const totalPoints = quizContent.questions.reduce((sum, q) => sum + (q.points || 10), 0);
+            const questionCount = quizContent.questions.length;
+            
+            quizContent.metadata = {
+              totalPoints,
+              questionCount
+            };
+            
+            const { error: quizError } = await supabase
+              .from('lessons')
+              .insert({
+                course_id: course.id,
+                topic_id: topicData.id,
+                title: quiz.title || 'Quiz',
+                description: quiz.summary || '',
+                content_data: quizContent,
+                duration_minutes: Math.ceil(questionCount * 2), // Estimate 2 minutes per question
+                sort_order: (topic.lessons?.length || 0) + quizIndex + 1,
+                is_preview: false,
+                content_type: 'quiz'
+              })
+            
+            if (quizError) {
+              console.error('Quiz creation error:', quizError)
+              console.error('Failed quiz data:', { title: quiz.title, questionsCount: questionCount })
+            }
+          }
+        }
       }
     }
 
@@ -236,146 +290,29 @@ export async function updateCourse(courseId, formData) {
       .update(settingsData)
       .eq('course_id', courseId)
 
-    // Update topics and lessons
+    // Update topics and lessons using the new saveCourseContent function
     if (formData.topics && formData.topics.length > 0) {
       console.log('Updating topics and lessons. Topics count:', formData.topics.length);
       
-      // Get existing topics
-      const { data: existingTopics } = await supabase
+      // Use the saveCourseContent function to handle all topic/lesson/quiz updates
+      const contentResult = await saveCourseContent(courseId, formData.topics);
+      
+      if (!contentResult.success) {
+        console.error('Failed to save course content:', contentResult.error);
+        return { error: `Failed to save course content: ${contentResult.error}` };
+      }
+      
+      console.log('Course content saved successfully');
+    } else {
+      // If no topics, delete all existing topics (cascade will handle lessons)
+      const { error: deleteError } = await supabase
         .from('course_topics')
-        .select('id')
-        .eq('course_id', courseId)
-      
-      // Delete existing topics (and their lessons will be deleted by cascade)
-      if (existingTopics && existingTopics.length > 0) {
-        console.log('Deleting existing topics:', existingTopics.length);
-        const { error: deleteError } = await supabase
-          .from('course_topics')
-          .delete()
-          .eq('course_id', courseId)
-          
-        if (deleteError) {
-          console.error('Error deleting topics:', deleteError);
-        }
-      }
-      
-      // Also delete any orphan lessons (lessons without topic_id)
-      const { error: deleteOrphanError } = await supabase
-        .from('lessons')
         .delete()
-        .eq('course_id', courseId)
-        .is('topic_id', null)
+        .eq('course_id', courseId);
         
-      if (deleteOrphanError) {
-        console.error('Error deleting orphan lessons:', deleteOrphanError);
+      if (deleteError) {
+        console.error('Error deleting topics:', deleteError);
       }
-      
-      // Create new topics and lessons
-      for (let topicIndex = 0; topicIndex < formData.topics.length; topicIndex++) {
-        const topic = formData.topics[topicIndex];
-        console.log(`Creating topic ${topicIndex + 1}:`, topic.name, 'with', topic.lessons?.length || 0, 'lessons');
-        
-        // Skip general-topic as it's a placeholder
-        if (topic.id === 'general-topic') {
-          // Create lessons without topic_id for general topics
-          if (topic.lessons && topic.lessons.length > 0) {
-            for (let lessonIndex = 0; lessonIndex < topic.lessons.length; lessonIndex++) {
-              const lesson = topic.lessons[lessonIndex];
-              console.log(`Creating lesson without topic: ${lesson.title}`);
-              
-              const lessonData = {
-                course_id: courseId,
-                topic_id: null,
-                title: lesson.title,
-                description: lesson.description || '',
-                video_url: lesson.videoUrl || '',
-                video_source: lesson.videoSource || 'youtube',
-                duration_minutes: typeof lesson.duration === 'number' ? lesson.duration : 0,
-                sort_order: lessonIndex + 1,
-                is_preview: lesson.enablePreview || false,
-                content_type: 'video',
-                thumbnail_url: lesson.thumbnail || null,
-                attachments: lesson.attachments || []
-              };
-              
-              console.log('Lesson data to insert:', lessonData);
-              
-              const { data: lessonResult, error: lessonError } = await supabase
-                .from('lessons')
-                .insert(lessonData)
-                .select()
-                .single()
-              
-              if (lessonError) {
-                console.error('Lesson creation error:', lessonError);
-                console.error('Failed lesson data:', lessonData);
-              } else {
-                console.log('Lesson created successfully:', lessonResult.id);
-              }
-            }
-          }
-          continue;
-        }
-        
-        // Create topic
-        const { data: topicData, error: topicError } = await supabase
-          .from('course_topics')
-          .insert({
-            course_id: courseId,
-            title: topic.name,
-            description: topic.summary || '',
-            sort_order: topicIndex + 1
-          })
-          .select()
-          .single()
-        
-        if (topicError) {
-          console.error('Topic creation error:', topicError);
-          continue;
-        }
-        
-        console.log('Topic created:', topicData.id);
-        
-        // Create lessons for this topic
-        if (topic.lessons && topic.lessons.length > 0) {
-          for (let lessonIndex = 0; lessonIndex < topic.lessons.length; lessonIndex++) {
-            const lesson = topic.lessons[lessonIndex];
-            console.log(`Creating lesson ${lessonIndex + 1} for topic:`, lesson.title);
-            
-            const lessonData = {
-              course_id: courseId,
-              topic_id: topicData.id,
-              title: lesson.title,
-              description: lesson.description || '',
-              video_url: lesson.videoUrl || '',
-              video_source: lesson.videoSource || 'youtube',
-              duration_minutes: typeof lesson.duration === 'number' ? lesson.duration : 0,
-              sort_order: lessonIndex,
-              is_preview: lesson.enablePreview || false,
-              content_type: 'video',
-              thumbnail_url: lesson.thumbnail || null,
-              attachments: lesson.attachments || []
-            };
-            
-            console.log('Lesson data to insert:', lessonData);
-            
-            const { data: lessonResult, error: lessonError } = await supabase
-              .from('lessons')
-              .insert(lessonData)
-              .select()
-              .single()
-            
-            if (lessonError) {
-              console.error('Lesson creation error:', lessonError);
-              console.error('Failed lesson data:', lessonData);
-            } else {
-              console.log('Lesson created successfully:', lessonResult.id);
-            }
-          }
-        }
-      }
-      
-      console.log('Topics and lessons update completed');
     }
 
     revalidatePath(`/courses/${courseId}`)

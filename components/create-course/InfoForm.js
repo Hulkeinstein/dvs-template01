@@ -1,21 +1,22 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { fileToBase64, validateFileSize, validateFileType } from '@/app/lib/utils/fileUpload';
+import { logger } from '@/app/lib/utils/logger';
 
 import img from "../../public/images/others/thumbnail-placeholder.svg";
 
 const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
-  console.log('InfoForm rendered with thumbnailPreview:', formData.thumbnailPreview);
+  logger.log('InfoForm rendered with thumbnailPreview:', formData.thumbnailPreview);
   const [thumbnailPreview, setThumbnailPreview] = useState(formData.thumbnailPreview || null);
   const [fileError, setFileError] = useState('');
   const fileInputRef = useRef(null);
 
   // formData.thumbnailPreview가 변경될 때 로컬 상태 업데이트
   useEffect(() => {
-    console.log('useEffect - thumbnailPreview changed:', formData.thumbnailPreview);
+    logger.log('useEffect - thumbnailPreview changed:', formData.thumbnailPreview);
     if (formData.thumbnailPreview) {
       setThumbnailPreview(formData.thumbnailPreview);
     }
@@ -570,7 +571,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
           <label htmlFor="createinputfile">Course Thumbnail*</label>
           <div className="rbt-create-course-thumbnail upload-area">
             <div className="upload-area">
-              <div className="brows-file-wrapper" data-black-overlay="9">
+              <div className="brows-file-wrapper" data-black-overlay="9" style={{ maxWidth: '100%', overflow: 'hidden' }}>
                 <input
                   name="createinputfile"
                   id="createinputfile"
@@ -586,7 +587,13 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                   width={797}
                   height={262}
                   alt="file image"
-                  style={{ objectFit: 'cover' }}
+                  style={{ 
+                    objectFit: 'cover',
+                    width: '100%',
+                    height: 'auto',
+                    maxWidth: '100%',
+                    display: 'block'
+                  }}
                 />
 
                 <label
@@ -616,4 +623,4 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
   );
 };
 
-export default InfoForm;
+export default React.memo(InfoForm);

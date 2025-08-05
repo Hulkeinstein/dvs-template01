@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Select from "react-select";
@@ -8,11 +8,13 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
 import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
-import { createCourse, updateCourse, getCourseById } from "@/app/lib/actions/courseActions";
+import { createCourse, updateCourse, getCourseById, deleteLesson } from "@/app/lib/actions/courseActions";
 import { getLessonsByCourse } from "@/app/lib/actions/lessonActions";
-import { createQuizLesson } from "@/app/lib/actions/quizActions";
+import { createQuizLesson, deleteQuizLesson } from "@/app/lib/actions/quizActions";
 import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
 import { mapDBToFormData } from "@/app/lib/utils/courseDataMapper";
+import { contentHelpers } from "@/app/lib/utils/contentHelpers";
+import { logger } from "@/app/lib/utils/logger";
 
 // import CourseData from "../../data/course-details/courseData.json";
 import CreateCourseData from "../../data/createCourse.json";
@@ -30,7 +32,7 @@ import UpdateModal from "./QuizModals/UpdateModal";
 import Lesson from "./lesson/Lesson";
 
 const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
-  console.log('CreateCourse component rendered:', { editMode, courseId });
+  logger.log('CreateCourse component rendered:', { editMode, courseId });
   const { data: session } = useSession();
   const router = useRouter();
   const fileInputRef = useRef(null);
@@ -45,6 +47,35 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailBase64, setThumbnailBase64] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  
+  // Accordion states - Course Info and Course Builder are open by default
+  const [accordionStates, setAccordionStates] = useState(() => {
+    // Load from localStorage if available
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('courseAccordionStates');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          console.error('Error parsing accordion states:', e);
+        }
+      }
+    }
+    return {
+      courseInfo: true,
+      courseIntro: false,
+      courseBuilder: true,
+      additionalInfo: false
+    };
+  });
+
+  // Save accordion states to localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('courseAccordionStates', JSON.stringify(accordionStates));
+    }
+  }, [accordionStates]);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -82,21 +113,48 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   // Load course data in edit mode
   useEffect(() => {
-    console.log('useEffect triggered:', { editMode, courseId });
-    if (editMode && courseId) {
+    logger.log('useEffect triggered:', { editMode, courseId, isDataLoaded });
+    if (editMode && courseId && !isDataLoaded) {
       loadCourseData();
     }
-  }, [editMode, courseId]);
+  }, [editMode, courseId, isDataLoaded]);
+
+  // Warn user about unsaved changes
+  useEffect(() => {
+    const hasUnsavedChanges = () => {
+      // 생성 모드에서 topics가 있거나, formData가 기본값과 다르면 true
+      if (!editMode) {
+        return formData.topics.length > 0 || 
+               formData.title !== '' || 
+               formData.shortDescription !== '';
+      }
+      return false;
+    };
+
+    const handleBeforeUnload = (e) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault();
+        e.returnValue = '저장하지 않은 변경사항이 있습니다. 정말로 페이지를 나가시겠습니까?';
+        return e.returnValue;
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [formData, editMode]);
 
   const loadCourseData = async () => {
     try {
-      console.log('Loading course with ID:', courseId);
+      logger.log('Loading course with ID:', courseId);
       setLoading(true);
       const result = await getCourseById(courseId);
-      console.log('getCourseById result:', result);
+      logger.log('getCourseById result:', result);
       
       if (result.error) {
-        console.error('Error from getCourseById:', result.error);
+        logger.error('Error from getCourseById:', result.error);
         setError(result.error);
         setLoading(false);
         return;
@@ -104,13 +162,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       
       if (result.course) {
         const course = result.course;
-        console.log('Course data loaded:', {
+        logger.log('Course data loaded:', {
           id: course.id,
           title: course.title,
           thumbnail_url: course.thumbnail_url,
           hasThumbnail: !!course.thumbnail_url
         });
-        console.log('Full thumbnail URL:', course.thumbnail_url);
+        logger.log('Full thumbnail URL:', course.thumbnail_url);
         
         // Map database fields to form fields using centralized mapper
         const mappedData = mapDBToFormData(course);
@@ -141,18 +199,29 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               id: topicData.id,
               name: topicData.title,
               summary: topicData.description || '',
-              lessons: (topicData.lessons || []).map(lesson => ({
-                id: lesson.id,
-                title: lesson.title,
-                description: lesson.description || '',
-                videoUrl: lesson.video_url || '',
-                videoSource: lesson.video_source || 'youtube',
-                duration: lesson.duration_minutes || 0,
-                enablePreview: lesson.is_preview || false,
-                thumbnail: lesson.thumbnail_url || null,
-                attachments: lesson.attachments || []
-              })),
-              quizzes: [],
+              lessons: (topicData.lessons || [])
+                .filter(lesson => lesson.content_type !== 'quiz')
+                .map(lesson => ({
+                  id: lesson.id,
+                  title: lesson.title,
+                  description: lesson.description || '',
+                  videoUrl: lesson.video_url || '',
+                  videoSource: lesson.video_source || 'youtube',
+                  duration: lesson.duration_minutes || 0,
+                  enablePreview: lesson.is_preview || false,
+                  thumbnail: lesson.thumbnail_url || null,
+                  attachments: lesson.attachments || []
+                })),
+              quizzes: (topicData.lessons || [])
+                .filter(lesson => lesson.content_type === 'quiz')
+                .map(quiz => ({
+                  id: quiz.id,
+                  title: quiz.title,
+                  summary: quiz.description,
+                  ...(quiz.content_data || {}),
+                  _pending: false,
+                  content_type: 'quiz'
+                })),
               assignments: []
             };
             
@@ -165,24 +234,35 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           const lessonsWithoutTopic = course.lessons.filter(lesson => !lesson.topic_id);
           
           if (lessonsWithoutTopic.length > 0) {
-            console.log('Found lessons without topics:', lessonsWithoutTopic.length);
+            logger.log('Found lessons without topics:', lessonsWithoutTopic.length);
             // Create a "General" topic for lessons without topic_id
             const generalTopic = {
               id: 'general-topic',
               name: 'Course Content',
               summary: 'Main course content',
-              lessons: lessonsWithoutTopic.map(lesson => ({
-                id: lesson.id,
-                title: lesson.title,
-                description: lesson.description || '',
-                videoUrl: lesson.video_url || '',
-                videoSource: lesson.video_source || 'youtube',
-                duration: lesson.duration_minutes || 0,
-                enablePreview: lesson.is_preview || false,
-                thumbnail: lesson.thumbnail_url || null,
-                attachments: lesson.attachments || []
-              })),
-              quizzes: [],
+              lessons: lessonsWithoutTopic
+                .filter(lesson => lesson.content_type !== 'quiz')
+                .map(lesson => ({
+                  id: lesson.id,
+                  title: lesson.title,
+                  description: lesson.description || '',
+                  videoUrl: lesson.video_url || '',
+                  videoSource: lesson.video_source || 'youtube',
+                  duration: lesson.duration_minutes || 0,
+                  enablePreview: lesson.is_preview || false,
+                  thumbnail: lesson.thumbnail_url || null,
+                  attachments: lesson.attachments || []
+                })),
+              quizzes: lessonsWithoutTopic
+                .filter(lesson => lesson.content_type === 'quiz')
+                .map(quiz => ({
+                  id: quiz.id,
+                  title: quiz.title,
+                  summary: quiz.description,
+                  ...(quiz.content_data || {}),
+                  _pending: false,
+                  content_type: 'quiz'
+                })),
               assignments: []
             };
             
@@ -194,11 +274,14 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           ...prev,
           topics: topics
         }));
+        
+        // 데이터 로드 완료 표시
+        setIsDataLoaded(true);
       } else {
         setError('Course not found');
       }
     } catch (error) {
-      console.error('Error loading course:', error);
+      logger.error('Error loading course:', error);
       setError('Failed to load course data');
     } finally {
       setLoading(false);
@@ -257,33 +340,33 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       // Case 1: Keep existing thumbnail (edit mode, no new file selected)
       if (!thumbnailFile && formData.thumbnailPreview) {
         thumbnailUrl = formData.thumbnailPreview;
-        console.log('Keeping existing thumbnail:', thumbnailUrl);
+        logger.log('Keeping existing thumbnail:', thumbnailUrl);
       }
       // Case 2: Upload new thumbnail
       else if (thumbnailBase64 && thumbnailFile) {
-        console.log('Uploading new thumbnail:', { 
+        logger.log('Uploading new thumbnail:', { 
           hasBase64: !!thumbnailBase64, 
           fileName: thumbnailFile.name,
           base64Length: thumbnailBase64?.length 
         });
         
         const uploadResult = await uploadCourseThumbnail(thumbnailBase64, thumbnailFile.name);
-        console.log('Thumbnail upload result:', uploadResult);
+        logger.log('Thumbnail upload result:', uploadResult);
         
         if (uploadResult.success) {
           thumbnailUrl = uploadResult.url;
-          console.log('New thumbnail uploaded successfully:', thumbnailUrl);
+          logger.log('New thumbnail uploaded successfully:', thumbnailUrl);
         } else {
-          console.error('Failed to upload thumbnail:', uploadResult.error);
+          logger.error('Failed to upload thumbnail:', uploadResult.error);
           // If we have an existing thumbnail, keep it
           if (formData.thumbnailPreview) {
             thumbnailUrl = formData.thumbnailPreview;
-            console.log('Upload failed, keeping existing thumbnail');
+            logger.log('Upload failed, keeping existing thumbnail');
           }
         }
       }
       
-      console.log('Final thumbnail URL:', thumbnailUrl);
+      logger.log('Final thumbnail URL:', thumbnailUrl);
       
       // Include thumbnail URL and status in formData
       const courseData = {
@@ -313,19 +396,19 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         setError(result.error || 'Failed to create course');
       }
     } catch (error) {
-      console.error('Error creating course:', error);
+      logger.error('Error creating course:', error);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
   
-  const handleFormDataChange = (newData) => {
+  const handleFormDataChange = useCallback((newData) => {
     setFormData(newData);
-  };
+  }, []);
   
-  const handleThumbnailChange = (data) => {
-    console.log('handleThumbnailChange called:', {
+  const handleThumbnailChange = useCallback((data) => {
+    logger.log('handleThumbnailChange called:', {
       hasData: !!data,
       hasFile: !!data?.file,
       hasBase64: !!data?.base64,
@@ -335,11 +418,11 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     if (data && data.file && data.base64) {
       setThumbnailFile(data.file);
       setThumbnailBase64(data.base64);
-      console.log('Thumbnail state updated');
+      logger.log('Thumbnail state updated');
     }
-  };
+  }, []);
   
-  const handleAddTopic = (topicData) => {
+  const handleAddTopic = useCallback((topicData) => {
     const newTopic = {
       id: Date.now(), // Simple ID generation
       name: topicData.name,
@@ -349,27 +432,27 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       assignments: []
     };
     
-    setFormData({
-      ...formData,
-      topics: [...formData.topics, newTopic]
-    });
-  };
+    setFormData(prev => ({
+      ...prev,
+      topics: [...prev.topics, newTopic]
+    }));
+  }, []);
   
-  const handleDeleteTopic = (topicId) => {
-    setFormData({
-      ...formData,
-      topics: formData.topics.filter(topic => topic.id !== topicId)
-    });
-  };
+  const handleDeleteTopic = useCallback((topicId) => {
+    setFormData(prev => ({
+      ...prev,
+      topics: prev.topics.filter(topic => topic.id !== topicId)
+    }));
+  }, []);
   
-  const handleUpdateTopic = (topicId, updatedData) => {
-    setFormData({
-      ...formData,
-      topics: formData.topics.map(topic =>
+  const handleUpdateTopic = useCallback((topicId, updatedData) => {
+    setFormData(prev => ({
+      ...prev,
+      topics: prev.topics.map(topic =>
         topic.id === topicId ? { ...topic, ...updatedData } : topic
       )
-    });
-  };
+    }));
+  }, []);
   
   const handleAddLesson = (topicId, lessonData) => {
     setFormData(prevFormData => ({
@@ -399,38 +482,156 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   };
   
   const handleAddQuiz = async (topicId, quizData) => {
-    if (!editMode || !courseId) {
-      // If not in edit mode, just add to local state
-      const newQuiz = {
-        id: Date.now(),
-        ...quizData
-      };
+    // 데이터 유효성 검증
+    if (!quizData || !quizData.questions || !Array.isArray(quizData.questions)) {
+      logger.error('Invalid quiz data structure:', quizData);
+      return { success: false, error: '퀴즈 데이터가 올바르지 않습니다. 다시 시도해주세요.' };
+    }
+    
+    // 생성 모드에서 퀴즈 추가 시 경고
+    if (!editMode) {
+      const confirmSaveDraft = window.confirm(
+        '퀴즈를 추가하려면 먼저 코스를 저장해야 합니다.\n' +
+        '"Save as Draft"를 클릭하여 코스를 저장하시겠습니까?'
+      );
       
-      setFormData({
-        ...formData,
-        topics: formData.topics.map(topic =>
-          topic.id === topicId 
-            ? { ...topic, quizzes: [...topic.quizzes, newQuiz] }
-            : topic
-        )
-      });
-      return;
-    }
-
-    // In edit mode, save to database
-    try {
-      const result = await createQuizLesson(courseId, topicId, quizData);
-      if (result.success) {
-        // Reload course data to get the updated lessons
-        await loadCourseData();
-        alert('Quiz added successfully!');
-      } else {
-        alert('Failed to add quiz: ' + result.error);
+      if (confirmSaveDraft) {
+        // Save as Draft 버튼 클릭 시뮬레이션
+        const event = { preventDefault: () => {} };
+        await handleCreateCourse(event, true);
+        return { success: false, error: '코스가 저장되었습니다. 다시 퀴즈를 추가해주세요.' };
       }
-    } catch (error) {
-      console.error('Error adding quiz:', error);
-      alert('An error occurred while adding the quiz');
+      
+      return { success: false, error: '먼저 코스를 저장해주세요.' };
     }
+    
+    // Step 1: Optimistic UI - 즉시 UI에 추가
+    const tempQuizId = `temp_${Date.now()}`;
+    const optimisticQuiz = {
+      id: tempQuizId,
+      ...quizData,
+      _pending: true, // 저장 중 상태 표시
+      content_type: 'quiz'
+    };
+    
+    // 즉시 로컬 state 업데이트
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      topics: prevFormData.topics.map(topic =>
+        topic.id === topicId 
+          ? { ...topic, quizzes: [...topic.quizzes, optimisticQuiz] }
+          : topic
+      )
+    }));
+
+    // Step 2: 편집 모드일 때만 서버에 저장
+    if (editMode && courseId) {
+      try {
+        logger.log('Creating quiz with:', { courseId, topicId, quizData });
+        const result = await createQuizLesson(courseId, topicId, quizData);
+        
+        if (result.success) {
+          // Step 3: 성공 - 임시 ID를 실제 ID로 교체하고 pending 상태 제거
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            topics: prevFormData.topics.map(topic =>
+              topic.id === topicId 
+                ? {
+                    ...topic,
+                    quizzes: topic.quizzes.map(quiz =>
+                      quiz.id === tempQuizId
+                        ? { 
+                            ...quiz, 
+                            id: result.data?.id || quiz.id, 
+                            _pending: false,
+                            // 서버에서 반환된 데이터로 업데이트
+                            ...(result.data?.content_data || {})
+                          }
+                        : quiz
+                    )
+                  }
+                : topic
+            )
+          }));
+          
+          // 전체 데이터 새로고침 제거 - 이미 optimistic UI로 업데이트됨
+          // setTimeout(() => loadCourseData(), 1000);
+          return { success: true };
+        } else {
+          throw new Error(result.error || 'Failed to save quiz');
+        }
+      } catch (error) {
+        logger.error('Error adding quiz:', error);
+        
+        // Step 4: 실패 - UI에서 제거
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          topics: prevFormData.topics.map(topic =>
+            topic.id === topicId 
+              ? {
+                  ...topic,
+                  quizzes: topic.quizzes.filter(quiz => quiz.id !== tempQuizId)
+                }
+              : topic
+          )
+        }));
+        
+        // Step 5: 에러 메시지 표시
+        let errorMessage = 'Quiz 저장에 실패했습니다.';
+        if (error.message) {
+          logger.error('Quiz save error details:', error.message);
+          // Zod validation 에러인 경우
+          if (error.message.includes('Required') || error.message.includes('Invalid')) {
+            errorMessage += '\n\n문제: ' + error.message;
+            errorMessage += '\n\nQuiz 설정을 확인해주세요.';
+          } else {
+            errorMessage += '\n\n' + error.message;
+          }
+        }
+        
+        return { success: false, error: errorMessage };
+      }
+    } else {
+      // 생성 모드에서는 pending 상태 제거 (로컬만 저장)
+      setTimeout(() => {
+        setFormData(prevFormData => ({
+          ...prevFormData,
+          topics: prevFormData.topics.map(topic =>
+            topic.id === topicId 
+              ? {
+                  ...topic,
+                  quizzes: topic.quizzes.map(quiz =>
+                    quiz.id === tempQuizId
+                      ? { ...quiz, _pending: false }
+                      : quiz
+                  )
+                }
+              : topic
+          )
+        }));
+      }, 500); // 짧은 지연으로 저장 효과 표현
+      return { success: true };
+    }
+  };
+  
+  const handleUpdateQuiz = (topicId, quizId, updatedData) => {
+    logger.log('handleUpdateQuiz called:', { topicId, quizId, updatedData });
+    
+    setFormData(prevFormData => ({
+      ...prevFormData,
+      topics: prevFormData.topics.map(topic =>
+        topic.id === topicId 
+          ? {
+              ...topic,
+              quizzes: topic.quizzes.map(quiz =>
+                quiz.id === quizId
+                  ? { ...quiz, ...updatedData }
+                  : quiz
+              )
+            }
+          : topic
+      )
+    }));
   };
   
   const handleAddAssignment = (topicId, assignmentData) => {
@@ -449,25 +650,63 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     });
   };
   
-  const handleDeleteLesson = (topicId, lessonId) => {
-    console.log('레슨 삭제:', topicId, lessonId);
-    setFormData({
-      ...formData,
-      topics: formData.topics.map(topic =>
-        topic.id === topicId 
-          ? { ...topic, lessons: topic.lessons.filter(lesson => lesson.id !== lessonId) }
-          : topic
-      )
-    });
+  const handleContentDelete = async (topicId, content) => {
+    logger.log('콘텐츠 삭제:', { topicId, contentId: content.id, type: content.type || content.content_type });
+    
+    // 1. UI 즉시 업데이트 - content type에 따라 적절한 배열에서 삭제
+    setFormData(prev => ({
+      ...prev,
+      topics: prev.topics.map(topic => {
+        if (topic.id !== topicId) return topic;
+        
+        const contentType = contentHelpers.normalizeType(content);
+        const updatedTopic = { ...topic };
+        
+        // 타입에 따라 해당 배열에서 삭제
+        switch(contentType) {
+          case 'quiz':
+            updatedTopic.quizzes = (topic.quizzes || []).filter(q => q.id !== content.id);
+            break;
+          case 'assignment':
+            updatedTopic.assignments = (topic.assignments || []).filter(a => a.id !== content.id);
+            break;
+          case 'lesson':
+          case 'video':
+          default:
+            updatedTopic.lessons = (topic.lessons || []).filter(l => l.id !== content.id);
+            break;
+        }
+        
+        return updatedTopic;
+      })
+    }));
+    
+    // 2. 편집 모드에서는 서버에서도 삭제
+    if (editMode && courseId && content.id && !content.id.toString().startsWith('temp_')) {
+      try {
+        const result = await contentHelpers.deleteContent(content);
+        if (!result.success) {
+          logger.error('콘텐츠 삭제 실패:', result.error);
+          // 실패 시 데이터 다시 로드
+          loadCourseData();
+          alert('삭제에 실패했습니다. 다시 시도해주세요.');
+        }
+      } catch (error) {
+        logger.error('삭제 중 오류:', error);
+        // 실패 시 데이터 다시 로드
+        loadCourseData();
+        alert('삭제 중 오류가 발생했습니다.');
+      }
+    }
   };
   
   const handleEditLesson = (topicId, lesson) => {
-    console.log('레슨 편집:', topicId, lesson);
+    logger.log('레슨 편집:', topicId, lesson);
     // 편집 모달 열기 로직 추가 필요
   };
   
   const handleUploadLesson = (topicId, lessonId) => {
-    console.log('레슨 업로드:', topicId, lessonId);
+    logger.log('레슨 업로드:', topicId, lessonId);
     // 업로드 기능 구현 필요
   };
   return (
@@ -479,21 +718,21 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               <div className="accordion-item card">
                 <h2 className="accordion-header card-header" id="accOne">
                   <button
-                    className="accordion-button"
+                    className={`accordion-button ${!accordionStates.courseInfo ? 'collapsed' : ''}`}
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#accCollapseOne"
-                    aria-expanded="true"
+                    aria-expanded={accordionStates.courseInfo}
                     aria-controls="accCollapseOne"
+                    onClick={() => setAccordionStates(prev => ({ ...prev, courseInfo: !prev.courseInfo }))}
                   >
                     Course Info
                   </button>
                 </h2>
                 <div
                   id="accCollapseOne"
-                  className="accordion-collapse collapse show"
+                  className={`accordion-collapse collapse ${accordionStates.courseInfo ? 'show' : ''}`}
                   aria-labelledby="accOne"
-                  data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body">
                     <InfoForm 
@@ -522,7 +761,6 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   id="accCollapseTwo"
                   className="accordion-collapse collapse"
                   aria-labelledby="accTwo"
-                  data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body rbt-course-field-wrapper rbt-default-form">
                     <div className="course-field mb--20">
@@ -562,21 +800,21 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               <div className="accordion-item card">
                 <h2 className="accordion-header card-header" id="accThree3">
                   <button
-                    className="accordion-button collapsed"
+                    className={`accordion-button ${!accordionStates.courseBuilder ? 'collapsed' : ''}`}
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#accCollapseThree3"
-                    aria-expanded="false"
+                    aria-expanded={accordionStates.courseBuilder}
                     aria-controls="accCollapseThree3"
+                    onClick={() => setAccordionStates(prev => ({ ...prev, courseBuilder: !prev.courseBuilder }))}
                   >
                     Course Builder
                   </button>
                 </h2>
                 <div
                   id="accCollapseThree3"
-                  className="accordion-collapse collapse"
+                  className={`accordion-collapse collapse ${accordionStates.courseBuilder ? 'show' : ''}`}
                   aria-labelledby="accThree3"
-                  data-bs-parent="#tutionaccordionExamplea12"
                 >
                   <div className="accordion-body card-body">
                     {formData.topics.length === 0 ? (
@@ -591,6 +829,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                           handleImportClick={handleImportClick}
                           fileInputRef={fileInputRef}
                           id={`accOne${topic.id}`}
+                          topicId={topic.id}
                           target={`accCollapseOne${topic.id}`}
                           expanded={false}
                           text={topic.name}
@@ -599,8 +838,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                           onUpdateTopic={(data) => handleUpdateTopic(topic.id, data)}
                           onAddLesson={(lessonData) => handleAddLesson(topic.id, lessonData)}
                           onAddQuiz={(quizData) => handleAddQuiz(topic.id, quizData)}
+                          onUpdateQuiz={(quizId, updatedData) => handleUpdateQuiz(topic.id, quizId, updatedData)}
                           onAddAssignment={(assignmentData) => handleAddAssignment(topic.id, assignmentData)}
-                          onDeleteLesson={handleDeleteLesson}
+                          onDeleteContent={handleContentDelete}
                           onEditLesson={handleEditLesson}
                           onUploadLesson={handleUploadLesson}
                           start={0}
@@ -665,7 +905,6 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   id="accCollapseEight"
                   className="accordion-collapse collapse"
                   aria-labelledby="accSeven"
-                  data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body">
                     <div className="advance-tab-button advance-tab-button-1">

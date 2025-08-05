@@ -11,21 +11,90 @@ const Question = ({
   handleSelectChange,
   editor,
   answerEditor,
-  currentQuestion,
+  currentQuestion: rawCurrentQuestion,
   setCurrentQuestion,
   isEditing,
 }) => {
+  // Ensure currentQuestion is always a safe object
+  const currentQuestion = React.useMemo(() => {
+    if (!rawCurrentQuestion) return {};
+    try {
+      // Deep clone to avoid any Zod references
+      return JSON.parse(JSON.stringify(rawCurrentQuestion));
+    } catch (e) {
+      console.error('Error parsing currentQuestion:', e);
+      return {};
+    }
+  }, [rawCurrentQuestion]);
   const [currentOption, setCurrentOption] = useState('');
   const [displayFormat, setDisplayFormat] = useState('text');
   const [optionImage, setOptionImage] = useState(null);
-  const [questionImagePreview, setQuestionImagePreview] = useState(currentQuestion.questionImage || null);
+  const [questionImagePreview, setQuestionImagePreview] = useState(() => currentQuestion?.questionImage || null);
+  const [blanks, setBlanks] = useState(() => currentQuestion?.blanks || []);
+  const [blankAnswers, setBlankAnswers] = useState(() => {
+    const answers = {};
+    if (currentQuestion?.blanks) {
+      currentQuestion.blanks.forEach(blank => {
+        answers[blank.id] = blank.answers || [];
+      });
+    }
+    return answers;
+  });
+  const [sortItems, setSortItems] = useState(() => currentQuestion?.sortItems || []);
+  const [newSortItem, setNewSortItem] = useState('');
+  // Matching states
+  const [matchingLeftItems, setMatchingLeftItems] = useState(() => 
+    currentQuestion?.matchingPairs?.leftItems || []
+  );
+  const [matchingRightItems, setMatchingRightItems] = useState(() => 
+    currentQuestion?.matchingPairs?.rightItems || []
+  );
+  const [newLeftItem, setNewLeftItem] = useState('');
+  const [newRightItem, setNewRightItem] = useState('');
+  
   
   // Update preview when editing existing question
   React.useEffect(() => {
-    if (currentQuestion.questionImage) {
+    if (currentQuestion?.questionImage) {
       setQuestionImagePreview(currentQuestion.questionImage);
     }
-  }, [currentQuestion.questionImage]);
+  }, [currentQuestion?.questionImage]);
+
+  // Initialize blanks when editing Fill in the Blanks question
+  React.useEffect(() => {
+    if (selectedOption === 'Fill in the Blanks' || currentQuestion?.type === 'Fill in the Blanks') {
+      if (currentQuestion?.blanks) {
+        setBlanks(currentQuestion.blanks);
+        const answers = {};
+        currentQuestion.blanks.forEach(blank => {
+          answers[blank.id] = blank.answers || [];
+        });
+        setBlankAnswers(answers);
+      }
+    }
+  }, [selectedOption, currentQuestion?.type, currentQuestion?.blanks?.length]);
+
+  // Initialize sort items when editing Sort Answer question
+  React.useEffect(() => {
+    if (selectedOption === 'Sort Answer' || currentQuestion?.type === 'Sort Answer') {
+      if (currentQuestion?.sortItems) {
+        setSortItems(currentQuestion.sortItems);
+      }
+    }
+  }, [selectedOption, currentQuestion?.type, currentQuestion?.sortItems?.length]);
+
+  // Initialize matching items when editing Matching question
+  React.useEffect(() => {
+    if (selectedOption === 'Matching' || currentQuestion?.type === 'Matching') {
+      if (currentQuestion?.matchingPairs) {
+        setMatchingLeftItems(currentQuestion.matchingPairs.leftItems || []);
+        setMatchingRightItems(currentQuestion.matchingPairs.rightItems || []);
+      } else {
+        setMatchingLeftItems([]);
+        setMatchingRightItems([]);
+      }
+    }
+  }, [selectedOption, currentQuestion?.type]);
 
   const handleAddOption = () => {
     if (!currentOption.trim()) return;
@@ -50,7 +119,14 @@ const Question = ({
   };
 
   const handleRemoveOption = (optionId) => {
-    const updatedOptions = currentQuestion.options.filter(opt => opt.id !== optionId);
+    const updatedOptions = currentQuestion.options.filter((opt, index) => {
+      if (typeof opt === 'string') {
+        return `opt_${index}` !== optionId;
+      }
+      // 새로운 ID 형식도 체크 (opt_0_1 형식)
+      const currentOptId = opt.id || `opt_${index}`;
+      return currentOptId !== optionId;
+    });
     setCurrentQuestion({ 
       ...currentQuestion, 
       options: updatedOptions,
@@ -60,9 +136,9 @@ const Question = ({
   };
 
   const handleSetCorrectAnswer = (optionId) => {
-    if (selectedOption === 'Single Choice') {
+    if (selectedOption === 'Single Choice' || currentQuestion.type === 'Single Choice') {
       setCurrentQuestion({ ...currentQuestion, correctAnswer: optionId });
-    } else if (selectedOption === 'Multiple Choice') {
+    } else if (selectedOption === 'Multiple Choice' || currentQuestion.type === 'Multiple Choice') {
       const currentAnswers = Array.isArray(currentQuestion.correctAnswer) ? currentQuestion.correctAnswer : [];
       const isSelected = currentAnswers.includes(optionId);
       
@@ -87,6 +163,117 @@ const Question = ({
     }
   };
 
+  // Fill in the Blanks specific functions
+  const addBlank = () => {
+    const newBlankId = blanks.length + 1;
+    const newBlank = { id: newBlankId, answers: [], caseSensitive: false };
+    const newBlanks = [...blanks, newBlank];
+    setBlanks(newBlanks);
+    setBlankAnswers({ ...blankAnswers, [newBlankId]: [] });
+    
+    // Add placeholder to question text and update currentQuestion
+    const currentText = currentQuestion.question || '';
+    setCurrentQuestion({ 
+      ...currentQuestion, 
+      question: currentText + ` [${newBlankId}]`,
+      blanks: newBlanks,
+      correctAnswer: {
+        ...currentQuestion.correctAnswer,
+        [newBlankId]: []
+      }
+    });
+  };
+
+  const removeBlank = (blankId) => {
+    const newBlanks = blanks.filter(b => b.id !== blankId);
+    setBlanks(newBlanks);
+    
+    const newAnswers = { ...blankAnswers };
+    delete newAnswers[blankId];
+    setBlankAnswers(newAnswers);
+    
+    const newCorrectAnswer = { ...currentQuestion.correctAnswer };
+    delete newCorrectAnswer[blankId];
+    
+    setCurrentQuestion({
+      ...currentQuestion,
+      blanks: newBlanks,
+      correctAnswer: newCorrectAnswer
+    });
+  };
+
+  const addAnswerToBlank = (blankId, answer) => {
+    if (!answer.trim()) return;
+    
+    const currentAnswers = blankAnswers[blankId] || [];
+    const newAnswers = [...currentAnswers, answer];
+    
+    setBlankAnswers({
+      ...blankAnswers,
+      [blankId]: newAnswers
+    });
+    
+    // Update blanks and currentQuestion
+    const updatedBlanks = blanks.map(blank => 
+      blank.id === blankId ? { ...blank, answers: newAnswers } : blank
+    );
+    
+    setBlanks(updatedBlanks);
+    setCurrentQuestion({
+      ...currentQuestion,
+      blanks: updatedBlanks,
+      correctAnswer: {
+        ...currentQuestion.correctAnswer,
+        [blankId]: newAnswers
+      }
+    });
+  };
+
+  const removeAnswerFromBlank = (blankId, answerIndex) => {
+    const currentAnswers = blankAnswers[blankId] || [];
+    const newAnswers = currentAnswers.filter((_, idx) => idx !== answerIndex);
+    
+    setBlankAnswers({
+      ...blankAnswers,
+      [blankId]: newAnswers
+    });
+    
+    // Update blanks and currentQuestion
+    const updatedBlanks = blanks.map(blank => 
+      blank.id === blankId ? { ...blank, answers: newAnswers } : blank
+    );
+    
+    setBlanks(updatedBlanks);
+    setCurrentQuestion({
+      ...currentQuestion,
+      blanks: updatedBlanks,
+      correctAnswer: {
+        ...currentQuestion.correctAnswer,
+        [blankId]: newAnswers
+      }
+    });
+  };
+
+  const updateBlankSettings = (blankId, settings) => {
+    const updatedBlanks = blanks.map(blank => 
+      blank.id === blankId ? { ...blank, ...settings } : blank
+    );
+    
+    setBlanks(updatedBlanks);
+    
+    // Update currentQuestion with new blank settings
+    const updatedBlanksWithAnswers = updatedBlanks.map(blank => ({
+      ...blank,
+      answers: blankAnswers[blank.id] || []
+    }));
+    
+    setCurrentQuestion({
+      ...currentQuestion,
+      blanks: updatedBlanksWithAnswers
+    });
+  };
+
+
   const handleOptionImageUpload = (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith('image/')) {
@@ -96,6 +283,62 @@ const Question = ({
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  // Sort Answer specific functions
+  const addSortItem = () => {
+    if (!newSortItem.trim()) return;
+    
+    const newItem = {
+      id: Date.now(),
+      text: newSortItem,
+      order: sortItems.length + 1
+    };
+    
+    const updatedItems = [...sortItems, newItem];
+    setSortItems(updatedItems);
+    setNewSortItem('');
+    
+    // Update currentQuestion
+    setCurrentQuestion({
+      ...currentQuestion,
+      sortItems: updatedItems,
+      correctAnswer: updatedItems.map(item => item.id)
+    });
+  };
+
+  const removeSortItem = (itemId) => {
+    const updatedItems = sortItems
+      .filter(item => item.id !== itemId)
+      .map((item, index) => ({ ...item, order: index + 1 }));
+    
+    setSortItems(updatedItems);
+    
+    setCurrentQuestion({
+      ...currentQuestion,
+      sortItems: updatedItems,
+      correctAnswer: updatedItems.map(item => item.id)
+    });
+  };
+
+  const moveSortItem = (fromIndex, toIndex) => {
+    const newItems = [...sortItems];
+    const [removed] = newItems.splice(fromIndex, 1);
+    newItems.splice(toIndex, 0, removed);
+    
+    // Update order
+    const updatedItems = newItems.map((item, index) => ({
+      ...item,
+      order: index + 1
+    }));
+    
+    setSortItems(updatedItems);
+    
+    setCurrentQuestion({
+      ...currentQuestion,
+      sortItems: updatedItems,
+      correctAnswer: updatedItems.map(item => item.id)
+    });
   };
   return (
     <>
@@ -185,8 +428,8 @@ const Question = ({
               onChange={handleSelectChange}
             >
               <option>True/False</option>
-              <option>Single Choice </option>
-              <option>Multiple Choice </option>
+              <option>Single Choice</option>
+              <option>Multiple Choice</option>
               <option>Open Ended</option>
               <option>Fill in the Blanks</option>
               <option>Sort Answer</option>
@@ -297,16 +540,86 @@ const Question = ({
 
           <div
             className={`course-field mt--20 ${
-              selectedOption === "Open Ended" ||
-              selectedOption === "Sort Answer"
-                ? "d-block"
-                : "d-none"
+              selectedOption === "Open Ended" ? "d-block" : "d-none"
             }`}
           >
             <small>
               <i className="feather-info"></i> No option is necessary for this
               answer type
             </small>
+          </div>
+          
+          <div
+            className={`course-field mt--20 ${
+              selectedOption === "Sort Answer" || currentQuestion.type === "Sort Answer" ? "d-block" : "d-none"
+            }`}
+          >
+            <div className="mb--20">
+              <h6>Items to Sort</h6>
+              <small className="d-block mb-2">
+                <i className="feather-info"></i> Add items in the correct order. Students will need to arrange them correctly.
+              </small>
+              <div className="d-flex gap-2 align-items-center">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter an item to sort"
+                  value={newSortItem}
+                  onChange={(e) => setNewSortItem(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      addSortItem();
+                    }
+                  }}
+                />
+                <button 
+                  className="rbt-btn btn-sm btn-primary" 
+                  type="button"
+                  onClick={addSortItem}
+                >
+                  <i className="feather-plus"></i> Add
+                </button>
+              </div>
+            </div>
+
+            {/* Sort Items List */}
+            {sortItems.length > 0 && (
+              <div className="mt--20">
+                <h6 className="mb--10">Correct Order (Drag to reorder)</h6>
+                <div className="sortable-list">
+                  {sortItems.map((item, index) => (
+                    <div 
+                      key={item.id} 
+                      className="d-flex align-items-center gap-3 mb-2 p-3 border rounded bg-light"
+                      draggable
+                      onDragStart={(e) => e.dataTransfer.setData('text/plain', index)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+                        moveSortItem(fromIndex, index);
+                      }}
+                      style={{ cursor: 'move' }}
+                    >
+                      <i className="feather-menu"></i>
+                      <span className="fw-bold">{index + 1}.</span>
+                      <span className="flex-grow-1">{item.text}</span>
+                      <button
+                        type="button"
+                        className="rbt-btn-close"
+                        onClick={() => removeSortItem(item.id)}
+                      >
+                        <i className="feather-x"></i>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <small className="text-muted mt-2 d-block">
+                  <i className="feather-info"></i> The order shown here is the correct answer
+                </small>
+              </div>
+            )}
           </div>
           <div
             className={`course-field rbt-lesson-rightsidebar mt--20 ${
@@ -350,7 +663,10 @@ const Question = ({
             className={`course-field mt--20 ${
               selectedOption === "Single Choice" ||
               selectedOption === "Multiple Choice" ||
-              selectedOption === "Matching"
+              selectedOption === "Matching" ||
+              (isEditing && (currentQuestion.type === "Single Choice" || 
+                           currentQuestion.type === "Multiple Choice" ||
+                           currentQuestion.type === "Matching"))
                 ? "d-block"
                 : "d-none"
             }`}
@@ -369,18 +685,6 @@ const Question = ({
                 }
               }}
             />
-            {selectedOption === "Matching" ? (
-              <div className="content">
-                <label htmlFor="modal-Matching-1">Matching Answer title</label>
-                <input
-                  id="modal-Matching-1"
-                  type="text"
-                  placeholder="matching"
-                />
-              </div>
-            ) : (
-              ""
-            )}
             {/* Show option image upload only when image or both is selected */}
             {(displayFormat === 'image' || displayFormat === 'both') && (
               <div className="course-field mt--20">
@@ -515,50 +819,82 @@ const Question = ({
                 <div className="mt--30">
                   <h6 className="mb--20">Answer Options</h6>
                   <div className="rbt-accordion-style rbt-accordion-04">
-                    {currentQuestion.options.map((option, index) => (
-                      <div key={option.id} className="rbt-accordion-item card mb--10">
-                        <div className="rbt-accordion-body card-body">
-                          <div className="d-flex justify-content-between align-items-center">
-                            <div className="d-flex align-items-center gap-3">
-                              {selectedOption === 'Single Choice' ? (
-                                <input
-                                  type="radio"
-                                  name="correctAnswer"
-                                  checked={currentQuestion.correctAnswer === option.id}
-                                  onChange={() => handleSetCorrectAnswer(option.id)}
-                                  className="form-check-input"
-                                />
-                              ) : selectedOption === 'Multiple Choice' ? (
-                                <input
-                                  type="checkbox"
-                                  checked={currentQuestion.correctAnswer?.includes(option.id) || false}
-                                  onChange={() => handleSetCorrectAnswer(option.id)}
-                                  className="form-check-input"
-                                />
-                              ) : null}
-                              <span className="fw-bold">Option {index + 1}:</span>
-                              <span>{option.text}</span>
-                              {option.image && (displayFormat === 'image' || displayFormat === 'both') && (
-                                <Image
-                                  src={option.image}
-                                  width={50}
-                                  height={50}
-                                  alt={`Option ${index + 1}`}
-                                  style={{ objectFit: 'cover', borderRadius: '4px' }}
-                                />
-                              )}
+                    {currentQuestion.options.map((option, index) => {
+                      // Handle both string and object options
+                      const optionId = typeof option === 'string' ? `opt_${index}` : (option.id || `opt_${index}`);
+                      const optionText = typeof option === 'string' ? option : option.text;
+                      
+                      const shouldShowRadioButton = selectedOption === 'Single Choice' || currentQuestion.type === 'Single Choice';
+                      
+                      return (
+                        <div key={optionId} className="rbt-accordion-item card mb--10">
+                          <div className="rbt-accordion-body card-body">
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div className="d-flex align-items-center gap-3">
+                                {(selectedOption === 'Single Choice' || currentQuestion.type === 'Single Choice') && (
+                                  <button
+                                    type="button"
+                                    className={`btn btn-sm ${
+                                      currentQuestion.correctAnswer === optionId || 
+                                      currentQuestion.correctAnswer === index
+                                        ? 'btn-success' 
+                                        : 'btn-outline-secondary'
+                                    }`}
+                                    onClick={() => handleSetCorrectAnswer(optionId)}
+                                    style={{ minWidth: '40px' }}
+                                  >
+                                    <i className={`feather-${
+                                      currentQuestion.correctAnswer === optionId || 
+                                      currentQuestion.correctAnswer === index
+                                        ? 'check-circle' 
+                                        : 'circle'
+                                    }`}></i>
+                                  </button>
+                                )}
+                                {(selectedOption === 'Multiple Choice' || currentQuestion.type === 'Multiple Choice') && (
+                                  <button
+                                    type="button"
+                                    className={`btn btn-sm ${
+                                      currentQuestion.correctAnswer?.includes(optionId) || 
+                                      currentQuestion.correctAnswer?.includes(index)
+                                        ? 'btn-primary' 
+                                        : 'btn-outline-secondary'
+                                    }`}
+                                    onClick={() => handleSetCorrectAnswer(optionId)}
+                                    style={{ minWidth: '40px' }}
+                                  >
+                                    <i className={`feather-${
+                                      currentQuestion.correctAnswer?.includes(optionId) || 
+                                      currentQuestion.correctAnswer?.includes(index)
+                                        ? 'check-square' 
+                                        : 'square'
+                                    }`}></i>
+                                  </button>
+                                )}
+                                <span className="fw-bold">Option {index + 1}:</span>
+                                <span>{optionText}</span>
+                                {typeof option === 'object' && option.image && (displayFormat === 'image' || displayFormat === 'both') && (
+                                  <Image
+                                    src={option.image}
+                                    width={50}
+                                    height={50}
+                                    alt={`Option ${index + 1}`}
+                                    style={{ objectFit: 'cover', borderRadius: '4px' }}
+                                  />
+                                )}
+                              </div>
+                              <button
+                                type="button"
+                                className="rbt-btn-close"
+                                onClick={() => handleRemoveOption(optionId)}
+                              >
+                                <i className="feather-x"></i>
+                              </button>
                             </div>
-                            <button
-                              type="button"
-                              className="rbt-btn-close"
-                              onClick={() => handleRemoveOption(option.id)}
-                            >
-                              <i className="feather-x"></i>
-                            </button>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -688,56 +1024,370 @@ const Question = ({
               </div>
             )}
           </div>
+          
+          {/* Matching Question Type */}
           <div
             className={`course-field mt--20 ${
-              selectedOption === "Fill in the Blanks" ? "d-block" : "d-none"
+              selectedOption === "Matching" || currentQuestion.type === "Matching" ? "d-block" : "d-none"
             }`}
           >
-            <label htmlFor="modal-field-3">Question Title</label>
-            <input
-              className="mb-0"
-              id="modal-field-3"
-              type="text"
-              placeholder="title"
-              value={currentQuestion.fillInBlanksQuestion || ''}
-              onChange={(e) => setCurrentQuestion({ ...currentQuestion, fillInBlanksQuestion: e.target.value })}
-            />
-            <small>
-              <i className="feather-info"></i> Please make sure to use the dash
-              variable in your question title to show the blanks in your
-              question. You can use multiple dash variables in one question.
+            <h6>Matching Items</h6>
+            <small className="d-block mb-3">
+              <i className="feather-info"></i> Create items for the left and right columns. Students will match items from left to right.
             </small>
-            <div className={`rbt-create-course-thumbnail upload-area mt--20`}>
-              <h6 className="mb-2">Correct Answer(s)</h6>
-              <input
-                className="mb-0"
-                id="modal-field-3"
-                type="text"
-                placeholder="answer"
-                value={currentQuestion.fillInBlanksAnswers || ''}
-                onChange={(e) => setCurrentQuestion({ ...currentQuestion, fillInBlanksAnswers: e.target.value })}
-              />
-              <small>
-                <i className="feather-info"></i> Separate multiple answers by a
-                vertical bar |. 1 answer per dash variable is defined in the
-                question. Example: Apple | Banana | Orange question.
-              </small>
+            
+            <div className="row">
+              {/* Left Column */}
+              <div className="col-md-6">
+                <h6>Left Column Items</h6>
+                <div className="d-flex gap-2 mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter left item"
+                    value={newLeftItem}
+                    onChange={(e) => setNewLeftItem(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newLeftItem.trim()) {
+                        e.preventDefault();
+                        const newItem = {
+                          id: `left_${Date.now()}`,
+                          text: newLeftItem.trim()
+                        };
+                        setMatchingLeftItems([...matchingLeftItems, newItem]);
+                        setNewLeftItem('');
+                        
+                        // Update currentQuestion
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: [...matchingLeftItems, newItem],
+                            rightItems: matchingRightItems,
+                            correctMatches: (currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}
+                          }
+                        });
+                      }
+                    }}
+                  />
+                  <button
+                    className="rbt-btn btn-sm btn-primary"
+                    type="button"
+                    onClick={() => {
+                      if (newLeftItem.trim()) {
+                        const newItem = {
+                          id: `left_${Date.now()}`,
+                          text: newLeftItem.trim()
+                        };
+                        setMatchingLeftItems([...matchingLeftItems, newItem]);
+                        setNewLeftItem('');
+                        
+                        // Update currentQuestion
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: [...matchingLeftItems, newItem],
+                            rightItems: matchingRightItems,
+                            correctMatches: (currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}
+                          }
+                        });
+                      }
+                    }}
+                  >
+                    <i className="feather-plus"></i>
+                  </button>
+                </div>
+                
+                {/* Left Items List */}
+                {matchingLeftItems.map((item, index) => (
+                  <div key={item.id} className="d-flex align-items-center gap-2 mb-2 p-2 border rounded">
+                    <span className="flex-grow-1">{item.text}</span>
+                    <button
+                      type="button"
+                      className="rbt-btn-close"
+                      onClick={() => {
+                        const updatedItems = matchingLeftItems.filter(i => i.id !== item.id);
+                        setMatchingLeftItems(updatedItems);
+                        
+                        // Remove from correct matches
+                        const updatedMatches = { ...((currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}) };
+                        delete updatedMatches[item.id];
+                        
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: updatedItems,
+                            rightItems: matchingRightItems,
+                            correctMatches: updatedMatches
+                          }
+                        });
+                      }}
+                    >
+                      <i className="feather-x"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Right Column */}
+              <div className="col-md-6">
+                <h6>Right Column Items</h6>
+                <div className="d-flex gap-2 mb-3">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter right item"
+                    value={newRightItem}
+                    onChange={(e) => setNewRightItem(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && newRightItem.trim()) {
+                        e.preventDefault();
+                        const newItem = {
+                          id: `right_${Date.now()}`,
+                          text: newRightItem.trim()
+                        };
+                        setMatchingRightItems([...matchingRightItems, newItem]);
+                        setNewRightItem('');
+                        
+                        // Update currentQuestion
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: matchingLeftItems,
+                            rightItems: [...matchingRightItems, newItem],
+                            correctMatches: (currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}
+                          }
+                        });
+                      }
+                    }}
+                  />
+                  <button
+                    className="rbt-btn btn-sm btn-primary"
+                    type="button"
+                    onClick={() => {
+                      if (newRightItem.trim()) {
+                        const newItem = {
+                          id: `right_${Date.now()}`,
+                          text: newRightItem.trim()
+                        };
+                        setMatchingRightItems([...matchingRightItems, newItem]);
+                        setNewRightItem('');
+                        
+                        // Update currentQuestion
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: matchingLeftItems,
+                            rightItems: [...matchingRightItems, newItem],
+                            correctMatches: (currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}
+                          }
+                        });
+                      }
+                    }}
+                  >
+                    <i className="feather-plus"></i>
+                  </button>
+                </div>
+                
+                {/* Right Items List */}
+                {matchingRightItems.map((item, index) => (
+                  <div key={item.id} className="d-flex align-items-center gap-2 mb-2 p-2 border rounded">
+                    <span className="flex-grow-1">{item.text}</span>
+                    <button
+                      type="button"
+                      className="rbt-btn-close"
+                      onClick={() => {
+                        const updatedItems = matchingRightItems.filter(i => i.id !== item.id);
+                        setMatchingRightItems(updatedItems);
+                        
+                        // Remove from correct matches (where this item is the value)
+                        const updatedMatches = { ...((currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}) };
+                        Object.keys(updatedMatches).forEach(key => {
+                          if (updatedMatches[key] === item.id) {
+                            delete updatedMatches[key];
+                          }
+                        });
+                        
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: matchingLeftItems,
+                            rightItems: updatedItems,
+                            correctMatches: updatedMatches
+                          }
+                        });
+                      }}
+                    >
+                      <i className="feather-x"></i>
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-            <button 
-              className="rbt-btn rbt-sm-btn mt--20" 
-              type="button"
-              onClick={() => {
-                // Parse the answers and save to correctAnswer
-                const answers = (currentQuestion.fillInBlanksAnswers || '').split('|').map(a => a.trim()).filter(a => a);
-                setCurrentQuestion({ 
-                  ...currentQuestion, 
-                  correctAnswer: answers,
-                  question: currentQuestion.fillInBlanksQuestion || ''
-                });
-              }}
-            >
-              Update Answer
-            </button>
+            
+            {/* Correct Matches Setup */}
+            {matchingLeftItems.length > 0 && matchingRightItems.length > 0 && (
+              <div className="mt-4">
+                <h6>Set Correct Matches</h6>
+                <small className="d-block mb-3">
+                  <i className="feather-info"></i> Select the correct match for each left item.
+                </small>
+                {matchingLeftItems.map(leftItem => (
+                  <div key={leftItem.id} className="d-flex align-items-center gap-3 mb-2">
+                    <span style={{ minWidth: '150px' }}>{leftItem.text}</span>
+                    <i className="feather-arrow-right"></i>
+                    <select
+                      className="form-select"
+                      value={(currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches && currentQuestion.matchingPairs.correctMatches[leftItem.id]) || ''}
+                      onChange={(e) => {
+                        const updatedMatches = {
+                          ...((currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches) || {}),
+                          [leftItem.id]: e.target.value
+                        };
+                        
+                        setCurrentQuestion({
+                          ...currentQuestion,
+                          matchingPairs: {
+                            leftItems: matchingLeftItems,
+                            rightItems: matchingRightItems,
+                            correctMatches: updatedMatches
+                          },
+                          correctAnswer: updatedMatches
+                        });
+                      }}
+                    >
+                      <option value="">Select correct match</option>
+                      {matchingRightItems.map(rightItem => (
+                        <option key={rightItem.id} value={rightItem.id}>
+                          {rightItem.text}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          
+          <div
+            className={`course-field mt--20 ${
+              selectedOption === "Fill in the Blanks" || currentQuestion.type === "Fill in the Blanks" ? "d-block" : "d-none"
+            }`}
+          >
+            <div className="mb--20">
+              <h6>Question with Blanks</h6>
+              <small className="d-block mb-2">
+                <i className="feather-info"></i> Write your question and click "Add Blank" to insert blank spaces. 
+                Blanks will appear as [1], [2], etc.
+              </small>
+              <div className="d-flex gap-2 align-items-center">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Example: The capital of [1] is [2]"
+                  value={currentQuestion.question || ''}
+                  onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
+                />
+                <button 
+                  className="rbt-btn btn-sm btn-primary" 
+                  type="button"
+                  onClick={addBlank}
+                >
+                  <i className="feather-plus"></i> Add Blank
+                </button>
+              </div>
+            </div>
+
+            {/* Preview */}
+            {currentQuestion.question && (
+              <div className="alert alert-light mb--20">
+                <h6 className="mb-2">Preview:</h6>
+                <div>
+                  {currentQuestion.question.replace(/\[(\d+)\]/g, '________')}
+                </div>
+              </div>
+            )}
+
+            {/* Blanks Management */}
+            {blanks.length > 0 && (
+              <div className="mt--30">
+                <h6 className="mb--20">Answer Options for Each Blank</h6>
+                {blanks.map((blank, index) => (
+                  <div key={blank.id} className="card mb--20 p-3">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                      <h6 className="mb-0">Blank [{blank.id}]</h6>
+                      <button
+                        type="button"
+                        className="rbt-btn-close"
+                        onClick={() => removeBlank(blank.id)}
+                      >
+                        <i className="feather-x"></i>
+                      </button>
+                    </div>
+                    
+                    {/* Add answer input */}
+                    <div className="d-flex gap-2 mb-3">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter acceptable answer"
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addAnswerToBlank(blank.id, e.target.value);
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                      <button
+                        className="rbt-btn btn-sm"
+                        type="button"
+                        onClick={(e) => {
+                          const input = e.target.parentElement.querySelector('input');
+                          addAnswerToBlank(blank.id, input.value);
+                          input.value = '';
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+
+                    {/* Answer list */}
+                    {blankAnswers[blank.id] && blankAnswers[blank.id].length > 0 && (
+                      <div className="mb-3">
+                        <small className="text-muted mb-2 d-block">Acceptable answers:</small>
+                        {blankAnswers[blank.id].map((answer, ansIdx) => (
+                          <div key={ansIdx} className="d-inline-flex align-items-center gap-2 me-2 mb-2">
+                            <span className="badge bg-secondary">{answer}</span>
+                            <button
+                              type="button"
+                              className="btn btn-sm p-0"
+                              style={{ lineHeight: 1 }}
+                              onClick={() => removeAnswerFromBlank(blank.id, ansIdx)}
+                            >
+                              <i className="feather-x"></i>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Settings */}
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`caseSensitive-${blank.id}`}
+                        checked={blank.caseSensitive || false}
+                        onChange={(e) => updateBlankSettings(blank.id, { caseSensitive: e.target.checked })}
+                      />
+                      <label className="form-check-label" htmlFor={`caseSensitive-${blank.id}`}>
+                        Case sensitive (대소문자 구분)
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="course-field mt--20">

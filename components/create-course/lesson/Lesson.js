@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import CourseData from "../../../data/course-details/courseData.json";
 
@@ -22,6 +22,8 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 
 import SingleLesson from "./SingleLesson";
+import { contentHelpers } from "@/app/lib/utils/contentHelpers";
+import { logger } from "@/app/lib/utils/logger";
 import LessonModal from "../QuizModals/LessonModal";
 import QuizModal from "../QuizModals/QuizModal";
 import AssignmentModal from "../QuizModals/AssignmentModal";
@@ -37,35 +39,39 @@ const Lesson = ({
   start,
   end,
   id,
+  topicId,
   topicData,
   onDeleteTopic,
   onUpdateTopic,
   onAddLesson,
   onAddQuiz,
+  onUpdateQuiz,
   onAddAssignment,
-  onDeleteLesson,
+  onDeleteContent,
   onEditLesson,
   onUploadLesson,
 }) => {
-  const [courseList, setCourseList] = useState(topicData?.lessons || []);
+  const [courseList, setCourseList] = useState([]);
   const [hydrated, setHydrated] = useState(false);
   const [toggle, setToggle] = useState(expanded || false);
   const [editingLesson, setEditingLesson] = useState(null);
+  const [editingQuiz, setEditingQuiz] = useState(null);
   
-  // Update courseList when topicData changes
+  // Update courseList when topicData changes - combine lessons and quizzes
   useEffect(() => {
-    console.log('[Lesson.js] Setting courseList from topicData:', {
-      topicId: id,
+    // Use contentHelpers to combine all content types
+    const combinedContents = contentHelpers.combineContents(topicData || {});
+    
+    logger.log('[Lesson.js] Setting combined courseList:', {
+      accordionId: id,
+      actualTopicId: topicId,
       lessonsCount: topicData?.lessons?.length || 0,
-      firstLesson: topicData?.lessons?.[0] ? {
-        id: topicData.lessons[0].id,
-        title: topicData.lessons[0].title,
-        hasThumbnail: !!topicData.lessons[0].thumbnail,
-        hasAttachments: !!topicData.lessons[0].attachments,
-        attachmentsCount: topicData.lessons[0].attachments?.length || 0
-      } : null
+      quizzesCount: topicData?.quizzes?.length || 0,
+      assignmentsCount: topicData?.assignments?.length || 0,
+      totalCount: combinedContents.length
     });
-    setCourseList(topicData?.lessons || []);
+    
+    setCourseList(combinedContents);
   }, [topicData, id]);
 
   useEffect(() => {
@@ -142,7 +148,7 @@ const Lesson = ({
             {courseList.length === 0 ? (
               <div className="text-center py-3 mb-3">
                 <p className="text-muted">
-                  <i className="feather-info"></i> No lessons added yet. Click the "Lesson" button below to add your first lesson.
+                  <i className="feather-info"></i> No content added yet. Click the "Lesson" or "Quiz" buttons below to add content.
                 </p>
               </div>
             ) : (
@@ -162,26 +168,34 @@ const Lesson = ({
                       course={course}
                       topicId={id}
                       onDelete={(lessonId) => {
-                        if (onDeleteLesson) {
-                          onDeleteLesson(id, lessonId);
-                        } else {
-                          // 로컬 삭제
-                          setCourseList(courseList.filter(c => c.id !== lessonId));
+                        if (onDeleteContent) {
+                          // course 객체 전체를 전달
+                          const contentToDelete = courseList.find(c => c.id === lessonId);
+                          if (contentToDelete) {
+                            onDeleteContent(topicId, contentToDelete);
+                          }
                         }
                       }}
                       onEdit={(lesson) => {
-                        console.log('[Lesson.js] onEdit called with lesson:', {
+                        logger.log('[Lesson.js] onEdit called with lesson:', {
                           id: lesson.id,
                           title: lesson.title,
+                          content_type: lesson.content_type,
+                          isQuiz: lesson.content_type === 'quiz',
                           hasThumbnail: !!lesson.thumbnail,
                           thumbnailValue: lesson.thumbnail,
                           hasAttachments: !!lesson.attachments,
                           attachmentsCount: lesson.attachments?.length || 0,
                           attachments: lesson.attachments
                         });
-                        setEditingLesson(lesson);
-                        if (onEditLesson) {
-                          onEditLesson(id, lesson);
+                        
+                        if (lesson.content_type === 'quiz') {
+                          setEditingQuiz(lesson);
+                        } else {
+                          setEditingLesson(lesson);
+                          if (onEditLesson) {
+                            onEditLesson(id, lesson);
+                          }
                         }
                       }}
                       onUpload={(lessonId) => {
@@ -287,7 +301,11 @@ const Lesson = ({
       {/* Quiz Modal for this topic */}
       <QuizModal 
         modalId={`QuizModal${id}`}
+        topicId={id}
         onAddQuiz={onAddQuiz}
+        onUpdateQuiz={onUpdateQuiz}
+        editingQuiz={editingQuiz}
+        onEditComplete={() => setEditingQuiz(null)}
       />
       
       {/* Assignment Modal for this topic */}
@@ -306,4 +324,4 @@ const Lesson = ({
   );
 };
 
-export default Lesson;
+export default React.memo(Lesson);

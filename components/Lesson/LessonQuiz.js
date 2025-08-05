@@ -9,6 +9,7 @@ const LessonQuiz = ({ quizData, attemptId, lessonId }) => {
   const [answers, setAnswers] = useState({});
   const [startTime] = useState(new Date());
   const [submitting, setSubmitting] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState(null);
   
   const questions = quizData?.questions || [];
   const settings = quizData?.settings || {};
@@ -179,15 +180,194 @@ const LessonQuiz = ({ quizData, attemptId, lessonId }) => {
                 </div>
               )}
               
+              {currentQuestion.type === 'Sort Answer' && (
+                <div className="mt-3">
+                  {currentQuestion.sortItems && currentQuestion.sortItems.length > 0 ? (
+                    <div>
+                      <p className="mb-3">Drag and drop to arrange items in the correct order:</p>
+                      <div className="sortable-list">
+                        {(() => {
+                          // Get current order or use default order
+                          const currentOrder = answers[currentQuestion.id] || currentQuestion.sortItems.map(item => item.id);
+                          const orderedItems = currentOrder.map(id => 
+                            currentQuestion.sortItems.find(item => item.id === id)
+                          ).filter(Boolean);
+                          
+                          return orderedItems.map((item, index) => (
+                            <div
+                              key={item.id}
+                              className="d-flex align-items-center gap-3 mb-2 p-3 border rounded bg-light"
+                              draggable
+                              onDragStart={(e) => {
+                                setDraggedIndex(index);
+                                e.dataTransfer.effectAllowed = 'move';
+                              }}
+                              onDragOver={(e) => {
+                                e.preventDefault();
+                                e.dataTransfer.dropEffect = 'move';
+                              }}
+                              onDrop={(e) => {
+                                e.preventDefault();
+                                if (draggedIndex === null) return;
+                                
+                                const newOrder = [...currentOrder];
+                                const [draggedItem] = newOrder.splice(draggedIndex, 1);
+                                newOrder.splice(index, 0, draggedItem);
+                                
+                                handleAnswerChange(newOrder);
+                                setDraggedIndex(null);
+                              }}
+                              style={{ cursor: 'move' }}
+                            >
+                              <i className="feather-menu"></i>
+                              <span className="fw-bold">{index + 1}.</span>
+                              <span className="flex-grow-1">{item.text}</span>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    </div>
+                  ) : (
+                    <p>No items to sort</p>
+                  )}
+                </div>
+              )}
+              
               {currentQuestion.type === 'Fill in the Blanks' && (
                 <div className="mt-3">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Enter your answer"
-                    value={answers[currentQuestion.id] || ''}
-                    onChange={(e) => handleAnswerChange(e.target.value)}
-                  />
+                  {currentQuestion.blanks && currentQuestion.blanks.length > 0 ? (
+                    // New format with multiple blanks
+                    <div>
+                      <div className="mb-3">
+                        {/* Display question with blank placeholders */}
+                        <p className="fs-5">
+                          {currentQuestion.question.split(/\[(\d+)\]/g).map((part, index) => {
+                            // Check if this part is a number (blank ID)
+                            const blankId = parseInt(part);
+                            if (!isNaN(blankId) && currentQuestion.blanks.find(b => b.id === blankId)) {
+                              return <span key={index} className="text-primary fw-bold">_______</span>;
+                            }
+                            return <span key={index}>{part}</span>;
+                          })}
+                        </p>
+                      </div>
+                      {currentQuestion.blanks.map((blank) => (
+                        <div key={blank.id} className="mb-3">
+                          <label className="form-label">Blank [{blank.id}]:</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder={`Enter answer for blank ${blank.id}`}
+                            value={answers[currentQuestion.id]?.[blank.id] || ''}
+                            onChange={(e) => {
+                              const currentAnswers = answers[currentQuestion.id] || {};
+                              handleAnswerChange({
+                                ...currentAnswers,
+                                [blank.id]: e.target.value
+                              });
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    // Legacy format with single answer
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Enter your answer"
+                      value={answers[currentQuestion.id] || ''}
+                      onChange={(e) => handleAnswerChange(e.target.value)}
+                    />
+                  )}
+                </div>
+              )}
+              
+              {currentQuestion.type === 'Matching' && (
+                <div className="mt-3">
+                  {currentQuestion.matchingPairs ? (
+                    <div className="row">
+                      <div className="col-md-6">
+                        <h6>Items to Match</h6>
+                        {currentQuestion.matchingPairs.leftItems?.map((leftItem) => (
+                          <div key={leftItem.id} className="mb-3 p-3 border rounded">
+                            <div className="d-flex align-items-center justify-content-between">
+                              <span>{leftItem.text}</span>
+                              <i className="feather-arrow-right"></i>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="col-md-6">
+                        <h6>Match With</h6>
+                        {currentQuestion.matchingPairs.leftItems?.map((leftItem) => (
+                          <div key={leftItem.id} className="mb-3">
+                            <select
+                              className="form-select"
+                              value={answers[currentQuestion.id]?.[leftItem.id] || ''}
+                              onChange={(e) => {
+                                const currentMatches = answers[currentQuestion.id] || {};
+                                handleAnswerChange({
+                                  ...currentMatches,
+                                  [leftItem.id]: e.target.value
+                                });
+                              }}
+                            >
+                              <option value="">Select a match</option>
+                              {currentQuestion.matchingPairs.rightItems?.map((rightItem) => (
+                                <option key={rightItem.id} value={rightItem.id}>
+                                  {rightItem.text}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p>No matching items available</p>
+                  )}
+                </div>
+              )}
+              
+              {currentQuestion.type === 'Image Matching' && (
+                <div className="mt-3">
+                  {currentQuestion.imageMatchingPairs && currentQuestion.imageMatchingPairs.length > 0 ? (
+                    <div>
+                      <p className="mb-3">Match each image with the correct text:</p>
+                      <div className="row">
+                        {currentQuestion.imageMatchingPairs.map((pair) => (
+                          <div key={pair.id} className="col-md-6 mb-4">
+                            <div className="card">
+                              <img 
+                                src={pair.image} 
+                                className="card-img-top" 
+                                alt={`Image ${pair.id}`}
+                                style={{ height: '200px', objectFit: 'cover' }}
+                              />
+                              <div className="card-body">
+                                <input
+                                  type="text"
+                                  className="form-control"
+                                  placeholder="Enter matching text"
+                                  value={answers[currentQuestion.id]?.[pair.id] || ''}
+                                  onChange={(e) => {
+                                    const currentMatches = answers[currentQuestion.id] || {};
+                                    handleAnswerChange({
+                                      ...currentMatches,
+                                      [pair.id]: e.target.value
+                                    });
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <p>No images to match</p>
+                  )}
                 </div>
               )}
               
