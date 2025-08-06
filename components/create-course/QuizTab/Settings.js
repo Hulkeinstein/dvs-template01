@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Settings = ({ quizData, setQuizData }) => {
   const [maxQuestions, setMaxQuestions] = useState(quizData?.settings?.maxQuestions || 0);
@@ -8,6 +8,16 @@ const Settings = ({ quizData, setQuizData }) => {
   const [sortAns, setSortAns] = useState(quizData?.settings?.shortAnswerLimit || 200);
   const [answer, setAnswer] = useState(quizData?.settings?.essayAnswerLimit || 500);
   const [isAdvanceOpen, setIsAdvanceOpen] = useState(false);
+
+  // quizData가 변경될 때 local state 업데이트
+  useEffect(() => {
+    if (quizData?.settings) {
+      setMaxQuestions(quizData.settings.maxQuestions || 0);
+      setPassingGrade(quizData.settings.passingScore || 70);
+      setSortAns(quizData.settings.shortAnswerLimit || 200);
+      setAnswer(quizData.settings.essayAnswerLimit || 500);
+    }
+  }, [quizData?.settings]);
 
   const handleInputChange = (setter, field) => (event) => {
     const value = Math.max(0, Number(event.target.value));

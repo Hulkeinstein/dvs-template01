@@ -355,6 +355,42 @@ const blob = base64ToBlob(base64Data)
 - `fix: Resolve course enrollment error`
 - `docs: Update README with setup instructions`
 
+### 커밋 메시지 작성 가이드
+**자세한 커밋 메시지를 작성하세요** - 미래의 디버깅과 코드 리뷰를 위해 충분한 맥락을 포함
+
+**추천 형식:**
+```
+<type>: <짧은 요약> (50자 이내)
+
+<왜 이 변경이 필요했는지> (선택사항)
+
+<무엇을 변경했는지> (상세 내용)
+- 변경사항 1
+- 변경사항 2
+- ...
+
+<어떤 문제를 해결했는지>
+```
+
+**예시:**
+```
+fix: 퀴즈 시스템 _zod 에러 및 데이터 로드 문제 해결
+
+사용자가 샘플 퀴즈를 저장할 때 _zod 에러가 발생하고,
+퀴즈가 레슨 목록에 표시되지 않는 문제가 있었습니다.
+
+변경사항:
+- Zod v4.0.14 → v3.25.76 다운그레이드
+- 샘플 퀴즈 True/False correctAnswer 타입 수정
+- course_topics 정렬 컬럼 수정 (order_index → sort_order)
+- 퀴즈 로드 로직 개선
+
+해결된 이슈:
+- 퀴즈 저장 시 "_zod" 에러
+- 토픽 로드 실패
+- 퀴즈가 레슨 목록에 표시되지 않음
+```
+
 ## Testing Guide
 
 ### Manual Testing Checklist
