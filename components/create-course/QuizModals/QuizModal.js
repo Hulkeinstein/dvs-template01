@@ -16,6 +16,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
   const [toggle, setToggle] = useState(true);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [settingsKey, setSettingsKey] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState({
     question: '',
     questionImage: null,
@@ -525,6 +526,9 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
     // 기존 데이터를 완전히 교체 (안전한 방식)
     setQuizData(sampleQuizData);
     
+    // Settings 컴포넌트 재마운트를 위해 key 변경
+    setSettingsKey(prev => prev + 1);
+    
     // 사용자에게 알림
     alert('샘플 퀴즈 데이터가 로드되었습니다. 필요에 따라 수정해서 사용하세요.');
   };
@@ -705,7 +709,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                         )}
                       </form>
                     )}
-                    {currentStep === 3 && <Settings quizData={quizData} setQuizData={setQuizData} />}
+                    {currentStep === 3 && <Settings key={settingsKey} quizData={quizData} setQuizData={setQuizData} />}
                   </div>
                 </div>
               </div>
