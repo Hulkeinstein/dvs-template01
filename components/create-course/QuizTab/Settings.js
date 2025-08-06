@@ -17,7 +17,7 @@ const Settings = ({ quizData, setQuizData }) => {
       setSortAns(quizData.settings.shortAnswerLimit || 200);
       setAnswer(quizData.settings.essayAnswerLimit || 500);
     }
-  }, [quizData?.settings]);
+  }, [quizData]);
 
   const handleInputChange = (setter, field) => (event) => {
     const value = Math.max(0, Number(event.target.value));
