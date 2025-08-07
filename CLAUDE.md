@@ -6,6 +6,7 @@
 - @./modules/development-status.md
 - @./modules/quiz-system.md
 - @./modules/git-workflow.md
+- @./modules/automation-system.md
 - @./modules/testing-guide.md
 - @./modules/common-issues.md
 - @./modules/recent-features.md
