@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import HomeTechnologyBanner from "./HomeTechnologyBanner";
-import TeamEight from "../Team/TeamEight";
-import AboutSaven from "../Abouts/About-Saven";
-import Service from "../Services/Service";
-import BrandThree from "../Brand/Brand-Three";
-import SingleCourseProp from "../11-single-course/SingleCourseProp";
-import CourseLessonProp from "../11-single-course/CourseLessonProp";
-import TestimonialFour from "../Testimonials/Testimonial-Four";
-import TeacherGallery from "../Become-a-Teacher/TeacherGallery";
-import NewsletterFour from "../Newsletters/Newsletter-Four";
+import HomeTechnologyBanner from './HomeTechnologyBanner';
+import TeamEight from '../Team/TeamEight';
+import AboutSaven from '../Abouts/About-Saven';
+import Service from '../Services/Service';
+import BrandThree from '../Brand/Brand-Three';
+import SingleCourseProp from '../11-single-course/SingleCourseProp';
+import CourseLessonProp from '../11-single-course/CourseLessonProp';
+import TestimonialFour from '../Testimonials/Testimonial-Four';
+import TeacherGallery from '../Become-a-Teacher/TeacherGallery';
+import NewsletterFour from '../Newsletters/Newsletter-Four';
 
-import SingleCourseData from "../../data/pages/11-singleCourse.json";
+import SingleCourseData from '../../data/pages/11-singleCourse.json';
 
-import courseImg from "../../public/images/course/course-content.jpg";
-import videoImg from "../../public/images/others/video-05.jpg";
+import courseImg from '../../public/images/course/course-content.jpg';
+import videoImg from '../../public/images/others/video-05.jpg';
 
 const HomeTechnology = () => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);

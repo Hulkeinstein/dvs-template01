@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import "venobox/dist/venobox.min.css";
-import Viedo from "./Course-Sections/Viedo";
-import CourseMenu from "./Course-Sections/Course-Menu";
-import Overview from "./Course-Sections/Overview";
-import Requirements from "./Course-Sections/Requirements";
-import Instructor from "./Course-Sections/Instructor";
-import Review from "./Course-Sections/Review";
-import Featured from "./Course-Sections/Featured";
-import Content from "./Course-Sections/Content";
+import 'venobox/dist/venobox.min.css';
+import Viedo from './Course-Sections/Viedo';
+import CourseMenu from './Course-Sections/Course-Menu';
+import Overview from './Course-Sections/Overview';
+import Requirements from './Course-Sections/Requirements';
+import Instructor from './Course-Sections/Instructor';
+import Review from './Course-Sections/Review';
+import Featured from './Course-Sections/Featured';
+import Content from './Course-Sections/Content';
 
 const CourseDetailsThree = ({ checkMatchCourses }) => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);

@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Image from 'next/image';
 
 const TeamWidget = ({ widgetStyle, teamMember }) => {
   return (
     <>
-      {widgetStyle === "card-box" && (
+      {widgetStyle === 'card-box' && (
         <div className="rbt-team team-style-default style-two rbt-hover">
           <div className="inner">
             <div className="thumbnail">
@@ -28,13 +28,13 @@ const TeamWidget = ({ widgetStyle, teamMember }) => {
                 {teamMember.social?.map((social, index) => (
                   <li key={`social-${index}`}>
                     <a href={social.url}>
-                      {social.type === "Facebook" && (
+                      {social.type === 'Facebook' && (
                         <i className="feather-facebook" />
                       )}
-                      {social.type === "Twitter" && (
+                      {social.type === 'Twitter' && (
                         <i className="feather-twitter" />
                       )}
-                      {social.type === "Instagram" && (
+                      {social.type === 'Instagram' && (
                         <i className="feather-instagram" />
                       )}
                     </a>

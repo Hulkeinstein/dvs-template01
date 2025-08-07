@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CardData from "../../data/elements/card";
+import CardData from '../../data/elements/card';
 
 const CardTwo = () => {
   return (
@@ -29,7 +29,7 @@ const CardTwo = () => {
                         <span>{data.badge}</span>
                       </div>
                     ) : (
-                      ""
+                      ''
                     )}
                   </Link>
                 </div>
@@ -71,7 +71,7 @@ const CardTwo = () => {
               {data.children.map((item, innerIndex) => (
                 <div
                   className={`rbt-card card-list variation-02 rbt-hover ${
-                    item.mt ? "mt--30" : ""
+                    item.mt ? 'mt--30' : ''
                   }`}
                   key={innerIndex}
                 >

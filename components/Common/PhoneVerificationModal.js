@@ -1,13 +1,18 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
-const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => {
+const PhoneVerificationModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  userProfile,
+}) => {
   const [formData, setFormData] = useState({
     phone: '',
-    otp: ''
+    otp: '',
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
@@ -17,7 +22,7 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
   // Initialize phone if user already has one
   useEffect(() => {
     if (userProfile?.phone) {
-      setFormData(prev => ({ ...prev, phone: userProfile.phone }));
+      setFormData((prev) => ({ ...prev, phone: userProfile.phone }));
     }
   }, [userProfile]);
 
@@ -38,13 +43,13 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
       setOtpTimer(0);
     } else {
       // When modal opens, set the phone number from props
-      setFormData(prev => ({ ...prev, phone: userProfile?.phone || '' }));
+      setFormData((prev) => ({ ...prev, phone: userProfile?.phone || '' }));
     }
   }, [isOpen, userProfile]);
 
   const handleSendOTP = async () => {
     if (!formData.phone.trim()) {
-      setErrors({ phone: "Phone number is required" });
+      setErrors({ phone: 'Phone number is required' });
       return;
     }
 
@@ -67,7 +72,9 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
         setOtpTimer(300); // 5 minutes
         setErrors({ success: 'Verification code sent to your phone!' });
       } else {
-        setErrors({ phone: result.error || 'Failed to send verification code' });
+        setErrors({
+          phone: result.error || 'Failed to send verification code',
+        });
       }
     } catch (error) {
       setErrors({ phone: 'An error occurred. Please try again.' });
@@ -78,7 +85,7 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
 
   const handleVerify = async () => {
     if (!formData.otp.trim()) {
-      setErrors({ otp: "Verification code is required" });
+      setErrors({ otp: 'Verification code is required' });
       return;
     }
 
@@ -93,7 +100,7 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
         },
         body: JSON.stringify({
           phone: formData.phone,
-          otp: formData.otp
+          otp: formData.otp,
         }),
       });
 
@@ -108,7 +115,7 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              phone: formData.phone
+              phone: formData.phone,
             }),
           });
         }
@@ -130,15 +137,15 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
   return (
     <>
       {/* Backdrop */}
-      <div 
-        className="modal-backdrop fade show" 
+      <div
+        className="modal-backdrop fade show"
         onClick={onClose}
         style={{ zIndex: 1040 }}
       />
-      
+
       {/* Modal */}
-      <div 
-        className="modal fade show" 
+      <div
+        className="modal fade show"
         style={{ display: 'block', zIndex: 1050 }}
         role="dialog"
         aria-modal="true"
@@ -154,10 +161,13 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
                 aria-label="Close"
               />
             </div>
-            
+
             <div className="modal-body">
               <div className="text-center mb-4">
-                <i className="feather-shield text-primary" style={{ fontSize: '48px' }}></i>
+                <i
+                  className="feather-shield text-primary"
+                  style={{ fontSize: '48px' }}
+                ></i>
                 <p className="mt-3">
                   This action requires phone verification for security purposes.
                 </p>
@@ -176,9 +186,9 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
                     country={'us'}
                     value={formData.phone}
                     onChange={(phone) => {
-                      setFormData(prev => ({ ...prev, phone: '+' + phone }));
+                      setFormData((prev) => ({ ...prev, phone: '+' + phone }));
                       if (errors.phone) {
-                        setErrors(prev => ({ ...prev, phone: "" }));
+                        setErrors((prev) => ({ ...prev, phone: '' }));
                       }
                     }}
                     disabled={loading || otpSent}
@@ -187,41 +197,67 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
                       border: 'none',
                       borderBottom: '2px solid #e5e5e5',
                       borderRadius: 0,
-                      boxShadow: 'none'
+                      boxShadow: 'none',
                     }}
                     buttonStyle={{
                       border: 'none',
                       borderBottom: '2px solid #e5e5e5',
                       borderRadius: 0,
-                      background: 'transparent'
+                      background: 'transparent',
                     }}
                     dropdownStyle={{
-                      borderRadius: '8px'
+                      borderRadius: '8px',
                     }}
                     containerClass="phone-input-container"
                     enableSearch={true}
                     searchPlaceholder="Search countries"
-                    preferredCountries={['us', 'kr', 'jp', 'cn', 'gb', 'ca', 'au']}
+                    preferredCountries={[
+                      'us',
+                      'kr',
+                      'jp',
+                      'cn',
+                      'gb',
+                      'ca',
+                      'au',
+                    ]}
                   />
                   {!otpSent && (
                     <button
                       type="button"
                       className="rbt-btn btn-sm send-code-btn"
                       onClick={handleSendOTP}
-                      disabled={loading || !formData.phone || formData.phone.length < 10}
-                      style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}
+                      disabled={
+                        loading || !formData.phone || formData.phone.length < 10
+                      }
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                      }}
                     >
                       Send Code
                     </button>
                   )}
                   {otpSent && otpTimer > 0 && (
-                    <span className="timer-badge" style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
-                      {Math.floor(otpTimer / 60)}:{(otpTimer % 60).toString().padStart(2, '0')}
+                    <span
+                      className="timer-badge"
+                      style={{
+                        position: 'absolute',
+                        right: '10px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                      }}
+                    >
+                      {Math.floor(otpTimer / 60)}:
+                      {(otpTimer % 60).toString().padStart(2, '0')}
                     </span>
                   )}
                 </div>
                 {errors.phone && (
-                  <span className="text-danger small d-block mt-1">{errors.phone}</span>
+                  <span className="text-danger small d-block mt-1">
+                    {errors.phone}
+                  </span>
                 )}
               </div>
 
@@ -234,9 +270,9 @@ const PhoneVerificationModal = ({ isOpen, onClose, onSuccess, userProfile }) => 
                     placeholder="Enter 6-digit code"
                     value={formData.otp}
                     onChange={(e) => {
-                      setFormData(prev => ({ ...prev, otp: e.target.value }));
+                      setFormData((prev) => ({ ...prev, otp: e.target.value }));
                       if (errors.otp) {
-                        setErrors(prev => ({ ...prev, otp: "" }));
+                        setErrors((prev) => ({ ...prev, otp: '' }));
                       }
                     }}
                     maxLength="6"

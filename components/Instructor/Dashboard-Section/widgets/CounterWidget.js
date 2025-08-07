@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import { useInView } from "react-intersection-observer";
-import "odometer/themes/odometer-theme-default.css";
-import Image from "next/image";
+import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { useInView } from 'react-intersection-observer';
+import 'odometer/themes/odometer-theme-default.css';
+import Image from 'next/image';
 
 let loadedCallback = null;
 let loaded = false;
 
-const Odometer = dynamic(() => import("react-odometerjs"), {
+const Odometer = dynamic(() => import('react-odometerjs'), {
   ssr: false,
   loading: () => <span>00</span>,
 });
 const CounterWidget = ({
-  counterStyle = "one",
+  counterStyle = 'one',
   icon,
   title,
   subtitle,
@@ -46,7 +46,7 @@ const CounterWidget = ({
 
   return (
     <>
-      {counterStyle === "one" && (
+      {counterStyle === 'one' && (
         <div className="rbt-counterup rbt-hover-03 border-bottom-gradient">
           <div className="top-circle-shape" />
           <div ref={ref} className="inner">
@@ -65,7 +65,7 @@ const CounterWidget = ({
         </div>
       )}
 
-      {counterStyle === "two" && (
+      {counterStyle === 'two' && (
         <div
           ref={ref}
           className={`rbt-counterup variation-01 rbt-hover-03 rbt-border-dashed ${styleClass}`}
@@ -84,7 +84,7 @@ const CounterWidget = ({
         </div>
       )}
 
-      {counterStyle === "three" && (
+      {counterStyle === 'three' && (
         <div className="rbt-counterup rbt-hover-03 style-2 text-color-white">
           <div ref={ref} className="inner">
             <div className="content">
@@ -98,7 +98,7 @@ const CounterWidget = ({
         </div>
       )}
 
-      {counterStyle === "four" && (
+      {counterStyle === 'four' && (
         <div ref={ref} className="rbt-counterup style-2">
           <div className="inner">
             <div className="content">

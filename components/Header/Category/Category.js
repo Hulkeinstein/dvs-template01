@@ -1,6 +1,6 @@
-import Link from "next/link";
-import CategoryData from "../../../data/elements/category";
-import SingleCategory from "./CategoryProps/SingleCategory";
+import Link from 'next/link';
+import CategoryData from '../../../data/elements/category';
+import SingleCategory from './CategoryProps/SingleCategory';
 
 const Category = () => {
   return (

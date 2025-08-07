@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CallToActionData from "../../data/elements/calltoaction.json";
-import CallToActionHead from "./CallToAction-Head";
+import CallToActionData from '../../data/elements/calltoaction.json';
+import CallToActionHead from './CallToAction-Head';
 
 const CallToActionTwo = () => {
   return (

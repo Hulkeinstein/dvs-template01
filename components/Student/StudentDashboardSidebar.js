@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import SidebarData from "../../data/dashboard/student/siderbar.json";
+import { usePathname } from 'next/navigation';
+import SidebarData from '../../data/dashboard/student/siderbar.json';
 
 const StudentDashboardSidebar = () => {
   const pathname = usePathname();
@@ -21,7 +21,7 @@ const StudentDashboardSidebar = () => {
                       <li className="nav-item" key={index} role="presentation">
                         <a
                           className={`${
-                            pathname === data.link ? "active" : ""
+                            pathname === data.link ? 'active' : ''
                           }`}
                           href={data.link}
                         >
@@ -45,7 +45,7 @@ const StudentDashboardSidebar = () => {
                         <a
                           href={data.link}
                           className={`${
-                            pathname === data.link ? "active" : ""
+                            pathname === data.link ? 'active' : ''
                           }`}
                         >
                           <i className={data.icon} />

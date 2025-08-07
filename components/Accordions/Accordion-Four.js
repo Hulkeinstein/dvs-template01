@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import AccordionData from "../../data/elements/accordion.json";
+import AccordionData from '../../data/elements/accordion.json';
 
 const AccordionFour = () => {
   return (
@@ -30,7 +30,7 @@ const AccordionFour = () => {
                         >
                           <button
                             className={`accordion-button ${
-                              !item.collapsed ? "collapsed" : ""
+                              !item.collapsed ? 'collapsed' : ''
                             }`}
                             type="button"
                             data-bs-toggle="collapse"
@@ -44,7 +44,7 @@ const AccordionFour = () => {
                         <div
                           id={item.collapse}
                           className={`accordion-collapse collapse ${
-                            item.show ? "show" : ""
+                            item.show ? 'show' : ''
                           }`}
                           aria-labelledby={item.heading}
                           data-bs-parent="#accordionExampleb4"

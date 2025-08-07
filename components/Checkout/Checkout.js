@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useSelector } from "react-redux";
-import dynamic from "next/dynamic";
+import { useSelector } from 'react-redux';
+import dynamic from 'next/dynamic';
 
-import CheckoutForm from "./CheckoutForm";
+import CheckoutForm from './CheckoutForm';
 
 const Checkout = () => {
   const { cart, total_amount, shipping_fee } = useSelector(

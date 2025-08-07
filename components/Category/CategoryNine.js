@@ -1,11 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-import CourseDetails from "../../data/course-details/courseData.json";
-import useCategoryCount from "@/context/useCategoryCount";
+import CourseDetails from '../../data/course-details/courseData.json';
+import useCategoryCount from '@/context/useCategoryCount';
 
 const CategoryNine = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -17,8 +17,8 @@ const CategoryNine = () => {
         slidesPerView={1}
         modules={[Navigation]}
         navigation={{
-          nextEl: ".rbt-arrow-left",
-          prevEl: ".rbt-arrow-right",
+          nextEl: '.rbt-arrow-left',
+          prevEl: '.rbt-arrow-right',
         }}
         breakpoints={{
           480: {
@@ -64,7 +64,7 @@ const CategoryNine = () => {
                           <h5 className="title">{item.category}</h5>
                           <div className="read-more-btn">
                             <span className="rbt-btn-link">
-                              {count} Course{count !== 1 ? "s" : ""}
+                              {count} Course{count !== 1 ? 's' : ''}
                               <i className="feather-arrow-right"></i>
                             </span>
                           </div>

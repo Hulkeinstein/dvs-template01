@@ -1,7 +1,7 @@
-import { useAppContext } from "@/context/Context";
-import HeaderTopFour from "../Header-Top/HeaderTop-Four";
-import HeaderFour from "../Headers/Header-Four";
-import DarkSwitch from "../dark-switch";
+import { useAppContext } from '@/context/Context';
+import HeaderTopFour from '../Header-Top/HeaderTop-Four';
+import HeaderFour from '../Headers/Header-Four';
+import DarkSwitch from '../dark-switch';
 
 const HeaderTypeFour = () => {
   const { isLightTheme, toggleTheme } = useAppContext();

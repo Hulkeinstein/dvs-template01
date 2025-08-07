@@ -1,5 +1,5 @@
-import TestimonialData from "../../data/elements/testimonial.json";
-import Scroll from "./Testimonial-Scroll/Scroll";
+import TestimonialData from '../../data/elements/testimonial.json';
+import Scroll from './Testimonial-Scroll/Scroll';
 
 const TestimonialTwo = () => {
   return (

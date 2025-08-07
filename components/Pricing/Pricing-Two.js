@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import PricingData from "../../data/elements/pricing.json";
-import BasicPlan from "./Plans/BasicPlan";
-import StandardPlan from "./Plans/StandardPlan";
-import ExclusivePlan from "./Plans/ExclusivePlan";
-import { useAppContext } from "@/context/Context";
+import PricingData from '../../data/elements/pricing.json';
+import BasicPlan from './Plans/BasicPlan';
+import StandardPlan from './Plans/StandardPlan';
+import ExclusivePlan from './Plans/ExclusivePlan';
+import { useAppContext } from '@/context/Context';
 
 const PricingTwo = ({ title, tag }) => {
   const { pricingTwo, setPricingTwo } = useAppContext();
@@ -28,7 +28,7 @@ const PricingTwo = ({ title, tag }) => {
                     <li className="nav-item">
                       <button
                         className={`nav-link yearly-plan-btn ${
-                          pricingTwo ? "active" : ""
+                          pricingTwo ? 'active' : ''
                         }`}
                         type="button"
                         onClick={() => setPricingTwo(!pricingTwo)}
@@ -39,7 +39,7 @@ const PricingTwo = ({ title, tag }) => {
                     <li className="nav-item">
                       <button
                         className={`nav-link monthly-plan-btn ${
-                          !pricingTwo ? "active" : ""
+                          !pricingTwo ? 'active' : ''
                         }`}
                         type="button"
                         onClick={() => setPricingTwo(!pricingTwo)}

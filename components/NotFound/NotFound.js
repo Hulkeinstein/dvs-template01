@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import Link from "next/link";
-import { Provider } from "react-redux";
-import HeaderStyleTen from "../Header/HeaderStyle-Ten";
-import Separator from "../Common/Separator";
-import FooterOne from "../Footer/Footer-One";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import Link from 'next/link';
+import { Provider } from 'react-redux';
+import HeaderStyleTen from '../Header/HeaderStyle-Ten';
+import Separator from '../Common/Separator';
+import FooterOne from '../Footer/Footer-One';
 
 const NotFound = () => {
   return (

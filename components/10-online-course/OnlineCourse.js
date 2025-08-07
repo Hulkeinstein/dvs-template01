@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import sal from "sal.js";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import sal from 'sal.js';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
-import OnlineCourseBanner from "./OnlineCourseBanner";
-import TestimonialTwo from "../Testimonials/Testimonial-Two";
-import CategoryThree from "../Category/CategoryThree";
-import ServiceSaven from "../Services/Service-Saven";
-import CourseSix from "../Category/Filter/Course-Six";
-import AboutSix from "../Abouts/About-Six";
-import CallToActionSix from "../Call-To-Action/CallToAction-Six";
-import NewsletterThree from "../Newsletters/Newsletter-Three";
+import OnlineCourseBanner from './OnlineCourseBanner';
+import TestimonialTwo from '../Testimonials/Testimonial-Two';
+import CategoryThree from '../Category/CategoryThree';
+import ServiceSaven from '../Services/Service-Saven';
+import CourseSix from '../Category/Filter/Course-Six';
+import AboutSix from '../Abouts/About-Six';
+import CallToActionSix from '../Call-To-Action/CallToAction-Six';
+import NewsletterThree from '../Newsletters/Newsletter-Three';
 
 const OnlineCourse = () => {
   let getAllCourse = JSON.parse(JSON.stringify(CourseDetails.courseTab));

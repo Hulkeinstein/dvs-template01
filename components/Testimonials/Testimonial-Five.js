@@ -1,10 +1,10 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-import TestimonialData from "../../data/elements/testimonial.json";
+import TestimonialData from '../../data/elements/testimonial.json';
 
 const TestimonialFive = ({ isDesc }) => {
   return (
@@ -22,7 +22,7 @@ const TestimonialFive = ({ isDesc }) => {
                   {isDesc ? (
                     <p className="description mt--20">{data.desc}</p>
                   ) : (
-                    ""
+                    ''
                   )}
                 </div>
               </div>
@@ -35,8 +35,8 @@ const TestimonialFive = ({ isDesc }) => {
                 key={parentIndex}
                 modules={[Navigation]}
                 navigation={{
-                  nextEl: ".rbt-arrow-left",
-                  prevEl: ".rbt-arrow-right",
+                  nextEl: '.rbt-arrow-left',
+                  prevEl: '.rbt-arrow-right',
                 }}
                 breakpoints={{
                   575: {

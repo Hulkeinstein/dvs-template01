@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import bgImage from "../../public/images/bg/bg-image-10.jpg";
+import bgImage from '../../public/images/bg/bg-image-10.jpg';
 
 const BlogBreadCrumb = ({ matchedBlog }) => {
   return (

@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TestimonialData from "../../data/elements/testimonial.json";
+import TestimonialData from '../../data/elements/testimonial.json';
 
 const TestimonialSeven = () => {
   return (

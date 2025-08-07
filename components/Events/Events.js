@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import Image from "next/image";
-import Link from "next/link";
-import Pagination from "../Common/Pagination";
+import Image from 'next/image';
+import Link from 'next/link';
+import Pagination from '../Common/Pagination';
 
 const Events = ({
   getEvents,
@@ -26,7 +26,7 @@ const Events = ({
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -68,9 +68,7 @@ const Events = ({
                   </li>
                 </ul>
                 <h4 className="rbt-card-title">
-                  <Link href={`/event-details/${data.id}`}>
-                    {data.title}
-                  </Link>
+                  <Link href={`/event-details/${data.id}`}>{data.title}</Link>
                 </h4>
 
                 <div className="read-more-btn">
@@ -106,7 +104,7 @@ const Events = ({
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import Image from "next/image";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-const EventWidget = ({ event, widgetStyle = "card" }) => {
+const EventWidget = ({ event, widgetStyle = 'card' }) => {
   const [eventDateMonth, setEventDateMonth] = useState(null);
   const [eventYear, setEventYear] = useState(null);
 
@@ -12,7 +12,7 @@ const EventWidget = ({ event, widgetStyle = "card" }) => {
     const getDateMonth = () => {
       const date = new Date(event.startDate);
       setEventDateMonth(
-        `${date.getDate()} ${date.toLocaleString("en-US", { month: "short" })}`
+        `${date.getDate()} ${date.toLocaleString('en-US', { month: 'short' })}`
       );
     };
 
@@ -27,7 +27,7 @@ const EventWidget = ({ event, widgetStyle = "card" }) => {
 
   return (
     <>
-      {widgetStyle === "card" && (
+      {widgetStyle === 'card' && (
         <div className="rbt-card event-grid-card variation-01 rbt-hover">
           <div className="rbt-card-img">
             <a href={`/event/${event.id}`}>
@@ -77,7 +77,7 @@ const EventWidget = ({ event, widgetStyle = "card" }) => {
         </div>
       )}
 
-      {widgetStyle === "list" && (
+      {widgetStyle === 'list' && (
         <div className="rbt-card card-list-2 event-list-card variation-01 rbt-hover">
           <div className="rbt-card-img">
             <a href={`/event/${event.id}`}>

@@ -70,7 +70,7 @@ const StudentCertificates = ({ userId }) => {
         ) : certificates.length === 0 ? (
           <div className="text-center py-5">
             <i className="feather-award" style={{ fontSize: '48px', color: '#ddd' }}></i>
-            <p className="mt-3 text-muted">You haven't earned any certificates yet.</p>
+            <p className="mt-3 text-muted">You haven&apos;t earned any certificates yet.</p>
             <p className="text-muted">Complete your enrolled courses to earn certificates!</p>
             <Link href="/course-filter-one-toggle" className="rbt-btn btn-sm mt-3">
               Browse Courses

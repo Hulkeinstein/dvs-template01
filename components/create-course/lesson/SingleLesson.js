@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const SingleLesson = (props) => {
   const { onDelete, onEdit, onUpload } = props;
@@ -31,7 +31,7 @@ const SingleLesson = (props) => {
         <div className="col-3 inner">
           <ul className="rbt-list-style-1 rbt-course-list d-flex gap-1 justify-content-end">
             <li>
-              <i 
+              <i
                 className="feather-trash"
                 onClick={() => {
                   if (onDelete && confirm('이 레슨을 삭제하시겠습니까?')) {
@@ -47,20 +47,23 @@ const SingleLesson = (props) => {
                 data-bs-target={`#LessonModal${props.topicId}`}
                 onClick={() => {
                   if (onEdit) {
-                    console.log('[SingleLesson.js] Edit clicked, passing course:', {
-                      id: props.course.id,
-                      title: props.course.title || props.course.courseTitle,
-                      hasThumbnail: !!props.course.thumbnail,
-                      hasAttachments: !!props.course.attachments,
-                      fullCourse: props.course
-                    });
+                    console.log(
+                      '[SingleLesson.js] Edit clicked, passing course:',
+                      {
+                        id: props.course.id,
+                        title: props.course.title || props.course.courseTitle,
+                        hasThumbnail: !!props.course.thumbnail,
+                        hasAttachments: !!props.course.attachments,
+                        fullCourse: props.course,
+                      }
+                    );
                     onEdit(props.course);
                   }
                 }}
               ></i>
             </li>
             <li>
-              <i 
+              <i
                 className="feather-upload"
                 onClick={() => {
                   if (onUpload) {

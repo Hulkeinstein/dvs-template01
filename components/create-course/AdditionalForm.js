@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 const AdditionalForm = ({ formData, onFormDataChange }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     onFormDataChange({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
   return (
@@ -20,10 +20,10 @@ const AdditionalForm = ({ formData, onFormDataChange }) => {
           <div className="col-lg-6">
             <div className="course-field mb--15">
               <label htmlFor="startDate">Start Date</label>
-              <input 
-                type="date" 
-                id="startDate" 
-                name="startDate" 
+              <input
+                type="date"
+                id="startDate"
+                name="startDate"
                 value={formData.startDate || ''}
                 onChange={handleInputChange}
               />
@@ -34,8 +34,8 @@ const AdditionalForm = ({ formData, onFormDataChange }) => {
             <div className="course-field mb--15">
               <label htmlFor="language">Language</label>
               <div className="rbt-modern-select bg-transparent height-50 mb--10">
-                <select 
-                  className="w-100" 
+                <select
+                  className="w-100"
                   id="language"
                   name="language"
                   value={formData.language || 'English'}
@@ -97,10 +97,10 @@ const AdditionalForm = ({ formData, onFormDataChange }) => {
               <label>Total Course Duration</label>
               <div className="row row--15">
                 <div className="col-lg-6">
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     name="totalDurationHours"
-                    placeholder="00" 
+                    placeholder="00"
                     value={formData.totalDurationHours || ''}
                     onChange={handleInputChange}
                     min="0"
@@ -110,10 +110,10 @@ const AdditionalForm = ({ formData, onFormDataChange }) => {
                   </small>
                 </div>
                 <div className="col-lg-6">
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     name="totalDurationMinutes"
-                    placeholder="00" 
+                    placeholder="00"
                     value={formData.totalDurationMinutes || ''}
                     onChange={handleInputChange}
                     min="0"

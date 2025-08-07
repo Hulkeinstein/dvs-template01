@@ -1,11 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import img from "../../public/images/banner/banner-01.png";
-import shape1 from "../../public/images/shape/shape-01.png";
-import shape2 from "../../public/images/shape/shape-02.png";
+import img from '../../public/images/banner/banner-01.png';
+import shape1 from '../../public/images/shape/shape-01.png';
+import shape2 from '../../public/images/shape/shape-02.png';
 
-import HomeCourses from "./Home-Sections/HomeCourse";
+import HomeCourses from './Home-Sections/HomeCourse';
 
 const MainDemoBanner = () => {
   return (

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Typed from "typed.js";
+import React, { useEffect, useState } from 'react';
+import Typed from 'typed.js';
 
 const AnimatedHeading = () => {
   const [visibleIndex, setVisibleIndex] = useState(0);
   const [visibleIndex2, setVisibleIndex2] = useState(0);
 
   useEffect(() => {
-    const typeitInstance = new Typed(".is-visible-one", {
-      strings: ["Clip One.", "Clip Two.", "Clip Three."],
+    const typeitInstance = new Typed('.is-visible-one', {
+      strings: ['Clip One.', 'Clip Two.', 'Clip Three.'],
       typeSpeed: 80,
       backSpeed: 60,
       startDelay: 200,
@@ -61,8 +61,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 0
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Rotate One.
@@ -70,8 +70,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 1
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Rotate Two.
@@ -79,8 +79,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 2
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Rotate Three.
@@ -109,14 +109,14 @@ const AnimatedHeading = () => {
                 <span className={`cd-headline loading-bar`}>
                   <span
                     className={`cd-words-wrapper ${
-                      visibleIndex2 === 1 ? "is-loading" : ""
+                      visibleIndex2 === 1 ? 'is-loading' : ''
                     }`}
                   >
                     <b
                       className={
                         visibleIndex === 0
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Loading One.
@@ -124,8 +124,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 1
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Loading Two.
@@ -133,8 +133,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 2
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Loading Three.
@@ -152,8 +152,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 0
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Zoom One.
@@ -161,8 +161,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 1
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Zoom Two.
@@ -170,8 +170,8 @@ const AnimatedHeading = () => {
                     <b
                       className={
                         visibleIndex === 2
-                          ? "is-visible theme-gradient"
-                          : "is-hidden theme-gradient"
+                          ? 'is-visible theme-gradient'
+                          : 'is-hidden theme-gradient'
                       }
                     >
                       Zoom Three.

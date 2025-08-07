@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import PostSidebar from "./PostSidebar";
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import PostSidebar from './PostSidebar';
 
-import EventData from "../../../data/events.json";
+import EventData from '../../../data/events.json';
 
 const Sidebar = ({ sideBlogs }) => {
   return (

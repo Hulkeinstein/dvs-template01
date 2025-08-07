@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
 const QuestionType = ({ handleBackClick, title, type }) => {
   return (
     <>
       <div
         className="d-flex justify-content-between rbt-course-wrape mb-4"
-        style={{ cursor: "auto" }}
+        style={{ cursor: 'auto' }}
       >
         <div className="inner d-flex align-items-center gap-2">
           <h6 className="rbt-title mb-0">{title}</h6>

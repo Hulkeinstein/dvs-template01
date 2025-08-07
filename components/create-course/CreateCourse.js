@@ -1,32 +1,39 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import Select from "react-select";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
-import { isPhoneVerified, getVerificationPromptMessage } from "@/app/lib/utils/phoneVerification";
-import { createCourse, updateCourse, getCourseById } from "@/app/lib/actions/courseActions";
-import { getLessonsByCourse } from "@/app/lib/actions/lessonActions";
-import { uploadCourseThumbnail } from "@/app/lib/actions/uploadActions";
-import { mapDBToFormData } from "@/app/lib/utils/courseDataMapper";
+import { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import Select from 'react-select';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import PhoneVerificationModal from '@/components/Common/PhoneVerificationModal';
+import {
+  isPhoneVerified,
+  getVerificationPromptMessage,
+} from '@/app/lib/utils/phoneVerification';
+import {
+  createCourse,
+  updateCourse,
+  getCourseById,
+} from '@/app/lib/actions/courseActions';
+import { getLessonsByCourse } from '@/app/lib/actions/lessonActions';
+import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
+import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
 
 // import CourseData from "../../data/course-details/courseData.json";
-import CreateCourseData from "../../data/createCourse.json";
+import CreateCourseData from '../../data/createCourse.json';
 
-import svgImg from "../../public/images/icons/certificate-none.svg";
-import svgImg2 from "../../public/images/icons/certificate-none-portrait.svg";
+import svgImg from '../../public/images/icons/certificate-none.svg';
+import svgImg2 from '../../public/images/icons/certificate-none-portrait.svg';
 
-import InfoForm from "./InfoForm";
-import TopicModal from "./QuizModals/TopicModal";
-import AdditionalForm from "./AdditionalForm";
-import LessonModal from "./QuizModals/LessonModal";
-import QuizModal from "./QuizModals/QuizModal";
-import AssignmentModal from "./QuizModals/AssignmentModal";
-import UpdateModal from "./QuizModals/UpdateModal";
-import Lesson from "./lesson/Lesson";
+import InfoForm from './InfoForm';
+import TopicModal from './QuizModals/TopicModal';
+import AdditionalForm from './AdditionalForm';
+import LessonModal from './QuizModals/LessonModal';
+import QuizModal from './QuizModals/QuizModal';
+import AssignmentModal from './QuizModals/AssignmentModal';
+import UpdateModal from './QuizModals/UpdateModal';
+import Lesson from './lesson/Lesson';
 
 const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   console.log('CreateCourse component rendered:', { editMode, courseId });
@@ -34,17 +41,18 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   const router = useRouter();
   const fileInputRef = useRef(null);
   const [sortVideo, setSortByVideo] = useState({
-    value: "Select Video Sources",
-    label: "Select Video Sources",
+    value: 'Select Video Sources',
+    label: 'Select Video Sources',
   });
-  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
+  const [showPhoneVerificationModal, setShowPhoneVerificationModal] =
+    useState(false);
   const [showVerificationAlert, setShowVerificationAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailBase64, setThumbnailBase64] = useState(null);
   const [loading, setLoading] = useState(false);
-  
+
   // Form data state
   const [formData, setFormData] = useState({
     // Basic info
@@ -54,29 +62,29 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     category: '',
     level: 'all_levels',
     maxStudents: 0,
-    
+
     // Video
     introVideoUrl: '',
-    
+
     // Pricing
     price: 0,
     discountPrice: null,
-    
+
     // Additional info
     startDate: '',
     endDate: '',
     enrollmentDeadline: '',
     language: 'English',
     duration: 0,
-    
+
     // Certificate
     certificateEnabled: false,
     certificateTitle: '',
     passingGrade: 70,
     lifetimeAccess: true,
-    
+
     // Course content
-    topics: []
+    topics: [],
   });
 
   // Load course data in edit mode
@@ -93,46 +101,46 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       setLoading(true);
       const result = await getCourseById(courseId);
       console.log('getCourseById result:', result);
-      
+
       if (result.error) {
         console.error('Error from getCourseById:', result.error);
         setError(result.error);
         setLoading(false);
         return;
       }
-      
+
       if (result.course) {
         const course = result.course;
         console.log('Course data loaded:', {
           id: course.id,
           title: course.title,
           thumbnail_url: course.thumbnail_url,
-          hasThumbnail: !!course.thumbnail_url
+          hasThumbnail: !!course.thumbnail_url,
         });
         console.log('Full thumbnail URL:', course.thumbnail_url);
-        
+
         // Map database fields to form fields using centralized mapper
         const mappedData = mapDBToFormData(course);
-        
+
         // Add additional fields that might not be in the mapper
         const formDataWithExtras = {
           ...mappedData,
           thumbnailPreview: course.thumbnail_url || null, // 썸네일 미리보기 추가
           slug: course.slug || '', // slug 추가
-          topics: [] // Will be loaded separately
+          topics: [], // Will be loaded separately
         };
-        
+
         setFormData(formDataWithExtras);
-        
+
         if (course.thumbnail_url) {
           // 편집 모드에서는 기존 썸네일 URL을 base64로 설정
           // 새로운 썸네일을 업로드하지 않으면 이 URL이 그대로 사용됨
           setThumbnailBase64(course.thumbnail_url);
         }
-        
+
         // Load topics from server response
         const topics = [];
-        
+
         if (course.topics && course.topics.length > 0) {
           // Convert server topics to UI format
           for (const topicData of course.topics) {
@@ -140,7 +148,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               id: topicData.id,
               name: topicData.title,
               summary: topicData.description || '',
-              lessons: (topicData.lessons || []).map(lesson => ({
+              lessons: (topicData.lessons || []).map((lesson) => ({
                 id: lesson.id,
                 title: lesson.title,
                 description: lesson.description || '',
@@ -149,28 +157,33 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                 duration: lesson.duration_minutes || 0,
                 enablePreview: lesson.is_preview || false,
                 thumbnail: lesson.thumbnail_url || null,
-                attachments: lesson.attachments || []
+                attachments: lesson.attachments || [],
               })),
               quizzes: [],
-              assignments: []
+              assignments: [],
             };
-            
+
             topics.push(topic);
           }
         }
-        
+
         // Also check for lessons without topics (from course.lessons)
         if (course.lessons && course.lessons.length > 0) {
-          const lessonsWithoutTopic = course.lessons.filter(lesson => !lesson.topic_id);
-          
+          const lessonsWithoutTopic = course.lessons.filter(
+            (lesson) => !lesson.topic_id
+          );
+
           if (lessonsWithoutTopic.length > 0) {
-            console.log('Found lessons without topics:', lessonsWithoutTopic.length);
+            console.log(
+              'Found lessons without topics:',
+              lessonsWithoutTopic.length
+            );
             // Create a "General" topic for lessons without topic_id
             const generalTopic = {
               id: 'general-topic',
               name: 'Course Content',
               summary: 'Main course content',
-              lessons: lessonsWithoutTopic.map(lesson => ({
+              lessons: lessonsWithoutTopic.map((lesson) => ({
                 id: lesson.id,
                 title: lesson.title,
                 description: lesson.description || '',
@@ -179,19 +192,19 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                 duration: lesson.duration_minutes || 0,
                 enablePreview: lesson.is_preview || false,
                 thumbnail: lesson.thumbnail_url || null,
-                attachments: lesson.attachments || []
+                attachments: lesson.attachments || [],
               })),
               quizzes: [],
-              assignments: []
+              assignments: [],
             };
-            
+
             topics.push(generalTopic);
           }
         }
-        
-        setFormData(prev => ({
+
+        setFormData((prev) => ({
           ...prev,
-          topics: topics
+          topics: topics,
         }));
       } else {
         setError('Course not found');
@@ -205,16 +218,16 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   };
 
   const previewImages = CreateCourseData.createCourse[0].landscape.filter(
-    (item) => item.type === "preview"
+    (item) => item.type === 'preview'
   );
   const portImages = CreateCourseData.createCourse[0].landscape.filter(
-    (item) => item.type === "port"
+    (item) => item.type === 'port'
   );
 
   const sortByVideoOptions = [
-    { value: "Youtube", label: "Youtube" },
-    { value: "Vimeo", label: "Vimeo" },
-    { value: "Local", label: "Local" },
+    { value: 'Youtube', label: 'Youtube' },
+    { value: 'Vimeo', label: 'Vimeo' },
+    { value: 'Local', label: 'Local' },
   ];
 
   const handleImportClick = (e) => {
@@ -227,32 +240,32 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   const handleCreateCourse = async (e, saveAsDraft = false) => {
     e.preventDefault();
-    
+
     // Check if phone is verified
     if (!isPhoneVerified(userProfile)) {
       setShowVerificationAlert(true);
       setShowPhoneVerificationModal(true);
       return;
     }
-    
+
     // Validate required fields
     if (!formData.title || !formData.category || !formData.shortDescription) {
       setError('Please fill in all required fields');
       return;
     }
-    
+
     if (formData.price === '' || formData.price < 0) {
       setError('Please set a valid price (0 for free courses)');
       return;
     }
-    
+
     setIsSubmitting(true);
     setError(null);
-    
+
     try {
       // Handle thumbnail
       let thumbnailUrl = null;
-      
+
       // Case 1: Keep existing thumbnail (edit mode, no new file selected)
       if (!thumbnailFile && formData.thumbnailPreview) {
         thumbnailUrl = formData.thumbnailPreview;
@@ -260,15 +273,18 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       }
       // Case 2: Upload new thumbnail
       else if (thumbnailBase64 && thumbnailFile) {
-        console.log('Uploading new thumbnail:', { 
-          hasBase64: !!thumbnailBase64, 
+        console.log('Uploading new thumbnail:', {
+          hasBase64: !!thumbnailBase64,
           fileName: thumbnailFile.name,
-          base64Length: thumbnailBase64?.length 
+          base64Length: thumbnailBase64?.length,
         });
-        
-        const uploadResult = await uploadCourseThumbnail(thumbnailBase64, thumbnailFile.name);
+
+        const uploadResult = await uploadCourseThumbnail(
+          thumbnailBase64,
+          thumbnailFile.name
+        );
         console.log('Thumbnail upload result:', uploadResult);
-        
+
         if (uploadResult.success) {
           thumbnailUrl = uploadResult.url;
           console.log('New thumbnail uploaded successfully:', thumbnailUrl);
@@ -281,16 +297,16 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           }
         }
       }
-      
+
       console.log('Final thumbnail URL:', thumbnailUrl);
-      
+
       // Include thumbnail URL and status in formData
       const courseData = {
         ...formData,
         thumbnail_url: thumbnailUrl,
-        status: saveAsDraft ? 'draft' : formData.status || 'draft'
+        status: saveAsDraft ? 'draft' : formData.status || 'draft',
       };
-      
+
       let result;
       if (editMode && courseId) {
         // Update existing course
@@ -299,7 +315,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         // Create new course
         result = await createCourse(courseData);
       }
-      
+
       if (result.success) {
         if (saveAsDraft && !editMode) {
           // If saving as draft for new course, redirect to edit mode with new ID
@@ -318,26 +334,26 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       setIsSubmitting(false);
     }
   };
-  
+
   const handleFormDataChange = (newData) => {
     setFormData(newData);
   };
-  
+
   const handleThumbnailChange = (data) => {
     console.log('handleThumbnailChange called:', {
       hasData: !!data,
       hasFile: !!data?.file,
       hasBase64: !!data?.base64,
-      fileName: data?.file?.name
+      fileName: data?.file?.name,
     });
-    
+
     if (data && data.file && data.base64) {
       setThumbnailFile(data.file);
       setThumbnailBase64(data.base64);
       console.log('Thumbnail state updated');
     }
   };
-  
+
   const handleAddTopic = (topicData) => {
     const newTopic = {
       id: Date.now(), // Simple ID generation
@@ -345,107 +361,110 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       summary: topicData.summary,
       lessons: [],
       quizzes: [],
-      assignments: []
+      assignments: [],
     };
-    
+
     setFormData({
       ...formData,
-      topics: [...formData.topics, newTopic]
+      topics: [...formData.topics, newTopic],
     });
   };
-  
+
   const handleDeleteTopic = (topicId) => {
     setFormData({
       ...formData,
-      topics: formData.topics.filter(topic => topic.id !== topicId)
+      topics: formData.topics.filter((topic) => topic.id !== topicId),
     });
   };
-  
+
   const handleUpdateTopic = (topicId, updatedData) => {
     setFormData({
       ...formData,
-      topics: formData.topics.map(topic =>
+      topics: formData.topics.map((topic) =>
         topic.id === topicId ? { ...topic, ...updatedData } : topic
-      )
+      ),
     });
   };
-  
+
   const handleAddLesson = (topicId, lessonData) => {
-    setFormData(prevFormData => ({
+    setFormData((prevFormData) => ({
       ...prevFormData,
-      topics: prevFormData.topics.map(topic => {
+      topics: prevFormData.topics.map((topic) => {
         if (topic.id === topicId) {
           // 편집 모드인지 확인 (lessonData에 id가 있으면 편집)
           if (lessonData.id) {
             return {
               ...topic,
-              lessons: topic.lessons.map(lesson =>
+              lessons: topic.lessons.map((lesson) =>
                 lesson.id === lessonData.id ? lessonData : lesson
-              )
+              ),
             };
           } else {
             // 새 레슨 추가
             const newLesson = {
               id: Date.now(),
-              ...lessonData
+              ...lessonData,
             };
             return { ...topic, lessons: [...topic.lessons, newLesson] };
           }
         }
         return topic;
-      })
+      }),
     }));
   };
-  
+
   const handleAddQuiz = (topicId, quizData) => {
     const newQuiz = {
       id: Date.now(),
-      ...quizData
+      ...quizData,
     };
-    
+
     setFormData({
       ...formData,
-      topics: formData.topics.map(topic =>
-        topic.id === topicId 
+      topics: formData.topics.map((topic) =>
+        topic.id === topicId
           ? { ...topic, quizzes: [...topic.quizzes, newQuiz] }
           : topic
-      )
+      ),
     });
   };
-  
+
   const handleAddAssignment = (topicId, assignmentData) => {
     const newAssignment = {
       id: Date.now(),
-      ...assignmentData
+      ...assignmentData,
     };
-    
+
     setFormData({
       ...formData,
-      topics: formData.topics.map(topic =>
-        topic.id === topicId 
+      topics: formData.topics.map((topic) =>
+        topic.id === topicId
           ? { ...topic, assignments: [...topic.assignments, newAssignment] }
           : topic
-      )
+      ),
     });
   };
-  
+
   const handleDeleteLesson = (topicId, lessonId) => {
     console.log('레슨 삭제:', topicId, lessonId);
     setFormData({
       ...formData,
-      topics: formData.topics.map(topic =>
-        topic.id === topicId 
-          ? { ...topic, lessons: topic.lessons.filter(lesson => lesson.id !== lessonId) }
+      topics: formData.topics.map((topic) =>
+        topic.id === topicId
+          ? {
+              ...topic,
+              lessons: topic.lessons.filter((lesson) => lesson.id !== lessonId),
+            }
           : topic
-      )
+      ),
     });
   };
-  
+
   const handleEditLesson = (topicId, lesson) => {
     console.log('레슨 편집:', topicId, lesson);
     // 편집 모달 열기 로직 추가 필요
   };
-  
+
   const handleUploadLesson = (topicId, lessonId) => {
     console.log('레슨 업로드:', topicId, lessonId);
     // 업로드 기능 구현 필요
@@ -476,7 +495,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body">
-                    <InfoForm 
+                    <InfoForm
                       formData={formData}
                       onFormDataChange={handleFormDataChange}
                       onThumbnailChange={handleThumbnailChange}
@@ -526,7 +545,12 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                         type="text"
                         placeholder="Add Your Video URL here."
                         value={formData.introVideoUrl || ''}
-                        onChange={(e) => handleFormDataChange({ ...formData, introVideoUrl: e.target.value })}
+                        onChange={(e) =>
+                          handleFormDataChange({
+                            ...formData,
+                            introVideoUrl: e.target.value,
+                          })
+                        }
                       />
                       <small className="d-block mt_dec--5">
                         Example:
@@ -561,7 +585,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   <div className="accordion-body card-body">
                     {formData.topics.length === 0 ? (
                       <div className="text-center py-4">
-                        <p className="text-muted mb-3">No topics added yet. Start by adding your first topic.</p>
+                        <p className="text-muted mb-3">
+                          No topics added yet. Start by adding your first topic.
+                        </p>
                       </div>
                     ) : (
                       formData.topics.map((topic, index) => (
@@ -576,10 +602,18 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                           text={topic.name}
                           topicData={topic}
                           onDeleteTopic={() => handleDeleteTopic(topic.id)}
-                          onUpdateTopic={(data) => handleUpdateTopic(topic.id, data)}
-                          onAddLesson={(lessonData) => handleAddLesson(topic.id, lessonData)}
-                          onAddQuiz={(quizData) => handleAddQuiz(topic.id, quizData)}
-                          onAddAssignment={(assignmentData) => handleAddAssignment(topic.id, assignmentData)}
+                          onUpdateTopic={(data) =>
+                            handleUpdateTopic(topic.id, data)
+                          }
+                          onAddLesson={(lessonData) =>
+                            handleAddLesson(topic.id, lessonData)
+                          }
+                          onAddQuiz={(quizData) =>
+                            handleAddQuiz(topic.id, quizData)
+                          }
+                          onAddAssignment={(assignmentData) =>
+                            handleAddAssignment(topic.id, assignmentData)
+                          }
                           onDeleteLesson={handleDeleteLesson}
                           onEditLesson={handleEditLesson}
                           onUploadLesson={handleUploadLesson}
@@ -622,7 +656,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                     Additional Information
                   </button>
                 </h2>
-                <AdditionalForm 
+                <AdditionalForm
                   formData={formData}
                   onFormDataChange={handleFormDataChange}
                 />
@@ -701,8 +735,15 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                                     id="option1"
                                     name="certificateTemplate"
                                     value="none"
-                                    checked={formData.certificateTemplate === 'none'}
-                                    onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
+                                    checked={
+                                      formData.certificateTemplate === 'none'
+                                    }
+                                    onChange={(e) =>
+                                      handleFormDataChange({
+                                        ...formData,
+                                        certificateTemplate: e.target.value,
+                                      })
+                                    }
                                   />
                                   <label htmlFor="option1">
                                     <Image
@@ -721,8 +762,16 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                                         id={`option${index + 2}`}
                                         name="certificateTemplate"
                                         value={`template${index + 1}`}
-                                        checked={formData.certificateTemplate === `template${index + 1}`}
-                                        onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
+                                        checked={
+                                          formData.certificateTemplate ===
+                                          `template${index + 1}`
+                                        }
+                                        onChange={(e) =>
+                                          handleFormDataChange({
+                                            ...formData,
+                                            certificateTemplate: e.target.value,
+                                          })
+                                        }
                                       />
                                       <label htmlFor={`option${index + 2}`}>
                                         <Image
@@ -752,8 +801,15 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                                     id="optionport1"
                                     name="certificateTemplate"
                                     value="none"
-                                    checked={formData.certificateTemplate === 'none'}
-                                    onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
+                                    checked={
+                                      formData.certificateTemplate === 'none'
+                                    }
+                                    onChange={(e) =>
+                                      handleFormDataChange({
+                                        ...formData,
+                                        certificateTemplate: e.target.value,
+                                      })
+                                    }
                                   />
                                   <label htmlFor="optionport1">
                                     <Image
@@ -772,8 +828,16 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                                         id={`optionport${index + 3}`}
                                         name="certificateTemplate"
                                         value={`template${index + 1}`}
-                                        checked={formData.certificateTemplate === `template${index + 1}`}
-                                        onChange={(e) => handleFormDataChange({ ...formData, certificateTemplate: e.target.value })}
+                                        checked={
+                                          formData.certificateTemplate ===
+                                          `template${index + 1}`
+                                        }
+                                        onChange={(e) =>
+                                          handleFormDataChange({
+                                            ...formData,
+                                            certificateTemplate: e.target.value,
+                                          })
+                                        }
                                       />
                                       <label htmlFor={`optionport${index + 3}`}>
                                         <Image
@@ -796,7 +860,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               </div>
             </div>
           </div>
-          
+
           {loading && (
             <div className="text-center py-5">
               <div className="spinner-border" role="status">
@@ -805,76 +869,94 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               <p className="mt-3">Loading course data...</p>
             </div>
           )}
-          
+
           {!loading && (
-          <>
-          <div className="mt--10 row g-5">
-            <div className="col-lg-4">
-              {editMode && courseId ? (
-                <Link
-                  className="rbt-btn hover-icon-reverse bg-primary-opacity w-100 text-center"
-                  href={`/course-details/${courseId}?preview=true`}
-                  target="_blank"
-                >
-                  <span className="icon-reverse-wrapper">
-                    <span className="btn-text">Preview</span>
-                    <span className="btn-icon">
-                      <i className="feather-eye"></i>
+            <>
+              <div className="mt--10 row g-5">
+                <div className="col-lg-4">
+                  {editMode && courseId ? (
+                    <Link
+                      className="rbt-btn hover-icon-reverse bg-primary-opacity w-100 text-center"
+                      href={`/course-details/${courseId}?preview=true`}
+                      target="_blank"
+                    >
+                      <span className="icon-reverse-wrapper">
+                        <span className="btn-text">Preview</span>
+                        <span className="btn-icon">
+                          <i className="feather-eye"></i>
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-eye"></i>
+                        </span>
+                      </span>
+                    </Link>
+                  ) : (
+                    <button
+                      className="rbt-btn hover-icon-reverse bg-secondary-opacity w-100 text-center"
+                      onClick={(e) => handleCreateCourse(e, true)}
+                      disabled={isSubmitting}
+                    >
+                      <span className="icon-reverse-wrapper">
+                        <span className="btn-text">
+                          {isSubmitting ? 'Saving...' : 'Save as Draft'}
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-save"></i>
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-save"></i>
+                        </span>
+                      </span>
+                    </button>
+                  )}
+                </div>
+                <div className="col-lg-8">
+                  <button
+                    className="rbt-btn btn-gradient hover-icon-reverse w-100 text-center"
+                    onClick={handleCreateCourse}
+                    disabled={isSubmitting}
+                  >
+                    <span className="icon-reverse-wrapper">
+                      <span className="btn-text">
+                        {isSubmitting
+                          ? editMode
+                            ? 'Updating Course...'
+                            : 'Creating Course...'
+                          : editMode
+                            ? 'Update Course'
+                            : 'Create Course'}
+                      </span>
+                      <span className="btn-icon">
+                        <i
+                          className={
+                            isSubmitting
+                              ? 'feather-loader'
+                              : 'feather-arrow-right'
+                          }
+                        ></i>
+                      </span>
+                      <span className="btn-icon">
+                        <i
+                          className={
+                            isSubmitting
+                              ? 'feather-loader'
+                              : 'feather-arrow-right'
+                          }
+                        ></i>
+                      </span>
                     </span>
-                    <span className="btn-icon">
-                      <i className="feather-eye"></i>
-                    </span>
-                  </span>
-                </Link>
-              ) : (
-                <button
-                  className="rbt-btn hover-icon-reverse bg-secondary-opacity w-100 text-center"
-                  onClick={(e) => handleCreateCourse(e, true)}
-                  disabled={isSubmitting}
-                >
-                  <span className="icon-reverse-wrapper">
-                    <span className="btn-text">
-                      {isSubmitting ? 'Saving...' : 'Save as Draft'}
-                    </span>
-                    <span className="btn-icon">
-                      <i className="feather-save"></i>
-                    </span>
-                    <span className="btn-icon">
-                      <i className="feather-save"></i>
-                    </span>
-                  </span>
-                </button>
+                  </button>
+                </div>
+              </div>
+
+              {/* Error message */}
+              {error && (
+                <div className="alert alert-danger mt-3" role="alert">
+                  <i className="feather-alert-circle me-2"></i>
+                  {error}
+                </div>
               )}
-            </div>
-            <div className="col-lg-8">
-              <button
-                className="rbt-btn btn-gradient hover-icon-reverse w-100 text-center"
-                onClick={handleCreateCourse}
-                disabled={isSubmitting}
-              >
-                <span className="icon-reverse-wrapper">
-                  <span className="btn-text">
-                    {isSubmitting ? (editMode ? 'Updating Course...' : 'Creating Course...') : (editMode ? 'Update Course' : 'Create Course')}
-                  </span>
-                  <span className="btn-icon">
-                    <i className={isSubmitting ? "feather-loader" : "feather-arrow-right"}></i>
-                  </span>
-                  <span className="btn-icon">
-                    <i className={isSubmitting ? "feather-loader" : "feather-arrow-right"}></i>
-                  </span>
-                </span>
-              </button>
-            </div>
-          </div>
-          
-          {/* Error message */}
-          {error && (
-            <div className="alert alert-danger mt-3" role="alert">
-              <i className="feather-alert-circle me-2"></i>
-              {error}
-            </div>
-          )}
-          </>
+            </>
           )}
         </div>
 
@@ -883,7 +965,10 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
             <div className="inner">
               <div className="rbt-accordion-style rbt-accordion-01 rbt-accordion-06 accordion">
                 <div className="accordion" id="courseUploadTipsAccordion">
-                  <div className="accordion-item card" style={{boxShadow: 'none'}}>
+                  <div
+                    className="accordion-item card"
+                    style={{ boxShadow: 'none' }}
+                  >
                     <h2 className="accordion-header card-header" id="accTips">
                       <button
                         className="accordion-button collapsed"
@@ -902,36 +987,41 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                       aria-labelledby="accTips"
                       data-bs-parent="#courseUploadTipsAccordion"
                     >
-                      <div className="accordion-body card-body" style={{borderTop: 'none'}}>
+                      <div
+                        className="accordion-body card-body"
+                        style={{ borderTop: 'none' }}
+                      >
                         <ul className="rbt-list-style-1">
                           <li>
-                            <i className="feather-check"></i> Set the Course Price
-                            option or make it free.
+                            <i className="feather-check"></i> Set the Course
+                            Price option or make it free.
                           </li>
                           <li>
-                            <i className="feather-check"></i> Standard size for the
-                            course thumbnail is 700x430.
+                            <i className="feather-check"></i> Standard size for
+                            the course thumbnail is 700x430.
                           </li>
                           <li>
-                            <i className="feather-check"></i> Video section controls the
-                            course overview video.
+                            <i className="feather-check"></i> Video section
+                            controls the course overview video.
                           </li>
                           <li>
-                            <i className="feather-check"></i> Course Builder is where
-                            you create & organize a course.
+                            <i className="feather-check"></i> Course Builder is
+                            where you create & organize a course.
                           </li>
                           <li>
-                            <i className="feather-check"></i> Add Topics in the Course
-                            Builder section to create lessons, quizzes, and assignments.
+                            <i className="feather-check"></i> Add Topics in the
+                            Course Builder section to create lessons, quizzes,
+                            and assignments.
                           </li>
                           <li>
-                            <i className="feather-check"></i> Prerequisites refers to
-                            the fundamental courses to complete before taking this
-                            particular course.
+                            <i className="feather-check"></i> Prerequisites
+                            refers to the fundamental courses to complete before
+                            taking this particular course.
                           </li>
                           <li>
-                            <i className="feather-check"></i> Information from the
-                            Additional Data section shows up on the course single page.
+                            <i className="feather-check"></i> Information from
+                            the Additional Data section shows up on the course
+                            single page.
                           </li>
                         </ul>
                       </div>
@@ -948,7 +1038,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       <LessonModal />
       <QuizModal />
       <AssignmentModal />
-      
+
       {/* Phone Verification Modal */}
       <PhoneVerificationModal
         isOpen={showPhoneVerificationModal}
@@ -964,11 +1054,17 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         }}
         userProfile={userProfile}
       />
-      
+
       {/* Verification Alert */}
       {showVerificationAlert && !showPhoneVerificationModal && (
-        <div className="position-fixed bottom-0 start-50 translate-middle-x mb-4" style={{ zIndex: 1000 }}>
-          <div className="alert alert-warning alert-dismissible fade show" role="alert">
+        <div
+          className="position-fixed bottom-0 start-50 translate-middle-x mb-4"
+          style={{ zIndex: 1000 }}
+        >
+          <div
+            className="alert alert-warning alert-dismissible fade show"
+            role="alert"
+          >
             <i className="feather-alert-circle me-2"></i>
             {getVerificationPromptMessage('create_course')}
             <button

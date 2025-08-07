@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
 
 // import Plyr from "plyr";
 // import "plyr/dist/plyr.css";
 
-import AboutData from "../../data/elements/about.json";
+import AboutData from '../../data/elements/about.json';
 
 const AboutEight = () => {
   // useEffect(() => {

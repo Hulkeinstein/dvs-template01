@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-import CourseData from "../../../data/course-details/courseData.json";
-import { useAppContext } from "@/context/Context";
+import CourseData from '../../../data/course-details/courseData.json';
+import { useAppContext } from '@/context/Context';
 
 const Search = () => {
   const { search } = useAppContext();
 
   return (
     <>
-      <div className={`rbt-search-dropdown ${!search ? "active" : ""}`}>
+      <div className={`rbt-search-dropdown ${!search ? 'active' : ''}`}>
         <div className="wrapper">
           <div className="row">
             <div className="col-lg-12">

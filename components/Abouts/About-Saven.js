@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import AboutData from "../../data/elements/about.json";
+import AboutData from '../../data/elements/about.json';
 
 const AboutSaven = () => {
   return (

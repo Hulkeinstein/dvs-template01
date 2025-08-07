@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const Pagination = ({ totalPages, pageNumber, handleClick }) => {
   const pages = [...Array(totalPages).keys()].map((num) => num + 1);
@@ -15,7 +15,7 @@ const Pagination = ({ totalPages, pageNumber, handleClick }) => {
     <nav>
       <div className="nav-links">
         <ul className="rbt-pagination">
-          <li className={pageNumber === 1 ? "disabled" : ""}>
+          <li className={pageNumber === 1 ? 'disabled' : ''}>
             <Link
               href="#"
               aria-label="Previous"
@@ -25,14 +25,14 @@ const Pagination = ({ totalPages, pageNumber, handleClick }) => {
             </Link>
           </li>
           {pages.map((num) => (
-            <li key={num} className={pageNumber === num ? "active" : ""}>
+            <li key={num} className={pageNumber === num ? 'active' : ''}>
               <Link href="#" onClick={() => handleClick(num)}>
                 {num}
               </Link>
             </li>
           ))}
 
-          <li className={pageNumber === totalPages ? "disabled" : ""}>
+          <li className={pageNumber === totalPages ? 'disabled' : ''}>
             <Link href="#" aria-label="Next" onClick={() => handleNextClick()}>
               <i className="feather-chevron-right" />
             </Link>

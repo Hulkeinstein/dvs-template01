@@ -1,53 +1,53 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import sal from "sal.js";
+import sal from 'sal.js';
 
-import MultilingualBanner from "./Multilingual-Banner";
-import BlogGrid from "../Blogs/BlogGrid";
-import TestimonialFour from "../Testimonials/Testimonial-Four";
-import CountDownTwo from "../Counters/CountDownTwo";
+import MultilingualBanner from './Multilingual-Banner';
+import BlogGrid from '../Blogs/BlogGrid';
+import TestimonialFour from '../Testimonials/Testimonial-Four';
+import CountDownTwo from '../Counters/CountDownTwo';
 
-import CourseTabData from "../../data/elements/advanceTab.json";
+import CourseTabData from '../../data/elements/advanceTab.json';
 
-import brand1 from "../../public/images/brand/partner-5.webp";
-import brand2 from "../../public/images/brand/partner-1.webp";
-import brand3 from "../../public/images/brand/partner-6.webp";
-import brand4 from "../../public/images/brand/partner-3.webp";
-import ukSvg from "../../public/images/shape/united-kingdom.svg";
-import germanySvg from "../../public/images/shape/germany.svg";
-import skSvg from "../../public/images/shape/south-korea.svg";
-import franceSvg from "../../public/images/shape/france.svg";
-import japanSvg from "../../public/images/shape/japan.svg";
-import italySvg from "../../public/images/shape/italian.svg";
+import brand1 from '../../public/images/brand/partner-5.webp';
+import brand2 from '../../public/images/brand/partner-1.webp';
+import brand3 from '../../public/images/brand/partner-6.webp';
+import brand4 from '../../public/images/brand/partner-3.webp';
+import ukSvg from '../../public/images/shape/united-kingdom.svg';
+import germanySvg from '../../public/images/shape/germany.svg';
+import skSvg from '../../public/images/shape/south-korea.svg';
+import franceSvg from '../../public/images/shape/france.svg';
+import japanSvg from '../../public/images/shape/japan.svg';
+import italySvg from '../../public/images/shape/italian.svg';
 
 const FeatureData = [
   {
     id: 1,
-    img: "/images/icons/f-icon-01.png",
-    title: "Best Industry",
-    subTitle: "Leaders",
+    img: '/images/icons/f-icon-01.png',
+    title: 'Best Industry',
+    subTitle: 'Leaders',
     description:
-      "It is a long established fact that a reader will be distracted by this on readable.",
+      'It is a long established fact that a reader will be distracted by this on readable.',
   },
   {
     id: 2,
-    img: "/images/icons/f-icon-02.png",
-    title: "Learn Courses",
-    subTitle: "Online",
+    img: '/images/icons/f-icon-02.png',
+    title: 'Learn Courses',
+    subTitle: 'Online',
     description:
-      "It is a long established fact that a reader will be distracted by this on readable.",
+      'It is a long established fact that a reader will be distracted by this on readable.',
   },
   {
     id: 3,
-    img: "/images/icons/f-icon-03.png",
-    title: "Online Book",
-    subTitle: "Library",
+    img: '/images/icons/f-icon-03.png',
+    title: 'Online Book',
+    subTitle: 'Library',
     description:
-      "It is a long established fact that a reader will be distracted by this on readable.",
+      'It is a long established fact that a reader will be distracted by this on readable.',
   },
 ];
 const Multilingual = ({ blogdata }) => {
@@ -72,8 +72,8 @@ const Multilingual = ({ blogdata }) => {
                     <div className="d-sm-flex align-items-center gap-4">
                       <span
                         className={`icon ${
-                          data.id === 1 ? "bg-color-pink" : "bg-color-primary"
-                        } ${data.id === 3 ? "bg-color-secondary" : ""}`}
+                          data.id === 1 ? 'bg-color-pink' : 'bg-color-primary'
+                        } ${data.id === 3 ? 'bg-color-secondary' : ''}`}
                       >
                         <Image
                           src={data.img}
@@ -103,7 +103,7 @@ const Multilingual = ({ blogdata }) => {
                     <span className="theme-gradient">Our Course</span>
                   </h6>
                   <h2 className="title w-600">
-                    Limitless Learning, More <br />{" "}
+                    Limitless Learning, More <br />{' '}
                     <span className="theme-gradient">Possibilities</span>
                   </h2>
                 </div>
@@ -254,7 +254,7 @@ const Multilingual = ({ blogdata }) => {
                   {getAllCourse.map((data, i) => (
                     <div
                       className={`tab-pane fade ${
-                        data.isActive ? "active show" : ""
+                        data.isActive ? 'active show' : ''
                       }`}
                       id={data.category}
                       role="tabpanel"
@@ -386,8 +386,8 @@ const Multilingual = ({ blogdata }) => {
                   Making
                   <span className="theme-gradient ms-2">
                     sensitive clients
-                  </span>{" "}
-                  more valuable for{" "}
+                  </span>{' '}
+                  more valuable for{' '}
                   <span className="theme-gradient me-2">companies</span>
                   like
                 </h5>
@@ -442,7 +442,7 @@ const Multilingual = ({ blogdata }) => {
                       alt="Brand Image"
                     />
                   </a>
-                </li>{" "}
+                </li>{' '}
                 <li>
                   <a href="#">
                     <Image
@@ -469,7 +469,7 @@ const Multilingual = ({ blogdata }) => {
                     News & Blog
                   </span>
                   <h2 className="title w-600">
-                    Have a Look on{" "}
+                    Have a Look on{' '}
                     <span className="theme-gradient">Our Update</span>
                   </h2>
                 </div>

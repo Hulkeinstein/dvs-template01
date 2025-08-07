@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import AboutData from "../../data/elements/about.json";
-import { useParallax } from "react-scroll-parallax";
+import AboutData from '../../data/elements/about.json';
+import { useParallax } from 'react-scroll-parallax';
 
-import aboutImg7 from "../../public/images/about/about-07.jpg";
-import aboutImg8 from "../../public/images/about/about-08.jpg";
-import aboutImg9 from "../../public/images/about/about-09.jpg";
+import aboutImg7 from '../../public/images/about/about-07.jpg';
+import aboutImg8 from '../../public/images/about/about-08.jpg';
+import aboutImg9 from '../../public/images/about/about-09.jpg';
 
 const About = () => {
   const { ref: ref1, style: style1 } = useParallax({
@@ -70,8 +70,8 @@ const About = () => {
                     <div
                       className={`icon ${
                         item.isPrimary
-                          ? "bg-primary-opacity"
-                          : "bg-pink-opacity"
+                          ? 'bg-primary-opacity'
+                          : 'bg-pink-opacity'
                       }`}
                     >
                       <i className={item.icon}></i>

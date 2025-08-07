@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import ServiceData from "../../data/elements/service.json";
+import ServiceData from '../../data/elements/service.json';
 
 const ServiceSaven = ({ head }) => {
   return (
@@ -18,7 +18,7 @@ const ServiceSaven = ({ head }) => {
                 </div>
               </div>
             ) : (
-              ""
+              ''
             )}
             <div className="row row--15 mt_dec--30">
               <div className="col-lg-4 col-xl-4 col-md-6 col-sm-6 col-12 mt--30">
@@ -43,16 +43,16 @@ const ServiceSaven = ({ head }) => {
                   <div
                     className={`service-card service-card-6 bg-color ${
                       item.bgOne
-                        ? "bg-card-color-1"
-                        : "" || item.bgTwo
-                        ? "bg-card-color-2"
-                        : "" || item.bgThree
-                        ? "bg-card-color-3"
-                        : "" || item.bgFour
-                        ? "bg-card-color-4"
-                        : "" || item.bgFive
-                        ? "bg-card-color-5"
-                        : ""
+                        ? 'bg-card-color-1'
+                        : '' || item.bgTwo
+                          ? 'bg-card-color-2'
+                          : '' || item.bgThree
+                            ? 'bg-card-color-3'
+                            : '' || item.bgFour
+                              ? 'bg-card-color-4'
+                              : '' || item.bgFive
+                                ? 'bg-card-color-5'
+                                : ''
                     }`}
                   >
                     <div className="inner">

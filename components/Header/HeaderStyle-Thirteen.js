@@ -1,6 +1,6 @@
-import { useAppContext } from "@/context/Context";
-import DarkSwitch from "./dark-switch";
-import HeaderEleven from "./Headers/Header-Eleven";
+import { useAppContext } from '@/context/Context';
+import DarkSwitch from './dark-switch';
+import HeaderEleven from './Headers/Header-Eleven';
 
 const HeaderStyleThirteen = () => {
   const { isLightTheme, toggleTheme } = useAppContext();

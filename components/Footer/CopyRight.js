@@ -1,5 +1,5 @@
-import Link from "next/link";
-import Separator from "../Common/Separator";
+import Link from 'next/link';
+import Separator from '../Common/Separator';
 
 const CopyRight = () => {
   return (

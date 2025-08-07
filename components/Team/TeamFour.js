@@ -1,9 +1,9 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
-import TeamHead from "./TeamHead";
+import TeamHead from './TeamHead';
 
-import TeamData from "../../data/elements/team.json";
+import TeamData from '../../data/elements/team.json';
 
 const TeamFour = ({ isHead }) => {
   return (
@@ -12,7 +12,7 @@ const TeamFour = ({ isHead }) => {
         {isHead ? (
           <TeamHead title="Team (Standard)." desc="Standard Image Style." />
         ) : (
-          ""
+          ''
         )}
 
         <div className="row row--15 mt_dec--30">

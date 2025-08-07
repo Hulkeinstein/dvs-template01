@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-const UpdateModal = ({ modalId = "UpdateTopic", topicData, onUpdateTopic }) => {
+const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
   const [formData, setFormData] = useState({
     name: '',
-    summary: ''
+    summary: '',
   });
-  
+
   useEffect(() => {
     if (topicData) {
       setFormData({
         name: topicData.name || '',
-        summary: topicData.summary || ''
+        summary: topicData.summary || '',
       });
     }
   }, [topicData]);
-  
+
   const handleSubmit = () => {
     if (formData.name.trim() && onUpdateTopic) {
       onUpdateTopic(formData);
-      
+
       // Close modal
       const modal = document.getElementById(modalId);
       const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
@@ -52,19 +52,18 @@ const UpdateModal = ({ modalId = "UpdateTopic", topicData, onUpdateTopic }) => {
               <div className="inner rbt-default-form">
                 <div className="row">
                   <div className="col-lg-12">
-                    <h5
-                      className="modal-title mb--20"
-                      id={`${modalId}Label`}
-                    >
+                    <h5 className="modal-title mb--20" id={`${modalId}Label`}>
                       Update Topic
                     </h5>
                     <div className="course-field mb--20">
                       <label htmlFor="updateModalTopicName">Topic Name</label>
-                      <input 
-                        id="updateModalTopicName" 
+                      <input
+                        id="updateModalTopicName"
                         type="text"
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, name: e.target.value })
+                        }
                       />
                       <small>
                         <i className="feather-info"></i> Topic titles are
@@ -73,11 +72,15 @@ const UpdateModal = ({ modalId = "UpdateTopic", topicData, onUpdateTopic }) => {
                       </small>
                     </div>
                     <div className="course-field mb--20">
-                      <label htmlFor="updateModalTopicSummary">Topic Summary</label>
-                      <textarea 
+                      <label htmlFor="updateModalTopicSummary">
+                        Topic Summary
+                      </label>
+                      <textarea
                         id="updateModalTopicSummary"
                         value={formData.summary}
-                        onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, summary: e.target.value })
+                        }
                       ></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short
@@ -100,8 +103,8 @@ const UpdateModal = ({ modalId = "UpdateTopic", topicData, onUpdateTopic }) => {
                 Cancel
               </button>
               <div className="content">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="rbt-btn btn-gradient btn-md"
                   onClick={handleSubmit}
                   data-bs-dismiss="modal"

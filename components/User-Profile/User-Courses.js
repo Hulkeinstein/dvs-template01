@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect } from "react";
-import sal from "sal.js";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect } from 'react';
+import sal from 'sal.js';
 
 const UserCourses = ({ relatedCourse }) => {
   useEffect(() => {

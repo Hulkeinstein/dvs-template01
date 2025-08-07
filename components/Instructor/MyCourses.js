@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import CourseWidget from "./Dashboard-Section/widgets/CourseWidget";
-import { getInstructorCourses } from "@/app/lib/actions/courseActions";
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import CourseWidget from './Dashboard-Section/widgets/CourseWidget';
+import { getInstructorCourses } from '@/app/lib/actions/courseActions';
 
 const MyCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -14,7 +14,7 @@ const MyCourses = () => {
     try {
       setLoading(true);
       const result = await getInstructorCourses();
-      
+
       if (result.error) {
         setError(result.error);
       } else {
@@ -32,10 +32,16 @@ const MyCourses = () => {
     fetchCourses();
   }, []);
 
-  const publishedCourses = courses.filter(course => course.status === 'published' || course.status === 'unpublished');
-  const pendingCourses = courses.filter(course => course.status === 'pending');
-  const draftCourses = courses.filter(course => course.status === 'draft');
-  const archivedCourses = courses.filter(course => course.status === 'archived');
+  const publishedCourses = courses.filter(
+    (course) => course.status === 'published' || course.status === 'unpublished'
+  );
+  const pendingCourses = courses.filter(
+    (course) => course.status === 'pending'
+  );
+  const draftCourses = courses.filter((course) => course.status === 'draft');
+  const archivedCourses = courses.filter(
+    (course) => course.status === 'archived'
+  );
 
   const formatCourseData = (course) => ({
     id: course.id,
@@ -46,7 +52,9 @@ const MyCourses = () => {
     courseShortDescription: course.description || '',
     coursePrice: course.regular_price || 0,
     offerPrice: course.discounted_price || course.regular_price || 0,
-    courseDuration: course.total_duration_hours ? `${course.total_duration_hours} hours` : 'TBD',
+    courseDuration: course.total_duration_hours
+      ? `${course.total_duration_hours} hours`
+      : 'TBD',
     lectures: course.lessons?.[0]?.count || 0,
     courseLecture: course.lessons?.[0]?.count || 0,
     enrolledStudent: course.enrollments?.[0]?.count || 0,
@@ -59,8 +67,8 @@ const MyCourses = () => {
       twoStar: 0,
       threeStar: 0,
       fourStar: 0,
-      fiveStar: 0
-    }
+      fiveStar: 0,
+    },
   });
 
   if (loading) {
@@ -120,7 +128,9 @@ const MyCourses = () => {
                   aria-controls="publish-4"
                   aria-selected="true"
                 >
-                  <span className="title">Published ({publishedCourses.length})</span>
+                  <span className="title">
+                    Published ({publishedCourses.length})
+                  </span>
                 </Link>
               </li>
               <li role="presentation">
@@ -134,7 +144,9 @@ const MyCourses = () => {
                   aria-controls="pending-4"
                   aria-selected="false"
                 >
-                  <span className="title">Pending ({pendingCourses.length})</span>
+                  <span className="title">
+                    Pending ({pendingCourses.length})
+                  </span>
                 </Link>
               </li>
               <li role="presentation">
@@ -162,7 +174,9 @@ const MyCourses = () => {
                   aria-controls="archived-4"
                   aria-selected="false"
                 >
-                  <span className="title">Archived ({archivedCourses.length})</span>
+                  <span className="title">
+                    Archived ({archivedCourses.length})
+                  </span>
                 </Link>
               </li>
             </ul>
@@ -198,7 +212,10 @@ const MyCourses = () => {
                   <div className="col-12">
                     <div className="text-center py-5">
                       <h5>No published courses yet</h5>
-                      <p className="text-muted">Your published courses will appear here once they go live.</p>
+                      <p className="text-muted">
+                        Your published courses will appear here once they go
+                        live.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -235,7 +252,9 @@ const MyCourses = () => {
                   <div className="col-12">
                     <div className="text-center py-5">
                       <h5>No pending courses</h5>
-                      <p className="text-muted">Courses waiting for approval will appear here.</p>
+                      <p className="text-muted">
+                        Courses waiting for approval will appear here.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -272,8 +291,13 @@ const MyCourses = () => {
                   <div className="col-12">
                     <div className="text-center py-5">
                       <h5>No draft courses</h5>
-                      <p className="text-muted">Create a new course to get started!</p>
-                      <Link href="/create-course" className="rbt-btn btn-gradient hover-icon-reverse">
+                      <p className="text-muted">
+                        Create a new course to get started!
+                      </p>
+                      <Link
+                        href="/create-course"
+                        className="rbt-btn btn-gradient hover-icon-reverse"
+                      >
                         <span className="icon-reverse-wrapper">
                           <span className="btn-text">Create Course</span>
                           <span className="btn-icon">
@@ -320,7 +344,9 @@ const MyCourses = () => {
                   <div className="col-12">
                     <div className="text-center py-5">
                       <h5>No archived courses</h5>
-                      <p className="text-muted">Archived courses will appear here.</p>
+                      <p className="text-muted">
+                        Archived courses will appear here.
+                      </p>
                     </div>
                   </div>
                 )}

@@ -1,11 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Navigation } from "swiper/modules";
+import { Navigation } from 'swiper/modules';
 
-import Teacher from "../../data/pages/become-A-Teacher.json";
+import Teacher from '../../data/pages/become-A-Teacher.json';
 
 const TeacherGallery = () => {
   return (
@@ -19,8 +19,8 @@ const TeacherGallery = () => {
                   modules={[Navigation]}
                   loop={true}
                   navigation={{
-                    nextEl: ".rbt-arrow-left",
-                    prevEl: ".rbt-arrow-right",
+                    nextEl: '.rbt-arrow-left',
+                    prevEl: '.rbt-arrow-right',
                   }}
                   slidesPerView={1}
                   className="swiper rbt-gif-banner-area rbt-arrow-between"

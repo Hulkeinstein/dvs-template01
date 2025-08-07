@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const Featured = ({ coursesFeatured }) => {
   const pathname = usePathname();
   const [toggle, setToggle] = useState(false);
 
-  const addClass = ["/course-detail-8"].some((path) =>
+  const addClass = ['/course-detail-8'].some((path) =>
     pathname.startsWith(path)
   );
   return (
     <>
       <div
         className={`about-author-list featured-wrapper ${
-          addClass ? "rbt-border-with-box" : "rbt-shadow-box"
-        } mt--30 has-show-more ${toggle ? "active" : ""}`}
+          addClass ? 'rbt-border-with-box' : 'rbt-shadow-box'
+        } mt--30 has-show-more ${toggle ? 'active' : ''}`}
       >
         <div className="section-title">
           <h4 className="rbt-title-style-3">{coursesFeatured.title}</h4>
@@ -83,7 +83,7 @@ const Featured = ({ coursesFeatured }) => {
           ))}
         </div>
         <div
-          className={`rbt-show-more-btn ${toggle ? "active" : ""}`}
+          className={`rbt-show-more-btn ${toggle ? 'active' : ''}`}
           onClick={() => setToggle(!toggle)}
         >
           Show More

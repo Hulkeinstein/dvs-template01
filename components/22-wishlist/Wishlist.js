@@ -1,25 +1,25 @@
-import React, { useEffect } from "react";
-import Image from "next/image";
-import sal from "sal.js";
-import { useParallax } from "react-scroll-parallax";
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import sal from 'sal.js';
+import { useParallax } from 'react-scroll-parallax';
 
-import WishlistBanner from "./Wishlist-Banner";
+import WishlistBanner from './Wishlist-Banner';
 
-import bgShape from "../../public/images/shape/wishlist-title-bg-shape.png";
-import wishCourse from "../../public/images/course/wishlist-course-01.png";
-import wishCourse3 from "../../public/images/course/wishlist-course-03.png";
-import wishCourse4 from "../../public/images/course/wishlist-course-04.png";
-import wishCourse5 from "../../public/images/course/wishlist-course-05.png";
-import wishCourseGif from "../../public/images/course/wishlist-course-02.gif";
-import wishTextShape from "../../public/images/shape/wishlist-text-shape-01.png";
-import wishTextShape2 from "../../public/images/shape/wishlist-text-shape-02.png";
-import wishDot from "../../public/images/shape/wishlist-dots.png";
-import wishMen from "../../public/images/shape/wishlist-b-men.png";
+import bgShape from '../../public/images/shape/wishlist-title-bg-shape.png';
+import wishCourse from '../../public/images/course/wishlist-course-01.png';
+import wishCourse3 from '../../public/images/course/wishlist-course-03.png';
+import wishCourse4 from '../../public/images/course/wishlist-course-04.png';
+import wishCourse5 from '../../public/images/course/wishlist-course-05.png';
+import wishCourseGif from '../../public/images/course/wishlist-course-02.gif';
+import wishTextShape from '../../public/images/shape/wishlist-text-shape-01.png';
+import wishTextShape2 from '../../public/images/shape/wishlist-text-shape-02.png';
+import wishDot from '../../public/images/shape/wishlist-dots.png';
+import wishMen from '../../public/images/shape/wishlist-b-men.png';
 
 const Wishlist = () => {
   const { ref: ref1, style: style1 } = useParallax({
     translateY: [0, 40],
-    easing: "easeOutQuad",
+    easing: 'easeOutQuad',
     speed: -1,
     lerp: 0.8,
   });
@@ -42,7 +42,7 @@ const Wishlist = () => {
             </div>
             <h2 className="title">
               A design tool <span className="color-body">(Figma)</span> for
-              crafting engaging UI/UX{" "}
+              crafting engaging UI/UX{' '}
               <span className="color-body">design experiences</span> and visual
               assets with <span className="theme-gradient">Histudy.</span>
             </h2>
@@ -162,7 +162,7 @@ const Wishlist = () => {
                     <span className="theme-gradient">Support System</span>
                   </h6>
                   <h5 className="rbt-card-title">
-                    I’m{" "}
+                    I’m{' '}
                     <span>
                       <Image
                         src={wishTextShape}
@@ -170,7 +170,7 @@ const Wishlist = () => {
                         height={36}
                         alt="Shape"
                       />
-                    </span>{" "}
+                    </span>{' '}
                     Always With You, To Solve Any
                     <span>
                       <Image

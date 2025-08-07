@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CardData from "../../data/elements/card";
+import CardData from '../../data/elements/card';
 
 const CardFour = () => {
   return (

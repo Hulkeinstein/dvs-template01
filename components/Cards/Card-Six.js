@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-import CourseCard from "../../data/course-details/courseData.json";
+import CourseCard from '../../data/course-details/courseData.json';
 
 const CardSix = ({ parentClass, childClass, types }) => {
-  const [courseFilter, setCourseFilter] = useState("");
+  const [courseFilter, setCourseFilter] = useState('');
 
   const filterItem = (types) => {
     const updateItem = CourseCard.courseDetails.filter((curElm) => {
@@ -99,7 +99,7 @@ const CardSix = ({ parentClass, childClass, types }) => {
                     </Link>
                   </div>
                   <div className="rbt-author-info">
-                    By{" "}
+                    By{' '}
                     <Link className="px-1" href={`/profile/${data.id}`}>
                       {data.userName}
                     </Link>

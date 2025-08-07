@@ -1,5 +1,5 @@
-import NewsletterData from "../../data/elements/newsletter.json";
-import CounterWrap from "../Counters/CounterWrap";
+import NewsletterData from '../../data/elements/newsletter.json';
+import CounterWrap from '../Counters/CounterWrap';
 
 const NewsletterTwo = () => {
   return (
@@ -43,7 +43,7 @@ const NewsletterTwo = () => {
                   {data.body.slice(0, 2).map((item, innerIndex) => (
                     <div
                       className={`col-lg-3 col-sm-6 col-md-6 single-counter ${
-                        item.offset ? "offset-lg-3" : "single-counter"
+                        item.offset ? 'offset-lg-3' : 'single-counter'
                       }`}
                       key={innerIndex}
                     >

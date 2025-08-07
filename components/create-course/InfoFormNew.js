@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import Image from "next/image";
+import { useState, useRef } from 'react';
+import Image from 'next/image';
 
-import img from "../../public/images/others/thumbnail-placeholder.svg";
+import img from '../../public/images/others/thumbnail-placeholder.svg';
 
 const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
@@ -13,7 +13,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
     const { name, value, type, checked } = e.target;
     onFormDataChange({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
@@ -21,7 +21,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
     const { name, value } = e.target;
     onFormDataChange({
       ...formData,
-      [name]: parseFloat(value) || 0
+      [name]: parseFloat(value) || 0,
     });
   };
 
@@ -51,40 +51,42 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
       <div className="rbt-course-field-wrapper rbt-default-form">
         <div className="course-field mb--15">
           <label htmlFor="field-1">Course Title</label>
-          <input 
-            id="field-1" 
+          <input
+            id="field-1"
             name="title"
-            type="text" 
-            placeholder="Introduction to Web Development" 
+            type="text"
+            placeholder="Introduction to Web Development"
             value={formData.title || ''}
             onChange={handleInputChange}
             required
           />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Title should be descriptive and clear.
+            <i className="feather-info"></i> Title should be descriptive and
+            clear.
           </small>
         </div>
 
         <div className="course-field mb--15">
           <label htmlFor="field-2">Short Description</label>
-          <input 
-            id="field-2" 
+          <input
+            id="field-2"
             name="shortDescription"
-            type="text" 
-            placeholder="Brief description of the course" 
+            type="text"
+            placeholder="Brief description of the course"
             value={formData.shortDescription || ''}
             onChange={handleInputChange}
             required
           />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> A brief summary that appears in course listings.
+            <i className="feather-info"></i> A brief summary that appears in
+            course listings.
           </small>
         </div>
 
         <div className="course-field mb--15">
           <label htmlFor="description">Course Description</label>
-          <textarea 
-            id="description" 
+          <textarea
+            id="description"
             name="description"
             rows="10"
             value={formData.description || ''}
@@ -92,7 +94,8 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
             placeholder="Describe what students will learn in this course..."
           ></textarea>
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Detailed description of the course content and objectives.
+            <i className="feather-info"></i> Detailed description of the course
+            content and objectives.
           </small>
         </div>
 
@@ -116,15 +119,17 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                 <option value="business">Business</option>
                 <option value="design">Design</option>
                 <option value="marketing">Marketing</option>
-                <option value="personal-development">Personal Development</option>
+                <option value="personal-development">
+                  Personal Development
+                </option>
               </select>
             </div>
           </div>
           <div className="col-lg-6">
             <div className="course-field mb--20">
               <label htmlFor="level">Difficulty Level</label>
-              <select 
-                className="form-select" 
+              <select
+                className="form-select"
                 id="level"
                 name="level"
                 value={formData.level || 'all_levels'}
@@ -286,7 +291,8 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                   />
                 </div>
                 <small>
-                  <i className="feather-info"></i> Issue certificates on completion
+                  <i className="feather-info"></i> Issue certificates on
+                  completion
                 </small>
               </div>
             </div>

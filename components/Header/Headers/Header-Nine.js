@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-import logo from "../../../public/images/logo/logo.png";
-import logoLight from "../../../public/images/dark/logo/logo-light.png";
-import { useAppContext } from "@/context/Context";
+import logo from '../../../public/images/logo/logo.png';
+import logoLight from '../../../public/images/dark/logo/logo-light.png';
+import { useAppContext } from '@/context/Context';
 
-import Nav from "../Nav";
-import HeaderRightTwo from "../Header-Right/HeaderRight-Two";
-import Search from "../Offcanvas/Search";
+import Nav from '../Nav';
+import HeaderRightTwo from '../Header-Right/HeaderRight-Two';
+import Search from '../Offcanvas/Search';
 
 const HeaderNine = ({
   gapSpaceBetween,
@@ -31,17 +31,17 @@ const HeaderNine = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
     <>
       <div
         className={`rbt-header-wrapper ${gapSpaceBetween} ${transparent} ${
-          !headerType && isSticky ? "rbt-sticky" : ""
+          !headerType && isSticky ? 'rbt-sticky' : ''
         }`}
       >
         <div className="container">

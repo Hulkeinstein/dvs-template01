@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import ServiceData from "../../data/elements/service.json";
+import ServiceData from '../../data/elements/service.json';
 
 const ServiceSix = () => {
   return (
@@ -25,14 +25,14 @@ const ServiceSix = () => {
                   <div
                     className={`service-card service-card-6 bg-color ${
                       item.bgOne
-                        ? "bg-card-color-1"
-                        : "" || item.bgTwo
-                        ? "bg-card-color-2"
-                        : "" || item.bgThree
-                        ? "bg-card-color-3"
-                        : "" || item.bgFour
-                        ? "bg-card-color-4"
-                        : ""
+                        ? 'bg-card-color-1'
+                        : '' || item.bgTwo
+                          ? 'bg-card-color-2'
+                          : '' || item.bgThree
+                            ? 'bg-card-color-3'
+                            : '' || item.bgFour
+                              ? 'bg-card-color-4'
+                              : ''
                     }`}
                   >
                     <div className="inner">

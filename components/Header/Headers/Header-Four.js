@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
 
-import logo from "../../../public/images/logo/logo.png";
-import logoLight from "../../../public/images/dark/logo/logo-light.png";
+import logo from '../../../public/images/logo/logo.png';
+import logoLight from '../../../public/images/dark/logo/logo-light.png';
 
-import Nav from "../Nav";
-import User from "../Offcanvas/User";
-import Search from "../Offcanvas/Search";
+import Nav from '../Nav';
+import User from '../Offcanvas/User';
+import Search from '../Offcanvas/Search';
 
 const HeaderFour = ({ gapSpaceBetween, sticky, navigationEnd, container }) => {
   const {
@@ -36,17 +36,17 @@ const HeaderFour = ({ gapSpaceBetween, sticky, navigationEnd, container }) => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
     <>
       <div
         className={`rbt-header-wrapper ${gapSpaceBetween} ${sticky} ${
-          isSticky ? "rbt-sticky" : ""
+          isSticky ? 'rbt-sticky' : ''
         }`}
       >
         <div className={`${container}`}>
@@ -100,7 +100,7 @@ const HeaderFour = ({ gapSpaceBetween, sticky, navigationEnd, container }) => {
                 <li className="access-icon">
                   <Link
                     className={`search-trigger-active rbt-round-btn ${
-                      search ? "" : "open"
+                      search ? '' : 'open'
                     }`}
                     href="#"
                     onClick={() => setSearch(!search)}

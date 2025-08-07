@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import EventData from "../../data/events.json";
-import Image from "next/image";
-import Link from "next/link";
+import EventData from '../../data/events.json';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const EventSidebar = () => {
   const [toggle, setToggle] = useState(false);
@@ -14,7 +14,7 @@ const EventSidebar = () => {
       <aside className="rbt-sidebar-widget-wrapper rbt-gradient-border">
         <div
           className={`rbt-single-widget rbt-widget-categories has-show-more ${
-            toggle ? "active" : ""
+            toggle ? 'active' : ''
           }`}
         >
           <div className="inner">
@@ -37,7 +37,7 @@ const EventSidebar = () => {
             </ul>
           </div>
           <div
-            className={`rbt-show-more-btn ${toggle ? "active" : ""}`}
+            className={`rbt-show-more-btn ${toggle ? 'active' : ''}`}
             onClick={() => setToggle(!toggle)}
           >
             Show More

@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 
 const SingleButton = ({
   btnText,
@@ -10,7 +10,8 @@ const SingleButton = ({
   btnClassFour,
   btnClassFive,
   btnClassSix,
-  lastbtn,head
+  lastbtn,
+  head,
 }) => {
   return (
     <>
@@ -40,7 +41,7 @@ const SingleButton = ({
                     {btnText}
                   </Link>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </div>

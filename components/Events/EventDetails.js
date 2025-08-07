@@ -1,11 +1,11 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import EventContent from "./Event-Section/EventContent";
-import EventDescription from "./Event-Section/EventDescription";
-import EventFaq from "./Event-Section/EventFaq";
-import EventParticipants from "./Event-Section/EventParticipants";
-import SimilarEvent from "./Event-Section/SimilarEvent";
-import EventViedo from "./Event-Section/EventViedo";
+import EventContent from './Event-Section/EventContent';
+import EventDescription from './Event-Section/EventDescription';
+import EventFaq from './Event-Section/EventFaq';
+import EventParticipants from './Event-Section/EventParticipants';
+import SimilarEvent from './Event-Section/SimilarEvent';
+import EventViedo from './Event-Section/EventViedo';
 
 const EventDetails = ({ getMatchEvent }) => {
   return (

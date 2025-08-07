@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import { useDispatch, useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
-import { addToCartAction } from "@/redux/action/CartAction";
+import { useDispatch, useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
+import { addToCartAction } from '@/redux/action/CartAction';
 
 const Viedo = ({ checkMatchCourses }) => {
   const pathname = usePathname();
@@ -18,16 +18,16 @@ const Viedo = ({ checkMatchCourses }) => {
   const [hideOnScroll, setHideOnScroll] = useState(false);
 
   const disableVideo = [
-    "/course-detail-2",
-    "/course-detail-3",
-    "/course-detail-4",
-    "/course-detail-5",
-    "/course-detail-6",
-    "/course-detail-7",
-    "/course-detail-8",
+    '/course-detail-2',
+    '/course-detail-3',
+    '/course-detail-4',
+    '/course-detail-5',
+    '/course-detail-6',
+    '/course-detail-7',
+    '/course-detail-8',
   ].some((path) => pathname.startsWith(path));
 
-  const isVideo = ["/course-detail-6"].some((path) =>
+  const isVideo = ['/course-detail-6'].some((path) =>
     pathname.startsWith(path)
   );
 
@@ -43,15 +43,15 @@ const Viedo = ({ checkMatchCourses }) => {
   };
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
   }, [cart]);
 
   // =====> For video PopUp
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
 
@@ -62,10 +62,10 @@ const Viedo = ({ checkMatchCourses }) => {
       setHideOnScroll(isHide);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
@@ -74,7 +74,7 @@ const Viedo = ({ checkMatchCourses }) => {
       {!disableVideo ? (
         <Link
           className={`video-popup-with-text video-popup-wrapper text-center popup-video sidebar-video-hidden mb--15 ${
-            hideOnScroll ? "d-none" : ""
+            hideOnScroll ? 'd-none' : ''
           }`}
           data-vbtype="video"
           href="https://www.youtube.com/watch?v=nA1Aqp0sPQo"
@@ -100,12 +100,12 @@ const Viedo = ({ checkMatchCourses }) => {
           </div>
         </Link>
       ) : (
-        ""
+        ''
       )}
       {isVideo ? (
         <div
           className={`radius-6 overflow-hidden sidebar-video-hidden mb--30 ${
-            hideOnScroll ? "d-none" : ""
+            hideOnScroll ? 'd-none' : ''
           }`}
         >
           <div className="plyr__video-embed rbtplayer">
@@ -120,9 +120,9 @@ const Viedo = ({ checkMatchCourses }) => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
-      
+
       <div className="content-item-content">
         <div className="rbt-price-wrapper d-flex flex-wrap align-items-center justify-content-between">
           <div className="rbt-price">
@@ -168,7 +168,7 @@ const Viedo = ({ checkMatchCourses }) => {
         </span>
         <div
           className={`rbt-widget-details has-show-more ${
-            toggle ? "active" : ""
+            toggle ? 'active' : ''
           }`}
         >
           <ul className="has-show-more-inner-content rbt-course-details-list-wrapper">
@@ -183,7 +183,7 @@ const Viedo = ({ checkMatchCourses }) => {
               ))}
           </ul>
           <div
-            className={`rbt-show-more-btn ${toggle ? "active" : ""}`}
+            className={`rbt-show-more-btn ${toggle ? 'active' : ''}`}
             onClick={() => setToggle(!toggle)}
           >
             Show More

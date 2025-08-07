@@ -1,80 +1,79 @@
-import React, { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import "venobox/dist/venobox.min.css";
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import 'venobox/dist/venobox.min.css';
 
-
-import BannerImg from "../../public/images/banner/o-banner.png";
-import Trustpilot from "../../public/images/shape/o-trustpilot.png";
-import TrustpilotDark from "../../public/images/shape/o-trustpilot-dark.png";
-import LineArrow from "../../public/images/shape/o-line-arrow.png";
-import Line3 from "../../public/images/shape/o-icon-3.png";
-import Icon1 from "../../public/images/shape/o-icon-1.png";
-import Icon2 from "../../public/images/shape/o-icon-2.png";
+import BannerImg from '../../public/images/banner/o-banner.png';
+import Trustpilot from '../../public/images/shape/o-trustpilot.png';
+import TrustpilotDark from '../../public/images/shape/o-trustpilot-dark.png';
+import LineArrow from '../../public/images/shape/o-line-arrow.png';
+import Line3 from '../../public/images/shape/o-icon-3.png';
+import Icon1 from '../../public/images/shape/o-icon-1.png';
+import Icon2 from '../../public/images/shape/o-icon-2.png';
 
 const imagesShape = [
   {
-    className: "shape-bg",
-    src: "/images/shape/o-bg-1.png",
+    className: 'shape-bg',
+    src: '/images/shape/o-bg-1.png',
     width: 606,
     height: 554,
   },
   {
-    className: "shadow-bg",
-    src: "/images/shape/o-shadow-bg.png",
+    className: 'shadow-bg',
+    src: '/images/shape/o-shadow-bg.png',
     width: 1519,
     height: 705,
   },
   {
-    className: "shape-1",
-    src: "/images/shape/o-shape-1.png",
+    className: 'shape-1',
+    src: '/images/shape/o-shape-1.png',
     width: 535,
     height: 105,
   },
   {
-    className: "shape-2",
-    src: "/images/shape/o-shape-2.png",
+    className: 'shape-2',
+    src: '/images/shape/o-shape-2.png',
     width: 535,
     height: 91,
   },
   {
-    className: "union",
-    src: "/images/shape/o-union.png",
+    className: 'union',
+    src: '/images/shape/o-union.png',
     width: 46,
     height: 46,
   },
   {
-    className: "star scene",
-    src: "/images/shape/o-star.png",
-    depth: "1",
+    className: 'star scene',
+    src: '/images/shape/o-star.png',
+    depth: '1',
     width: 45,
     height: 47,
   },
   {
-    className: "dot-shape-1",
-    src: "/images/shape/o-dots-1.png",
+    className: 'dot-shape-1',
+    src: '/images/shape/o-dots-1.png',
     width: 92,
     height: 36,
   },
   {
-    className: "dot-shape-2",
-    src: "/images/shape/o-dots-2.png",
+    className: 'dot-shape-2',
+    src: '/images/shape/o-dots-2.png',
     width: 36,
     height: 92,
   },
 ];
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/art-stu-2.png" },
-  { name: "Mark Jordan", src: "/images/shape/art-stu-1.png" },
-  { name: "Jordan", src: "/images/shape/art-stu-3.png" },
-  { name: "Ava Miller", src: "/images/shape/i-team.png" },
+  { name: 'Ava Miller', src: '/images/shape/art-stu-2.png' },
+  { name: 'Mark Jordan', src: '/images/shape/art-stu-1.png' },
+  { name: 'Jordan', src: '/images/shape/art-stu-3.png' },
+  { name: 'Ava Miller', src: '/images/shape/i-team.png' },
 ];
 
 const OnlineAcademyBanner = () => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);
@@ -134,7 +133,7 @@ const OnlineAcademyBanner = () => {
                     Excellent 4.9 out of 5
                   </h6>
                   <h1 className="title">
-                    Education Is The Best Key{" "}
+                    Education Is The Best Key{' '}
                     <span className="theme-gradient">Success In Life</span>
                   </h1>
                   <p className="description">

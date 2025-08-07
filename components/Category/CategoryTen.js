@@ -1,7 +1,7 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
 const CategoryTen = () => {
   return (
@@ -15,7 +15,7 @@ const CategoryTen = () => {
             >
               <Link
                 className={`rbt-cat-box rbt-cat-box-1 image-overlaping-content with-image-content ${
-                  item.isActiveCate ? "active" : ""
+                  item.isActiveCate ? 'active' : ''
                 }`}
                 id={`cat-tab-${innerIndex}-tab`}
                 data-bs-toggle="tab"
@@ -59,7 +59,7 @@ const CategoryTen = () => {
               CourseDetails.courseDetails.slice(0, 6).map((data, index) => (
                 <div
                   className={`tab-pane fade show ${
-                    data.isActiveCate ? "active" : ""
+                    data.isActiveCate ? 'active' : ''
                   }`}
                   id={`cat-tab-${index}`}
                   role="tabpanel"

@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import CallToActionData from "../../data/elements/calltoaction.json";
+import CallToActionData from '../../data/elements/calltoaction.json';
 
 const CallToActionFive = () => {
   return (

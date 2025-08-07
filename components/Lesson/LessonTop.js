@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 
 const LessonTop = ({ sidebar, setSidebar }) => {
   return (
@@ -9,7 +9,7 @@ const LessonTop = ({ sidebar, setSidebar }) => {
           <div className="rbt-lesson-toggle">
             <button
               className={`lesson-toggle-active btn-round-white-opacity ${
-                !sidebar ? "sidebar-hide" : ""
+                !sidebar ? 'sidebar-hide' : ''
               }`}
               title="Toggle Sidebar"
               onClick={setSidebar}

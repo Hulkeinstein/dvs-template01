@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import ShopData from "../../data/shop.json";
+import ShopData from '../../data/shop.json';
 
-import ShopHead from "./ShopHead";
-import Pagination from "../Common/Pagination";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCartAction } from "@/redux/action/CartAction";
-import { useAppContext } from "@/context/Context";
+import ShopHead from './ShopHead';
+import Pagination from '../Common/Pagination';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCartAction } from '@/redux/action/CartAction';
+import { useAppContext } from '@/context/Context';
 
 const Shop = () => {
   const { cartToggle, setCart } = useAppContext();
@@ -29,7 +29,7 @@ const Shop = () => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -40,8 +40,8 @@ const Shop = () => {
   };
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
   }, [cart]);
 
   useEffect(() => {

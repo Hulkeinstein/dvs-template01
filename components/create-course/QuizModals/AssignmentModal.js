@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 
-import TextEditorWrapper from "../TextEditorWrapper";
+import TextEditorWrapper from '../TextEditorWrapper';
 
-const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
-  const [content, setContent] = useState("");
+const AssignmentModal = ({ modalId = 'Assignment', onAddAssignment }) => {
+  const [content, setContent] = useState('');
   const [assignmentData, setAssignmentData] = useState({
     title: '',
     summary: '',
@@ -14,7 +14,7 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
     totalPoints: 100,
     passingPoints: 70,
     maxUploads: 1,
-    maxFileSize: 10
+    maxFileSize: 10,
   });
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -27,7 +27,7 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      console.log("Selected file:", file.name);
+      console.log('Selected file:', file.name);
     }
   };
 
@@ -61,13 +61,20 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                         Add Assignment
                       </h5>
                       <div className="course-field mb--20">
-                        <label htmlFor="assignmentModalTitle">Assignment Title</label>
+                        <label htmlFor="assignmentModalTitle">
+                          Assignment Title
+                        </label>
                         <input
                           id="assignmentModalTitle"
                           type="text"
                           placeholder="Assignments"
                           value={assignmentData.title}
-                          onChange={(e) => setAssignmentData({ ...assignmentData, title: e.target.value })}
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              title: e.target.value,
+                            })
+                          }
                         />
                       </div>
                       <div className="course-field mb--30">
@@ -75,7 +82,12 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                         <TextEditorWrapper
                           ref={editorRef}
                           value={assignmentData.summary}
-                          onChange={(newContent) => setAssignmentData({ ...assignmentData, summary: newContent })}
+                          onChange={(newContent) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              summary: newContent,
+                            })
+                          }
                         />
                       </div>
                       <div className="course-field mb--20">
@@ -100,7 +112,7 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                           <input
                             type="file"
                             ref={fileInputRef}
-                            style={{ display: "none" }}
+                            style={{ display: 'none' }}
                             onChange={handleFileChange}
                           />
                         </div>
@@ -114,21 +126,31 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                               type="number"
                               placeholder="00"
                               value={assignmentData.timeLimit.value}
-                              onChange={(e) => setAssignmentData({ 
-                                ...assignmentData, 
-                                timeLimit: { ...assignmentData.timeLimit, value: parseInt(e.target.value) || 0 }
-                              })}
+                              onChange={(e) =>
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  timeLimit: {
+                                    ...assignmentData.timeLimit,
+                                    value: parseInt(e.target.value) || 0,
+                                  },
+                                })
+                              }
                             />
                           </div>
                           <div className="col-sm-5 col-lg-4">
-                            <select 
-                              className="w-75" 
-                              style={{ height: "50px" }}
+                            <select
+                              className="w-75"
+                              style={{ height: '50px' }}
                               value={assignmentData.timeLimit.unit}
-                              onChange={(e) => setAssignmentData({ 
-                                ...assignmentData, 
-                                timeLimit: { ...assignmentData.timeLimit, unit: e.target.value }
-                              })}
+                              onChange={(e) =>
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  timeLimit: {
+                                    ...assignmentData.timeLimit,
+                                    unit: e.target.value,
+                                  },
+                                })
+                              }
                             >
                               <option value="weeks">Weeks</option>
                               <option value="days">Days</option>
@@ -146,7 +168,12 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                               type="number"
                               placeholder="0"
                               value={assignmentData.totalPoints}
-                              onChange={(e) => setAssignmentData({ ...assignmentData, totalPoints: parseInt(e.target.value) || 0 })}
+                              onChange={(e) =>
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  totalPoints: parseInt(e.target.value) || 0,
+                                })
+                              }
                             />
                             <small>
                               <i className="feather-info pr--5"></i>
@@ -164,7 +191,12 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                               type="number"
                               placeholder="0"
                               value={assignmentData.passingPoints}
-                              onChange={(e) => setAssignmentData({ ...assignmentData, passingPoints: parseInt(e.target.value) || 0 })}
+                              onChange={(e) =>
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  passingPoints: parseInt(e.target.value) || 0,
+                                })
+                              }
                             />
                           </div>
                           <small>
@@ -183,7 +215,12 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                               type="number"
                               placeholder="0"
                               value={assignmentData.maxUploads}
-                              onChange={(e) => setAssignmentData({ ...assignmentData, maxUploads: parseInt(e.target.value) || 0 })}
+                              onChange={(e) =>
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  maxUploads: parseInt(e.target.value) || 0,
+                                })
+                              }
                             />
                           </div>
                           <small>
@@ -203,7 +240,12 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                               type="number"
                               placeholder="0"
                               value={assignmentData.maxFileSize}
-                              onChange={(e) => setAssignmentData({ ...assignmentData, maxFileSize: parseInt(e.target.value) || 0 })}
+                              onChange={(e) =>
+                                setAssignmentData({
+                                  ...assignmentData,
+                                  maxFileSize: parseInt(e.target.value) || 0,
+                                })
+                              }
                             />
                           </div>
                           <small>
@@ -226,8 +268,8 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
               >
                 Cancel
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="rbt-btn btn-gradient btn-md"
                 onClick={() => {
                   if (assignmentData.title.trim() && onAddAssignment) {
@@ -241,13 +283,14 @@ const AssignmentModal = ({ modalId = "Assignment", onAddAssignment }) => {
                       totalPoints: 100,
                       passingPoints: 70,
                       maxUploads: 1,
-                      maxFileSize: 10
+                      maxFileSize: 10,
                     });
                     setContent('');
-                    
+
                     // Close modal
                     const modal = document.getElementById(modalId);
-                    const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+                    const modalInstance =
+                      window.bootstrap?.Modal?.getInstance(modal);
                     if (modalInstance) {
                       modalInstance.hide();
                     }

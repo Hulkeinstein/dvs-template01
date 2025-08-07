@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import MenuData from "../../data/MegaMenu.json";
-import CourseLayout from "./NavProps/CourseLayout";
-import PageLayout from "./NavProps/PageLayout";
-import ElementsLayout from "./NavProps/ElementsLayout";
-import addImage from "../../public/images/service/mobile-cat.jpg";
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useState } from 'react';
+import MenuData from '../../data/MegaMenu.json';
+import CourseLayout from './NavProps/CourseLayout';
+import PageLayout from './NavProps/PageLayout';
+import ElementsLayout from './NavProps/ElementsLayout';
+import addImage from '../../public/images/service/mobile-cat.jpg';
 
 const Nav = () => {
   const [activeMenuItem, setActiveMenuItem] = useState(null);
@@ -23,8 +23,8 @@ const Nav = () => {
       <ul className="mainmenu">
         <li className="with-megamenu has-menu-child-item position-static">
           <Link
-            className={`${activeMenuItem === "home" ? "open" : ""}`}
-            onClick={() => toggleMenuItem("home")}
+            className={`${activeMenuItem === 'home' ? 'open' : ''}`}
+            onClick={() => toggleMenuItem('home')}
             href="#"
           >
             Home
@@ -32,14 +32,14 @@ const Nav = () => {
           </Link>
           <div
             className={`rbt-megamenu menu-skin-dark ${
-              activeMenuItem === "home" ? "active d-block" : ""
+              activeMenuItem === 'home' ? 'active d-block' : ''
             }`}
           >
             <div className="wrapper">
               <div className="row row--15 home-plesentation-wrapper single-dropdown-menu-presentation">
                 {MenuData &&
                   MenuData.menuData.map((data, index) => {
-                    if (data.menuType === "home") {
+                    if (data.menuType === 'home') {
                       const elements = data.menuItems?.map(
                         (value, innerIndex) => (
                           <div
@@ -49,13 +49,13 @@ const Nav = () => {
                             <div className="demo-single">
                               <div
                                 className={`inner ${
-                                  value.badget ? "disable" : ""
+                                  value.badget ? 'disable' : ''
                                 }`}
                               >
                                 {value.tag ? (
                                   <span className="new-batch">New Added</span>
                                 ) : (
-                                  ""
+                                  ''
                                 )}
                                 <div className="thumbnail">
                                   <Link href={value.link} className="relative">
@@ -70,7 +70,7 @@ const Nav = () => {
                                         Coming
                                       </span>
                                     ) : (
-                                      ""
+                                      ''
                                     )}
                                   </Link>
                                 </div>
@@ -83,7 +83,7 @@ const Nav = () => {
                                           Coming
                                         </span>
                                       ) : (
-                                        ""
+                                        ''
                                       )}
                                       <span className="btn-icon">
                                         <i className="feather-arrow-right"></i>
@@ -104,7 +104,7 @@ const Nav = () => {
               <div className="load-demo-btn-wrap">
                 <div className="load-demo-btn text-center">
                   <span className="color-white b3">
-                    Scroll to view more{" "}
+                    Scroll to view more{' '}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
@@ -127,9 +127,9 @@ const Nav = () => {
 
         <li className="with-megamenu has-menu-child-item">
           <Link
-            className={`${activeMenuItem === "courses" ? "open" : ""}`}
+            className={`${activeMenuItem === 'courses' ? 'open' : ''}`}
             href="#"
-            onClick={() => toggleMenuItem("courses")}
+            onClick={() => toggleMenuItem('courses')}
           >
             Courses
             <i className="feather-chevron-down"></i>
@@ -137,13 +137,13 @@ const Nav = () => {
 
           <div
             className={`rbt-megamenu grid-item-2 ${
-              activeMenuItem === "courses" ? "active d-block" : ""
+              activeMenuItem === 'courses' ? 'active d-block' : ''
             }`}
           >
             <div className="wrapper">
               {MenuData &&
                 MenuData.menuData.map((data, index) => {
-                  if (data.menuType === "grid-item-2") {
+                  if (data.menuType === 'grid-item-2') {
                     const elements = data.submenuBanner?.map(
                       (value, innerIndex) => (
                         <div className="row" key={innerIndex}>
@@ -184,7 +184,7 @@ const Nav = () => {
                   <ul className="nav-quick-access">
                     {MenuData &&
                       MenuData.menuData.map((data, index) => {
-                        if (data.menuType === "grid-item-2") {
+                        if (data.menuType === 'grid-item-2') {
                           const coursElements = data.menuFooterItems?.map(
                             (value, innerIndex) => (
                               <li key={innerIndex}>
@@ -206,7 +206,7 @@ const Nav = () => {
         </li>
         <li>
           <Link
-            className={isActive("/dashboard") ? "active" : ""}
+            className={isActive('/dashboard') ? 'active' : ''}
             href="/dashboard"
           >
             Dashboard
@@ -215,15 +215,15 @@ const Nav = () => {
         <li className="with-megamenu has-menu-child-item position-static">
           <Link
             href="#"
-            className={`${activeMenuItem === "pages" ? "open" : ""}`}
-            onClick={() => toggleMenuItem("pages")}
+            className={`${activeMenuItem === 'pages' ? 'open' : ''}`}
+            onClick={() => toggleMenuItem('pages')}
           >
             Pages
             <i className="feather-chevron-down"></i>
           </Link>
           <div
             className={`rbt-megamenu grid-item-4 ${
-              activeMenuItem === "pages" ? "active d-block" : ""
+              activeMenuItem === 'pages' ? 'active d-block' : ''
             }`}
           >
             <div className="wrapper">
@@ -250,7 +250,7 @@ const Nav = () => {
                   <div className="mega-category-item">
                     {MenuData &&
                       MenuData.menuData.map((data, index) => {
-                        if (data.menuType === "grid-item-4") {
+                        if (data.menuType === 'grid-item-4') {
                           const elements = data.gridMenuItems4?.map(
                             (value, innerIndex) => (
                               <div
@@ -267,7 +267,7 @@ const Nav = () => {
                                         alt={value.title}
                                       />
                                     ) : (
-                                      ""
+                                      ''
                                     )}
                                   </div>
                                   <Link href={value.link}>
@@ -290,15 +290,15 @@ const Nav = () => {
         <li className="with-megamenu has-menu-child-item position-static">
           <Link
             href="#"
-            className={`${activeMenuItem === "elements" ? "open" : ""}`}
-            onClick={() => toggleMenuItem("elements")}
+            className={`${activeMenuItem === 'elements' ? 'open' : ''}`}
+            onClick={() => toggleMenuItem('elements')}
           >
             Elements
             <i className="feather-chevron-down"></i>
           </Link>
           <div
             className={`rbt-megamenu grid-item-3 ${
-              activeMenuItem === "elements" ? "active d-block" : ""
+              activeMenuItem === 'elements' ? 'active d-block' : ''
             }`}
           >
             <div className="wrapper">
@@ -348,15 +348,15 @@ const Nav = () => {
         <li className="with-megamenu has-menu-child-item position-static">
           <Link
             href="#"
-            className={`${activeMenuItem === "blog" ? "open" : ""}`}
-            onClick={() => toggleMenuItem("blog")}
+            className={`${activeMenuItem === 'blog' ? 'open' : ''}`}
+            onClick={() => toggleMenuItem('blog')}
           >
             Blog
             <i className="feather-chevron-down"></i>
           </Link>
           <div
             className={`rbt-megamenu grid-item-3 ${
-              activeMenuItem === "blog" ? "active d-block" : ""
+              activeMenuItem === 'blog' ? 'active d-block' : ''
             }`}
           >
             <div className="wrapper">
@@ -366,17 +366,17 @@ const Nav = () => {
                   <ul className="mega-menu-item">
                     {MenuData &&
                       MenuData.menuData.map((data, index) => {
-                        if (data.menuType === "grid-item-5") {
+                        if (data.menuType === 'grid-item-5') {
                           const elements = data.menuItems?.map(
                             (value, innerIndex) =>
                               value.id <= 7 && (
                                 <li key={innerIndex}>
                                   <Link
                                     className={
-                                      isActive(value.link) ? "active" : ""
+                                      isActive(value.link) ? 'active' : ''
                                     }
                                     href={
-                                      value.coming ? "/maintenance" : value.link
+                                      value.coming ? '/maintenance' : value.link
                                     }
                                   >
                                     {value.title}
@@ -389,7 +389,7 @@ const Nav = () => {
                                         {value.subTitle}
                                       </span>
                                     ) : (
-                                      ""
+                                      ''
                                     )}
                                   </Link>
                                 </li>
@@ -405,7 +405,7 @@ const Nav = () => {
                   <ul className="mega-menu-item">
                     {MenuData &&
                       MenuData.menuData.map((data, index) => {
-                        if (data.menuType === "grid-item-5") {
+                        if (data.menuType === 'grid-item-5') {
                           const elements = data.menuItems?.map(
                             (value, innerIndex) =>
                               value.id > 7 &&
@@ -413,10 +413,10 @@ const Nav = () => {
                                 <li key={innerIndex}>
                                   <Link
                                     className={
-                                      isActive(value.link) ? "active" : ""
+                                      isActive(value.link) ? 'active' : ''
                                     }
                                     href={
-                                      value.coming ? "/maintenance" : value.link
+                                      value.coming ? '/maintenance' : value.link
                                     }
                                   >
                                     {value.title}
@@ -429,7 +429,7 @@ const Nav = () => {
                                         {value.subTitle}
                                       </span>
                                     ) : (
-                                      ""
+                                      ''
                                     )}
                                   </Link>
                                 </li>

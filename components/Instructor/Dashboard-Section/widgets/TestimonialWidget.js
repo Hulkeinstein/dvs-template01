@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-const TestimonialWidget = ({ testimonialData, testimonialStyle = "one" }) => {
+const TestimonialWidget = ({ testimonialData, testimonialStyle = 'one' }) => {
   return (
     <>
-      {testimonialStyle === "one" && (
+      {testimonialStyle === 'one' && (
         <div className="rbt-testimonial-box style-2">
           <div className="inner">
             <div className="icons">
@@ -36,7 +36,7 @@ const TestimonialWidget = ({ testimonialData, testimonialStyle = "one" }) => {
           </div>
         </div>
       )}
-      {testimonialStyle === "two" && (
+      {testimonialStyle === 'two' && (
         <div className="rbt-testimonial-box">
           <div className="inner bg-no-shadow bg-color-primary-opacity">
             <div className="clint-info-wrapper">

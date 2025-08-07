@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Link from "next/link";
-import sal from "sal.js";
+import { useEffect } from 'react';
+import Link from 'next/link';
+import sal from 'sal.js';
 
-import CourseData from "../../data/course-details/courseData.json";
+import CourseData from '../../data/course-details/courseData.json';
 
-import UdemyAffiliateBanner from "./UdemyAffiliate-Banner";
-import Card from "../Cards/Card";
-import AboutEight from "../Abouts/About-Eight";
-import CategoryOne from "../Category/CategoryOne";
-import Separator from "../Common/Separator";
-import BrandOne from "../Brand/Brand-One";
-import TestimonialFive from "../Testimonials/Testimonial-Five";
+import UdemyAffiliateBanner from './UdemyAffiliate-Banner';
+import Card from '../Cards/Card';
+import AboutEight from '../Abouts/About-Eight';
+import CategoryOne from '../Category/CategoryOne';
+import Separator from '../Common/Separator';
+import BrandOne from '../Brand/Brand-One';
+import TestimonialFive from '../Testimonials/Testimonial-Five';
 
 const UdemyAffiliate = () => {
   useEffect(() => {
@@ -58,7 +58,9 @@ const UdemyAffiliate = () => {
       </div>
 
       <div className="rbt-about-area bg-color-darker rbt-section-gap">
-        <div className="container"><AboutEight /></div>
+        <div className="container">
+          <AboutEight />
+        </div>
       </div>
 
       <div className="rbt-categories-area bg-color-white rbt-section-gap">

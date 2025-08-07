@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import AboutData from "../../data/elements/about.json";
-import { useEffect } from "react";
-import sal from "sal.js";
+import AboutData from '../../data/elements/about.json';
+import { useEffect } from 'react';
+import sal from 'sal.js';
 
 const AboutSix = ({ btnClass, btnText }) => {
   useEffect(() => {

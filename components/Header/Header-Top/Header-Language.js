@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import us from "../../../public/images/icons/en-us.png";
-import fr from "../../../public/images/icons/fr.png";
-import de from "../../../public/images/icons/de.png";
+import us from '../../../public/images/icons/en-us.png';
+import fr from '../../../public/images/icons/fr.png';
+import de from '../../../public/images/icons/de.png';
 
 const HeaderLanguage = () => {
   return (

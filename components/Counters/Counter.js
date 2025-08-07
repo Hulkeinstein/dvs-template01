@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Image from "next/image";
+import Image from 'next/image';
 
-import CounterHead from "./Counter-Head";
+import CounterHead from './Counter-Head';
 
-import CounterData from "../../data/elements/counter.json";
-import CounterWrap from "./CounterWrap";
+import CounterData from '../../data/elements/counter.json';
+import CounterWrap from './CounterWrap';
 
 const Counter = ({ isDesc, head }) => {
   return (
@@ -20,18 +20,18 @@ const Counter = ({ isDesc, head }) => {
                 tag={data.tag}
                 title={data.title}
                 subTitle={data.subTitle}
-                desc={isDesc ? data.desc : ""}
+                desc={isDesc ? data.desc : ''}
               />
             ) : (
-              ""
+              ''
             )}
             <div className="row g-5 hanger-line">
               {data.body.map((item, innerIndex) => (
                 <div
                   className={`${
                     item.top
-                      ? "col-lg-3 col-md-6 col-sm-6 col-12 mt_md--60 mt_sm--60"
-                      : "col-lg-3 col-md-6 col-sm-6 col-12 mt--60 mt_md--30 mt_sm--30 mt_mobile--60"
+                      ? 'col-lg-3 col-md-6 col-sm-6 col-12 mt_md--60 mt_sm--60'
+                      : 'col-lg-3 col-md-6 col-sm-6 col-12 mt--60 mt_md--30 mt_sm--30 mt_mobile--60'
                   }`}
                   key={innerIndex}
                 >

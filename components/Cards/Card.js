@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
 const Card = ({ start, end, col, mt, isDesc, isUser }) => {
   return (
@@ -30,7 +30,7 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                       <span>Off</span>
                     </div>
                   ) : (
-                    ""
+                    ''
                   )}
                 </Link>
               </div>
@@ -71,7 +71,7 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                     {data.student} Students
                   </li>
                 </ul>
-                {isDesc ? <p className="rbt-card-text">{data.desc}</p> : ""}
+                {isDesc ? <p className="rbt-card-text">{data.desc}</p> : ''}
                 {isUser ? (
                   <div className="rbt-author-meta mb--10">
                     <div className="rbt-avater">
@@ -86,12 +86,14 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                     </div>
                     <div className="rbt-author-info">
                       By
-                      <Link className="px-1" href={`/profile/${data.id}`}>{data.name || data.instructor || 'Instructor'}</Link>
+                      <Link className="px-1" href={`/profile/${data.id}`}>
+                        {data.name || data.instructor || 'Instructor'}
+                      </Link>
                       In <Link href="#">{data.userCategory}</Link>
                     </div>
                   </div>
                 ) : (
-                  ""
+                  ''
                 )}
                 <div className="rbt-card-bottom">
                   <div className="rbt-price">

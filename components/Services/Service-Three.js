@@ -1,11 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Navigation } from "swiper/modules";
+import { Navigation } from 'swiper/modules';
 
-import ServiceData from "../../data/elements/service.json";
+import ServiceData from '../../data/elements/service.json';
 
 const ServiceThree = ({ head }) => {
   return (
@@ -22,15 +22,15 @@ const ServiceThree = ({ head }) => {
                 </div>
               </div>
             ) : (
-              ""
+              ''
             )}
             <Swiper
               className="swiper service-item-3-activation  rbt-arrow-between gutter-swiper-30"
               slidesPerView={1}
               modules={[Navigation]}
               navigation={{
-                nextEl: ".rbt-arrow-left",
-                prevEl: ".rbt-arrow-right",
+                nextEl: '.rbt-arrow-left',
+                prevEl: '.rbt-arrow-right',
               }}
               breakpoints={{
                 480: {
@@ -54,14 +54,14 @@ const ServiceThree = ({ head }) => {
                       <div
                         className={`rbt-service rbt-service-2 rbt-hover-02 bg-no-shadow ${
                           item.bgOne
-                            ? "card-bg-1"
-                            : "" || item.bgTwo
-                            ? "card-bg-2"
-                            : "" || item.bgThree
-                            ? "card-bg-3"
-                            : "" || item.bgFour
-                            ? "card-bg-4"
-                            : ""
+                            ? 'card-bg-1'
+                            : '' || item.bgTwo
+                              ? 'card-bg-2'
+                              : '' || item.bgThree
+                                ? 'card-bg-3'
+                                : '' || item.bgFour
+                                  ? 'card-bg-4'
+                                  : ''
                         }`}
                       >
                         <div className="inner">

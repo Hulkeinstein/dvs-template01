@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const CounterHead = ({ bgClass, tag, title, subTitle, desc, mb }) => {
   return (

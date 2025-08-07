@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const TopicModal = ({ onAddTopic }) => {
   const [topicData, setTopicData] = useState({
     name: '',
-    summary: ''
+    summary: '',
   });
 
   const handleSubmit = () => {
@@ -50,11 +50,13 @@ const TopicModal = ({ onAddTopic }) => {
                     </h5>
                     <div className="course-field mb--20">
                       <label htmlFor="topicModalName">Topic Name</label>
-                      <input 
-                        id="topicModalName" 
+                      <input
+                        id="topicModalName"
                         type="text"
                         value={topicData.name}
-                        onChange={(e) => setTopicData({ ...topicData, name: e.target.value })}
+                        onChange={(e) =>
+                          setTopicData({ ...topicData, name: e.target.value })
+                        }
                       />
                       <small>
                         <i className="feather-info"></i> Topic titles are
@@ -64,10 +66,15 @@ const TopicModal = ({ onAddTopic }) => {
                     </div>
                     <div className="course-field mb--20">
                       <label htmlFor="topicModalSummary">Topic Summary</label>
-                      <textarea 
+                      <textarea
                         id="topicModalSummary"
                         value={topicData.summary}
-                        onChange={(e) => setTopicData({ ...topicData, summary: e.target.value })}
+                        onChange={(e) =>
+                          setTopicData({
+                            ...topicData,
+                            summary: e.target.value,
+                          })
+                        }
                       ></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short

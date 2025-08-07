@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const EventFaq = ({ eventParentClass, getEventData }) => {
   return (
@@ -17,7 +17,7 @@ const EventFaq = ({ eventParentClass, getEventData }) => {
                 >
                   <button
                     className={`accordion-button ${
-                      !data.collapsed ? "collapsed" : ""
+                      !data.collapsed ? 'collapsed' : ''
                     }`}
                     type="button"
                     data-bs-toggle="collapse"
@@ -31,7 +31,7 @@ const EventFaq = ({ eventParentClass, getEventData }) => {
                 <div
                   id={`collapseTwo1${index}`}
                   className={`accordion-collapse collapse ${
-                    data.isShow ? "show" : ""
+                    data.isShow ? 'show' : ''
                   }`}
                   aria-labelledby={`headingTwo${index}`}
                   data-bs-parent="#accordionExampleb2"

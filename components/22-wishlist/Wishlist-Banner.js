@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
-import wHello from "../../public/images/shape/w-hello.png";
-import wColorElemt from "../../public/images/shape/w-color-elemt.png";
-import wToolsElemt from "../../public/images/shape/w-tools-elemt.png";
-import wCursor from "../../public/images/shape/w-cursor.png";
-import wShadow from "../../public/images/shape/w-shadow.png";
-import wBanner from "../../public/images/banner/w-banner.png";
+import wHello from '../../public/images/shape/w-hello.png';
+import wColorElemt from '../../public/images/shape/w-color-elemt.png';
+import wToolsElemt from '../../public/images/shape/w-tools-elemt.png';
+import wCursor from '../../public/images/shape/w-cursor.png';
+import wShadow from '../../public/images/shape/w-shadow.png';
+import wBanner from '../../public/images/banner/w-banner.png';
 
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/art-stu-2.png" },
-  { name: "Mark Jordan", src: "/images/shape/art-stu-1.png" },
-  { name: "Jordan", src: "/images/shape/art-stu-3.png" },
+  { name: 'Ava Miller', src: '/images/shape/art-stu-2.png' },
+  { name: 'Mark Jordan', src: '/images/shape/art-stu-1.png' },
+  { name: 'Jordan', src: '/images/shape/art-stu-3.png' },
 ];
 
 const WishlistBanner = () => {
@@ -35,8 +35,8 @@ const WishlistBanner = () => {
       setOffsetY(moveY);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   // Cursor move
@@ -46,8 +46,8 @@ const WishlistBanner = () => {
     let xp = 0,
       yp = 0;
 
-    const cursorFollower = document.getElementById("cursorFollower");
-    const container = document.querySelector(".cf_boundary");
+    const cursorFollower = document.getElementById('cursorFollower');
+    const container = document.querySelector('.cf_boundary');
 
     if (cursorFollower && container) {
       const handleMouseMove = (e) => {
@@ -65,7 +65,7 @@ const WishlistBanner = () => {
         mouseY = Math.max(minY, Math.min(mouseY, maxY));
       };
 
-      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener('mousemove', handleMouseMove);
 
       const animateCursor = () => {
         xp += (mouseX - xp) * 0.1;
@@ -82,7 +82,7 @@ const WishlistBanner = () => {
       animateCursor();
 
       return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener('mousemove', handleMouseMove);
       };
     }
   }, []);
@@ -135,9 +135,9 @@ const WishlistBanner = () => {
               </div>
               <div className="content">
                 <h1 className="title">
-                  We’re making an course on{" "}
+                  We’re making an course on{' '}
                   <span className="theme-gradient cf_boundary">
-                    UX/UI{" "}
+                    UX/UI{' '}
                     <Image
                       id="cursorFollower"
                       className="cursorFollower"

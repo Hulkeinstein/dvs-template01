@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
-import PricingData from "../../data/elements/pricing.json";
-import BasicPlan from "./Plans/BasicPlan";
-import StandardPlan from "./Plans/StandardPlan";
-import ExclusivePlan from "./Plans/ExclusivePlan";
-import { useAppContext } from "@/context/Context";
+import PricingData from '../../data/elements/pricing.json';
+import BasicPlan from './Plans/BasicPlan';
+import StandardPlan from './Plans/StandardPlan';
+import ExclusivePlan from './Plans/ExclusivePlan';
+import { useAppContext } from '@/context/Context';
 
 const PricingThree = ({ title, tag, col, position }) => {
   const { pricingThree, setPricingThree } = useAppContext();
@@ -15,7 +15,7 @@ const PricingThree = ({ title, tag, col, position }) => {
         PricingData.pricingThree.map((data, index) => (
           <div className="container" key={index}>
             <div className="row g-5 mb--60">
-              {title !== "" ? (
+              {title !== '' ? (
                 <div className="col-lg-6 col-md-6 col-12">
                   <div className="section-title text-start">
                     <span className="subtitle bg-pink-opacity">{tag}</span>
@@ -23,7 +23,7 @@ const PricingThree = ({ title, tag, col, position }) => {
                   </div>
                 </div>
               ) : (
-                ""
+                ''
               )}
 
               <div className={col}>
@@ -32,7 +32,7 @@ const PricingThree = ({ title, tag, col, position }) => {
                     <li className="nav-item">
                       <button
                         className={`nav-link yearly-plan-btn ${
-                          pricingThree ? "active" : ""
+                          pricingThree ? 'active' : ''
                         }`}
                         type="button"
                         onClick={() => setPricingThree(!pricingThree)}
@@ -43,7 +43,7 @@ const PricingThree = ({ title, tag, col, position }) => {
                     <li className="nav-item">
                       <button
                         className={`nav-link monthly-plan-btn ${
-                          !pricingThree ? "active" : ""
+                          !pricingThree ? 'active' : ''
                         }`}
                         type="button"
                         onClick={() => setPricingThree(!pricingThree)}

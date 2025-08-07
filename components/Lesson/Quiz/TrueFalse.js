@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 const TrueFalse = ({ point, pointNum }) => {
   return (
     <>
       <div className="rbt-single-quiz">
-        <h4>3. NextJs is a Framework?</h4>{" "}
+        <h4>3. NextJs is a Framework?</h4>{' '}
         {point ? (
           <div className="mb--10">
             <span>
@@ -12,7 +12,7 @@ const TrueFalse = ({ point, pointNum }) => {
             </span>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div className="row g-3">
           <div className="col-lg-6">

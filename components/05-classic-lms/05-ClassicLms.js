@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Link from "next/link";
-import sal from "sal.js";
-import HomeCourse from "../01-Main-Demo/Home-Sections/HomeCourse";
-import NewsletterThree from "../Newsletters/Newsletter-Three";
-import Card from "../Cards/Card";
-import BlogGrid from "../Blogs/BlogGrid";
-import Instagram from "../Instagram/Instagram";
-import TestimonialFour from "../Testimonials/Testimonial-Four";
-import CategorySix from "../Category/CategorySix";
+import { useEffect } from 'react';
+import Link from 'next/link';
+import sal from 'sal.js';
+import HomeCourse from '../01-Main-Demo/Home-Sections/HomeCourse';
+import NewsletterThree from '../Newsletters/Newsletter-Three';
+import Card from '../Cards/Card';
+import BlogGrid from '../Blogs/BlogGrid';
+import Instagram from '../Instagram/Instagram';
+import TestimonialFour from '../Testimonials/Testimonial-Four';
+import CategorySix from '../Category/CategorySix';
 
 const ClassicLms = ({ blogdata }) => {
   useEffect(() => {

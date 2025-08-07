@@ -1,10 +1,10 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
-import TeamHead from "./TeamHead";
+import TeamHead from './TeamHead';
 
-import TeamData from "../../data/elements/team.json";
-import Link from "next/link";
+import TeamData from '../../data/elements/team.json';
+import Link from 'next/link';
 
 const TeamFive = () => {
   return (
@@ -13,7 +13,7 @@ const TeamFive = () => {
         <TeamHead title="Team (Card Box)." desc="Card Box Style." />
         <div className="row row--15 mt_dec--30">
           {TeamData &&
-            TeamData.team.slice(2,5).map((data, index) => (
+            TeamData.team.slice(2, 5).map((data, index) => (
               <div className="col-lg-4 col-md-6 col-12 mt--30" key={index}>
                 {data.details.map((item, innerIndex) => (
                   <div

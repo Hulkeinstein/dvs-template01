@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import EventData from "../../data/events.json";
+import EventData from '../../data/events.json';
 
 const EventHead = () => {
   return (

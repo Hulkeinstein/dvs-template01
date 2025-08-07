@@ -1,7 +1,7 @@
-import CounterData from "../../data/elements/counter.json";
+import CounterData from '../../data/elements/counter.json';
 
-import CounterHead from "./Counter-Head";
-import CounterWrap from "./CounterWrap";
+import CounterHead from './Counter-Head';
+import CounterWrap from './CounterWrap';
 
 const CounterSix = ({ head }) => {
   return (
@@ -19,7 +19,7 @@ const CounterSix = ({ head }) => {
                 desc={data.desc}
               />
             ) : (
-              ""
+              ''
             )}
 
             <div className="row g-5">

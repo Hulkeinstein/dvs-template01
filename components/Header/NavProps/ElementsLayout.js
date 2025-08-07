@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const ElementsLayout = ({ MenuData, menuGrid, num1, num2 }) => {
   const pathname = usePathname();
@@ -17,8 +17,8 @@ const ElementsLayout = ({ MenuData, menuGrid, num1, num2 }) => {
                   value.id <= num2 && (
                     <li key={innerIndex}>
                       <Link
-                        className={isActive(value.link) ? "active" : ""}
-                        href={value.coming ? "/maintenance" : value.link}
+                        className={isActive(value.link) ? 'active' : ''}
+                        href={value.coming ? '/maintenance' : value.link}
                       >
                         {value.title}
                         {value.coming ? (
@@ -30,7 +30,7 @@ const ElementsLayout = ({ MenuData, menuGrid, num1, num2 }) => {
                             {value.badgeText}
                           </span>
                         ) : (
-                          ""
+                          ''
                         )}
                       </Link>
                     </li>

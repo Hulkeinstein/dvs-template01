@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
-import PhoneVerificationModal from "@/components/Common/PhoneVerificationModal";
-import ProfileCompletionChecklist from "@/components/Common/ProfileCompletionChecklist";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import PhoneVerificationModal from '@/components/Common/PhoneVerificationModal';
+import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
@@ -18,26 +18,28 @@ const Setting = ({ userProfile }) => {
   const [otpValue, setOtpValue] = useState('');
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
-  
+
   // Form data state
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
     phone: '',
     skill_occupation: '',
-    bio: ''
+    bio: '',
   });
 
   // Initialize form with user data
   useEffect(() => {
     if (userProfile) {
-      const nameParts = userProfile.name ? userProfile.name.split(' ') : ['', ''];
+      const nameParts = userProfile.name
+        ? userProfile.name.split(' ')
+        : ['', ''];
       setFormData({
         first_name: userProfile.first_name || nameParts[0] || '',
         last_name: userProfile.last_name || nameParts.slice(1).join(' ') || '',
         phone: userProfile.phone || '',
         skill_occupation: userProfile.skill_occupation || '',
-        bio: userProfile.bio || ''
+        bio: userProfile.bio || '',
       });
       setPhoneVerified(userProfile.is_phone_verified || false);
     }
@@ -53,9 +55,9 @@ const Setting = ({ userProfile }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -82,20 +84,32 @@ const Setting = ({ userProfile }) => {
       if (response.ok) {
         setShowOtpInput(true);
         setOtpTimer(300); // 5 minutes
-        setMessage({ type: 'success', text: 'Verification code sent to your phone!' });
+        setMessage({
+          type: 'success',
+          text: 'Verification code sent to your phone!',
+        });
       } else {
         // In development, show OTP input anyway for testing
         if (result.error?.includes('Database table not found')) {
           setShowOtpInput(true);
           setOtpTimer(300); // 5 minutes
-          setMessage({ type: 'warning', text: 'Database not configured. In development mode - use OTP: 123456' });
+          setMessage({
+            type: 'warning',
+            text: 'Database not configured. In development mode - use OTP: 123456',
+          });
           console.log('Development mode: Use OTP 123456 for testing');
         } else {
-          setMessage({ type: 'error', text: result.error || 'Failed to send verification code' });
+          setMessage({
+            type: 'error',
+            text: result.error || 'Failed to send verification code',
+          });
         }
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again.',
+      });
     } finally {
       setOtpLoading(false);
     }
@@ -118,7 +132,7 @@ const Setting = ({ userProfile }) => {
         },
         body: JSON.stringify({
           phone: formData.phone,
-          otp: otpValue
+          otp: otpValue,
         }),
       });
 
@@ -128,7 +142,10 @@ const Setting = ({ userProfile }) => {
         setPhoneVerified(true);
         setShowOtpInput(false);
         setOtpValue('');
-        setMessage({ type: 'success', text: 'Phone number verified successfully!' });
+        setMessage({
+          type: 'success',
+          text: 'Phone number verified successfully!',
+        });
       } else {
         // In development, allow test OTP
         if (otpValue === '123456') {
@@ -136,13 +153,22 @@ const Setting = ({ userProfile }) => {
           setPhoneVerified(true);
           setShowOtpInput(false);
           setOtpValue('');
-          setMessage({ type: 'success', text: 'Phone number verified successfully! (Development mode)' });
+          setMessage({
+            type: 'success',
+            text: 'Phone number verified successfully! (Development mode)',
+          });
         } else {
-          setMessage({ type: 'error', text: result.error || 'Invalid verification code' });
+          setMessage({
+            type: 'error',
+            text: result.error || 'Invalid verification code',
+          });
         }
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again.',
+      });
     } finally {
       setOtpLoading(false);
     }
@@ -161,7 +187,7 @@ const Setting = ({ userProfile }) => {
         },
         body: JSON.stringify({
           ...formData,
-          name: `${formData.first_name} ${formData.last_name}`.trim()
+          name: `${formData.first_name} ${formData.last_name}`.trim(),
         }),
       });
 
@@ -174,10 +200,16 @@ const Setting = ({ userProfile }) => {
           await fetch('/api/auth/session?update');
         }
       } else {
-        setMessage({ type: 'error', text: result.error || 'Failed to update profile' });
+        setMessage({
+          type: 'error',
+          text: result.error || 'Failed to update profile',
+        });
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'An error occurred. Please try again.' });
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again.',
+      });
     } finally {
       setLoading(false);
     }
@@ -186,8 +218,16 @@ const Setting = ({ userProfile }) => {
   return (
     <>
       {/* Profile Completion Checklist */}
-      {userProfile && <ProfileCompletionChecklist userProfile={{...userProfile, phone: formData.phone, is_phone_verified: phoneVerified}} />}
-      
+      {userProfile && (
+        <ProfileCompletionChecklist
+          userProfile={{
+            ...userProfile,
+            phone: formData.phone,
+            is_phone_verified: phoneVerified,
+          }}
+        />
+      )}
+
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
           <div className="section-title">
@@ -195,7 +235,10 @@ const Setting = ({ userProfile }) => {
           </div>
 
           {message.text && (
-            <div className={`alert alert-${message.type === 'success' ? 'success' : 'danger'} mb-4`} role="alert">
+            <div
+              className={`alert alert-${message.type === 'success' ? 'success' : 'danger'} mb-4`}
+              role="alert"
+            >
               {message.text}
             </div>
           )}
@@ -266,7 +309,11 @@ const Setting = ({ userProfile }) => {
                       <Image
                         width={300}
                         height={300}
-                        src={userProfile?.photo_url || session?.user?.image || "/images/team/avatar-2.jpg"}
+                        src={
+                          userProfile?.photo_url ||
+                          session?.user?.image ||
+                          '/images/team/avatar-2.jpg'
+                        }
                         alt="Student"
                       />
                       <div className="rbt-edit-photo-inner">
@@ -327,7 +374,9 @@ const Setting = ({ userProfile }) => {
                           <i className="feather-check me-1"></i>Verified
                         </span>
                       ) : formData.phone ? (
-                        <span className="badge bg-warning ms-2">Not Verified</span>
+                        <span className="badge bg-warning ms-2">
+                          Not Verified
+                        </span>
                       ) : null}
                     </label>
                     <div className="phone-input-wrapper position-relative">
@@ -337,10 +386,16 @@ const Setting = ({ userProfile }) => {
                           value={formData.phone}
                           onChange={(phone) => {
                             const newPhone = phone ? '+' + phone : '';
-                            setFormData(prev => ({ ...prev, phone: newPhone }));
-                            
+                            setFormData((prev) => ({
+                              ...prev,
+                              phone: newPhone,
+                            }));
+
                             // If phone was verified and number changed, unverify it
-                            if (phoneVerified && newPhone !== userProfile?.phone) {
+                            if (
+                              phoneVerified &&
+                              newPhone !== userProfile?.phone
+                            ) {
                               setPhoneVerified(false);
                             }
                           }}
@@ -352,51 +407,69 @@ const Setting = ({ userProfile }) => {
                             fontWeight: '400',
                             lineHeight: '28px',
                             paddingLeft: '48px',
-                            paddingRight: formData.phone && !phoneVerified ? '85px' : '15px',
+                            paddingRight:
+                              formData.phone && !phoneVerified
+                                ? '85px'
+                                : '15px',
                             border: '2px solid #e6e3f1',
                             borderRadius: '6px',
-                            boxShadow: '0 13px 14px 0 rgba(129, 104, 145, 0.05)',
-                            background: phoneVerified ? '#f8f9fa' : 'transparent',
-                            color: '#5f5a70'
+                            boxShadow:
+                              '0 13px 14px 0 rgba(129, 104, 145, 0.05)',
+                            background: phoneVerified
+                              ? '#f8f9fa'
+                              : 'transparent',
+                            color: '#5f5a70',
                           }}
                           buttonStyle={{
                             border: '2px solid #e6e3f1',
                             borderRadius: '6px 0 0 6px',
                             borderRight: 'none',
-                            background: phoneVerified ? '#f8f9fa' : 'transparent',
-                            height: '50px'
+                            background: phoneVerified
+                              ? '#f8f9fa'
+                              : 'transparent',
+                            height: '50px',
                           }}
                           dropdownStyle={{
-                            borderRadius: '8px'
+                            borderRadius: '8px',
                           }}
                           containerClass="w-100"
                           enableSearch={true}
                           searchPlaceholder="Search countries"
-                          preferredCountries={['us', 'kr', 'jp', 'cn', 'gb', 'ca', 'au']}
+                          preferredCountries={[
+                            'us',
+                            'kr',
+                            'jp',
+                            'cn',
+                            'gb',
+                            'ca',
+                            'au',
+                          ]}
                         />
-                        {formData.phone && formData.phone.length > 3 && !phoneVerified && (
-                          <button
-                            type="button"
-                            className="btn btn-primary btn-sm position-absolute"
-                            style={{ 
-                              right: '8px', 
-                              top: '50%', 
-                              transform: 'translateY(-50%)',
-                              padding: '4px 16px',
-                              fontSize: '14px',
-                              borderRadius: '4px',
-                              height: '34px',
-                              zIndex: 10
-                            }}
-                            onClick={handleSendOTP}
-                            disabled={otpLoading}
-                          >
-                            Verify
-                          </button>
-                        )}
+                        {formData.phone &&
+                          formData.phone.length > 3 &&
+                          !phoneVerified && (
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm position-absolute"
+                              style={{
+                                right: '8px',
+                                top: '50%',
+                                transform: 'translateY(-50%)',
+                                padding: '4px 16px',
+                                fontSize: '14px',
+                                borderRadius: '4px',
+                                height: '34px',
+                                zIndex: 10,
+                              }}
+                              onClick={handleSendOTP}
+                              disabled={otpLoading}
+                            >
+                              Verify
+                            </button>
+                          )}
                       </div>
                     </div>
-                    
+
                     {/* OTP Input Section */}
                     {showOtpInput && !phoneVerified && (
                       <div className="mt-3">
@@ -420,7 +493,8 @@ const Setting = ({ userProfile }) => {
                           </button>
                           {otpTimer > 0 ? (
                             <span className="text-muted ms-2">
-                              {Math.floor(otpTimer / 60)}:{(otpTimer % 60).toString().padStart(2, '0')}
+                              {Math.floor(otpTimer / 60)}:
+                              {(otpTimer % 60).toString().padStart(2, '0')}
                             </span>
                           ) : (
                             <button
@@ -461,7 +535,7 @@ const Setting = ({ userProfile }) => {
                       readOnly
                       style={{
                         backgroundColor: '#f8f9fa',
-                        cursor: 'not-allowed'
+                        cursor: 'not-allowed',
                       }}
                     />
                   </div>
@@ -628,14 +702,17 @@ const Setting = ({ userProfile }) => {
           </div>
         </div>
       </div>
-      
+
       {/* Phone Verification Modal */}
       <PhoneVerificationModal
         isOpen={showPhoneVerificationModal}
         onClose={() => setShowPhoneVerificationModal(false)}
         onSuccess={() => {
           setPhoneVerified(true);
-          setMessage({ type: 'success', text: 'Phone number verified successfully!' });
+          setMessage({
+            type: 'success',
+            text: 'Phone number verified successfully!',
+          });
         }}
         userProfile={{ phone: formData.phone }}
       />

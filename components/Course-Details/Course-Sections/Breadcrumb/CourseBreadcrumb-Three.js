@@ -1,24 +1,24 @@
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/art-stu-2.png" },
-  { name: "Mark Jordan", src: "/images/shape/art-stu-1.png" },
-  { name: "Jordan", src: "/images/shape/art-stu-3.png" },
+  { name: 'Ava Miller', src: '/images/shape/art-stu-2.png' },
+  { name: 'Mark Jordan', src: '/images/shape/art-stu-1.png' },
+  { name: 'Jordan', src: '/images/shape/art-stu-3.png' },
 ];
 
 const CourseBreadcrumbThree = ({ getMatchCourse }) => {
-    useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+  useEffect(() => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
-    }, [])
-    
+  }, []);
+
   return (
     <>
       <div className="col-lg-7">
@@ -72,7 +72,7 @@ const CourseBreadcrumbThree = ({ getMatchCourse }) => {
                 <i className="feather-user"></i>
               </span>
               <h6 className="b3 w-400 mb--0">
-                <span className="color-body">by</span>{" "}
+                <span className="color-body">by</span>{' '}
                 <Link className="px-1" href={`/profile/${getMatchCourse.id}`}>
                   {getMatchCourse.userName}
                 </Link>

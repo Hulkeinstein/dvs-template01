@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect } from "react";
-import sal from "sal.js";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect } from 'react';
+import sal from 'sal.js';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
-import client1 from "../../public/images/testimonial/client-04.png";
-import client2 from "../../public/images/testimonial/client-05.png";
-import client3 from "../../public/images/testimonial/client-06.png";
-import client4 from "../../public/images/testimonial/client-12.png";
-import languageClub from "../../public/images/banner/language-club.png";
+import client1 from '../../public/images/testimonial/client-04.png';
+import client2 from '../../public/images/testimonial/client-05.png';
+import client3 from '../../public/images/testimonial/client-06.png';
+import client4 from '../../public/images/testimonial/client-12.png';
+import languageClub from '../../public/images/banner/language-club.png';
 
-import CategoryFour from "../Category/CategoryFour";
-import Counter from "../Counters/Counter";
-import AboutTwo from "../Abouts/About-Two";
-import CountDownTwo from "../Counters/CountDownTwo";
-import { ParallaxProvider } from "react-scroll-parallax";
+import CategoryFour from '../Category/CategoryFour';
+import Counter from '../Counters/Counter';
+import AboutTwo from '../Abouts/About-Two';
+import CountDownTwo from '../Counters/CountDownTwo';
+import { ParallaxProvider } from 'react-scroll-parallax';
 
 const LanguageAcademy = ({ blogs }) => {
   let getAllCourse = JSON.parse(JSON.stringify(CourseDetails.languageAcademy));

@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import BlogGridTop from "./Blog-Sections/BlogGrid-Top";
-import Pagination from "../Common/Pagination";
-import { usePathname } from "next/navigation";
+import BlogGridTop from './Blog-Sections/BlogGrid-Top';
+import Pagination from '../Common/Pagination';
+import { usePathname } from 'next/navigation';
 
 const BlogGrid = ({ isPagination, blogdata, top, start, end }) => {
   const pathname = usePathname();
@@ -22,7 +22,7 @@ const BlogGrid = ({ isPagination, blogdata, top, start, end }) => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -38,10 +38,10 @@ const BlogGrid = ({ isPagination, blogdata, top, start, end }) => {
           selectedGridBlogs={selectedGridBlogs}
         />
       ) : (
-        ""
+        ''
       )}
 
-      <div className={`row g-5 ${pathname === "/blog-grid" ? "mt--15" : ""}`}>
+      <div className={`row g-5 ${pathname === '/blog-grid' ? 'mt--15' : ''}`}>
         {blogdata &&
           selectedGridBlogs.slice(start, end).map((data, index) => (
             <div className="col-lg-4 col-md-6 col-sm-12 col-12" key={index}>
@@ -104,7 +104,7 @@ const BlogGrid = ({ isPagination, blogdata, top, start, end }) => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );

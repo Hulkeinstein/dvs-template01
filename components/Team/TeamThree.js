@@ -1,10 +1,10 @@
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TeamHead from "./TeamHead";
+import TeamHead from './TeamHead';
 
-import TeamData from "../../data/elements/team.json";
+import TeamData from '../../data/elements/team.json';
 
 const TeamThree = () => {
   return (
