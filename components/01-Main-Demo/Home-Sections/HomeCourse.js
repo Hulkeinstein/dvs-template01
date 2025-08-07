@@ -1,21 +1,21 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { EffectCards, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { EffectCards, Pagination } from 'swiper/modules';
 
-import MainDemoData from "../../../data/course-details/courseData.json";
+import MainDemoData from '../../../data/course-details/courseData.json';
 
 const HomeCourses = ({ start, end }) => {
   return (
     <>
       <Swiper
         className="swiper-wrapper"
-        effect={"cards"}
+        effect={'cards'}
         modules={[EffectCards, Pagination]}
         grabCursor={true}
         pagination={{
-          el: ".rbt-swiper-pagination",
+          el: '.rbt-swiper-pagination',
           clickable: true,
         }}
       >
@@ -85,7 +85,7 @@ const HomeCourses = ({ start, end }) => {
           ))}
         <div
           className="rbt-swiper-pagination"
-          style={{ bottom: "-40px" }}
+          style={{ bottom: '-40px' }}
         ></div>
       </Swiper>
     </>

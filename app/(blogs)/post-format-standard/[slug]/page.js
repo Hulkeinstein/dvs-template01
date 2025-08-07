@@ -1,9 +1,8 @@
+import BackToTop from '@/app/backToTop';
+import SingleBlog from '../index';
+import BlogLayout from '../page';
 
-import BackToTop from "@/app/backToTop";
-import SingleBlog from "../index";
-import BlogLayout from "../page";
-
-import { getPostBySlug, getAllPostsMeta } from "@/mdx";
+import { getPostBySlug, getAllPostsMeta } from '@/mdx';
 
 const getPageContent = async (slug) => {
   try {
@@ -40,7 +39,7 @@ const PostFormatStandardlayout = async ({ params }) => {
   }
 
   const extractNumberFromPathname = (pathname) => {
-    const parts = pathname.split("/");
+    const parts = pathname.split('/');
     const lastPart = parts[parts.length - 1];
     const match = lastPart.match(/\d+/);
     return match ? parseInt(match[0]) : null;

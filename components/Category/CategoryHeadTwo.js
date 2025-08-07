@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
+import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
-import CategoryBanner from "./Category-Banner";
+import CategoryBanner from './Category-Banner';
 
-import CourseFilterTwo from "./Filter/CourseFilterTwo";
-import { useAppContext } from "@/context/Context";
+import CourseFilterTwo from './Filter/CourseFilterTwo';
+import { useAppContext } from '@/context/Context';
 
 const CategoryHeadTwo = ({ category }) => {
   const pathname = usePathname();
@@ -35,7 +35,7 @@ const CategoryHeadTwo = ({ category }) => {
                         <li className="course-switch-item">
                           <button
                             className={`rbt-grid-view ${
-                              toggle ? "active" : ""
+                              toggle ? 'active' : ''
                             }`}
                             title="Grid Layout"
                             onClick={() => setToggle(!toggle)}
@@ -47,7 +47,7 @@ const CategoryHeadTwo = ({ category }) => {
                         <li className="course-switch-item">
                           <button
                             className={`rbt-grid-view ${
-                              !toggle ? "active" : ""
+                              !toggle ? 'active' : ''
                             }`}
                             title="List Layout"
                             onClick={() => setToggle(!toggle)}
@@ -87,8 +87,8 @@ const CategoryHeadTwo = ({ category }) => {
                         </button>
                       </form>
                     </div>
-                    {pathname === "/course-filter-two-open" ? (
-                      ""
+                    {pathname === '/course-filter-two-open' ? (
+                      ''
                     ) : (
                       <div className="rbt-short-item">
                         <div className="view-more-btn text-start text-sm-end">
@@ -105,12 +105,12 @@ const CategoryHeadTwo = ({ category }) => {
                 </div>
               </div>
 
-              {pathname === "/course-filter-two-open" ? (
+              {pathname === '/course-filter-two-open' ? (
                 <CourseFilterTwo />
               ) : (
                 <div
                   className={`row default-exp-wrapper ${
-                    filterToggle ? "default-exp-expand" : ""
+                    filterToggle ? 'default-exp-expand' : ''
                   } top-border-less`}
                 >
                   <CourseFilterTwo />

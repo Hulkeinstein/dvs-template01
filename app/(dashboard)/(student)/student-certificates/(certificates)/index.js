@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
-import { useSession } from "next-auth/react";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
+import { useSession } from 'next-auth/react';
 
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import StudentDashboardHeader from "@/components/Student/StudentDashboardHeader";
-import StudentDashboardSidebar from "@/components/Student/StudentDashboardSidebar";
-import StudentCertificates from "@/components/Student/Certificates";
-import RoleProtection from "@/components/Auth/RoleProtection";
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
+import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
+import StudentCertificates from '@/components/Student/Certificates';
+import RoleProtection from '@/components/Auth/RoleProtection';
 
 const StudentCertificatesPage = () => {
   const { data: session } = useSession();
-  
+
   return (
     <>
       <Provider store={Store}>
@@ -33,9 +33,9 @@ const StudentCertificatesPage = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={["student"]}>
-                    <StudentDashboardHeader 
-                      userId={session?.user?.id} 
+                  <RoleProtection allowedRoles={['student']}>
+                    <StudentDashboardHeader
+                      userId={session?.user?.id}
                       userProfile={session?.user}
                     />
 

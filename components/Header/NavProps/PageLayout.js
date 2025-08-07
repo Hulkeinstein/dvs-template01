@@ -1,5 +1,5 @@
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const PageLayout = ({ MenuData, menuGrid, title, gridNumber }) => {
   const pathname = usePathname();
@@ -13,13 +13,13 @@ const PageLayout = ({ MenuData, menuGrid, title, gridNumber }) => {
         {MenuData &&
           MenuData.menuData.map((data, index) => {
             if (data.menuType === menuGrid) {
-              if (gridNumber === "1") {
+              if (gridNumber === '1') {
                 const elements = data.gridMenuItems1?.map(
                   (value, innerIndex) => (
                     <li key={innerIndex}>
                       <Link
-                        className={isActive(value.link) ? "active" : ""}
-                        href={value.coming ? "/maintenance" : value.link}
+                        className={isActive(value.link) ? 'active' : ''}
+                        href={value.coming ? '/maintenance' : value.link}
                       >
                         {value.title}
                         {value.coming ? (
@@ -31,20 +31,20 @@ const PageLayout = ({ MenuData, menuGrid, title, gridNumber }) => {
                             {value.subTitle}
                           </span>
                         ) : (
-                          ""
+                          ''
                         )}
                       </Link>
                     </li>
                   )
                 );
                 return elements;
-              } else if (gridNumber === "2") {
+              } else if (gridNumber === '2') {
                 const elements = data.gridMenuItems2?.map(
                   (value, innerIndex) => (
                     <li key={innerIndex}>
                       <Link
-                        className={isActive(value.link) ? "active" : ""}
-                        href={value.coming ? "/maintenance" : value.link}
+                        className={isActive(value.link) ? 'active' : ''}
+                        href={value.coming ? '/maintenance' : value.link}
                       >
                         {value.title}
                         {value.coming ? (
@@ -56,7 +56,7 @@ const PageLayout = ({ MenuData, menuGrid, title, gridNumber }) => {
                             {value.subTitle}
                           </span>
                         ) : (
-                          ""
+                          ''
                         )}
                       </Link>
                     </li>
@@ -67,8 +67,8 @@ const PageLayout = ({ MenuData, menuGrid, title, gridNumber }) => {
               const elements = data.gridMenuItems3?.map((value, innerIndex) => (
                 <li key={innerIndex}>
                   <Link
-                    className={isActive(value.link) ? "active" : ""}
-                    href={value.coming ? "/maintenance" : value.link}
+                    className={isActive(value.link) ? 'active' : ''}
+                    href={value.coming ? '/maintenance' : value.link}
                   >
                     {value.title}
                     {value.coming ? (
@@ -78,7 +78,7 @@ const PageLayout = ({ MenuData, menuGrid, title, gridNumber }) => {
                     ) : value.subTitle ? (
                       <span className="rbt-badge-card">{value.subTitle}</span>
                     ) : (
-                      ""
+                      ''
                     )}
                   </Link>
                 </li>

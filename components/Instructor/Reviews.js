@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const Reviews = () => {
   return (
@@ -66,7 +66,8 @@ const Reviews = () => {
                       <td>January 30, 2021</td>
                       <td>
                         <span className="b3">
-                          Course: <Link href="#">Speaking Korean for Beginners</Link>
+                          Course:{' '}
+                          <Link href="#">Speaking Korean for Beginners</Link>
                         </span>
                         <div className="rbt-review">
                           <div className="rating">

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import Slider from "rc-slider";
-import "rc-slider/assets/index.css";
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 const CourseFilter = ({ filterToggle }) => {
   const [value, setValue] = useState([0, 400]);
@@ -13,7 +13,7 @@ const CourseFilter = ({ filterToggle }) => {
   };
   return (
     <>
-      <div className={`default-exp-wrapper ${filterToggle ? "d-none" : ""}`}>
+      <div className={`default-exp-wrapper ${filterToggle ? 'd-none' : ''}`}>
         <div className="filter-inner">
           <div className="filter-select-option">
             <div className="filter-select rbt-modern-select">
@@ -81,13 +81,13 @@ const CourseFilter = ({ filterToggle }) => {
                       range
                       value={value}
                       onChange={handleSliderChange}
-                      trackStyle={{ backgroundColor: "#2f57ef" }}
+                      trackStyle={{ backgroundColor: '#2f57ef' }}
                       handleStyle={{
-                        borderColor: "#2f57ef",
-                        backgroundColor: "#2f57ef",
-                        opacity: "1",
-                        boxShadow: "none",
-                        outline: "0",
+                        borderColor: '#2f57ef',
+                        backgroundColor: '#2f57ef',
+                        opacity: '1',
+                        boxShadow: 'none',
+                        outline: '0',
                       }}
                     />
                   </div>

@@ -1,43 +1,43 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import logo from "../../public/images/logo/logo.png";
-import logoLight from "../../public/images/dark/logo/logo-light.png";
-import footerBg from "../../public/images/shape/islamic-footer-bg.png";
-import footerMoon from "../../public/images/shape/i-moon.png";
-import footerStar from "../../public/images/shape/i-star.png";
+import logo from '../../public/images/logo/logo.png';
+import logoLight from '../../public/images/dark/logo/logo-light.png';
+import footerBg from '../../public/images/shape/islamic-footer-bg.png';
+import footerMoon from '../../public/images/shape/i-moon.png';
+import footerStar from '../../public/images/shape/i-star.png';
 
-import CopyRight from "./CopyRight";
+import CopyRight from './CopyRight';
 
-import FooterData from "../../data/footer.json";
-import SingleFooter from "./FooterProps/SingleFooter";
-import { useAppContext } from "@/context/Context";
+import FooterData from '../../data/footer.json';
+import SingleFooter from './FooterProps/SingleFooter';
+import { useAppContext } from '@/context/Context';
 
 const FooterOne = ({ isBox, bgColor, newsletterBorder, islamic }) => {
   const { isLightTheme } = useAppContext();
-  
+
   return (
     <>
       <footer
         className={`rbt-footer ${
-          newsletterBorder === undefined ? "" : "rbt-footer-shadow-1"
-        } footer-style-1 ${bgColor ? bgColor : "bg-color-white"} ${
-          isBox ? isBox : ""
-        } ${islamic === undefined ? "" : "footer-islamic"} overflow-hidden`}
+          newsletterBorder === undefined ? '' : 'rbt-footer-shadow-1'
+        } footer-style-1 ${bgColor ? bgColor : 'bg-color-white'} ${
+          isBox ? isBox : ''
+        } ${islamic === undefined ? '' : 'footer-islamic'} overflow-hidden`}
       >
         {newsletterBorder === undefined ? (
-          ""
+          ''
         ) : (
           <div className="gradient-shadow-top"></div>
         )}
         {newsletterBorder === undefined ? (
-          ""
+          ''
         ) : (
           <div className="gradient-shadow-bottom"></div>
         )}
 
         {islamic === undefined ? (
-          ""
+          ''
         ) : (
           <div className="shape-bg">
             <Image
@@ -49,7 +49,7 @@ const FooterOne = ({ isBox, bgColor, newsletterBorder, islamic }) => {
           </div>
         )}
         {islamic === undefined ? (
-          ""
+          ''
         ) : (
           <div className="moon">
             <Image src={footerMoon} width={45} height={48} alt="Moon" />
@@ -57,7 +57,7 @@ const FooterOne = ({ isBox, bgColor, newsletterBorder, islamic }) => {
         )}
 
         {islamic === undefined ? (
-          ""
+          ''
         ) : (
           <div className="star">
             <Image src={footerStar} width={33} height={39} alt="Star" />
@@ -151,7 +151,7 @@ const FooterOne = ({ isBox, bgColor, newsletterBorder, islamic }) => {
                       </ul>
 
                       {newsletterBorder === undefined ? (
-                        ""
+                        ''
                       ) : (
                         <h6 className="w-600 mt--25">Newsletter</h6>
                       )}
@@ -196,7 +196,6 @@ const FooterOne = ({ isBox, bgColor, newsletterBorder, islamic }) => {
                           </button>
                         </form>
                       )}
-
                     </div>
                   </div>
                 </div>

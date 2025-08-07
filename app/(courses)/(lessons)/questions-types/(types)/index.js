@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonTop from "@/components/Lesson/LessonTop";
-import QuestionType from "@/components/Lesson/QuestionType";
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonTop from '@/components/Lesson/LessonTop';
+import QuestionType from '@/components/Lesson/QuestionType';
 
 const QuestionTypeLayout = () => {
   const [sidebar, setSidebar] = useState(true);
@@ -16,7 +16,7 @@ const QuestionTypeLayout = () => {
         <div className="rbt-lesson-content-wrapper">
           <div
             className={`rbt-lesson-leftsidebar ${
-              sidebar ? "" : "sibebar-none"
+              sidebar ? '' : 'sibebar-none'
             }`}
           >
             <LessonSidebar />

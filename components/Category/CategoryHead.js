@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { usePathname } from "next/navigation";
+import React, { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
-import CategoryBanner from "./Category-Banner";
-import CourseFilter from "./Filter/CourseFilter";
-import { useAppContext } from "@/context/Context";
+import CategoryBanner from './Category-Banner';
+import CourseFilter from './Filter/CourseFilter';
+import { useAppContext } from '@/context/Context';
 
 const CategoryHead = ({
   category,
@@ -16,7 +16,7 @@ const CategoryHead = ({
   const pathname = usePathname();
   const { toggle, setToggle } = useAppContext();
   const [filterToggle, setFilterToggle] = useState(true);
-  const [activeTab, setActiveTab] = useState("All Course");
+  const [activeTab, setActiveTab] = useState('All Course');
 
   const handleButtonClick = (courseType) => {
     setCourseFilter(category);
@@ -41,22 +41,22 @@ const CategoryHead = ({
               <div className="row g-5 align-items-center">
                 <div className="col-lg-5 col-md-12">
                   <div className="rbt-sorting-list d-flex flex-wrap align-items-center">
-                    {pathname === "/course-card-3" ||
-                    pathname === "/course-masonry" ? (
-                      ""
+                    {pathname === '/course-card-3' ||
+                    pathname === '/course-masonry' ? (
+                      ''
                     ) : (
                       <div className="rbt-short-item switch-layout-container">
                         <ul className="course-switch-layout">
                           <li className="course-switch-item">
                             <button
                               className={`rbt-grid-view ${
-                                pathname === "/course-card-2"
+                                pathname === '/course-card-2'
                                   ? !toggle
-                                    ? "active"
-                                    : ""
+                                    ? 'active'
+                                    : ''
                                   : toggle
-                                  ? "active"
-                                  : ""
+                                    ? 'active'
+                                    : ''
                               }`}
                               title="Grid Layout"
                               onClick={() => setToggle(!toggle)}
@@ -68,13 +68,13 @@ const CategoryHead = ({
                           <li className="course-switch-item">
                             <button
                               className={`rbt-grid-view ${
-                                pathname === "/course-card-2"
+                                pathname === '/course-card-2'
                                   ? toggle
-                                    ? "active"
-                                    : ""
+                                    ? 'active'
+                                    : ''
                                   : !toggle
-                                  ? "active"
-                                  : ""
+                                    ? 'active'
+                                    : ''
                               }`}
                               title="List Layout"
                               onClick={() => setToggle(!toggle)}
@@ -104,8 +104,8 @@ const CategoryHead = ({
                 </div>
                 <div className="col-lg-7 col-md-12">
                   <div className="rbt-sorting-list d-flex flex-wrap align-items-end justify-content-start justify-content-lg-end">
-                    {pathname === "/course-with-sidebar" ? (
-                      ""
+                    {pathname === '/course-with-sidebar' ? (
+                      ''
                     ) : (
                       <div className="rbt-short-item">
                         <form action="#" className="rbt-search-style me-0">
@@ -123,9 +123,9 @@ const CategoryHead = ({
                       </div>
                     )}
 
-                    {pathname === "/course-with-tab" ||
-                    pathname === "/course-with-tab-two" ||
-                    pathname === "/course-with-sidebar" ? (
+                    {pathname === '/course-with-tab' ||
+                    pathname === '/course-with-tab-two' ||
+                    pathname === '/course-with-sidebar' ? (
                       <div className="rbt-short-item">
                         <div className="filter-select">
                           <span className="select-label d-block">Short By</span>
@@ -142,14 +142,14 @@ const CategoryHead = ({
                         </div>
                       </div>
                     ) : (
-                      ""
+                      ''
                     )}
-                    {pathname === "/course-filter-two-open" ||
-                    pathname === "/course-filter-two-toggle" ||
-                    pathname === "/course-filter-one-toggle" ||
-                    pathname === "/course-card-2" ||
-                    pathname === "/course-card-3" ||
-                    pathname === "/course-masonry" ? (
+                    {pathname === '/course-filter-two-open' ||
+                    pathname === '/course-filter-two-toggle' ||
+                    pathname === '/course-filter-one-toggle' ||
+                    pathname === '/course-card-2' ||
+                    pathname === '/course-card-3' ||
+                    pathname === '/course-masonry' ? (
                       <div className="rbt-short-item">
                         <div className="view-more-btn text-start text-sm-end">
                           <button
@@ -161,20 +161,20 @@ const CategoryHead = ({
                         </div>
                       </div>
                     ) : (
-                      ""
+                      ''
                     )}
                   </div>
                 </div>
 
-                {pathname === "/course-filter-one-open" ? (
+                {pathname === '/course-filter-one-open' ? (
                   <CourseFilter />
                 ) : (
                   <CourseFilter filterToggle={filterToggle} />
                 )}
 
-                {pathname === "/course-with-tab" ||
-                pathname === "/course-with-tab-two" ||
-                pathname === "/course-masonry" ? (
+                {pathname === '/course-with-tab' ||
+                pathname === '/course-with-tab-two' ||
+                pathname === '/course-masonry' ? (
                   <div className="col-lg-12 mt--60">
                     <ul
                       className="rbt-portfolio-filter filter-tab-button justify-content-start nav nav-tabs"
@@ -182,11 +182,11 @@ const CategoryHead = ({
                       role="tablist"
                     >
                       {[
-                        "All Course",
-                        "featured",
-                        "popular",
-                        "trending",
-                        "latest",
+                        'All Course',
+                        'featured',
+                        'popular',
+                        'trending',
+                        'latest',
                       ].map((courseType, index) => (
                         <li
                           key={index}
@@ -194,12 +194,12 @@ const CategoryHead = ({
                           role="presentation"
                         >
                           <button
-                            className={activeTab === courseType ? "active" : ""}
+                            className={activeTab === courseType ? 'active' : ''}
                             type="button"
                             onClick={() => handleButtonClick(courseType)}
                           >
                             <span className="filter-text">{courseType}</span>
-                            {courseType === "All Course" ? (
+                            {courseType === 'All Course' ? (
                               <span className="course-number">
                                 {category.filter((course) => course).length}
                               </span>
@@ -219,7 +219,7 @@ const CategoryHead = ({
                     </ul>
                   </div>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </div>

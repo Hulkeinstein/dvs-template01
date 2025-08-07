@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const ProgressbarFour = () => {
   const [percentage, setPercentages] = useState({
@@ -48,7 +48,7 @@ const ProgressbarFour = () => {
               <div className="radial-progress-single">
                 <div
                   className="m-auto"
-                  style={{ width: "185px", height: "185px" }}
+                  style={{ width: '185px', height: '185px' }}
                 >
                   <CircularProgressbar
                     className="circle-text count"
@@ -56,9 +56,9 @@ const ProgressbarFour = () => {
                     value={percentage1}
                     text={`${percentage1}%`}
                     styles={buildStyles({
-                      textColor: "#6b7385",
-                      pathColor: "#059DFF",
-                      trailColor: "#F6F6F6",
+                      textColor: '#6b7385',
+                      pathColor: '#059DFF',
+                      trailColor: '#F6F6F6',
                     })}
                   />
                 </div>
@@ -72,7 +72,7 @@ const ProgressbarFour = () => {
               <div className="radial-progress-single">
                 <div
                   className="m-auto"
-                  style={{ width: "185px", height: "185px" }}
+                  style={{ width: '185px', height: '185px' }}
                 >
                   <CircularProgressbar
                     className="circle-text count"
@@ -80,9 +80,9 @@ const ProgressbarFour = () => {
                     value={percentage2}
                     text={`${percentage2}%`}
                     styles={buildStyles({
-                      textColor: "#6b7385",
-                      pathColor: "#059DFF",
-                      trailColor: "#F6F6F6",
+                      textColor: '#6b7385',
+                      pathColor: '#059DFF',
+                      trailColor: '#F6F6F6',
                     })}
                   />
                 </div>
@@ -98,7 +98,7 @@ const ProgressbarFour = () => {
               <div className="radial-progress-single">
                 <div
                   className="m-auto"
-                  style={{ width: "185px", height: "185px" }}
+                  style={{ width: '185px', height: '185px' }}
                 >
                   <CircularProgressbar
                     className="circle-text count"
@@ -106,9 +106,9 @@ const ProgressbarFour = () => {
                     value={percentage3}
                     text={`${percentage3}%`}
                     styles={buildStyles({
-                      textColor: "#6b7385",
-                      pathColor: "#059DFF",
-                      trailColor: "#F6F6F6",
+                      textColor: '#6b7385',
+                      pathColor: '#059DFF',
+                      trailColor: '#F6F6F6',
                     })}
                   />
                 </div>
@@ -123,7 +123,7 @@ const ProgressbarFour = () => {
               <div className="radial-progress-single">
                 <div
                   className="m-auto"
-                  style={{ width: "185px", height: "185px" }}
+                  style={{ width: '185px', height: '185px' }}
                 >
                   <CircularProgressbar
                     className="circle-text count"
@@ -131,9 +131,9 @@ const ProgressbarFour = () => {
                     value={percentage4}
                     text={`${percentage4}%`}
                     styles={buildStyles({
-                      textColor: "#6b7385",
-                      pathColor: "#059DFF",
-                      trailColor: "#F6F6F6",
+                      textColor: '#6b7385',
+                      pathColor: '#059DFF',
+                      trailColor: '#F6F6F6',
                     })}
                   />
                 </div>

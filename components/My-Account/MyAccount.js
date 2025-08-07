@@ -1,6 +1,6 @@
-import Link from "next/link";
-import React from "react";
-import AccountForm from "./AccountForm";
+import Link from 'next/link';
+import React from 'react';
+import AccountForm from './AccountForm';
 
 const MyAccount = ({ account }) => {
   return (
@@ -87,7 +87,7 @@ const MyAccount = ({ account }) => {
                     <tr key={index}>
                       <td>{info.name}</td>
                       <td>{info.date}</td>
-                      <td>{info.expire ? "Yes" : "Never"}</td>
+                      <td>{info.expire ? 'Yes' : 'Never'}</td>
                       <td>
                         <Link className="rbt-btn btn-gradient btn-sm" href="#">
                           Download File

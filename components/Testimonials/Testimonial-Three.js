@@ -1,12 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Pagination } from 'swiper/modules';
 
-import TestimonialData from "../../data/elements/testimonial.json";
+import TestimonialData from '../../data/elements/testimonial.json';
 
-const TestimonialThree = ({ bgClass, designation, isStar,subTitleBg }) => {
+const TestimonialThree = ({ bgClass, designation, isStar, subTitleBg }) => {
   return (
     <>
       {TestimonialData &&
@@ -15,9 +15,7 @@ const TestimonialThree = ({ bgClass, designation, isStar,subTitleBg }) => {
             <div className="row">
               <div className="col-lg-12 mb--60">
                 <div className="section-title text-center">
-                  <span className={`subtitle ${subTitleBg}`}>
-                    {data.tag}
-                  </span>
+                  <span className={`subtitle ${subTitleBg}`}>{data.tag}</span>
                   <h2 className="title">{data.title}</h2>
                 </div>
               </div>
@@ -34,7 +32,7 @@ const TestimonialThree = ({ bgClass, designation, isStar,subTitleBg }) => {
                         >
                           <button
                             className={`accordion-button ${
-                              !item.collapsed ? "collapsed" : ""
+                              !item.collapsed ? 'collapsed' : ''
                             }`}
                             type="button"
                             data-bs-toggle="collapse"
@@ -48,7 +46,7 @@ const TestimonialThree = ({ bgClass, designation, isStar,subTitleBg }) => {
                         <div
                           id={item.collapse}
                           className={`accordion-collapse collapse ${
-                            item.show ? "show" : ""
+                            item.show ? 'show' : ''
                           }`}
                           aria-labelledby={item.heading}
                           data-bs-parent="#accordionExamplea1"
@@ -68,7 +66,7 @@ const TestimonialThree = ({ bgClass, designation, isStar,subTitleBg }) => {
                   slidesPerView={1}
                   modules={[Pagination]}
                   pagination={{
-                    el: ".rbt-swiper-pagination",
+                    el: '.rbt-swiper-pagination',
                     clickable: true,
                   }}
                   className="swiper testimonial-activation-1 rbt-dot-bottom-left pb--60"

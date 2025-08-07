@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import sal from "sal.js";
+import { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import sal from 'sal.js';
 
-import { useAppContext } from "@/context/Context";
+import { useAppContext } from '@/context/Context';
 
 const CourseCardTwo = ({ course }) => {
   const { toggle } = useAppContext();
@@ -21,7 +21,7 @@ const CourseCardTwo = ({ course }) => {
     <>
       <div
         className={`rbt-course-grid-column list-column-half ${
-          toggle ? "active-list-view" : ""
+          toggle ? 'active-list-view' : ''
         }`}
       >
         {course.map((data, index) => (
@@ -34,7 +34,7 @@ const CourseCardTwo = ({ course }) => {
           >
             <div
               className={`rbt-card variation-01 rbt-hover ${
-                toggle ? "card-list-2" : ""
+                toggle ? 'card-list-2' : ''
               }`}
             >
               <div className="rbt-card-img">

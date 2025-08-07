@@ -1,23 +1,22 @@
-import CourseMenu from "./Course-Sections/Course-Menu";
-import Overview from "./Course-Sections/Overview";
-import Content from "./Course-Sections/Content";
-import Requirements from "./Course-Sections/Requirements";
-import Instructor from "./Course-Sections/Instructor";
-import Review from "./Course-Sections/Review";
-import Featured from "./Course-Sections/Featured";
-import RelatedCourse from "./Course-Sections/RelatedCourse";
-import Viedo from "./Course-Sections/Viedo";
-import Link from "next/link";
-import Image from "next/image";
+import CourseMenu from './Course-Sections/Course-Menu';
+import Overview from './Course-Sections/Overview';
+import Content from './Course-Sections/Content';
+import Requirements from './Course-Sections/Requirements';
+import Instructor from './Course-Sections/Instructor';
+import Review from './Course-Sections/Review';
+import Featured from './Course-Sections/Featured';
+import RelatedCourse from './Course-Sections/RelatedCourse';
+import Viedo from './Course-Sections/Viedo';
+import Link from 'next/link';
+import Image from 'next/image';
 
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/art-stu-2.png" },
-  { name: "Mark Jordan", src: "/images/shape/art-stu-1.png" },
-  { name: "Jordan", src: "/images/shape/art-stu-3.png" },
+  { name: 'Ava Miller', src: '/images/shape/art-stu-2.png' },
+  { name: 'Mark Jordan', src: '/images/shape/art-stu-1.png' },
+  { name: 'Jordan', src: '/images/shape/art-stu-3.png' },
 ];
 
 const CourseDetailsFive = ({ checkMatchCourses }) => {
-  
   return (
     <>
       <div className="col-lg-8">
@@ -58,7 +57,7 @@ const CourseDetailsFive = ({ checkMatchCourses }) => {
                 <i className="feather-user"></i>
               </span>
               <h6 className="b3 w-400 mb--0">
-                <span className="color-body">by</span>{" "}
+                <span className="color-body">by</span>{' '}
                 <Link
                   className="px-1"
                   href={`/profile/${checkMatchCourses.id}`}
@@ -222,7 +221,7 @@ const CourseDetailsFive = ({ checkMatchCourses }) => {
                         </span>
                       </div>
                       <span className="author">
-                        By{" "}
+                        By{' '}
                         <Link
                           className="px-1"
                           href={`/profile/${innerData.id}`}

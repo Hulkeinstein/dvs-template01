@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import sal from "sal.js";
-import Link from "next/link";
+import { useEffect } from 'react';
+import sal from 'sal.js';
+import Link from 'next/link';
 
-import CategoryEight from "../Category/CategoryEight";
-import Card from "../Cards/Card";
-import CounterFive from "../Counters/Counter-Five";
-import TestimonialFive from "../Testimonials/Testimonial-Five";
-import BlogGridMinimal from "../Blogs/BlogGridMinimal";
-import NewsletterFour from "../Newsletters/Newsletter-Four";
+import CategoryEight from '../Category/CategoryEight';
+import Card from '../Cards/Card';
+import CounterFive from '../Counters/Counter-Five';
+import TestimonialFive from '../Testimonials/Testimonial-Five';
+import BlogGridMinimal from '../Blogs/BlogGridMinimal';
+import NewsletterFour from '../Newsletters/Newsletter-Four';
 
 const Marketplace = ({ blogdata }) => {
   useEffect(() => {

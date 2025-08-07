@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TeamData from "../../data/elements/team.json";
-import TeamHead from "./TeamHead";
+import TeamData from '../../data/elements/team.json';
+import TeamHead from './TeamHead';
 
 const TeamSix = ({ isHead }) => {
   return (
@@ -11,7 +11,7 @@ const TeamSix = ({ isHead }) => {
         {isHead === undefined ? (
           <TeamHead title="Team (Hover Style)." desc="Awesome Hover Style." />
         ) : (
-          ""
+          ''
         )}
         <div className="row row--15 mt_dec--30">
           {TeamData &&

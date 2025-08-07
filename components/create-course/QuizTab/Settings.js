@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const Settings = () => {
   const [maxQuestions, setMaxQuestions] = useState(10);
@@ -31,7 +31,7 @@ const Settings = () => {
             <div className="content">
               <select
                 className="w-100 rbt-select-dark"
-                style={{ height: "50px" }}
+                style={{ height: '50px' }}
               >
                 <option value="seconds">Seconds </option>
                 <option value="minutes">Minutes</option>

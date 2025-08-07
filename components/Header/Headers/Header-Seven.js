@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-import logo from "../../../public/images/logo/logo.png";
-import logoLight from "../../../public/images/dark/logo/logo-light.png";
+import logo from '../../../public/images/logo/logo.png';
+import logoLight from '../../../public/images/dark/logo/logo-light.png';
 
-import Nav from "../Nav";
-import Category from "../Category/Category";
-import { useAppContext } from "@/context/Context";
+import Nav from '../Nav';
+import Category from '../Category/Category';
+import { useAppContext } from '@/context/Context';
 
 const HeaderSeven = ({
   gapSpaceBetween,
@@ -32,17 +32,17 @@ const HeaderSeven = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
     <>
       <div
         className={`rbt-header-wrapper ${gapSpaceBetween} ${transparent} ${
-          !headerType && isSticky ? "rbt-sticky" : ""
+          !headerType && isSticky ? 'rbt-sticky' : ''
         }`}
       >
         <div className="container">

@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { useAppContext } from "@/context/Context";
+import { useAppContext } from '@/context/Context';
 
 const CourseTab = ({ course, start, end }) => {
   const { toggle } = useAppContext();
@@ -10,14 +10,14 @@ const CourseTab = ({ course, start, end }) => {
     <>
       <div
         className={`rbt-course-grid-column ${
-          !toggle ? "active-list-view" : ""
+          !toggle ? 'active-list-view' : ''
         }`}
       >
         {course.slice(start, end).map((data, index) => (
           <div className="course-grid-3" key={index}>
             <div
               className={`rbt-card variation-01 rbt-hover ${
-                !toggle ? "card-list-2" : ""
+                !toggle ? 'card-list-2' : ''
               }`}
             >
               <div className="rbt-card-img">
@@ -86,7 +86,10 @@ const CourseTab = ({ course, start, end }) => {
                     </Link>
                   </div>
                   <div className="rbt-author-info">
-                    By <Link href={`/profile/${data.id}`}>{data.name || data.instructor || 'Instructor'}</Link>
+                    By{' '}
+                    <Link href={`/profile/${data.id}`}>
+                      {data.name || data.instructor || 'Instructor'}
+                    </Link>
                     In <Link href="#">{data.userCategory}</Link>
                   </div>
                 </div>

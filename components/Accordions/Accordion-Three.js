@@ -1,4 +1,4 @@
-import AccordionData from "../../data/elements/accordion.json";
+import AccordionData from '../../data/elements/accordion.json';
 
 const AccordionThree = () => {
   return (
@@ -26,7 +26,7 @@ const AccordionThree = () => {
                       >
                         <button
                           className={`accordion-button ${
-                            !item.collapsed ? "collapsed" : ""
+                            !item.collapsed ? 'collapsed' : ''
                           }`}
                           type="button"
                           data-bs-toggle="collapse"
@@ -40,7 +40,7 @@ const AccordionThree = () => {
                       <div
                         id={item.collapse}
                         className={`accordion-collapse collapse ${
-                          item.show ? "show" : ""
+                          item.show ? 'show' : ''
                         }`}
                         aria-labelledby={item.heading}
                         data-bs-parent="#accordionExamplec3"

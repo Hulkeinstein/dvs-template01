@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import React, { useState } from "react";
+import Link from 'next/link';
+import React, { useState } from 'react';
 
 const LessonQuiz = () => {
   const [next, updateNext] = useState(false);
   return (
     <>
       <form id="quiz-form" className="quiz-form-wrapper">
-        <div id="question-1" className={`question ${next ? "d-none" : ""}`}>
+        <div id="question-1" className={`question ${next ? 'd-none' : ''}`}>
           <div className={`quize-top-meta`}>
             <div className="quize-top-left">
               <span>
@@ -76,7 +76,7 @@ const LessonQuiz = () => {
           </div>
         </div>
 
-        <div id="question-2" className={`question ${!next ? "d-none" : ""}`}>
+        <div id="question-2" className={`question ${!next ? 'd-none' : ''}`}>
           <div className="quize-top-meta">
             <div className="quize-top-left">
               <span>
@@ -164,7 +164,7 @@ const LessonQuiz = () => {
           </button>
           <button
             className={`rbt-btn bg-primary-opacity btn-sm ms-2 ${
-              next ? "d-none" : ""
+              next ? 'd-none' : ''
             }`}
             id="next-btn"
             type="button"
@@ -174,7 +174,7 @@ const LessonQuiz = () => {
           </button>
           <Link
             className={`rbt-btn btn-gradient btn-sm ms-2 ${
-              !next ? "d-none" : ""
+              !next ? 'd-none' : ''
             }`}
             href="/lesson-quiz-result"
             id="submit-btn"

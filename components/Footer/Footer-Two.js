@@ -1,9 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import logo from "../../public/images/logo/logo.png";
-import logoLight from "../../public/images/dark/logo/logo-light.png";
-import { useAppContext } from "@/context/Context";
+import logo from '../../public/images/logo/logo.png';
+import logoLight from '../../public/images/dark/logo/logo-light.png';
+import { useAppContext } from '@/context/Context';
 
 const FooterTwo = () => {
   const { isLightTheme } = useAppContext();

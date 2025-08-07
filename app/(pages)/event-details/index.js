@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
-import sal from "sal.js";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
+import sal from 'sal.js';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import EventBreadCrumb from "@/components/Events/EventBreadCrumb";
-import EventDetails from "@/components/Events/EventDetails";
-import CallToActionFour from "@/components/Call-To-Action/CallToAction-Four";
-import FooterOne from "@/components/Footer/Footer-One";
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import EventBreadCrumb from '@/components/Events/EventBreadCrumb';
+import EventDetails from '@/components/Events/EventDetails';
+import CallToActionFour from '@/components/Call-To-Action/CallToAction-Four';
+import FooterOne from '@/components/Footer/Footer-One';
 
-import EventData from "../../../data/events.json";
+import EventData from '../../../data/events.json';
 
 const SingleEvent = ({ getParams }) => {
   const router = useRouter();
@@ -33,7 +33,7 @@ const SingleEvent = ({ getParams }) => {
     });
 
     if (postId && getMatchEvent === undefined) {
-      router.push("/event-list");
+      router.push('/event-list');
     }
   }, [getMatchEvent, router]);
 

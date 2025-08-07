@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import StudentDashboardHeader from "@/components/Student/StudentDashboardHeader";
-import StudentDashboardSidebar from "@/components/Student/StudentDashboardSidebar";
-import Wishlist from "@/components/Student/Wishlist";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
+import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
+import Wishlist from '@/components/Student/Wishlist';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
 const StudentWishlist = () => {
   return (

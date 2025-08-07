@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import SplitData from "../../data/elements/split.json";
+import SplitData from '../../data/elements/split.json';
 
 const SplitTwo = ({ isImg }) => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);

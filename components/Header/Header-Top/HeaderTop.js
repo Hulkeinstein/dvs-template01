@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import HeaderTopData from "../../../data/headerTop";
+import HeaderTopData from '../../../data/headerTop';
 
 const HeaderTop = () => {
   return (

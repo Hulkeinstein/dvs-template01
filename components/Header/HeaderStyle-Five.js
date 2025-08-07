@@ -1,16 +1,14 @@
-import { useAppContext } from "@/context/Context";
-import DarkSwitch from "./dark-switch";
-import HeaderTopSeven from "./Header-Top/HeaderTop-Seven";
-import HeaderFive from "./Headers/Header-Five";
+import { useAppContext } from '@/context/Context';
+import DarkSwitch from './dark-switch';
+import HeaderTopSeven from './Header-Top/HeaderTop-Seven';
+import HeaderFive from './Headers/Header-Five';
 
 const HeaderStyleFive = () => {
   const { isLightTheme, toggleTheme } = useAppContext();
   return (
     <>
       <DarkSwitch isLight={isLightTheme} switchTheme={toggleTheme} />
-      <header
-        className={`rbt-header rbt-header-default`}
-      >
+      <header className={`rbt-header rbt-header-default`}>
         <div className="rbt-sticky-placeholder"></div>
         <HeaderTopSeven
           bgColor="bg-color-transparent"

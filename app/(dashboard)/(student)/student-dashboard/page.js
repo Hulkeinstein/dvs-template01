@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 export const metadata = {
-  title: "Student Dashboard - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Student Dashboard - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const StudentDashboardLayout = () => {

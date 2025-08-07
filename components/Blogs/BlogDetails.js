@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useRef } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Navigation } from 'swiper/modules';
 
-import BlogAuthor from "./Blog-Sections/Blog-Author";
-import ComntForm from "./Blog-Sections/ComntForm";
-import Comment from "./Blog-Sections/Comment";
+import BlogAuthor from './Blog-Sections/Blog-Author';
+import ComntForm from './Blog-Sections/ComntForm';
+import Comment from './Blog-Sections/Comment';
 
 const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
   const thumbsSwiperRef = useRef(null);
@@ -18,7 +18,7 @@ const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
     <>
       <div className="content">
         {isQuote || isAudio || isVideo ? (
-          ""
+          ''
         ) : (
           <>
             {isSlider ? (
@@ -32,8 +32,8 @@ const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
                   loop={false}
                   autoHeight={true}
                   navigation={{
-                    nextEl: ".rbt-arrow-left",
-                    prevEl: ".rbt-arrow-right",
+                    nextEl: '.rbt-arrow-left',
+                    prevEl: '.rbt-arrow-right',
                     clickable: true,
                   }}
                 >
@@ -98,7 +98,7 @@ const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
             Your browser does not support the audio tag.
           </audio>
         ) : (
-          ""
+          ''
         )}
 
         {isVideo ? (
@@ -111,7 +111,7 @@ const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
             ></iframe>
           </div>
         ) : (
-          ""
+          ''
         )}
 
         <p>{matchedBlog.descOne}</p>
@@ -119,8 +119,8 @@ const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
         <blockquote
           className={`${
             isQuote
-              ? "rbt-blockquote mt--0 alignwide square rbt-border-none bg-color-gray-light"
-              : "wp-block-quote"
+              ? 'rbt-blockquote mt--0 alignwide square rbt-border-none bg-color-gray-light'
+              : 'wp-block-quote'
           }`}
         >
           <p>{matchedBlog.quote}</p>
@@ -131,7 +131,7 @@ const BlogDetails = ({ matchedBlog, isSlider, isQuote, isAudio, isVideo }) => {
           </cite>
         </blockquote>
         {isQuote ? (
-          ""
+          ''
         ) : (
           <div className="wp-block-gallery columns-3 is-cropped">
             <ul className="blocks-gallery-grid">

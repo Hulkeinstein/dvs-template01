@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { createClient } from '@supabase/supabase-js';
 import twilio from 'twilio';
-import { generateOTP, getOTPExpiryTime, normalizePhoneNumber } from '@/app/lib/utils/otp';
+import {
+  generateOTP,
+  getOTPExpiryTime,
+  normalizePhoneNumber,
+} from '@/app/lib/utils/otp';
 
 // Supabase 클라이언트
 const supabase = createClient(
@@ -29,15 +33,21 @@ export async function POST(request) {
     }
 
     const { phone } = await request.json();
-    
+
     if (!phone) {
-      return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Phone number is required' },
+        { status: 400 }
+      );
     }
 
     // 전화번호 정규화
     const normalizedPhone = normalizePhoneNumber(phone);
     if (!normalizedPhone) {
-      return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid phone number format' },
+        { status: 400 }
+      );
     }
 
     // Rate limiting: 같은 번호로 1분 내 재요청 방지
@@ -53,10 +63,17 @@ export async function POST(request) {
       .limit(1);
 
     if (recentVerifications && recentVerifications.length > 0) {
-      const secondsLeft = 60 - Math.floor((new Date() - new Date(recentVerifications[0].created_at)) / 1000);
-      return NextResponse.json({ 
-        error: `Please wait ${secondsLeft} seconds before requesting a new code` 
-      }, { status: 429 });
+      const secondsLeft =
+        60 -
+        Math.floor(
+          (new Date() - new Date(recentVerifications[0].created_at)) / 1000
+        );
+      return NextResponse.json(
+        {
+          error: `Please wait ${secondsLeft} seconds before requesting a new code`,
+        },
+        { status: 429 }
+      );
     }
 
     // 전화번호 중복 체크
@@ -68,9 +85,12 @@ export async function POST(request) {
       .single();
 
     if (existingUser) {
-      return NextResponse.json({ 
-        error: 'This phone number is already registered with another account' 
-      }, { status: 409 });
+      return NextResponse.json(
+        {
+          error: 'This phone number is already registered with another account',
+        },
+        { status: 409 }
+      );
     }
 
     // OTP 생성
@@ -93,26 +113,36 @@ export async function POST(request) {
         otp: otp,
         expires_at: expiresAt.toISOString(),
         verified: false,
-        attempts: 0
+        attempts: 0,
       });
 
     if (insertError) {
       console.error('Error saving OTP:', insertError);
-      console.error('Insert error full object:', JSON.stringify(insertError, null, 2));
-      
+      console.error(
+        'Insert error full object:',
+        JSON.stringify(insertError, null, 2)
+      );
+
       // The error is likely a table not found error
       if (!insertError.message && !insertError.code) {
         console.error('Table phone_verifications likely does not exist');
-        return NextResponse.json({ 
-          error: 'Database table not found. Please run migrations.', 
-          details: 'The phone_verifications table needs to be created in Supabase'
-        }, { status: 500 });
+        return NextResponse.json(
+          {
+            error: 'Database table not found. Please run migrations.',
+            details:
+              'The phone_verifications table needs to be created in Supabase',
+          },
+          { status: 500 }
+        );
       }
-      
-      return NextResponse.json({ 
-        error: 'Failed to generate OTP', 
-        details: insertError.message || insertError.toString()
-      }, { status: 500 });
+
+      return NextResponse.json(
+        {
+          error: 'Failed to generate OTP',
+          details: insertError.message || insertError.toString(),
+        },
+        { status: 500 }
+      );
     }
 
     // SMS 전송
@@ -121,7 +151,7 @@ export async function POST(request) {
         await twilioClient.messages.create({
           body: `Your verification code is: ${otp}. It will expire in 5 minutes.`,
           from: process.env.TWILIO_PHONE_NUMBER,
-          to: normalizedPhone
+          to: normalizedPhone,
         });
       } catch (twilioError) {
         console.error('Twilio error:', twilioError);
@@ -135,14 +165,16 @@ export async function POST(request) {
       console.log(`Development OTP for ${normalizedPhone}: ${otp}`);
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       message: 'OTP sent successfully',
-      expiresIn: 300 // 5분 (초 단위)
+      expiresIn: 300, // 5분 (초 단위)
     });
-
   } catch (error) {
     console.error('Send OTP error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

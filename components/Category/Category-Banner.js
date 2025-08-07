@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const CategoryBanner = ({ category }) => {
   return (
@@ -20,14 +20,14 @@ const CategoryBanner = ({ category }) => {
                   <li className="rbt-breadcrumb-item active">
                     {category && category.category
                       ? category.category
-                      : "All Courses"}
+                      : 'All Courses'}
                   </li>
                 </ul>
                 <div className=" title-wrapper">
                   <h1 className="title mb--0">
                     {category && category.category
                       ? category.category
-                      : "All Courses"}
+                      : 'All Courses'}
                   </h1>
                   <Link href="#" className="rbt-badge-2">
                     <div className="image">🎉</div>
@@ -37,7 +37,7 @@ const CategoryBanner = ({ category }) => {
                 <p className="description">
                   {category && category.desc
                     ? category.desc
-                    : "Courses that help beginner designers become true unicorns."}
+                    : 'Courses that help beginner designers become true unicorns.'}
                 </p>
               </div>
             </div>

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { Provider } from "react-redux";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { ParallaxProvider } from "react-scroll-parallax";
+import { Provider } from 'react-redux';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { ParallaxProvider } from 'react-scroll-parallax';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import FooterOne from "@/components/Footer/Footer-One";
-import HealthInstitute from "@/components/24-health-wellness-institute/HealthInstitute";
-import HeaderStyleFour from "@/components/Header/HeaderStyle-Four";
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import FooterOne from '@/components/Footer/Footer-One';
+import HealthInstitute from '@/components/24-health-wellness-institute/HealthInstitute';
+import HeaderStyleFour from '@/components/Header/HeaderStyle-Four';
 
 const HealthInstitutePage = ({ getAllBlogs }) => {
   return (

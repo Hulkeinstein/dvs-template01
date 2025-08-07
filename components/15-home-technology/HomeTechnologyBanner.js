@@ -1,10 +1,10 @@
-import Image from "next/image";
-import React from "react";
+import Image from 'next/image';
+import React from 'react';
 
-import brand1 from "../../public/images/brand/partner-5.webp";
-import brand2 from "../../public/images/brand/partner-1.webp";
-import brand3 from "../../public/images/brand/partner-6.webp";
-import brand4 from "../../public/images/brand/partner-3.webp";
+import brand1 from '../../public/images/brand/partner-5.webp';
+import brand2 from '../../public/images/brand/partner-1.webp';
+import brand3 from '../../public/images/brand/partner-6.webp';
+import brand4 from '../../public/images/brand/partner-3.webp';
 
 const HomeTechnologyBanner = () => {
   return (

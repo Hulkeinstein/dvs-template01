@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Link from "next/link";
-import { Provider } from "react-redux";
-import { ParallaxProvider } from "react-scroll-parallax";
-import Store from "@/redux/store";
+import Context from '@/context/Context';
+import Link from 'next/link';
+import { Provider } from 'react-redux';
+import { ParallaxProvider } from 'react-scroll-parallax';
+import Store from '@/redux/store';
 
-import Banner from "@/components/About-Us-01/Banner";
-import Teacher from "@/components/About-Us-01/Teacher";
-import About from "@/components/Abouts/About";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import NewsletterTwo from "@/components/Newsletters/Newsletter-Two";
-import SplitTwo from "@/components/Split/Split-Two";
-import TestimonialSix from "@/components/Testimonials/Testimonial-Six";
+import Banner from '@/components/About-Us-01/Banner';
+import Teacher from '@/components/About-Us-01/Teacher';
+import About from '@/components/Abouts/About';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import NewsletterTwo from '@/components/Newsletters/Newsletter-Two';
+import SplitTwo from '@/components/Split/Split-Two';
+import TestimonialSix from '@/components/Testimonials/Testimonial-Six';
 
 const AboutUsPage = () => {
   return (

@@ -1,18 +1,18 @@
-import Link from "next/link";
-import React from "react";
-import Image from "next/image";
+import Link from 'next/link';
+import React from 'react';
+import Image from 'next/image';
 
-import AboutFive from "../Abouts/About-Five";
-import CategoryEight from "../Category/CategoryEight";
+import AboutFive from '../Abouts/About-Five';
+import CategoryEight from '../Category/CategoryEight';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
-import callImg from "../../public/images/shape/cta-4.png";
-import CounterSix from "../Counters/Counter-Six";
-import PricingFive from "../Pricing/Pricing-Five";
-import TestimonialSix from "../Testimonials/Testimonial-Six";
-import InstructorForm from "./InstructorForm";
-import NewsletterThree from "../Newsletters/Newsletter-Three";
+import callImg from '../../public/images/shape/cta-4.png';
+import CounterSix from '../Counters/Counter-Six';
+import PricingFive from '../Pricing/Pricing-Five';
+import TestimonialSix from '../Testimonials/Testimonial-Six';
+import InstructorForm from './InstructorForm';
+import NewsletterThree from '../Newsletters/Newsletter-Three';
 
 const InstructorPortfolio = () => {
   let getAllCourse = JSON.parse(JSON.stringify(CourseDetails.courseDetails));
@@ -155,7 +155,7 @@ const InstructorPortfolio = () => {
                             <span>Off</span>
                           </div>
                         ) : (
-                          ""
+                          ''
                         )}
                       </Link>
                     </div>

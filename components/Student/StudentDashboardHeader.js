@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { getUserCertificates } from "@/app/lib/certificate/actions/certificateActions";
-import { isFeatureEnabled } from "@/app/lib/certificate/utils/featureFlags";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { getUserCertificates } from '@/app/lib/certificate/actions/certificateActions';
+import { isFeatureEnabled } from '@/app/lib/certificate/utils/featureFlags';
 
 const StudentDashboardHeader = ({ userId, userProfile }) => {
   const [certificateCount, setCertificateCount] = useState(0);
@@ -42,13 +42,16 @@ const StudentDashboardHeader = ({ userId, userProfile }) => {
               />
             </div>
             <div className="tutor-content">
-              <h5 className="title">{userProfile?.full_name || "Student"}</h5>
+              <h5 className="title">{userProfile?.full_name || 'Student'}</h5>
               <ul className="rbt-meta rbt-meta-white mt--5">
                 <li>
-                  <i className="feather-book"></i>{enrolledCount} Courses Enrolled
+                  <i className="feather-book"></i>
+                  {enrolledCount} Courses Enrolled
                 </li>
                 <li>
-                  <i className="feather-award"></i>{certificateCount} Certificate{certificateCount !== 1 ? 's' : ''}
+                  <i className="feather-award"></i>
+                  {certificateCount} Certificate
+                  {certificateCount !== 1 ? 's' : ''}
                 </li>
               </ul>
             </div>

@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Newsletter from "@/components/Newsletters/Newsletter";
-import NewsletterFour from "@/components/Newsletters/Newsletter-Four";
-import NewsletterThree from "@/components/Newsletters/Newsletter-Three";
-import NewsletterTwo from "@/components/Newsletters/Newsletter-Two";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Newsletter from '@/components/Newsletters/Newsletter';
+import NewsletterFour from '@/components/Newsletters/Newsletter-Four';
+import NewsletterThree from '@/components/Newsletters/Newsletter-Three';
+import NewsletterTwo from '@/components/Newsletters/Newsletter-Two';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
 const NewsletterPage = () => {
   return (

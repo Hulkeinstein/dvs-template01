@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import Pagination from "../Common/Pagination";
-import Sidebar from "./Blog-Sections/Sidebar";
+import Pagination from '../Common/Pagination';
+import Sidebar from './Blog-Sections/Sidebar';
 
 const BlogSidebar = ({ blogdata }) => {
   const [blogs, setBlogs] = useState([]);
@@ -19,7 +19,7 @@ const BlogSidebar = ({ blogdata }) => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 

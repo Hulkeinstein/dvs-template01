@@ -1,8 +1,8 @@
-import PricingPage from "./(pricing)";
+import PricingPage from './(pricing)';
 
 export const metadata = {
-  title: "Pricing - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Pricing - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const PricingLayout = () => {

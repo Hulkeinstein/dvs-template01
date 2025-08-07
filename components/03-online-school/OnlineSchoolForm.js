@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const OnlineSchoolForm = () => {
   const [focusedInput, setFocusedInput] = useState(null);
@@ -8,38 +8,38 @@ const OnlineSchoolForm = () => {
         <h3 className="title">Get a Free Histudy Online Course</h3>
         <form id="contact-form">
           <div
-            className={`form-group ${focusedInput === "name" ? "focused" : ""}`}
+            className={`form-group ${focusedInput === 'name' ? 'focused' : ''}`}
           >
             <input
               name="con_name"
               type="text"
               placeholder="Name"
-              onFocus={() => setFocusedInput("name")}
+              onFocus={() => setFocusedInput('name')}
               onBlur={() => setFocusedInput(null)}
             />
             <span className="focus-border"></span>
           </div>
           <div
             className={`form-group ${
-              focusedInput === "email" ? "focused" : ""
+              focusedInput === 'email' ? 'focused' : ''
             }`}
           >
             <input
               name="con_email"
               placeholder="Email"
               type="email"
-              onFocus={() => setFocusedInput("email")}
+              onFocus={() => setFocusedInput('email')}
               onBlur={() => setFocusedInput(null)}
             />
             <span className="focus-border"></span>
           </div>
           <div
             className={`form-group ${
-              focusedInput === "message" ? "focused" : ""
+              focusedInput === 'message' ? 'focused' : ''
             }`}
           >
             <textarea
-              onFocus={() => setFocusedInput("message")}
+              onFocus={() => setFocusedInput('message')}
               onBlur={() => setFocusedInput(null)}
               placeholder="Message"
             ></textarea>

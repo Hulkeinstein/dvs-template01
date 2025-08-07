@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import LessonQuizData from "../../data/lesson.json";
+import LessonQuizData from '../../data/lesson.json';
 
 const LessonQuizResult = ({ details, setDetails }) => {
   return (
@@ -44,11 +44,11 @@ const LessonQuizResult = ({ details, setDetails }) => {
                   <span
                     className={`rbt-badge-5 ${
                       data.isPass
-                        ? "bg-color-success-opacity color-success"
-                        : "bg-color-danger-opacity color-danger"
+                        ? 'bg-color-success-opacity color-success'
+                        : 'bg-color-danger-opacity color-danger'
                     }`}
                   >
-                    {data.isPass ? "Pass" : "Fail"}
+                    {data.isPass ? 'Pass' : 'Fail'}
                   </span>
                 </td>
                 <td>

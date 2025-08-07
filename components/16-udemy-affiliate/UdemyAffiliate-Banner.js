@@ -1,8 +1,8 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
 const UdemyAffiliateBanner = ({ CourseData }) => {
   return (
@@ -12,8 +12,8 @@ const UdemyAffiliateBanner = ({ CourseData }) => {
         slidesPerView={1}
         modules={[Navigation]}
         navigation={{
-          nextEl: ".rbt-arrow-left",
-          prevEl: ".rbt-arrow-right",
+          nextEl: '.rbt-arrow-left',
+          prevEl: '.rbt-arrow-right',
         }}
       >
         {CourseData &&

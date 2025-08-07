@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 
 const Banner = ({ text, col, blogdata }) => {
   return (
@@ -27,7 +27,7 @@ const Banner = ({ text, col, blogdata }) => {
                     <h1 className="title mb--0">{text}</h1>
                     <Link href="#" className="rbt-badge-2">
                       <div className="image">🎉</div>
-                      {blogdata ? `${blogdata.length} Articles` : "50 Articles"}
+                      {blogdata ? `${blogdata.length} Articles` : '50 Articles'}
                     </Link>
                   </div>
 

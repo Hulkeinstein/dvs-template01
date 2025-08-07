@@ -1,36 +1,36 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Link as ScrollLink } from "react-scroll";
+import Link from 'next/link';
+import Image from 'next/image';
+import React, { useEffect, useState } from 'react';
+import { Link as ScrollLink } from 'react-scroll';
 
-import HeaderTopBar from "./HeaderTopBar/HeaderTopBar";
+import HeaderTopBar from './HeaderTopBar/HeaderTopBar';
 
-import logo from "../../public/images/logo/logo.png";
-import { useAppContext } from "@/context/Context";
-import DarkSwitch from "./dark-switch";
+import logo from '../../public/images/logo/logo.png';
+import { useAppContext } from '@/context/Context';
+import DarkSwitch from './dark-switch';
 
 const HeaderStyleTwelve = () => {
   const { mobile, setMobile, isLightTheme, toggleTheme } = useAppContext();
   const [isSticky, setIsSticky] = useState(false);
-  const [currentSection, setCurrentSection] = useState("home");
+  const [currentSection, setCurrentSection] = useState('home');
 
   const sections = [
-    { id: "home", label: "Home" },
-    { id: "about", label: "About Us" },
-    { id: "guideline", label: "Course Guideline" },
-    { id: "coursecontent", label: "Course Content" },
-    { id: "career", label: "Career" },
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About Us' },
+    { id: 'guideline', label: 'Course Guideline' },
+    { id: 'coursecontent', label: 'Course Content' },
+    { id: 'career', label: 'Career' },
   ];
 
   useEffect(() => {
     const sectionIds = [
-      "home",
-      "about",
-      "guideline",
-      "coursecontent",
-      "career",
+      'home',
+      'about',
+      'guideline',
+      'coursecontent',
+      'career',
     ];
 
     const handleScroll = () => {
@@ -45,10 +45,10 @@ const HeaderStyleTwelve = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [currentSection]);
 
@@ -62,10 +62,10 @@ const HeaderStyleTwelve = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
@@ -76,7 +76,7 @@ const HeaderStyleTwelve = () => {
 
         <div className="rbt-sticky-placeholder"></div>
 
-        <div className={`rbt-header-wrapper ${isSticky ? "rbt-sticky" : ""}`}>
+        <div className={`rbt-header-wrapper ${isSticky ? 'rbt-sticky' : ''}`}>
           <div className="container">
             <div className="mainbar-row rbt-navigation-center align-items-center">
               <div className="header-left">
@@ -97,7 +97,7 @@ const HeaderStyleTwelve = () => {
                   <ul className="mainmenu">
                     {sections.map((sec, i) => (
                       <li
-                        className={currentSection === sec.id ? "current" : ""}
+                        className={currentSection === sec.id ? 'current' : ''}
                         key={i}
                       >
                         <ScrollLink
@@ -106,7 +106,7 @@ const HeaderStyleTwelve = () => {
                           smooth={true}
                           duration={500}
                           offset={-70}
-                          style={{ cursor: "pointer" }}
+                          style={{ cursor: 'pointer' }}
                         >
                           {sec.label}
                         </ScrollLink>

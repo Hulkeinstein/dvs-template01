@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import React from "react";
-import { Provider } from "react-redux";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import React from 'react';
+import { Provider } from 'react-redux';
 
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import FooterThree from "@/components/Footer/Footer-Three";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import PricingThree from "@/components/Pricing/Pricing-Three";
-import AccordionThree from "@/components/Accordions/Accordion-Three";
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import FooterThree from '@/components/Footer/Footer-Three';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import PricingThree from '@/components/Pricing/Pricing-Three';
+import AccordionThree from '@/components/Accordions/Accordion-Three';
 
 const SubscriptionPage = () => {
   return (

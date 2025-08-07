@@ -1,6 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
 
 const RelatedCourse = ({ checkMatchCourses, colClass }) => {
   return (
@@ -30,7 +30,7 @@ const RelatedCourse = ({ checkMatchCourses, colClass }) => {
           <div
             className={`${
               colClass === undefined
-                ? "col-lg-6 col-md-6 col-sm-6 col-12"
+                ? 'col-lg-6 col-md-6 col-sm-6 col-12'
                 : colClass
             }`}
             data-sal-delay="150"
@@ -53,7 +53,7 @@ const RelatedCourse = ({ checkMatchCourses, colClass }) => {
                       <span>Off</span>
                     </div>
                   ) : (
-                    ""
+                    ''
                   )}
                 </Link>
               </div>

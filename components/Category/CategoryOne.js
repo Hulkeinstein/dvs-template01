@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CourseDetails from "../../data/course-details/courseData.json";
-import useCategoryCount from "@/context/useCategoryCount";
+import CourseDetails from '../../data/course-details/courseData.json';
+import useCategoryCount from '@/context/useCategoryCount';
 
 const CategoryOne = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -34,7 +34,7 @@ const CategoryOne = () => {
                     <h5 className="title">{item.category}</h5>
                     <div className="read-more-btn">
                       <span className="rbt-btn-link">
-                        {count} Course{count !== 1 ? "s" : ""}
+                        {count} Course{count !== 1 ? 's' : ''}
                         <i className="feather-arrow-right"></i>
                       </span>
                     </div>

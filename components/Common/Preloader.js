@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useAppContext } from "@/context/Context";
+import React from 'react';
+import { useAppContext } from '@/context/Context';
 
 const Preloader = () => {
   const { isLightTheme } = useAppContext();
-  
+
   // 테마에 따라 배경색 설정
-  const bgColor = isLightTheme ? "#ffffff" : "#192335";
-  
+  const bgColor = isLightTheme ? '#ffffff' : '#192335';
+
   return (
     <div
       className="preloader"
       style={{
-        width: "100%",
-        height: "100vh",
+        width: '100%',
+        height: '100vh',
         backgroundColor: bgColor,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "fixed",
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'fixed',
         top: 0,
         left: 0,
         zIndex: 9999,
@@ -86,4 +86,4 @@ const Preloader = () => {
   );
 };
 
-export default Preloader; 
+export default Preloader;

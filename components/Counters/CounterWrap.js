@@ -1,10 +1,10 @@
-"use client";
-import { useEffect, useState, useRef } from "react";
+'use client';
+import { useEffect, useState, useRef } from 'react';
 
-import dynamic from "next/dynamic";
-const Odometer = dynamic(() => import("react-odometerjs"), { ssr: false });
+import dynamic from 'next/dynamic';
+const Odometer = dynamic(() => import('react-odometerjs'), { ssr: false });
 
-const CounterWrap = ({ value, format = "d" }) => {
+const CounterWrap = ({ value, format = 'd' }) => {
   const [count, setCount] = useState(0);
   const counterRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);

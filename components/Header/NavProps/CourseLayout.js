@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import React from "react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React from 'react';
 
 const CourseLayout = ({ MenuData, courseTitle, type, courseType, num }) => {
   const pathname = usePathname();
@@ -21,8 +21,8 @@ const CourseLayout = ({ MenuData, courseTitle, type, courseType, num }) => {
                       innerIndex < num && (
                         <li key={innerIndex}>
                           <Link
-                            className={isActive(value.link) ? "active" : ""}
-                            href={value.coming ? "/maintenance" : value.link}
+                            className={isActive(value.link) ? 'active' : ''}
+                            href={value.coming ? '/maintenance' : value.link}
                           >
                             {value.title}
                             {value.coming ? (
@@ -34,7 +34,7 @@ const CourseLayout = ({ MenuData, courseTitle, type, courseType, num }) => {
                                 {value.subTitle}
                               </span>
                             ) : (
-                              ""
+                              ''
                             )}
                           </Link>
                         </li>
@@ -47,8 +47,8 @@ const CourseLayout = ({ MenuData, courseTitle, type, courseType, num }) => {
                     innerIndex > num && (
                       <li key={innerIndex}>
                         <Link
-                          className={isActive(value.link) ? "active" : ""}
-                          href={value.coming ? "/maintenance" : value.link}
+                          className={isActive(value.link) ? 'active' : ''}
+                          href={value.coming ? '/maintenance' : value.link}
                         >
                           {value.title}
                           {value.coming ? (
@@ -60,7 +60,7 @@ const CourseLayout = ({ MenuData, courseTitle, type, courseType, num }) => {
                               {value.subTitle}
                             </span>
                           ) : (
-                            ""
+                            ''
                           )}
                         </Link>
                       </li>

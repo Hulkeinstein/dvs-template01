@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
+import Link from 'next/link';
+import { useState } from 'react';
 
 const ProfileCompletionBanner = ({ userProfile }) => {
   const [dismissed, setDismissed] = useState(false);
@@ -13,8 +13,8 @@ const ProfileCompletionBanner = ({ userProfile }) => {
 
   // 누락된 선택 필드 확인
   const missingFields = [];
-  if (!userProfile?.skill_occupation) missingFields.push("skill/occupation");
-  if (!userProfile?.bio) missingFields.push("biography");
+  if (!userProfile?.skill_occupation) missingFields.push('skill/occupation');
+  if (!userProfile?.bio) missingFields.push('biography');
 
   // 전화번호가 없는 경우 배너를 표시하지 않음
   if (!userProfile?.phone) {
@@ -34,15 +34,16 @@ const ProfileCompletionBanner = ({ userProfile }) => {
                 <div className="info-content">
                   <h6 className="mb-0">Complete Your Profile</h6>
                   <p className="mb-0">
-                    Add your {missingFields.join(" and ")} to help others know you better.
+                    Add your {missingFields.join(' and ')} to help others know
+                    you better.
                   </p>
                 </div>
               </div>
             </div>
             <div className="col-lg-4 col-md-4">
               <div className="info-action text-md-end">
-                <Link 
-                  href="/instructor-profile" 
+                <Link
+                  href="/instructor-profile"
                   className="rbt-btn btn-sm hover-icon-reverse"
                 >
                   <span className="icon-reverse-wrapper">
@@ -55,7 +56,7 @@ const ProfileCompletionBanner = ({ userProfile }) => {
                     </span>
                   </span>
                 </Link>
-                <button 
+                <button
                   onClick={() => setDismissed(true)}
                   className="rbt-btn btn-sm minimal-btn ms-2"
                   aria-label="Dismiss"

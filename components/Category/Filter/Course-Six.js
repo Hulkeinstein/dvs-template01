@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import CourseDetails from "../../../data/course-details/courseData.json";
+import CourseDetails from '../../../data/course-details/courseData.json';
 
 const CourseSix = () => {
   let getAllCourse = JSON.parse(
     JSON.stringify(CourseDetails.courseDetails.slice(0, 12))
   );
   const [courseFilter, setCourseFilter] = useState(getAllCourse);
-  const [activeTab, setActiveTab] = useState("All Course");
+  const [activeTab, setActiveTab] = useState('All Course');
 
   const filterItem = (types) => {
     const updateItem = getAllCourse.filter((curElm) => {
       return curElm.courseType === types;
     });
 
-    if (types !== "All Course") {
+    if (types !== 'All Course') {
       setCourseFilter(updateItem);
     } else {
       setCourseFilter(getAllCourse);
@@ -39,16 +39,16 @@ const CourseSix = () => {
             id="rbt-myTab"
             role="tablist"
           >
-            {["All Course", "featured", "popular", "trending", "latest"].map(
+            {['All Course', 'featured', 'popular', 'trending', 'latest'].map(
               (courseType, index) => (
                 <li key={index} className="nav-item" role="presentation">
                   <button
-                    className={activeTab === courseType ? "active" : ""}
+                    className={activeTab === courseType ? 'active' : ''}
                     type="button"
                     onClick={() => handleButtonClick(courseType)}
                   >
                     <span className="filter-text">{courseType}</span>
-                    {courseType === "All Course" ? (
+                    {courseType === 'All Course' ? (
                       <span className="course-number">
                         {getAllCourse.filter((course) => course).length}
                       </span>

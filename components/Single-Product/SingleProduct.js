@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-import BreadCrumb from "../Common/BreadCrumb";
-import ProductBody from "./ProductBody";
-import ReviewForm from "./ReviewForm";
-import RelatedProduct from "./RelatedProduct";
+import BreadCrumb from '../Common/BreadCrumb';
+import ProductBody from './ProductBody';
+import ReviewForm from './ReviewForm';
+import RelatedProduct from './RelatedProduct';
 
 const SingleProduct = ({ checkMatchProduct }) => {
   const [tab, setTab] = useState(false);
@@ -70,7 +70,7 @@ const SingleProduct = ({ checkMatchProduct }) => {
 
               <div
                 className={`product-description-content tab-pan fad ${
-                  tab ? "d-none" : "d-block"
+                  tab ? 'd-none' : 'd-block'
                 }`}
                 id="home-4"
                 role="tabpanel"
@@ -82,7 +82,7 @@ const SingleProduct = ({ checkMatchProduct }) => {
 
               <div
                 className={`product-description-content tab-pan fad ${
-                  tab ? "d-block" : "d-none"
+                  tab ? 'd-block' : 'd-none'
                 }`}
                 id="profile-4"
                 role="tabpanel"

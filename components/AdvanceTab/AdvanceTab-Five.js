@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import TabData from "../../data/elements/advanceTab.json";
+import TabData from '../../data/elements/advanceTab.json';
 
 const AdvanceTabFive = () => {
   return (
@@ -45,7 +45,7 @@ const AdvanceTabFive = () => {
                       >
                         <button
                           className={`nav-link ${
-                            item.isActive ? "active" : ""
+                            item.isActive ? 'active' : ''
                           }`}
                           id={item.tab}
                           data-bs-toggle="tab"
@@ -64,7 +64,7 @@ const AdvanceTabFive = () => {
                     {data.body.map((item, innerIndex) => (
                       <div
                         className={`tab-pane fade ${
-                          item.isActive ? "active show" : ""
+                          item.isActive ? 'active show' : ''
                         }`}
                         id={item.target}
                         role="tabpanel"

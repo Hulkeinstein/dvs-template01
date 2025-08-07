@@ -1,10 +1,10 @@
-import BackToTop from "../backToTop";
-import { getAllPostsMeta } from "@/mdx";
-import ArtDesignSchoolPage from "./(art-design-school)";
+import BackToTop from '../backToTop';
+import { getAllPostsMeta } from '@/mdx';
+import ArtDesignSchoolPage from './(art-design-school)';
 
 export const metadata = {
-  title: "ArtDesignSchool - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'ArtDesignSchool - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const ArtDesignSchoolLayout = async () => {

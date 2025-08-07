@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 import {
   DndContext,
@@ -12,23 +12,23 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import CourseData from "../../data/course-details/courseData.json";
+import CourseData from '../../data/course-details/courseData.json';
 
-import MutipleSelect from "./Quiz/MutipleSelect";
-import SingleSelect from "./Quiz/SingleSelect";
-import TrueFalse from "./Quiz/TrueFalse";
-import FillBlanks from "./Quiz/FillBlanks";
-import Summary from "./Quiz/Summary";
-import Ordering from "./Quiz/Ordering";
+import MutipleSelect from './Quiz/MutipleSelect';
+import SingleSelect from './Quiz/SingleSelect';
+import TrueFalse from './Quiz/TrueFalse';
+import FillBlanks from './Quiz/FillBlanks';
+import Summary from './Quiz/Summary';
+import Ordering from './Quiz/Ordering';
 
 const PaginationQuiz = () => {
   const [courseList, setCourseList] = useState(CourseData.courseDetails);
@@ -98,37 +98,37 @@ const PaginationQuiz = () => {
               </Link>
             </li>
             <li
-              className={activeQuestion === 1 ? "active" : ""}
+              className={activeQuestion === 1 ? 'active' : ''}
               onClick={() => handlePaginationClick(1)}
             >
               <Link href="#">1</Link>
             </li>
             <li
-              className={activeQuestion === 2 ? "active" : ""}
+              className={activeQuestion === 2 ? 'active' : ''}
               onClick={() => handlePaginationClick(2)}
             >
               <Link href="#">2</Link>
             </li>
             <li
-              className={activeQuestion === 3 ? "active" : ""}
+              className={activeQuestion === 3 ? 'active' : ''}
               onClick={() => handlePaginationClick(3)}
             >
               <Link href="#">3</Link>
             </li>
             <li
-              className={activeQuestion === 4 ? "active" : ""}
+              className={activeQuestion === 4 ? 'active' : ''}
               onClick={() => handlePaginationClick(4)}
             >
               <Link href="#">4</Link>
             </li>
             <li
-              className={activeQuestion === 5 ? "active" : ""}
+              className={activeQuestion === 5 ? 'active' : ''}
               onClick={() => handlePaginationClick(5)}
             >
               <Link href="#">5</Link>
             </li>
             <li
-              className={activeQuestion === 6 ? "active" : ""}
+              className={activeQuestion === 6 ? 'active' : ''}
               onClick={() => handlePaginationClick(6)}
             >
               <Link href="#">6</Link>
@@ -145,41 +145,41 @@ const PaginationQuiz = () => {
       <form id="quiz-form" className="quiz-form-wrapper">
         <div
           id="question-1"
-          className={`question ${activeQuestion === 1 ? "" : "d-none"}`}
+          className={`question ${activeQuestion === 1 ? '' : 'd-none'}`}
         >
           <MutipleSelect />
         </div>
 
         <div
           id="question-2"
-          className={`question ${activeQuestion === 2 ? "" : "d-none"}`}
+          className={`question ${activeQuestion === 2 ? '' : 'd-none'}`}
         >
           <SingleSelect />
         </div>
 
         <div
           id="question-3"
-          className={`question ${activeQuestion === 3 ? "" : "d-none"}`}
+          className={`question ${activeQuestion === 3 ? '' : 'd-none'}`}
         >
           <TrueFalse />
         </div>
         <div
           id="question-4"
-          className={`question ${activeQuestion === 4 ? "" : "d-none"}`}
+          className={`question ${activeQuestion === 4 ? '' : 'd-none'}`}
         >
           <Summary />
         </div>
 
         <div
           id="question-5"
-          className={`question ${activeQuestion === 5 ? "" : "d-none"}`}
+          className={`question ${activeQuestion === 5 ? '' : 'd-none'}`}
         >
           <FillBlanks />
         </div>
 
         <div
           id="question-6"
-          className={`question ${activeQuestion === 6 ? "" : "d-none"}`}
+          className={`question ${activeQuestion === 6 ? '' : 'd-none'}`}
         >
           <div className="rbt-single-quiz">
             <h4>6. Change Question Order</h4>

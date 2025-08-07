@@ -1,9 +1,9 @@
-import BackToTop from "@/app/backToTop";
-import NewsletterPage from "./(newsletter)";
+import BackToTop from '@/app/backToTop';
+import NewsletterPage from './(newsletter)';
 
 export const metadata = {
-  title: "Newsletter - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Newsletter - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const NewsletterLayout = () => {

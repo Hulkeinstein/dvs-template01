@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import ServiceData from "../../data/elements/service.json";
+import ServiceData from '../../data/elements/service.json';
 
 const ServiceEight = ({ isHead }) => {
   return (
@@ -18,7 +18,7 @@ const ServiceEight = ({ isHead }) => {
                 </div>
               </div>
             ) : (
-              ""
+              ''
             )}
             <div className="row g-5">
               {data.body.map((item, innerIndex) => (

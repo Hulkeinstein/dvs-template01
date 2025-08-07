@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import bgImg from "../../public/images/bg/bg-image-10.jpg";
+import bgImg from '../../public/images/bg/bg-image-10.jpg';
 
 const EventBreadCrumb = ({ getMatchEvent }) => {
   return (

@@ -1,5 +1,5 @@
-import React from "react";
-import Link from "next/link";
+import React from 'react';
+import Link from 'next/link';
 
 const CourseBreadcrumbSix = ({ getMatchCourse }) => {
   return (
@@ -30,7 +30,7 @@ const CourseBreadcrumbSix = ({ getMatchCourse }) => {
                 <i className="feather-user"></i>
               </span>
               <h6 className="b3 w-400 mb--0">
-                <span className="color-body">by</span>{" "}
+                <span className="color-body">by</span>{' '}
                 <Link className="px-1" href={`/profile/${getMatchCourse.id}`}>
                   {getMatchCourse.userName}
                 </Link>
@@ -66,7 +66,9 @@ const CourseBreadcrumbSix = ({ getMatchCourse }) => {
                     <i className="fa fa-star"></i>
                   </Link>
                 </span>
-                <span className="b3 ps-2">({getMatchCourse.review} Reviews)</span>
+                <span className="b3 ps-2">
+                  ({getMatchCourse.review} Reviews)
+                </span>
               </div>
             </div>
           </div>

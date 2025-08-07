@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 
 const PricingFive = ({ title, tag }) => {
   return (
@@ -15,7 +15,7 @@ const PricingFive = ({ title, tag }) => {
             </div>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div className="row">
           <div className="col-lg-8 offset-lg-2">

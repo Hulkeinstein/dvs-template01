@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Link from "next/link";
-import sal from "sal.js";
-import AboutThree from "../Abouts/About-Three";
-import AdvanceTabFour from "../AdvanceTab/AdvanceTab-Four";
-import CounterSix from "../Counters/Counter-Six";
-import Split from "../Split/Split";
-import AboutFour from "../Abouts/About-Four";
+import { useEffect } from 'react';
+import Link from 'next/link';
+import sal from 'sal.js';
+import AboutThree from '../Abouts/About-Three';
+import AdvanceTabFour from '../AdvanceTab/AdvanceTab-Four';
+import CounterSix from '../Counters/Counter-Six';
+import Split from '../Split/Split';
+import AboutFour from '../Abouts/About-Four';
 
-import CourseDetails from "../../data/course-details/courseData.json";
-import CourseCardThree from "../Category/Filter/CourseCard-Three";
-import ServiceThree from "../Services/Service-Three";
-import ServiceTwelve from "../Services/Service-Twelve";
-import CallToActionSix from "../Call-To-Action/CallToAction-Six";
-import Course from "../Accordions/Course";
-import CallToActionFour from "../Call-To-Action/CallToAction-Four";
-import Image from "next/image";
+import CourseDetails from '../../data/course-details/courseData.json';
+import CourseCardThree from '../Category/Filter/CourseCard-Three';
+import ServiceThree from '../Services/Service-Three';
+import ServiceTwelve from '../Services/Service-Twelve';
+import CallToActionSix from '../Call-To-Action/CallToAction-Six';
+import Course from '../Accordions/Course';
+import CallToActionFour from '../Call-To-Action/CallToAction-Four';
+import Image from 'next/image';
 
 const UniversityStatus = () => {
   let getAllCourse = JSON.parse(

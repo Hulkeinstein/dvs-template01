@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import SplitData from "../../data/elements/split.json";
+import SplitData from '../../data/elements/split.json';
 
 const Split = () => {
   return (

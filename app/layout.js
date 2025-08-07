@@ -1,29 +1,29 @@
 import { cookies } from 'next/headers';
-import React from "react";
+import React from 'react';
 
 // ========= Core Framework =========
-import "bootstrap/scss/bootstrap.scss";
+import 'bootstrap/scss/bootstrap.scss';
 
 // ========= Template Main Styles (Bootstrap 오버라이드) =========
-import "../public/scss/styles.scss";
+import '../public/scss/styles.scss';
 
 // ========= Custom Fonts =========
-import "../public/scss/default/euclid-circulara.scss";
+import '../public/scss/default/euclid-circulara.scss';
 
 // ========= Plugins CSS =========
-import "../node_modules/sal.js/dist/sal.css";
-import "../public/css/plugins/fontawesome.min.css";
-import "../public/css/plugins/feather.css";
-import "../public/css/plugins/odometer.css";
-import "../public/css/plugins/animation.css";
+import '../node_modules/sal.js/dist/sal.css';
+import '../public/css/plugins/fontawesome.min.css';
+import '../public/css/plugins/feather.css';
+import '../public/css/plugins/odometer.css';
+import '../public/css/plugins/animation.css';
 // euclid-circulara.css 제거 - SCSS와 중복
 
 // ========= Swiper CSS =========
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/effect-cards";
-import "swiper/css/free-mode";
-import "swiper/css/thumbs";
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-cards';
+import 'swiper/css/free-mode';
+import 'swiper/css/thumbs';
 
 import Providers from './Providers';
 import BootstrapClient from './bootstrap-client';
@@ -35,11 +35,12 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en" dir="ltr" data-theme={theme}>
-      <body className={isDark ? "active-dark-mode" : ""} suppressHydrationWarning={true}>
+      <body
+        className={isDark ? 'active-dark-mode' : ''}
+        suppressHydrationWarning={true}
+      >
         <BootstrapClient />
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

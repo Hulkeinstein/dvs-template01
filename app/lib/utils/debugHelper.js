@@ -13,25 +13,27 @@ const DEBUG_MODE = process.env.NODE_ENV === 'development';
  */
 export const debugLog = (component, action, data) => {
   if (!DEBUG_MODE) return;
-  
+
   const timestamp = new Date().toISOString();
   const logData = {
     timestamp,
     component,
     action,
     data,
-    stackTrace: new Error().stack
+    stackTrace: new Error().stack,
   };
-  
+
   // 콘솔에 그룹으로 로그 출력
   console.group(`🔍 [${component}] ${action}`);
   console.log('Time:', timestamp);
   console.log('Data:', data);
   console.groupEnd();
-  
+
   // 로컬 스토리지에 저장 (최근 50개만 유지)
   try {
-    const logs = JSON.parse(localStorage.getItem('attachmentDebugLogs') || '[]');
+    const logs = JSON.parse(
+      localStorage.getItem('attachmentDebugLogs') || '[]'
+    );
     logs.push(logData);
     if (logs.length > 50) logs.shift();
     localStorage.setItem('attachmentDebugLogs', JSON.stringify(logs));
@@ -51,19 +53,22 @@ export const trackError = (component, error, context = {}) => {
     message: error.message,
     stack: error.stack,
     context,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
-  
+
   // 개발 모드에서 에러 알림
   if (DEBUG_MODE && typeof window !== 'undefined') {
     // 로컬스토리지에 마지막 에러 저장
     try {
-      localStorage.setItem('lastAttachmentError', JSON.stringify({
-        component,
-        message: error.message,
-        context,
-        timestamp: new Date().toISOString()
-      }));
+      localStorage.setItem(
+        'lastAttachmentError',
+        JSON.stringify({
+          component,
+          message: error.message,
+          context,
+          timestamp: new Date().toISOString(),
+        })
+      );
     } catch (e) {
       console.warn('Failed to save error to localStorage:', e);
     }
@@ -75,12 +80,14 @@ export const trackError = (component, error, context = {}) => {
  */
 export const printDebugInfo = () => {
   if (!DEBUG_MODE || typeof window === 'undefined') return;
-  
+
   try {
-    const logs = JSON.parse(localStorage.getItem('attachmentDebugLogs') || '[]');
+    const logs = JSON.parse(
+      localStorage.getItem('attachmentDebugLogs') || '[]'
+    );
     console.log('📋 Attachment Debug Logs:');
     console.table(logs.slice(-10)); // 최근 10개만 표시
-    
+
     const lastError = localStorage.getItem('lastAttachmentError');
     if (lastError) {
       console.log('❌ Last Error:', JSON.parse(lastError));
@@ -95,7 +102,7 @@ export const printDebugInfo = () => {
  */
 export const clearDebugLogs = () => {
   if (typeof window === 'undefined') return;
-  
+
   try {
     localStorage.removeItem('attachmentDebugLogs');
     localStorage.removeItem('lastAttachmentError');
@@ -126,9 +133,9 @@ if (DEBUG_MODE && typeof window !== 'undefined') {
         return null;
       }
     },
-    print: printDebugInfo
+    print: printDebugInfo,
   };
-  
+
   console.log('💡 Attachment debug tools available: window.attachmentDebug');
   console.log('   - .logs()      : Get all debug logs');
   console.log('   - .clearLogs() : Clear all logs');

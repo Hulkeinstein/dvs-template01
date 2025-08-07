@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import HeaderRightTwo from "../Header-Right/HeaderRight-Two";
-import Search from "../Offcanvas/Search";
-import Category from "../Category/Category";
-import Nav from "../Nav";
+import HeaderRightTwo from '../Header-Right/HeaderRight-Two';
+import Search from '../Offcanvas/Search';
+import Category from '../Category/Category';
+import Nav from '../Nav';
 
-import logo from "../../../public/images/logo/logo.png";
-import logoLight from "../../../public/images/dark/logo/logo-light.png";
-import { useAppContext } from "@/context/Context";
+import logo from '../../../public/images/logo/logo.png';
+import logoLight from '../../../public/images/dark/logo/logo-light.png';
+import { useAppContext } from '@/context/Context';
 
 const HeaderEight = ({
   headerType,
@@ -34,17 +34,17 @@ const HeaderEight = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
     <>
       <div
         className={`rbt-header-wrapper ${gapSpaceBetween} ${sticky}  ${
-          !headerType && isSticky ? `${headerSticky}` : ""
+          !headerType && isSticky ? `${headerSticky}` : ''
         }`}
       >
         <div className={`${container}`}>

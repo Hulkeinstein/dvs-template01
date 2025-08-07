@@ -1,38 +1,38 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import dynamic from "next/dynamic";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import dynamic from 'next/dynamic';
 
-import { useDispatch, useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
-import { deleteProduct } from "@/redux/action/CartAction";
+import { useDispatch, useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
+import { deleteProduct } from '@/redux/action/CartAction';
 
 const Cart = () => {
   const router = useRouter();
-  const path = typeof window !== "undefined" ? window.location.pathname : "";
+  const path = typeof window !== 'undefined' ? window.location.pathname : '';
   const dispatch = useDispatch();
   const { cart, total_amount } = useSelector((state) => state.CartReducer);
 
   const { cartToggle, setCart } = useAppContext();
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
 
-    if (path === "/cart") {
+    if (path === '/cart') {
       setCart(true);
     }
   }, [cart, path]);
 
   return (
     <>
-      <div className={`${!cartToggle ? "cart-sidenav-menu-active" : ""}`}>
+      <div className={`${!cartToggle ? 'cart-sidenav-menu-active' : ''}`}>
         <div
           className={`rbt-cart-side-menu ${
-            !cartToggle ? "side-menu-active" : ""
+            !cartToggle ? 'side-menu-active' : ''
           }`}
         >
           <div className="inner-wrapper">

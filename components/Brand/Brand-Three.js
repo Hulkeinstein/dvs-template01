@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import BrandData from "../../data/elements/brands.json";
+import BrandData from '../../data/elements/brands.json';
 
 const BrandThree = () => {
   return (

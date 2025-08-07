@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const ListStyle = () => {
   return (
@@ -170,9 +170,7 @@ const ListStyle = () => {
                 <i className="feather-monitor"></i>
               </div>
               <div className="feature-content">
-                <h6 className="feature-title">
-                  Experienced Teachers service.
-                </h6>
+                <h6 className="feature-title">Experienced Teachers service.</h6>
                 <p className="feature-description">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
                   Officia, aliquid mollitia Officia, aliquid mollitia.
@@ -214,9 +212,7 @@ const ListStyle = () => {
                 <i className="feather-monitor"></i>
               </div>
               <div className="feature-content">
-                <h6 className="feature-title">
-                  Experienced Teachers service.
-                </h6>
+                <h6 className="feature-title">Experienced Teachers service.</h6>
                 <p className="feature-description">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
                   Officia, aliquid mollitia Officia, aliquid mollitia.

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const RoleProtection = ({ allowedRoles, children }) => {
   const { data: session, status } = useSession();
@@ -18,13 +18,13 @@ const RoleProtection = ({ allowedRoles, children }) => {
   // 이 훅은 렌더링이 완료된 후에만 실행되므로 안전합니다.
   useEffect(() => {
     // 1. 컴포넌트가 마운트되지 않았거나, 세션 정보를 아직 로딩 중이면 아무것도 하지 않습니다.
-    if (!isMounted || status === "loading") {
+    if (!isMounted || status === 'loading') {
       return;
     }
 
     // 2. 로그인하지 않은 사용자라면 로그인 페이지로 보냅니다.
     if (!session) {
-      router.push("/login");
+      router.push('/login');
       return;
     }
 
@@ -46,7 +46,7 @@ const RoleProtection = ({ allowedRoles, children }) => {
 
   // 2. 세션 정보를 가져오는 중이거나, 사용자가 아직 인증되지 않았다면 로딩 화면을 표시합니다.
   //    이 상태는 리디렉션이 처리되는 동안에도 유지됩니다.
-  if (status !== "authenticated") {
+  if (status !== 'authenticated') {
     return <div>Loading...</div>;
   }
 

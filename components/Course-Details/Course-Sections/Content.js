@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 
 const Content = ({ checkMatchCourses }) => {
   return (
@@ -18,7 +18,7 @@ const Content = ({ checkMatchCourses }) => {
                 >
                   <button
                     className={`accordion-button ${
-                      !item.collapsed ? "collapsed" : ""
+                      !item.collapsed ? 'collapsed' : ''
                     }`}
                     type="button"
                     data-bs-toggle="collapse"
@@ -33,7 +33,7 @@ const Content = ({ checkMatchCourses }) => {
                 <div
                   id={`collapseTwo${innerIndex + 1}`}
                   className={`accordion-collapse collapse ${
-                    item.isShow ? "show" : ""
+                    item.isShow ? 'show' : ''
                   }`}
                   aria-labelledby={`headingTwo${innerIndex}`}
                   data-bs-parent="#accordionExampleb2"

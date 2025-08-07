@@ -1,61 +1,61 @@
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import shadow1 from "../../public/images/shape/shadow-1.png";
-import shadow2 from "../../public/images/shape/shadow-2.png";
-import shadow3 from "../../public/images/shape/shadow-3.png";
-import line1 from "../../public/images/shape/curve-line-1.png";
-import line2 from "../../public/images/shape/curve-line-2.png";
-import line3 from "../../public/images/shape/curve-line-3.png";
-import line4 from "../../public/images/shape/curve-line-4.png";
-import handCap from "../../public/images/shape/hand-cap.png";
-import dotBg from "../../public/images/shape/dot-bg.png";
-import dotElement from "../../public/images/shape/dot-element.png";
-import translate from "../../public/images/shape/translate.png";
-import translateText from "../../public/images/shape/translate-in-text.png";
-import awardText from "../../public/images/shape/award-in-text.png";
-import worldImg from "../../public/images/shape/world.png";
+import shadow1 from '../../public/images/shape/shadow-1.png';
+import shadow2 from '../../public/images/shape/shadow-2.png';
+import shadow3 from '../../public/images/shape/shadow-3.png';
+import line1 from '../../public/images/shape/curve-line-1.png';
+import line2 from '../../public/images/shape/curve-line-2.png';
+import line3 from '../../public/images/shape/curve-line-3.png';
+import line4 from '../../public/images/shape/curve-line-4.png';
+import handCap from '../../public/images/shape/hand-cap.png';
+import dotBg from '../../public/images/shape/dot-bg.png';
+import dotElement from '../../public/images/shape/dot-element.png';
+import translate from '../../public/images/shape/translate.png';
+import translateText from '../../public/images/shape/translate-in-text.png';
+import awardText from '../../public/images/shape/award-in-text.png';
+import worldImg from '../../public/images/shape/world.png';
 
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/user-1.png" },
-  { name: "Mark Jordan", src: "/images/shape/avatar-in-text-2.png" },
+  { name: 'Ava Miller', src: '/images/shape/user-1.png' },
+  { name: 'Mark Jordan', src: '/images/shape/avatar-in-text-2.png' },
 ];
 
 const countryFlag = [
-  { country: "Australia", image: "/images/shape/flag-australia.png" },
-  { country: "Canada", image: "/images/shape/flag-canada.png" },
-  { country: "China", image: "/images/shape/flag-china.png" },
-  { country: "France", image: "/images/shape/flag-french.png" },
-  { country: "Germany", image: "/images/shape/flag-germany.png" },
-  { country: "Japan", image: "/images/shape/flag-japan.png" },
-  { country: "Korea", image: "/images/shape/flag-korea.png" },
-  { country: "Pakistan", image: "/images/shape/flag-pakistan.png" },
-  { country: "Sri Lanka", image: "/images/shape/flag-srilonka.png" },
-  { country: "United Kingdom", image: "/images/shape/flag-uk.png" },
-  { country: "United States", image: "/images/shape/flag-usa.png" },
+  { country: 'Australia', image: '/images/shape/flag-australia.png' },
+  { country: 'Canada', image: '/images/shape/flag-canada.png' },
+  { country: 'China', image: '/images/shape/flag-china.png' },
+  { country: 'France', image: '/images/shape/flag-french.png' },
+  { country: 'Germany', image: '/images/shape/flag-germany.png' },
+  { country: 'Japan', image: '/images/shape/flag-japan.png' },
+  { country: 'Korea', image: '/images/shape/flag-korea.png' },
+  { country: 'Pakistan', image: '/images/shape/flag-pakistan.png' },
+  { country: 'Sri Lanka', image: '/images/shape/flag-srilonka.png' },
+  { country: 'United Kingdom', image: '/images/shape/flag-uk.png' },
+  { country: 'United States', image: '/images/shape/flag-usa.png' },
 ];
 
 const MultilingualBanner = () => {
-    const [offsetX, setOffsetX] = useState(0);
-    const [offsetY, setOffsetY] = useState(0);
-  
-    useEffect(() => {
-      const handleMouseMove = (event) => {
-        const { clientX, clientY } = event;
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-  
-        const moveX = ((clientX - centerX) / centerX) * 5;
-        const moveY = ((clientY - centerY) / centerY) * 5;
-  
-        setOffsetX(moveX);
-        setOffsetY(moveY);
-      };
-  
-      window.addEventListener("mousemove", handleMouseMove);
-      return () => window.removeEventListener("mousemove", handleMouseMove);
-    }, []);
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      const { clientX, clientY } = event;
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      const moveX = ((clientX - centerX) / centerX) * 5;
+      const moveY = ((clientY - centerY) / centerY) * 5;
+
+      setOffsetX(moveX);
+      setOffsetY(moveY);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
   return (
     <>
       <div className="rbt-banner-area rbt-banner-20 position-relative">
@@ -157,7 +157,7 @@ const MultilingualBanner = () => {
                     <h1 className="title">Take Online</h1>
                   </div>
                   <h1 className="title">
-                    Language{" "}
+                    Language{' '}
                     <span>
                       <Image
                         src={translateText}
@@ -165,7 +165,7 @@ const MultilingualBanner = () => {
                         height={50}
                         alt=""
                       />
-                    </span>{" "}
+                    </span>{' '}
                     Courses
                   </h1>
                   <h1 className="title">

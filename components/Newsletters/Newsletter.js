@@ -1,4 +1,4 @@
-import NewsletterData from "../../data/elements/newsletter.json";
+import NewsletterData from '../../data/elements/newsletter.json';
 
 const Newsletter = () => {
   return (

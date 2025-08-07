@@ -1,9 +1,9 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
+'use client';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import emoji from "../../../public/images/icons/hand-emojji.svg";
-import { useAppContext } from "@/context/Context";
+import emoji from '../../../public/images/icons/hand-emojji.svg';
+import { useAppContext } from '@/context/Context';
 
 const HeaderTopBar = () => {
   const { toggle, setToggle } = useAppContext();
@@ -11,7 +11,7 @@ const HeaderTopBar = () => {
     <>
       <div
         className={`rbt-header-campaign rbt-header-campaign-1 rbt-header-top-news bg-image1 ${
-          !toggle ? "deactive" : ""
+          !toggle ? 'deactive' : ''
         }`}
       >
         <div className="wrapper">

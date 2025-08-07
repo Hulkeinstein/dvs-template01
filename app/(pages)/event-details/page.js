@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const EventLayout = ({ params }) => {
   const router = useRouter();
@@ -9,7 +9,7 @@ const EventLayout = ({ params }) => {
 
   useEffect(() => {
     if (postId === undefined) {
-      router.push("/event-list");
+      router.push('/event-list');
     }
   }, []);
 };

@@ -18,7 +18,7 @@ const TestimonialFour = ({ isGradient, leftContent }) => {
                         <span className="theme-gradient">Testimonials</span>
                       </h6>
                       <h2 className="title w-600">
-                        Student's{" "}
+                        Student&apos;s{" "}
                         <span className="theme-gradient">Feedback</span>
                       </h2>
                     </div>
@@ -40,7 +40,7 @@ const TestimonialFour = ({ isGradient, leftContent }) => {
                       EDUCATION FOR EVERYONE
                     </span>
                     <h2 className="title w-600">
-                      Student's <span className="theme-gradient">Feedback</span>
+                      Student&apos;s <span className="theme-gradient">Feedback</span>
                     </h2>
                   </div>
                 </div>

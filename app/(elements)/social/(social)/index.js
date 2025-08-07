@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Social from "@/components/Socials/Social";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Social from '@/components/Socials/Social';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
 
 const SocialPage = () => {
   return (

@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import MobileMenu from "@/components/Header/MobileMenu";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import MobileMenu from '@/components/Header/MobileMenu';
 
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Progressbar from "@/components/Progressbars/Progressbar";
-import ProgressbarFour from "@/components/Progressbars/Progressbar-Four";
-import ProgressbarThree from "@/components/Progressbars/Progressbar-Three";
-import ProgressbarTwo from "@/components/Progressbars/Progressbar-Two";
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Progressbar from '@/components/Progressbars/Progressbar';
+import ProgressbarFour from '@/components/Progressbars/Progressbar-Four';
+import ProgressbarThree from '@/components/Progressbars/Progressbar-Three';
+import ProgressbarTwo from '@/components/Progressbars/Progressbar-Two';
 
 const ProgressbarPage = () => {
   return (

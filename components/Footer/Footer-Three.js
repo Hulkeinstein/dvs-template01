@@ -1,13 +1,13 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import logo from "../../public/images/logo/logo.png";
-import logoLight from "../../public/images/dark/logo/logo-light.png";
+import logo from '../../public/images/logo/logo.png';
+import logoLight from '../../public/images/dark/logo/logo-light.png';
 
-import FooterData from "../../data/footer.json";
-import SingleFooter from "./FooterProps/SingleFooter";
-import CopyRight from "./CopyRight";
-import { useAppContext } from "@/context/Context";
+import FooterData from '../../data/footer.json';
+import SingleFooter from './FooterProps/SingleFooter';
+import CopyRight from './CopyRight';
+import { useAppContext } from '@/context/Context';
 
 const FooterThree = () => {
   const { isLightTheme } = useAppContext();

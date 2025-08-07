@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import client from "../../public/images/testimonial/client-02.png";
+import client from '../../public/images/testimonial/client-02.png';
 
 const Badge = () => {
   return (

@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect } from "react";
-import sal from "sal.js";
+import Link from 'next/link';
+import { useEffect } from 'react';
+import sal from 'sal.js';
 
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import MobileMenu from "@/components/Header/MobileMenu";
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import MobileMenu from '@/components/Header/MobileMenu';
 
-import FooterOne from "@/components/Footer/Footer-One";
-import Testimonial from "@/components/Testimonials/Testimonial";
-import TestimonialTwo from "@/components/Testimonials/Testimonial-Two";
-import TestimonialThree from "@/components/Testimonials/Testimonial-Three";
-import TestimonialFour from "@/components/Testimonials/Testimonial-Four";
-import TestimonialFive from "@/components/Testimonials/Testimonial-Five";
-import TestimonialSix from "@/components/Testimonials/Testimonial-Six";
-import TestimonialSeven from "@/components/Testimonials/Testimonial-Seven";
-import CallToActionFour from "@/components/Call-To-Action/CallToAction-Four";
-import BreadCrumb from "@/components/Common/BreadCrumb";
+import FooterOne from '@/components/Footer/Footer-One';
+import Testimonial from '@/components/Testimonials/Testimonial';
+import TestimonialTwo from '@/components/Testimonials/Testimonial-Two';
+import TestimonialThree from '@/components/Testimonials/Testimonial-Three';
+import TestimonialFour from '@/components/Testimonials/Testimonial-Four';
+import TestimonialFive from '@/components/Testimonials/Testimonial-Five';
+import TestimonialSix from '@/components/Testimonials/Testimonial-Six';
+import TestimonialSeven from '@/components/Testimonials/Testimonial-Seven';
+import CallToActionFour from '@/components/Call-To-Action/CallToAction-Four';
+import BreadCrumb from '@/components/Common/BreadCrumb';
 
 const TestimonialPage = () => {
   useEffect(() => {

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const HoverButton = ({
   SwitchX,
@@ -14,7 +14,7 @@ const HoverButton = ({
   return (
     <>
       <div className="col-lg-12">
-        <div className={`rbt-button-group ${mt ? "mt--30" : ""}`}>
+        <div className={`rbt-button-group ${mt ? 'mt--30' : ''}`}>
           <Link className={`rbt-btn ${switchBtnOne}`} href="#">
             <span data-text="Switch X">{SwitchX}</span>
           </Link>

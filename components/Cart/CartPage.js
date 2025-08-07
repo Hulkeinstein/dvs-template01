@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import dynamic from "next/dynamic";
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import dynamic from 'next/dynamic';
 
-import CartItems from "./CartItems";
+import CartItems from './CartItems';
 
 const CartPage = () => {
   const dispatch = useDispatch();
@@ -15,8 +15,8 @@ const CartPage = () => {
   );
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
   }, [cart]);
 
   return (

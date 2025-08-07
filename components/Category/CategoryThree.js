@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CourseDetails from "../../data/course-details/courseData.json";
-import useCategoryCount from "@/context/useCategoryCount";
+import CourseDetails from '../../data/course-details/courseData.json';
+import useCategoryCount from '@/context/useCategoryCount';
 
 const CategoryThree = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -47,7 +47,7 @@ const CategoryThree = () => {
                         className="rbt-btn-link"
                         href={`/course-filter-one-toggle/${item.category}`}
                       >
-                        {count} Course{count !== 1 ? "s" : ""}
+                        {count} Course{count !== 1 ? 's' : ''}
                         <i className="feather-arrow-right"></i>
                       </Link>
                     </div>

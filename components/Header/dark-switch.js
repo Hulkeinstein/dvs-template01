@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
-import light from "../../public/images/about/sun-01.svg";
-import dark from "../../public/images/about/vector.svg";
+import light from '../../public/images/about/sun-01.svg';
+import dark from '../../public/images/about/vector.svg';
 
 const DarkSwitch = ({ isLight, switchTheme }) => {
   const [mounted, setMounted] = useState(false);

@@ -1,10 +1,10 @@
-import BackToTop from "@/app/backToTop";
-import OrderHistoryPage from "./(order-history)";
+import BackToTop from '@/app/backToTop';
+import OrderHistoryPage from './(order-history)';
 
 export const metadata = {
   title:
-    "Instructor Order History - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+    'Instructor Order History - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const OrderHistoryLayout = () => {

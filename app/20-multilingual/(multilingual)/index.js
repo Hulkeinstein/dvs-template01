@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Provider } from "react-redux";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
+import { Provider } from 'react-redux';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import FooterOne from "@/components/Footer/Footer-One";
-import Multilingual from "@/components/20-multilingual/Multilingual";
-import HeaderStyleFive from "@/components/Header/HeaderStyle-Five";
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import FooterOne from '@/components/Footer/Footer-One';
+import Multilingual from '@/components/20-multilingual/Multilingual';
+import HeaderStyleFive from '@/components/Header/HeaderStyle-Five';
 
 const MultilingualPage = ({ getAllBlogs }) => {
   return (

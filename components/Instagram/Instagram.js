@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import InstagramData from "../../data/elements/instagram.json";
+import InstagramData from '../../data/elements/instagram.json';
 
 const Instagram = () => {
   return (

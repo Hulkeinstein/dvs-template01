@@ -1,7 +1,7 @@
 import { useAppContext } from '@/context/Context';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react'
+import React from 'react';
 
 const HeaderTopFour = ({
   gapSpaceBetween,
@@ -10,19 +10,19 @@ const HeaderTopFour = ({
   btnText,
   btnClass,
   container,
-}) =>  {
+}) => {
   const pathname = usePathname();
   const { toggle, setToggle } = useAppContext();
   return (
     <>
       <div
         className={`rbt-header-top rbt-header-top-1 ${
-          pathname === "/19-modern-university" ||
-          "/24-health-wellness-institute"
-            ? ""
-            : "variation-height-50"
+          pathname === '/19-modern-university' ||
+          '/24-health-wellness-institute'
+            ? ''
+            : 'variation-height-50'
         } ${gapSpaceBetween} ${bgColor} d-none d-xl-block ${
-          !toggle ? "d-none" : ""
+          !toggle ? 'd-none' : ''
         }`}
       >
         <div className={`${container}`}>
@@ -114,4 +114,4 @@ const HeaderTopFour = ({
   );
 };
 
-export default HeaderTopFour
+export default HeaderTopFour;

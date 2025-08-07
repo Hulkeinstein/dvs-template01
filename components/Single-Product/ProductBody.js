@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Image from "next/image";
+import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-import { useAppContext } from "@/context/Context";
-import { addToCartAction, toggleAmount } from "@/redux/action/CartAction";
-import { useDispatch, useSelector } from "react-redux";
+import { useAppContext } from '@/context/Context';
+import { addToCartAction, toggleAmount } from '@/redux/action/CartAction';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProductBody = ({ product }) => {
   const { cartToggle, setCart } = useAppContext();
@@ -22,12 +22,12 @@ const ProductBody = ({ product }) => {
   };
 
   const increasePrice = () => {
-    dispatch(toggleAmount(product.id, "inc"));
+    dispatch(toggleAmount(product.id, 'inc'));
     setQty(qty + 1);
   };
 
   const decreasePrice = () => {
-    dispatch(toggleAmount(product.id, "dec"));
+    dispatch(toggleAmount(product.id, 'dec'));
     setQty((prevQty) => {
       const newQty = prevQty - 1;
       return newQty < 1 ? 1 : newQty;
@@ -35,8 +35,8 @@ const ProductBody = ({ product }) => {
   };
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
   }, [cart, product]);
 
   const getProductForUpdateQty = cart.find((prod) => prod.id === product.id);

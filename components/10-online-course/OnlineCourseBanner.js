@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import videoImg from "../../public/images/others/video-02.jpg";
-import clientImg from "../../public/images/testimonial/client-02.png";
+import videoImg from '../../public/images/others/video-02.jpg';
+import clientImg from '../../public/images/testimonial/client-02.png';
 
 const OnlineCourseBanner = () => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);
