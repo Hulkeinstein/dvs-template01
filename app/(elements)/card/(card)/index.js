@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
-import { useEffect } from "react";
-import sal from "sal.js";
-import "../../../../node_modules/sal.js/dist/sal.css";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
+import { useEffect } from 'react';
+import sal from 'sal.js';
+import '../../../../node_modules/sal.js/dist/sal.css';
 
-import Card from "@/components/Cards/Card";
-import CardFive from "@/components/Cards/Card-Five";
-import CardFour from "@/components/Cards/Card-Four";
-import CardThree from "@/components/Cards/Card-Three";
-import CardTwo from "@/components/Cards/Card-Two";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
+import Card from '@/components/Cards/Card';
+import CardFive from '@/components/Cards/Card-Five';
+import CardFour from '@/components/Cards/Card-Four';
+import CardThree from '@/components/Cards/Card-Three';
+import CardTwo from '@/components/Cards/Card-Two';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
 
 const CardPage = () => {
   useEffect(() => {

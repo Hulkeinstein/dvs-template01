@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const ShopLayout = ({ params }) => {
   const router = useRouter();
@@ -9,7 +9,7 @@ const ShopLayout = ({ params }) => {
 
   useEffect(() => {
     if (postId === undefined) {
-      router.push("/shop");
+      router.push('/shop');
     }
   }, []);
 };

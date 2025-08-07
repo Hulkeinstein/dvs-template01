@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation';
 
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import BlogDetails from "@/components/Blogs/BlogDetails";
-import BlogListItems from "@/components/Blogs/Blog-Sections/BlogList-Items";
-import Instagram from "@/components/Instagram/Instagram";
-import BlogBreadCrumb from "@/components/Common/Blog-BreadCrumb";
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import BlogDetails from '@/components/Blogs/BlogDetails';
+import BlogListItems from '@/components/Blogs/Blog-Sections/BlogList-Items';
+import Instagram from '@/components/Instagram/Instagram';
+import BlogBreadCrumb from '@/components/Common/Blog-BreadCrumb';
 
 export default function SingleBlogVideo({ getAllblog }) {
   const pathname = usePathname();
 
   const extractNumberFromPathname = (pathname) => {
-    const parts = pathname.split("/");
+    const parts = pathname.split('/');
     const lastPart = parts[parts.length - 1];
     const match = lastPart.match(/\d+/);
     return match ? parseInt(match[0]) : null;
@@ -41,7 +41,7 @@ export default function SingleBlogVideo({ getAllblog }) {
             <div className="rbt-blog-details-area rbt-section-gapBottom breadcrumb-style-max-width">
               <div className="blog-content-wrapper rbt-article-content-wrapper">
                 <BlogDetails
-                  matchedBlog={matchedBlog !== undefined ? matchedBlog : ""}
+                  matchedBlog={matchedBlog !== undefined ? matchedBlog : ''}
                   isVideo={true}
                 />
                 <div className="related-post pt--60">

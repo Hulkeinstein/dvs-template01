@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import CategoryHead from "@/components/Category/CategoryHead";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import CourseFilterOneToggle from "@/components/Category/Filter/CourseFilterOneToggle";
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import CategoryHead from '@/components/Category/CategoryHead';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import CourseFilterOneToggle from '@/components/Category/Filter/CourseFilterOneToggle';
 
-import CourseDetails from "../../../../data/course-details/courseData.json";
+import CourseDetails from '../../../../data/course-details/courseData.json';
 
 const SingleCoursePage = ({ getParams }) => {
   const router = useRouter();
@@ -34,7 +34,7 @@ const SingleCoursePage = ({ getParams }) => {
 
   useEffect(() => {
     if (courseId && !matchedCourse) {
-      router.push("/course-filter-one-toggle");
+      router.push('/course-filter-one-toggle');
     }
 
     setFilteredCourses(checkMatchCourse);
@@ -70,13 +70,13 @@ function slugify(text) {
   return text
     .toString()
     .toLowerCase()
-    .replace(/\d+/g, "") // Remove all numeric digits
-    .replace("&", "")
-    .replace(/\s+/g, " ") // Replace spaces with -
-    .replace(/[^\w-]+/g, "") // Remove all non-word chars
-    .replace(/--+/g, "-") // Replace multiple - with single -
-    .replace(/^-+/, "") // Trim - from start of text
-    .replace(/-+$/, ""); // Trim - from end of text
+    .replace(/\d+/g, '') // Remove all numeric digits
+    .replace('&', '')
+    .replace(/\s+/g, ' ') // Replace spaces with -
+    .replace(/[^\w-]+/g, '') // Remove all non-word chars
+    .replace(/--+/g, '-') // Replace multiple - with single -
+    .replace(/^-+/, '') // Trim - from start of text
+    .replace(/-+$/, ''); // Trim - from end of text
 }
 
 export default SingleCoursePage;

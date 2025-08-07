@@ -1,4 +1,4 @@
-import CountDown from "@/components/Maintenance/CountDonw";
+import CountDown from '@/components/Maintenance/CountDonw';
 
 const MaintenancePage = () => {
   return (

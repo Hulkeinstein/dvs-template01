@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import AccountSidebar from "@/components/My-Account/AccountSidebar";
-import MyAccount from "@/components/My-Account/MyAccount";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import React from "react";
-import { Provider } from "react-redux";
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import AccountSidebar from '@/components/My-Account/AccountSidebar';
+import MyAccount from '@/components/My-Account/MyAccount';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import React from 'react';
+import { Provider } from 'react-redux';
 
-import AccountInfo from "../../../../data/myAccount.json";
+import AccountInfo from '../../../../data/myAccount.json';
 
 const MyAccountPage = () => {
   return (

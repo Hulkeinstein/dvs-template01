@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
-import Accordion from "@/components/Accordions/Accordion";
-import AccordionFour from "@/components/Accordions/Accordion-Four";
-import AccordionThree from "@/components/Accordions/Accordion-Three";
-import AccordionTwo from "@/components/Accordions/Accordion-Two";
-import Course from "@/components/Accordions/Course";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
+import Accordion from '@/components/Accordions/Accordion';
+import AccordionFour from '@/components/Accordions/Accordion-Four';
+import AccordionThree from '@/components/Accordions/Accordion-Three';
+import AccordionTwo from '@/components/Accordions/Accordion-Two';
+import Course from '@/components/Accordions/Course';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
 
 const AccordionPage = () => {
   return (

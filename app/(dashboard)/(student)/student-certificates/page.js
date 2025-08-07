@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 
 export const metadata = {
-  title: "My Certificates - DVS-TEMPLATE01",
-  description: "View and download your course completion certificates",
+  title: 'My Certificates - DVS-TEMPLATE01',
+  description: 'View and download your course completion certificates',
 };
 
 const StudentCertificatesLayout = () => {

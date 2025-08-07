@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const Profile = ({ params }) => {
   const router = useRouter();
@@ -9,7 +9,7 @@ const Profile = ({ params }) => {
 
   useEffect(() => {
     if (postId === undefined) {
-      router.push("/profile/1");
+      router.push('/profile/1');
     }
   }, []);
 };

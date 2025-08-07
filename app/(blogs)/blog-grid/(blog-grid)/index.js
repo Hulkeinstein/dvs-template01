@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import sal from "sal.js";
-import { Provider } from "react-redux";
+import { useEffect } from 'react';
+import sal from 'sal.js';
+import { Provider } from 'react-redux';
 
-import Store from "@/redux/store";
-import Context from "@/context/Context";
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Banner from "@/components/Common/Banner";
-import BlogGrid from "@/components/Blogs/BlogGrid";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
+import Store from '@/redux/store';
+import Context from '@/context/Context';
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Banner from '@/components/Common/Banner';
+import BlogGrid from '@/components/Blogs/BlogGrid';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
 
 const BlogGridPage = ({ getAllBlogs }) => {
   useEffect(() => {
@@ -21,7 +21,7 @@ const BlogGridPage = ({ getAllBlogs }) => {
       once: true,
     });
   }, []);
-  
+
   return (
     <>
       <Provider store={Store}>

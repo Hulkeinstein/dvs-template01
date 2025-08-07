@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonPagination from "@/components/Lesson/LessonPagination";
-import LessonTop from "@/components/Lesson/LessonTop";
-import Link from "next/link";
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonPagination from '@/components/Lesson/LessonPagination';
+import LessonTop from '@/components/Lesson/LessonTop';
+import Link from 'next/link';
 
 const LessonAssignmentPage = () => {
   const [sidebar, setSidebar] = useState(true);
@@ -16,7 +16,7 @@ const LessonAssignmentPage = () => {
         <div className="rbt-lesson-content-wrapper">
           <div
             className={`rbt-lesson-leftsidebar ${
-              sidebar ? "" : "sibebar-none"
+              sidebar ? '' : 'sibebar-none'
             }`}
           >
             <LessonSidebar />

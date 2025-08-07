@@ -1,9 +1,9 @@
-import BackToTop from "../backToTop";
-import HomeTechnologyPage from "./(home-technology)";
+import BackToTop from '../backToTop';
+import HomeTechnologyPage from './(home-technology)';
 
 export const metadata = {
-  title: "Home Technology - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Home Technology - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const HomeTechnologyLayout = () => {

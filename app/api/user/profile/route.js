@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase 클라이언트 생성
@@ -13,20 +13,39 @@ const supabase = createClient(
 async function getExistingColumns() {
   try {
     // user 테이블의 첫 번째 행을 가져와서 어떤 컬럼이 있는지 확인
-    const { data, error } = await supabase
-      .from('user')
-      .select('*')
-      .limit(1);
-    
+    const { data, error } = await supabase.from('user').select('*').limit(1);
+
     if (error || !data || data.length === 0) {
       // 기본 필드만 반환
-      return ['id', 'email', 'name', 'photo_url', 'role', 'created_at', 'username', 'phone', 'is_profile_complete', 'onboarding_completed_at'];
+      return [
+        'id',
+        'email',
+        'name',
+        'photo_url',
+        'role',
+        'created_at',
+        'username',
+        'phone',
+        'is_profile_complete',
+        'onboarding_completed_at',
+      ];
     }
-    
+
     return Object.keys(data[0]);
   } catch (error) {
     console.error('Error fetching columns:', error);
-    return ['id', 'email', 'name', 'photo_url', 'role', 'created_at', 'username', 'phone', 'is_profile_complete', 'onboarding_completed_at'];
+    return [
+      'id',
+      'email',
+      'name',
+      'photo_url',
+      'role',
+      'created_at',
+      'username',
+      'phone',
+      'is_profile_complete',
+      'onboarding_completed_at',
+    ];
   }
 }
 
@@ -40,24 +59,27 @@ export async function PUT(request) {
 
     // session.user.id가 없으면 email로 사용자 찾기
     let userId = session.user.id;
-    
+
     if (!userId && session.user.email) {
-      console.log('User ID not in session, fetching by email:', session.user.email);
+      console.log(
+        'User ID not in session, fetching by email:',
+        session.user.email
+      );
       const { data: userData, error: userError } = await supabase
         .from('user')
         .select('id')
         .eq('email', session.user.email)
         .single();
-      
+
       if (userError || !userData) {
         console.error('Failed to fetch user by email:', userError);
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
-      
+
       userId = userData.id;
       console.log('Found user ID:', userId);
     }
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }
@@ -70,7 +92,7 @@ export async function PUT(request) {
 
     // 업데이트할 필드 준비
     const updateData = {};
-    
+
     // Username 필드 처리 (선택사항)
     if (data.username !== undefined) {
       // Username이 제공되면 중복 체크
@@ -81,9 +103,12 @@ export async function PUT(request) {
           .eq('username', data.username)
           .neq('id', userId)
           .single();
-        
+
         if (existingUser) {
-          return NextResponse.json({ error: 'Username already taken' }, { status: 400 });
+          return NextResponse.json(
+            { error: 'Username already taken' },
+            { status: 400 }
+          );
         }
         updateData.username = data.username.trim();
       } else {
@@ -94,7 +119,10 @@ export async function PUT(request) {
 
     if (data.phone !== undefined) {
       if (!data.phone.trim()) {
-        return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
+        return NextResponse.json(
+          { error: 'Phone number is required' },
+          { status: 400 }
+        );
       }
       updateData.phone = data.phone.trim();
     }
@@ -110,10 +138,10 @@ export async function PUT(request) {
       'twitter_url',
       'linkedin_url',
       'website_url',
-      'github_url'
+      'github_url',
     ];
 
-    optionalFields.forEach(field => {
+    optionalFields.forEach((field) => {
       if (data[field] !== undefined && existingColumns.includes(field)) {
         updateData[field] = data[field].trim();
       }
@@ -141,22 +169,25 @@ export async function PUT(request) {
     // 업데이트할 필드가 없으면 성공으로 처리 (Skip 기능을 위해)
     if (Object.keys(updateData).length === 0) {
       console.log('No fields to update, returning current user data');
-      
+
       // 현재 사용자 정보 반환
       const { data: currentUser, error: fetchError } = await supabase
         .from('user')
         .select('*')
         .eq('id', userId)
         .single();
-        
+
       if (fetchError) {
-        return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 });
+        return NextResponse.json(
+          { error: 'Failed to fetch user data' },
+          { status: 500 }
+        );
       }
-      
-      return NextResponse.json({ 
-        success: true, 
+
+      return NextResponse.json({
+        success: true,
         user: currentUser,
-        profileComplete: currentUser.is_profile_complete || false
+        profileComplete: currentUser.is_profile_complete || false,
       });
     }
 
@@ -173,23 +204,28 @@ export async function PUT(request) {
 
     if (error) {
       console.error('Supabase update error:', error);
-      return NextResponse.json({ 
-        error: 'Failed to update profile', 
-        details: error.message 
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: 'Failed to update profile',
+          details: error.message,
+        },
+        { status: 500 }
+      );
     }
 
     console.log('Update successful:', updatedUser);
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       user: updatedUser,
-      profileComplete: updateData.is_profile_complete || false
+      profileComplete: updateData.is_profile_complete || false,
     });
-
   } catch (error) {
     console.error('Profile update error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }
 
@@ -202,21 +238,21 @@ export async function GET() {
 
     // session.user.id가 없으면 email로 사용자 찾기
     let userId = session.user.id;
-    
+
     if (!userId && session.user.email) {
       const { data: userData, error: userError } = await supabase
         .from('user')
         .select('id')
         .eq('email', session.user.email)
         .single();
-      
+
       if (userError || !userData) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
-      
+
       userId = userData.id;
     }
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'User ID not found' }, { status: 400 });
     }
@@ -229,13 +265,18 @@ export async function GET() {
 
     if (error) {
       console.error('Supabase fetch error:', error);
-      return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Failed to fetch profile' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(user);
-
   } catch (error) {
     console.error('Profile fetch error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
 }

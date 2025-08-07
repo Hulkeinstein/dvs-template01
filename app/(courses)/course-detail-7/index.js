@@ -1,34 +1,34 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import sal from "sal.js";
-import "venobox/dist/venobox.min.css";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import sal from 'sal.js';
+import 'venobox/dist/venobox.min.css';
 
-import CourseData from "../../../data/course-details/courseData.json";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import CourseData from '../../../data/course-details/courseData.json';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import CourseHead from "@/components/Course-Details/Course-Sections/course-head";
-import CourseActionBottom from "@/components/Course-Details/Course-Sections/Course-Action-Bottom";
-import RelatedCourse from "@/components/Course-Details/Course-Sections/RelatedCourse";
-import CourseDetailsSeven from "@/components/Course-Details/CourseDetails-Seven";
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import CourseHead from '@/components/Course-Details/Course-Sections/course-head';
+import CourseActionBottom from '@/components/Course-Details/Course-Sections/Course-Action-Bottom';
+import RelatedCourse from '@/components/Course-Details/Course-Sections/RelatedCourse';
+import CourseDetailsSeven from '@/components/Course-Details/CourseDetails-Seven';
 
-import breadcrumbImg from "../../../public/images/shape/breadcrumb-light-shadow-01.png";
-import breadcrumbShape from "../../../public/images/shape/breadcrumb-shape-01.png";
+import breadcrumbImg from '../../../public/images/shape/breadcrumb-light-shadow-01.png';
+import breadcrumbShape from '../../../public/images/shape/breadcrumb-shape-01.png';
 
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/art-stu-2.png" },
-  { name: "Mark Jordan", src: "/images/shape/art-stu-1.png" },
-  { name: "Jordan", src: "/images/shape/art-stu-3.png" },
+  { name: 'Ava Miller', src: '/images/shape/art-stu-2.png' },
+  { name: 'Mark Jordan', src: '/images/shape/art-stu-1.png' },
+  { name: 'Jordan', src: '/images/shape/art-stu-3.png' },
 ];
 
 const SingleCourseSeven = ({ getParams }) => {
@@ -42,12 +42,12 @@ const SingleCourseSeven = ({ getParams }) => {
 
   useEffect(() => {
     if (postId && checkMatch === undefined) {
-      router.push("/course-card-2");
+      router.push('/course-card-2');
     }
 
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
 
@@ -67,7 +67,7 @@ const SingleCourseSeven = ({ getParams }) => {
 
           <div className="rbt-breadcrumb-default breadcrumb-bg-3 bg_image">
             <CourseHead
-              checkMatch={checkMatch !== undefined ? checkMatch : ""}
+              checkMatch={checkMatch !== undefined ? checkMatch : ''}
             />
           </div>
 
@@ -136,7 +136,7 @@ const SingleCourseSeven = ({ getParams }) => {
                           <i className="feather-user color-white"></i>
                         </span>
                         <h6 className="b3 w-400 mb--0 color-white">
-                          <span className="opacity-8">by</span>{" "}
+                          <span className="opacity-8">by</span>{' '}
                           <Link
                             className="px-1"
                             href={`/profile/${checkMatch.id}`}
@@ -199,14 +199,14 @@ const SingleCourseSeven = ({ getParams }) => {
               </div>
               <div className="row g-5">
                 <CourseDetailsSeven
-                  checkMatchCourses={checkMatch !== undefined ? checkMatch : ""}
+                  checkMatchCourses={checkMatch !== undefined ? checkMatch : ''}
                 />
               </div>
             </div>
           </div>
 
           <CourseActionBottom
-            checkMatchCourses={checkMatch !== undefined ? checkMatch : ""}
+            checkMatchCourses={checkMatch !== undefined ? checkMatch : ''}
           />
 
           <div className="rbt-related-course-area bg-color-white rbt-section-gapBottom">

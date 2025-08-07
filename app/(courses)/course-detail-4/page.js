@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 const CourseLayout = ({ params }) => {
   const router = useRouter();
@@ -9,7 +9,7 @@ const CourseLayout = ({ params }) => {
 
   useEffect(() => {
     if (postId === undefined) {
-      router.push("/course-detail-4/13");
+      router.push('/course-detail-4/13');
     }
   }, []);
 };

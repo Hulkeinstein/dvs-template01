@@ -1,10 +1,10 @@
-import BackToTop from "@/app/backToTop";
-import { getAllPostsMeta } from "@/mdx";
-import BlogWithSidebarPage from "./(blog-sidebar)";
+import BackToTop from '@/app/backToTop';
+import { getAllPostsMeta } from '@/mdx';
+import BlogWithSidebarPage from './(blog-sidebar)';
 
 export const metadata = {
-  title: "Blog With Sidebar- Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Blog With Sidebar- Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const BlogWithSidebarLayout = async () => {

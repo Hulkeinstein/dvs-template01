@@ -1,5 +1,5 @@
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
 import { createClient } from '@supabase/supabase-js';
 
 // 환경 변수 확인 로그 제거 - 필요 시 주석 해제
@@ -15,10 +15,13 @@ import { createClient } from '@supabase/supabase-js';
 // Supabase 클라이언트 생성
 let supabase = null;
 try {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.SUPABASE_SERVICE_ROLE_KEY
+  ) {
     throw new Error('Supabase 환경 변수가 설정되지 않았습니다.');
   }
-  
+
   supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -51,9 +54,9 @@ export const authOptions = {
           .select('email')
           .eq('email', user.email);
 
-        if (error) { 
+        if (error) {
           console.error('Supabase select error:', error);
-          return false; 
+          return false;
         }
 
         if (data && data.length > 0) {
@@ -61,22 +64,20 @@ export const authOptions = {
             .from('user')
             .update({ name: user.name, photo_url: user.image })
             .eq('email', user.email);
-          if (updateError) { 
+          if (updateError) {
             console.error('Supabase update error:', updateError);
-            return false; 
+            return false;
           }
         } else {
-          const { error: insertError } = await supabase
-            .from('user')
-            .insert({
-              email: user.email,
-              name: user.name,
-              photo_url: user.image,
-              role: 'student'
-            });
-          if (insertError) { 
+          const { error: insertError } = await supabase.from('user').insert({
+            email: user.email,
+            name: user.name,
+            photo_url: user.image,
+            role: 'student',
+          });
+          if (insertError) {
             console.error('Supabase insert error:', insertError);
-            return false; 
+            return false;
           }
         }
         return true;
@@ -85,7 +86,7 @@ export const authOptions = {
         return false;
       }
     },
-    
+
     async jwt({ token, user }) {
       if (user && supabase) {
         try {
@@ -115,9 +116,9 @@ export const authOptions = {
 
     async session({ session, token }) {
       if (token && session.user) {
-          session.user.id = token.id;
-          session.user.role = token.role;
-          session.user.isProfileComplete = token.isProfileComplete;
+        session.user.id = token.id;
+        session.user.role = token.role;
+        session.user.isProfileComplete = token.isProfileComplete;
       }
       return session;
     },

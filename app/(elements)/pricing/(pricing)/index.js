@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Cart from "@/components/Header/Offcanvas/Cart";
+import Context from '@/context/Context';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Cart from '@/components/Header/Offcanvas/Cart';
 
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Pricing from "@/components/Pricing/Pricing";
-import PricingTwo from "@/components/Pricing/Pricing-Two";
-import PricingThree from "@/components/Pricing/Pricing-Three";
-import PricingFour from "@/components/Pricing/Pricing-Four";
-import PricingFive from "@/components/Pricing/Pricing-Five";
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Pricing from '@/components/Pricing/Pricing';
+import PricingTwo from '@/components/Pricing/Pricing-Two';
+import PricingThree from '@/components/Pricing/Pricing-Three';
+import PricingFour from '@/components/Pricing/Pricing-Four';
+import PricingFive from '@/components/Pricing/Pricing-Five';
 
 const PricingPage = () => {
   return (

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonPagination from "@/components/Lesson/LessonPagination";
-import LessonTop from "@/components/Lesson/LessonTop";
-import LessonQuizResult from "@/components/Lesson/LessonQuizResult";
-import QuizResult from "@/components/Lesson/Quiz/QuizResult";
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonPagination from '@/components/Lesson/LessonPagination';
+import LessonTop from '@/components/Lesson/LessonTop';
+import LessonQuizResult from '@/components/Lesson/LessonQuizResult';
+import QuizResult from '@/components/Lesson/Quiz/QuizResult';
 
 const LessonQuizResultLayout = () => {
   const [sidebar, setSidebar] = useState(true);
@@ -18,7 +18,7 @@ const LessonQuizResultLayout = () => {
         <div className="rbt-lesson-content-wrapper">
           <div
             className={`rbt-lesson-leftsidebar ${
-              sidebar ? "" : "sibebar-none"
+              sidebar ? '' : 'sibebar-none'
             }`}
           >
             <LessonSidebar />
@@ -42,8 +42,8 @@ const LessonQuizResultLayout = () => {
                 <div
                   className={`rbt-dashboard-table table-responsive mobile-table-750 mt--50 quiz-result-enter ${
                     details
-                      ? "quiz-result-enter-active"
-                      : "quiz-result-exit quiz-result-exit-active"
+                      ? 'quiz-result-enter-active'
+                      : 'quiz-result-exit quiz-result-exit-active'
                   }`}
                 >
                   <QuizResult />

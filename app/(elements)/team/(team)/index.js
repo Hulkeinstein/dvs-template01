@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import TeamOne from "@/components/Team/TeamOne";
-import TeamHead from "@/components/Team/TeamHead";
-import TeamTwo from "@/components/Team/TeamTwo";
-import TeamThree from "@/components/Team/TeamThree";
-import TeamFour from "@/components/Team/TeamFour";
-import TeamFive from "@/components/Team/TeamFive";
-import TeamSix from "@/components/Team/TeamSix";
-import TeamSeven from "@/components/Team/TeamSeven";
-import TeamEight from "@/components/Team/TeamEight";
-import TeamNine from "@/components/Team/TeamNine";
-import TeamTen from "@/components/Team/TeamTen";
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import TeamOne from '@/components/Team/TeamOne';
+import TeamHead from '@/components/Team/TeamHead';
+import TeamTwo from '@/components/Team/TeamTwo';
+import TeamThree from '@/components/Team/TeamThree';
+import TeamFour from '@/components/Team/TeamFour';
+import TeamFive from '@/components/Team/TeamFive';
+import TeamSix from '@/components/Team/TeamSix';
+import TeamSeven from '@/components/Team/TeamSeven';
+import TeamEight from '@/components/Team/TeamEight';
+import TeamNine from '@/components/Team/TeamNine';
+import TeamTen from '@/components/Team/TeamTen';
 
 const InstructorPage = () => {
   return (

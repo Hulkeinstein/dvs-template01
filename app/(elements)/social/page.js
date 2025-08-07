@@ -1,8 +1,8 @@
-import SocialPage from "./(social)";
+import SocialPage from './(social)';
 
 export const metadata = {
-  title: "Social - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Social - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const SocialLayout = () => {

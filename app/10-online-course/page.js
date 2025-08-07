@@ -1,9 +1,9 @@
-import BackToTop from "../backToTop";
-import OnlineCoursePage from "./(online-course)";
+import BackToTop from '../backToTop';
+import OnlineCoursePage from './(online-course)';
 
 export const metadata = {
-  title: "Online Course - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Online Course - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const OnlineCourseLayout = () => {

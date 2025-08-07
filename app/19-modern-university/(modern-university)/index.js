@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Provider } from "react-redux";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
+import { Provider } from 'react-redux';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import ModernUniversity from "@/components/19-modern-university/ModernUniversity";
-import HeaderStyleFour from "@/components/Header/HeaderStyle-Four";
-import FooterOne from "@/components/Footer/Footer-One";
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import ModernUniversity from '@/components/19-modern-university/ModernUniversity';
+import HeaderStyleFour from '@/components/Header/HeaderStyle-Four';
+import FooterOne from '@/components/Footer/Footer-One';
 
 const ModernUniversityPage = ({ getAllBlogs }) => {
   return (

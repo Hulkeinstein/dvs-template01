@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import InstructorDashboardHeader from "@/components/Instructor/InstructorDashboardHeader";
-import InstructorDashboardSidebar from "@/components/Instructor/InstructorDashboardSidebar";
-import StudentManagement from "@/components/Instructor/StudentManagement";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
-import RoleProtection from "@/components/Auth/RoleProtection";
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
+import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
+import StudentManagement from '@/components/Instructor/StudentManagement';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
+import RoleProtection from '@/components/Auth/RoleProtection';
 
 const StudentManagementPage = () => {
   return (
@@ -29,7 +29,7 @@ const StudentManagementPage = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={["instructor"]}>
+                  <RoleProtection allowedRoles={['instructor']}>
                     <InstructorDashboardHeader />
 
                     <div className="row g-5">

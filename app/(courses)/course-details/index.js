@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import sal from "sal.js";
-import { useSession } from "next-auth/react";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
-import { CourseProviderFactory } from "@/app/lib/course-providers/CourseProviderFactory";
+import React, { useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import sal from 'sal.js';
+import { useSession } from 'next-auth/react';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
+import { CourseProviderFactory } from '@/app/lib/course-providers/CourseProviderFactory';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import CourseHead from "@/components/Course-Details/Course-Sections/course-head";
-import CourseDetailsOne from "@/components/Course-Details/CourseDetails-One";
-import CourseActionBottom from "@/components/Course-Details/Course-Sections/Course-Action-Bottom";
-import SimilarCourses from "@/components/Course-Details/Course-Sections/SimilarCourses";
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import CourseHead from '@/components/Course-Details/Course-Sections/course-head';
+import CourseDetailsOne from '@/components/Course-Details/CourseDetails-One';
+import CourseActionBottom from '@/components/Course-Details/Course-Sections/Course-Action-Bottom';
+import SimilarCourses from '@/components/Course-Details/Course-Sections/SimilarCourses';
 
 const SingleCourse = ({ getParams }) => {
   const router = useRouter();
@@ -26,7 +26,7 @@ const SingleCourse = ({ getParams }) => {
   const { data: session, status: sessionStatus } = useSession();
   const courseId = getParams.courseId;
   const isPreview = searchParams.get('preview') === 'true';
-  
+
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,32 +34,32 @@ const SingleCourse = ({ getParams }) => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        console.log('Fetching course:', { 
-          courseId, 
-          isPreview, 
+        console.log('Fetching course:', {
+          courseId,
+          isPreview,
           sessionStatus,
-          userEmail: session?.user?.email 
+          userEmail: session?.user?.email,
         });
 
         // Use factory to get appropriate provider and fetch course
-        const courseData = await CourseProviderFactory.getCourse(courseId, { 
+        const courseData = await CourseProviderFactory.getCourse(courseId, {
           session,
-          isPreview 
+          isPreview,
         });
 
         if (courseData) {
           setCourse(courseData);
         } else {
           setError('Course not found');
-          router.push("/course-filter-one-toggle");
+          router.push('/course-filter-one-toggle');
         }
       } catch (err) {
         console.error('Error fetching course:', err);
         setError(err.message || 'Failed to load course');
-        
+
         // Only redirect if it's not an access denied error
         if (!err.message?.includes('Access denied')) {
-          router.push("/course-filter-one-toggle");
+          router.push('/course-filter-one-toggle');
         }
       } finally {
         setLoading(false);
@@ -71,7 +71,7 @@ const SingleCourse = ({ getParams }) => {
       console.log('Waiting for session to load...');
       return;
     }
-    
+
     if (courseId) {
       fetchCourse();
     }
@@ -89,7 +89,7 @@ const SingleCourse = ({ getParams }) => {
           <MobileMenu />
           <HeaderStyleTen headerSticky="" headerType={true} />
           <Cart />
-          
+
           {/* Preview Mode Banner */}
           {isPreview && course && (
             <div className="rbt-preview-banner">
@@ -98,11 +98,12 @@ const SingleCourse = ({ getParams }) => {
                   <div className="col-lg-8">
                     <h6 className="mb-0">
                       <i className="feather-eye me-2"></i>
-                      Preview Mode - This is how your course will appear to students
+                      Preview Mode - This is how your course will appear to
+                      students
                     </h6>
                   </div>
                   <div className="col-lg-4 text-lg-end">
-                    <button 
+                    <button
                       className="rbt-btn btn-white btn-sm"
                       onClick={() => window.close()}
                     >
@@ -159,7 +160,9 @@ const SingleCourse = ({ getParams }) => {
               <CourseActionBottom checkMatchCourses={course} />
 
               <div className="rbt-related-course-area bg-color-white pt--60 rbt-section-gapBottom">
-                <SimilarCourses checkMatchCourses={course.similarCourse || []} />
+                <SimilarCourses
+                  checkMatchCourses={course.similarCourse || []}
+                />
               </div>
             </>
           ) : (
@@ -168,7 +171,10 @@ const SingleCourse = ({ getParams }) => {
                 <div className="col-lg-12">
                   <div className="text-center py-5">
                     <h3>Course not found</h3>
-                    <p className="text-muted">{error || 'The course you are looking for does not exist.'}</p>
+                    <p className="text-muted">
+                      {error ||
+                        'The course you are looking for does not exist.'}
+                    </p>
                   </div>
                 </div>
               </div>

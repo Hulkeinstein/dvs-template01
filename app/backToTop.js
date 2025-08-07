@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
 const BackToTop = () => {
   const progressRef = useRef(null);
 
   useEffect(() => {
-    const progressPath = progressRef.current?.querySelector("path");
+    const progressPath = progressRef.current?.querySelector('path');
     if (!progressPath) return;
 
     const pathLength = progressPath.getTotalLength();
-    progressPath.style.transition = "none";
+    progressPath.style.transition = 'none';
     progressPath.style.strokeDasharray = `${pathLength} ${pathLength}`;
     progressPath.style.strokeDashoffset = pathLength;
     progressPath.getBoundingClientRect();
-    progressPath.style.transition = "stroke-dashoffset 10ms linear";
+    progressPath.style.transition = 'stroke-dashoffset 10ms linear';
 
     const updateProgress = () => {
       const scroll = window.pageYOffset || document.documentElement.scrollTop;
@@ -27,23 +27,23 @@ const BackToTop = () => {
       const rbtProgressParent = progressRef.current;
       if (rbtProgressParent) {
         if (scroll > 50) {
-          rbtProgressParent.classList.add("rbt-backto-top-active");
+          rbtProgressParent.classList.add('rbt-backto-top-active');
         } else {
-          rbtProgressParent.classList.remove("rbt-backto-top-active");
+          rbtProgressParent.classList.remove('rbt-backto-top-active');
         }
       }
     };
 
     updateProgress();
-    window.addEventListener("scroll", updateProgress);
+    window.addEventListener('scroll', updateProgress);
 
-    progressRef.current?.addEventListener("click", (event) => {
+    progressRef.current?.addEventListener('click', (event) => {
       event.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
     return () => {
-      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener('scroll', updateProgress);
     };
   }, []);
 

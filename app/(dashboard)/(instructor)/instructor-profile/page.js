@@ -1,12 +1,12 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getUserProfile } from "@/app/lib/actions/getUserProfile";
-import BackToTop from "@/app/backToTop";
-import InstructorProfile from "./(profile)";
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getUserProfile } from '@/app/lib/actions/getUserProfile';
+import BackToTop from '@/app/backToTop';
+import InstructorProfile from './(profile)';
 
 export const metadata = {
-  title: "Instructor Profile - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Instructor Profile - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const InstructorProfileLayout = async () => {
