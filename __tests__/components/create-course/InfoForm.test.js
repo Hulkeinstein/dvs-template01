@@ -7,7 +7,7 @@ import { fileToBase64 } from '@/app/lib/utils/fileUpload';
 jest.mock('@/app/lib/utils/fileUpload', () => ({
   fileToBase64: jest.fn(),
   validateFileSize: jest.fn(),
-  validateFileType: jest.fn()
+  validateFileType: jest.fn(),
 }));
 
 // Mock Select component
@@ -17,12 +17,12 @@ jest.mock('react-select', () => {
       data-testid="select-category"
       value={value?.value || ''}
       onChange={(e) => {
-        const option = options.find(opt => opt.value === e.target.value);
+        const option = options.find((opt) => opt.value === e.target.value);
         onChange(option);
       }}
     >
       <option value="">{placeholder}</option>
-      {options.map(option => (
+      {options.map((option) => (
         <option key={option.value} value={option.value}>
           {option.label}
         </option>
@@ -43,7 +43,7 @@ describe('InfoForm Component', () => {
     price: '',
     description: '',
     prerequisites: '',
-    learningObjectives: ''
+    learningObjectives: '',
   };
 
   const mockOnFormDataChange = jest.fn();
@@ -55,7 +55,7 @@ describe('InfoForm Component', () => {
 
   it('should render all form fields', () => {
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -73,7 +73,7 @@ describe('InfoForm Component', () => {
 
   it('should handle title input change', () => {
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -85,7 +85,7 @@ describe('InfoForm Component', () => {
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith({
       ...mockFormData,
-      title: 'Test Course'
+      title: 'Test Course',
     });
   });
 
@@ -94,7 +94,7 @@ describe('InfoForm Component', () => {
     fileToBase64.mockResolvedValue(mockBase64);
 
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -110,14 +110,14 @@ describe('InfoForm Component', () => {
       expect(fileToBase64).toHaveBeenCalledWith(mockFile);
       expect(mockOnThumbnailChange).toHaveBeenCalledWith({
         file: mockFile,
-        base64: mockBase64
+        base64: mockBase64,
       });
     });
   });
 
   it('should display error for invalid file type', async () => {
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -125,7 +125,9 @@ describe('InfoForm Component', () => {
     );
 
     const fileInput = screen.getByLabelText('Course Thumbnail*');
-    const mockFile = new File(['test'], 'test.pdf', { type: 'application/pdf' });
+    const mockFile = new File(['test'], 'test.pdf', {
+      type: 'application/pdf',
+    });
 
     fireEvent.change(fileInput, { target: { files: [mockFile] } });
 
@@ -136,7 +138,7 @@ describe('InfoForm Component', () => {
 
   it('should display error for oversized file', async () => {
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -148,7 +150,7 @@ describe('InfoForm Component', () => {
     const largeFile = {
       name: 'large.jpg',
       type: 'image/jpeg',
-      size: 10 * 1024 * 1024 // 10MB
+      size: 10 * 1024 * 1024, // 10MB
     };
 
     Object.defineProperty(fileInput, 'files', {
@@ -159,13 +161,15 @@ describe('InfoForm Component', () => {
     fireEvent.change(fileInput, { target: { files: [largeFile] } });
 
     await waitFor(() => {
-      expect(screen.getByText(/File size must be less than 5MB/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/File size must be less than 5MB/)
+      ).toBeInTheDocument();
     });
   });
 
   it('should handle category selection', () => {
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -177,18 +181,18 @@ describe('InfoForm Component', () => {
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith({
       ...mockFormData,
-      category: { value: 'web-development', label: 'Web Development' }
+      category: { value: 'web-development', label: 'Web Development' },
     });
   });
 
   it('should display preview image when thumbnail is provided', () => {
     const formDataWithThumbnail = {
       ...mockFormData,
-      thumbnailPreview: 'data:image/jpeg;base64,mockpreview'
+      thumbnailPreview: 'data:image/jpeg;base64,mockpreview',
     };
 
     render(
-      <InfoForm 
+      <InfoForm
         formData={formDataWithThumbnail}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -197,12 +201,15 @@ describe('InfoForm Component', () => {
 
     const previewImage = screen.getByAltText('Thumbnail Preview');
     expect(previewImage).toBeInTheDocument();
-    expect(previewImage).toHaveAttribute('src', formDataWithThumbnail.thumbnailPreview);
+    expect(previewImage).toHaveAttribute(
+      'src',
+      formDataWithThumbnail.thumbnailPreview
+    );
   });
 
   it('should validate required fields', () => {
     render(
-      <InfoForm 
+      <InfoForm
         formData={mockFormData}
         onFormDataChange={mockOnFormDataChange}
         onThumbnailChange={mockOnThumbnailChange}
@@ -213,10 +220,10 @@ describe('InfoForm Component', () => {
       'Course Title*',
       'Course Slug*',
       'Course Duration*',
-      'Course Price*'
+      'Course Price*',
     ];
 
-    requiredFields.forEach(placeholder => {
+    requiredFields.forEach((placeholder) => {
       const field = screen.getByPlaceholderText(placeholder);
       expect(field).toHaveAttribute('required');
     });

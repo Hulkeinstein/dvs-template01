@@ -7,7 +7,7 @@ import EditCoursePage from '@/app/(dashboard)/instructor/courses/[id]/edit/page'
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
-  notFound: jest.fn()
+  notFound: jest.fn(),
 }));
 
 // Mock next-auth
@@ -20,14 +20,14 @@ jest.mock('@/app/lib/actions/lessonActions');
 const mockPush = jest.fn();
 const mockRouter = {
   push: mockPush,
-  back: jest.fn()
+  back: jest.fn(),
 };
 
 const mockSession = {
   user: {
     email: 'instructor@test.com',
-    name: 'Test Instructor'
-  }
+    name: 'Test Instructor',
+  },
 };
 
 describe('EditCoursePage', () => {
@@ -47,8 +47,8 @@ describe('EditCoursePage', () => {
         description: 'Test Description',
         category: 'web-development',
         price: 99,
-        instructor_id: 'instructor-123'
-      }
+        instructor_id: 'instructor-123',
+      },
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -71,8 +71,8 @@ describe('EditCoursePage', () => {
       course: {
         id: '123',
         title: 'Test Course',
-        instructor_id: 'another-instructor'
-      }
+        instructor_id: 'another-instructor',
+      },
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -86,7 +86,7 @@ describe('EditCoursePage', () => {
     const courseActions = require('@/app/lib/actions/courseActions');
     courseActions.getCourseById = jest.fn().mockResolvedValue({
       success: false,
-      error: 'Course not found'
+      error: 'Course not found',
     });
 
     render(<EditCoursePage params={{ id: 'non-existent' }} />);
@@ -104,12 +104,12 @@ describe('EditCoursePage', () => {
         id: '123',
         title: 'Old Title',
         description: 'Old Description',
-        price: 50
-      }
+        price: 50,
+      },
     });
 
     courseActions.updateCourse = jest.fn().mockResolvedValue({
-      success: true
+      success: true,
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -134,7 +134,7 @@ describe('EditCoursePage', () => {
     await waitFor(() => {
       expect(courseActions.updateCourse).toHaveBeenCalledWith('123', {
         title: 'New Title',
-        price: 99
+        price: 99,
       });
     });
   });
@@ -150,9 +150,9 @@ describe('EditCoursePage', () => {
         title: 'Test Course',
         lessons: [
           { id: 'lesson-1', title: 'Lesson 1', order_index: 0 },
-          { id: 'lesson-2', title: 'Lesson 2', order_index: 1 }
-        ]
-      }
+          { id: 'lesson-2', title: 'Lesson 2', order_index: 1 },
+        ],
+      },
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -174,7 +174,7 @@ describe('EditCoursePage', () => {
   it('should handle lesson reordering', async () => {
     const lessonActions = require('@/app/lib/actions/lessonActions');
     lessonActions.reorderLessons = jest.fn().mockResolvedValue({
-      success: true
+      success: true,
     });
 
     const courseActions = require('@/app/lib/actions/courseActions');
@@ -185,9 +185,9 @@ describe('EditCoursePage', () => {
         title: 'Test Course',
         lessons: [
           { id: 'lesson-1', title: 'Lesson 1', order_index: 0 },
-          { id: 'lesson-2', title: 'Lesson 2', order_index: 1 }
-        ]
-      }
+          { id: 'lesson-2', title: 'Lesson 2', order_index: 1 },
+        ],
+      },
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -203,7 +203,7 @@ describe('EditCoursePage', () => {
   it('should delete a lesson', async () => {
     const lessonActions = require('@/app/lib/actions/lessonActions');
     lessonActions.deleteLesson = jest.fn().mockResolvedValue({
-      success: true
+      success: true,
     });
 
     const courseActions = require('@/app/lib/actions/courseActions');
@@ -212,10 +212,8 @@ describe('EditCoursePage', () => {
       course: {
         id: '123',
         title: 'Test Course',
-        lessons: [
-          { id: 'lesson-1', title: 'Lesson 1', order_index: 0 }
-        ]
-      }
+        lessons: [{ id: 'lesson-1', title: 'Lesson 1', order_index: 0 }],
+      },
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -243,8 +241,8 @@ describe('EditCoursePage', () => {
       success: true,
       course: {
         id: '123',
-        title: 'Test Course'
-      }
+        title: 'Test Course',
+      },
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
@@ -257,9 +255,11 @@ describe('EditCoursePage', () => {
 
   it('should show loading state while fetching course', () => {
     const courseActions = require('@/app/lib/actions/courseActions');
-    courseActions.getCourseById = jest.fn().mockImplementation(() => 
-      new Promise(resolve => setTimeout(resolve, 1000))
-    );
+    courseActions.getCourseById = jest
+      .fn()
+      .mockImplementation(
+        () => new Promise((resolve) => setTimeout(resolve, 1000))
+      );
 
     render(<EditCoursePage params={{ id: '123' }} />);
 
@@ -272,13 +272,13 @@ describe('EditCoursePage', () => {
       success: true,
       course: {
         id: '123',
-        title: 'Test Course'
-      }
+        title: 'Test Course',
+      },
     });
 
     courseActions.updateCourse = jest.fn().mockResolvedValue({
       success: false,
-      error: 'Failed to update course'
+      error: 'Failed to update course',
     });
 
     render(<EditCoursePage params={{ id: '123' }} />);
