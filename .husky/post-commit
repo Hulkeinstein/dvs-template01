@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# main 브랜치에서만 태스크 아카이빙 실행
+npm run task:archive 2>/dev/null || true
