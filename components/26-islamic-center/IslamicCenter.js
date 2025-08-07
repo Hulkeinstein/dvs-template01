@@ -131,7 +131,7 @@ const IslamicCenter = ({ blogdata }) => {
                       </h2>
                       <p className="mt--15">
                         At Histudy University, we are moving boldly - and
-                        concertedly - to expand tomorrow's frontiers. We believe
+                        concertedly - to expand tomorrow&apos;s frontiers. We believe
                         that we have the power to shape the future, for the
                         better
                       </p>
