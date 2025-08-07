@@ -84,7 +84,7 @@
 ## Planned Features
 
 ### Badge System (Week 3)
-**Database Changes**:
+**데이터베이스 변경**:
 ```sql
 ALTER TABLE courses 
 ADD COLUMN is_hot BOOLEAN DEFAULT false,
@@ -99,7 +99,7 @@ ADD COLUMN badge_text VARCHAR(50);
 - Auto-badge rules (e.g., new courses < 7 days)
 
 ### Bookmark System (Week 1)
-**Database Changes**:
+**데이터베이스 변경**:
 ```sql
 CREATE TABLE bookmarks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

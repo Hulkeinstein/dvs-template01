@@ -1,170 +1,170 @@
-# Common Issues & Solutions
+# 일반적인 문제 & 해결방법
 
-## Supabase Issues
+## Supabase 문제
 
-### Supabase Warnings
-- "@supabase/realtime-js" warnings are normal and can be ignored
-- They don't affect functionality
+### Supabase 경고
+- "@supabase/realtime-js" 경고는 정상이며 무시해도 됩니다
+- 기능에 영향을 주지 않습니다
 
-### Course Creation Fails
-- Ensure user role is 'instructor' in Supabase
-- Check `/api/user/profile` is returning correct format
-- Verify RLS policies are properly configured
+### 코스 생성 실패
+- Supabase에서 사용자 역할이 'instructor'인지 확인
+- `/api/user/profile`이 올바른 형식을 반환하는지 확인
+- RLS 정책이 제대로 구성되었는지 확인
 
-### Database Connection Issues
-- Check environment variables are set correctly
-- Ensure Supabase project is not paused
-- Verify service role key has proper permissions
+### 데이터베이스 연결 문제
+- 환경 변수가 올바르게 설정되었는지 확인
+- Supabase 프로젝트가 일시 중지되지 않았는지 확인
+- Service role key가 적절한 권한을 가지고 있는지 확인
 
-## File Upload Issues
+## 파일 업로드 문제
 
-### File Upload Fails
-- Check file size < 5MB
-- Verify file type is image (jpg, png, webp)
-- Check Supabase bucket exists and has public access
-- Verify bucket permissions in Supabase dashboard
+### 파일 업로드 실패
+- 파일 크기가 5MB 미만인지 확인
+- 파일 타입이 이미지(jpg, png, webp)인지 확인
+- Supabase bucket이 존재하고 public 접근이 가능한지 확인
+- Supabase 대시보드에서 bucket 권한 확인
 
-### Base64 Conversion Error
-- Ensure file is properly selected before conversion
-- Check browser console for specific error messages
-- Verify `/app/lib/utils/fileUpload.js` functions
+### Base64 변환 오류
+- 변환 전에 파일이 제대로 선택되었는지 확인
+- 브라우저 콘솔에서 특정 오류 메시지 확인
+- `/app/lib/utils/fileUpload.js` 함수 확인
 
-## Lesson Management Issues
+## 레슨 관리 문제
 
-### Lesson Reorder Not Working
-- Check `@dnd-kit` packages installed
-- Verify lesson IDs are unique
-- Check order_index values in DB
-- Ensure drag handle is properly implemented
+### 레슨 재정렬 작동 안함
+- `@dnd-kit` 패키지가 설치되었는지 확인
+- 레슨 ID가 고유한지 확인
+- DB의 order_index 값 확인
+- 드래그 핸들이 제대로 구현되었는지 확인
 
-### Edit Button Not Working
-- Verify course ID is passed correctly
-- Check route exists: `/instructor/courses/[id]/edit`
-- Verify user owns the course
-- Check browser console for routing errors
+### 편집 버튼 작동 안함
+- 코스 ID가 올바르게 전달되었는지 확인
+- 경로가 존재하는지 확인: `/instructor/courses/[id]/edit`
+- 사용자가 해당 코스를 소유하고 있는지 확인
+- 브라우저 콘솔에서 라우팅 오류 확인
 
-## Quiz System Issues
+## 퀴즈 시스템 문제
 
-### Zod Validation Error (_zod)
-- **Problem**: Zod v4.0.14 creates "_zod" property
-- **Solution**: Use Zod v3.25.76
-- **Check**: `package.json` for correct version
+### Zod 검증 오류 (_zod)
+- **문제**: Zod v4.0.14가 "_zod" 속성을 생성함
+- **해결책**: Zod v3.25.76 사용
+- **확인**: `package.json`에서 올바른 버전 확인
 
-### Quiz Not Showing in Lessons
-- Verify `content_type` is set to 'quiz'
-- Check topic_id is correctly assigned
-- Ensure course_topics table has correct sort_order
-- Verify getLessonsByCourseAndTopic query
+### 레슨에 퀴즈가 표시되지 않음
+- `content_type`이 'quiz'로 설정되었는지 확인
+- topic_id가 올바르게 할당되었는지 확인
+- course_topics 테이블에 올바른 sort_order가 있는지 확인
+- getLessonsByCourseAndTopic 쿼리 확인
 
-### Video Placeholder Not Working
-- Check videoUtils.js is imported correctly
-- Verify Quill editor modules configuration
-- Ensure conversion happens before saving
-- Check HTML content for placeholder divs
+### 비디오 플레이스홀더 작동 안함
+- videoUtils.js가 올바르게 import되었는지 확인
+- Quill 에디터 모듈 설정 확인
+- 저장 전에 변환이 일어나는지 확인
+- HTML 컨텐츠에 placeholder div가 있는지 확인
 
-## Authentication Issues
+## 인증 문제
 
-### Google OAuth Not Working
-- Verify Google Client ID and Secret
-- Check authorized redirect URIs in Google Console
-- Ensure NEXTAUTH_URL is set correctly
-- Check NextAuth configuration
+### Google OAuth 작동 안함
+- Google Client ID와 Secret 확인
+- Google Console에서 승인된 redirect URI 확인
+- NEXTAUTH_URL이 올바르게 설정되었는지 확인
+- NextAuth 설정 확인
 
-### Role-based Redirect Issues
-- Verify user role in Supabase database
-- Check middleware.js for routing logic
-- Ensure session includes role information
-- Clear browser cookies and re-login
+### 역할 기반 리디렉트 문제
+- Supabase 데이터베이스에서 사용자 역할 확인
+- middleware.js에서 라우팅 로직 확인
+- 세션에 역할 정보가 포함되어 있는지 확인
+- 브라우저 쿠키 삭제 후 다시 로그인
 
-## Styling Issues
+## 스타일링 문제
 
-### CSS Changes Not Applying
-- **NEVER modify CSS files directly**
-- Always edit SCSS files in `/public/scss/`
-- Import new SCSS in `styles.scss`
-- Run build to compile SCSS to CSS
+### CSS 변경사항이 적용되지 않음
+- **CSS 파일을 직접 수정하지 마세요**
+- 항상 `/public/scss/`의 SCSS 파일을 편집하세요
+- `styles.scss`에 새 SCSS를 import
+- SCSS를 CSS로 컴파일하기 위해 build 실행
 
-### Bootstrap Conflicts
-- Check for conflicting class names
-- Verify Bootstrap version (5.x)
-- Ensure proper import order
-- Check for custom overrides
+### Bootstrap 충돌
+- 충돌하는 클래스 이름 확인
+- Bootstrap 버전 확인 (5.x)
+- 올바른 import 순서 확인
+- 커스텀 오버라이드 확인
 
-## Performance Issues
+## 성능 문제
 
-### Slow Page Load
-- Check for unnecessary client components
-- Verify image optimization (WebP, lazy loading)
-- Review bundle size with `npm run analyze`
-- Check for memory leaks in useEffect
+### 느린 페이지 로드
+- 불필요한 client components 확인
+- 이미지 최적화 확인 (WebP, lazy loading)
+- `npm run analyze`로 번들 크기 검토
+- useEffect에서 메모리 누수 확인
 
-### Database Query Slow
-- Add appropriate indexes in Supabase
-- Optimize query with select specific columns
-- Use pagination for large datasets
-- Consider caching strategies
+### 느린 데이터베이스 쿼리
+- Supabase에 적절한 인덱스 추가
+- 특정 커럼 선택으로 쿼리 최적화
+- 대용량 데이터셋에 페이지네이션 사용
+- 캐싱 전략 고려
 
-## GitHub Actions CI Issues
+## GitHub Actions CI 문제
 
-### Prettier Check Fails
-- Run `npm run format` locally
-- Check `.prettierrc.json` configuration
-- Ensure `endOfLine: "auto"` setting
-- Verify all files are formatted
+### Prettier 검사 실패
+- 로컬에서 `npm run format` 실행
+- `.prettierrc.json` 설정 확인
+- `endOfLine: "auto"` 설정 확인
+- 모든 파일이 포맷팅되었는지 확인
 
-### ESLint Errors
-- Run `npm run lint` locally
-- Fix all errors (not warnings)
-- Check for unused variables
-- Verify import statements
+### ESLint 오류
+- 로컬에서 `npm run lint` 실행
+- 모든 오류 수정 (경고는 제외)
+- 사용하지 않는 변수 확인
+- import 문 확인
 
-### Build Fails
-- Check for TypeScript errors
-- Verify all dependencies installed
-- Check environment variables in CI
-- Review build logs for specific errors
+### 빌드 실패
+- TypeScript 오류 확인
+- 모든 의존성이 설치되었는지 확인
+- CI의 환경 변수 확인
+- 특정 오류에 대한 빌드 로그 검토
 
-## Development Environment Issues
+## 개발 환경 문제
 
-### Port 3000 Already in Use
-- Check for existing Next.js process
-- Kill process: `taskkill /F /IM node.exe` (Windows)
-- Or use different port: `npm run dev -- -p 3001`
+### 3000번 포트가 이미 사용 중
+- 기존 Next.js 프로세스 확인
+- 프로세스 종료: `taskkill /F /IM node.exe` (Windows)
+- 또는 다른 포트 사용: `npm run dev -- -p 3001`
 
-### Module Not Found Errors
-- Run `npm install`
-- Delete `node_modules` and reinstall
-- Check for typos in import paths
-- Verify file extensions (.js vs .jsx)
+### 모듈을 찾을 수 없음 오류
+- `npm install` 실행
+- `node_modules` 삭제 후 재설치
+- import 경로에 오타 확인
+- 파일 확장자 확인 (.js vs .jsx)
 
-### Hot Reload Not Working
-- Check `.next` folder permissions
-- Clear Next.js cache: `rm -rf .next`
-- Restart development server
-- Check for syntax errors
+### Hot Reload 작동 안함
+- `.next` 폴더 권한 확인
+- Next.js 캐시 삭제: `rm -rf .next`
+- 개발 서버 재시작
+- 구문 오류 확인
 
-## Quick Fixes Checklist
+## 빠른 수정 체크리스트
 
-1. **Clear all caches**
+1. **모든 캐시 삭제**
    ```bash
    rm -rf .next
    rm -rf node_modules
    npm install
    ```
 
-2. **Reset database connection**
-   - Restart Supabase project
-   - Generate new service role key
-   - Update environment variables
+2. **데이터베이스 연결 재설정**
+   - Supabase 프로젝트 재시작
+   - 새 service role key 생성
+   - 환경 변수 업데이트
 
-3. **Fix formatting issues**
+3. **포맷팅 문제 해결**
    ```bash
    npm run format
    npm run lint -- --fix
    ```
 
-4. **Verify environment**
+4. **환경 확인**
    ```bash
-   node -v  # Should be 18+
-   npm -v   # Should be 9+
+   node -v  # 18+ 이상이어야 함
+   npm -v   # 9+ 이상이어야 함
    ```
