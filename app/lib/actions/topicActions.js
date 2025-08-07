@@ -9,7 +9,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 export async function createTopic(courseId, topicData) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.email) {
       return { error: 'You must be logged in to create a topic' };
     }
@@ -33,7 +33,9 @@ export async function createTopic(courseId, topicData) {
       .single();
 
     if (!userData || courseCheck.instructor_id !== userData.id) {
-      return { error: 'You do not have permission to add topics to this course' };
+      return {
+        error: 'You do not have permission to add topics to this course',
+      };
     }
 
     // Get the next sort order
@@ -46,7 +48,9 @@ export async function createTopic(courseId, topicData) {
 
     if (orderError) throw orderError;
 
-    const nextSortOrder = existingTopics?.[0]?.sort_order ? existingTopics[0].sort_order + 1 : 0;
+    const nextSortOrder = existingTopics?.[0]?.sort_order
+      ? existingTopics[0].sort_order + 1
+      : 0;
 
     // Create the topic
     const { data, error } = await supabase
@@ -55,7 +59,7 @@ export async function createTopic(courseId, topicData) {
         course_id: courseId,
         title: topicData.title || topicData.name,
         description: topicData.description || topicData.summary,
-        sort_order: nextSortOrder
+        sort_order: nextSortOrder,
       })
       .select()
       .single();
@@ -63,7 +67,7 @@ export async function createTopic(courseId, topicData) {
     if (error) throw error;
 
     revalidatePath(`/instructor/courses/${courseId}/edit`);
-    
+
     return { success: true, data };
   } catch (error) {
     console.error('Error creating topic:', error);
@@ -75,7 +79,7 @@ export async function createTopic(courseId, topicData) {
 export async function updateTopic(topicId, updates) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.email) {
       return { error: 'You must be logged in to update a topic' };
     }
@@ -104,7 +108,11 @@ export async function updateTopic(topicId, updates) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || !courseCheck || courseCheck.instructor_id !== userData.id) {
+    if (
+      !userData ||
+      !courseCheck ||
+      courseCheck.instructor_id !== userData.id
+    ) {
       return { error: 'You do not have permission to update this topic' };
     }
 
@@ -114,7 +122,7 @@ export async function updateTopic(topicId, updates) {
       .update({
         title: updates.title || updates.name,
         description: updates.description || updates.summary,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', topicId)
       .select()
@@ -123,7 +131,7 @@ export async function updateTopic(topicId, updates) {
     if (error) throw error;
 
     revalidatePath(`/instructor/courses/${topicData.course_id}/edit`);
-    
+
     return { success: true, data };
   } catch (error) {
     console.error('Error updating topic:', error);
@@ -135,7 +143,7 @@ export async function updateTopic(topicId, updates) {
 export async function deleteTopic(topicId) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.email) {
       return { error: 'You must be logged in to delete a topic' };
     }
@@ -164,7 +172,11 @@ export async function deleteTopic(topicId) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || !courseCheck || courseCheck.instructor_id !== userData.id) {
+    if (
+      !userData ||
+      !courseCheck ||
+      courseCheck.instructor_id !== userData.id
+    ) {
       return { error: 'You do not have permission to delete this topic' };
     }
 
@@ -189,7 +201,7 @@ export async function deleteTopic(topicId) {
     }
 
     revalidatePath(`/instructor/courses/${topicData.course_id}/edit`);
-    
+
     return { success: true };
   } catch (error) {
     console.error('Error deleting topic:', error);
@@ -201,7 +213,7 @@ export async function deleteTopic(topicId) {
 export async function reorderTopics(courseId, topicOrders) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.email) {
       return { error: 'You must be logged in to reorder topics' };
     }
@@ -219,8 +231,14 @@ export async function reorderTopics(courseId, topicOrders) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || !courseCheck || courseCheck.instructor_id !== userData.id) {
-      return { error: 'You do not have permission to reorder topics in this course' };
+    if (
+      !userData ||
+      !courseCheck ||
+      courseCheck.instructor_id !== userData.id
+    ) {
+      return {
+        error: 'You do not have permission to reorder topics in this course',
+      };
     }
 
     // Update each topic's sort_order
@@ -233,15 +251,15 @@ export async function reorderTopics(courseId, topicOrders) {
     );
 
     const results = await Promise.all(updatePromises);
-    
+
     // Check if any updates failed
-    const hasError = results.some(result => result.error);
+    const hasError = results.some((result) => result.error);
     if (hasError) {
       return { error: 'Failed to update some topic orders' };
     }
 
     revalidatePath(`/instructor/courses/${courseId}/edit`);
-    
+
     return { success: true };
   } catch (error) {
     console.error('Error reordering topics:', error);
@@ -254,12 +272,14 @@ export async function getTopicsByCourse(courseId) {
   try {
     const { data, error } = await supabase
       .from('course_topics')
-      .select(`
+      .select(
+        `
         *,
         lessons (
           *
         )
-      `)
+      `
+      )
       .eq('course_id', courseId)
       .order('sort_order', { ascending: true });
 
@@ -267,7 +287,7 @@ export async function getTopicsByCourse(courseId) {
 
     // Sort lessons within each topic
     if (data) {
-      data.forEach(topic => {
+      data.forEach((topic) => {
         if (topic.lessons) {
           topic.lessons.sort((a, b) => a.sort_order - b.sort_order);
         }

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonTop from "@/components/Lesson/LessonTop";
-import { supabase } from "@/app/lib/supabase/client";
+import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonTop from '@/components/Lesson/LessonTop';
+import { supabase } from '@/app/lib/supabase/client';
 
 const QuizResultContent = () => {
   const searchParams = useSearchParams();
-  const attemptId = searchParams.get("attemptId");
+  const attemptId = searchParams.get('attemptId');
   const [sidebar, setSidebar] = useState(true);
   const [loading, setLoading] = useState(true);
   const [attemptData, setAttemptData] = useState(null);
@@ -24,18 +24,20 @@ const QuizResultContent = () => {
   const loadQuizResult = async () => {
     try {
       setLoading(true);
-      
+
       // Get attempt data
       const { data: attempt, error: attemptError } = await supabase
         .from('quiz_attempts')
-        .select(`
+        .select(
+          `
           *,
           lessons (
             title,
             content_data,
             course_id
           )
-        `)
+        `
+        )
         .eq('id', attemptId)
         .single();
 
@@ -85,7 +87,9 @@ const QuizResultContent = () => {
   return (
     <div className="rbt-lesson-area bg-color-white">
       <div className="rbt-lesson-content-wrapper">
-        <div className={`rbt-lesson-leftsidebar ${sidebar ? "" : "sibebar-none"}`}>
+        <div
+          className={`rbt-lesson-leftsidebar ${sidebar ? '' : 'sibebar-none'}`}
+        >
           <LessonSidebar />
         </div>
 
@@ -110,7 +114,10 @@ const QuizResultContent = () => {
                         <h4 className="rbt-card-title">Score</h4>
                         <div className="rbt-card-text">
                           <span className="h3">{attemptData.score || 0}</span>
-                          <span className="text-muted"> / {attemptData.total_points}</span>
+                          <span className="text-muted">
+                            {' '}
+                            / {attemptData.total_points}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -120,7 +127,9 @@ const QuizResultContent = () => {
                       <div className="rbt-card-body">
                         <h4 className="rbt-card-title">Percentage</h4>
                         <div className="rbt-card-text">
-                          <span className="h3">{Math.round(attemptData.percentage || 0)}%</span>
+                          <span className="h3">
+                            {Math.round(attemptData.percentage || 0)}%
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -130,7 +139,9 @@ const QuizResultContent = () => {
                       <div className="rbt-card-body">
                         <h4 className="rbt-card-title">Time Taken</h4>
                         <div className="rbt-card-text">
-                          <span className="h3">{formatTime(attemptData.time_spent_seconds || 0)}</span>
+                          <span className="h3">
+                            {formatTime(attemptData.time_spent_seconds || 0)}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -140,12 +151,14 @@ const QuizResultContent = () => {
                       <div className="rbt-card-body">
                         <h4 className="rbt-card-title">Result</h4>
                         <div className="rbt-card-text">
-                          <span className={`rbt-badge-5 ${
-                            attemptData.passed
-                              ? "bg-color-success-opacity color-success"
-                              : "bg-color-danger-opacity color-danger"
-                          }`}>
-                            {attemptData.passed ? "PASSED" : "FAILED"}
+                          <span
+                            className={`rbt-badge-5 ${
+                              attemptData.passed
+                                ? 'bg-color-success-opacity color-success'
+                                : 'bg-color-danger-opacity color-danger'
+                            }`}
+                          >
+                            {attemptData.passed ? 'PASSED' : 'FAILED'}
                           </span>
                         </div>
                       </div>
@@ -172,36 +185,46 @@ const QuizResultContent = () => {
                         {quizData.questions.map((question, index) => {
                           const userAnswer = attemptData.answers[question.id];
                           const isCorrect = userAnswer?.isCorrect;
-                          
+
                           return (
                             <tr key={question.id}>
                               <td>{index + 1}</td>
                               <td>
                                 <p className="b3">{question.question}</p>
-                                <span className="text-muted">{question.type}</span>
+                                <span className="text-muted">
+                                  {question.type}
+                                </span>
                               </td>
                               <td>
                                 <p className="b3">
-                                  {typeof userAnswer?.answer === 'boolean' 
-                                    ? (userAnswer.answer ? 'True' : 'False')
+                                  {typeof userAnswer?.answer === 'boolean'
+                                    ? userAnswer.answer
+                                      ? 'True'
+                                      : 'False'
                                     : userAnswer?.answer || 'Not answered'}
                                 </p>
                               </td>
                               <td>
                                 <p className="b3">
-                                  {typeof question.correctAnswer === 'boolean' 
-                                    ? (question.correctAnswer ? 'True' : 'False')
+                                  {typeof question.correctAnswer === 'boolean'
+                                    ? question.correctAnswer
+                                      ? 'True'
+                                      : 'False'
                                     : question.correctAnswer || 'N/A'}
                                 </p>
                               </td>
-                              <td>{userAnswer?.points || 0}/{question.points}</td>
                               <td>
-                                <span className={`rbt-badge-5 ${
-                                  isCorrect
-                                    ? "bg-color-success-opacity color-success"
-                                    : "bg-color-danger-opacity color-danger"
-                                }`}>
-                                  {isCorrect ? "Correct" : "Incorrect"}
+                                {userAnswer?.points || 0}/{question.points}
+                              </td>
+                              <td>
+                                <span
+                                  className={`rbt-badge-5 ${
+                                    isCorrect
+                                      ? 'bg-color-success-opacity color-success'
+                                      : 'bg-color-danger-opacity color-danger'
+                                  }`}
+                                >
+                                  {isCorrect ? 'Correct' : 'Incorrect'}
                                 </span>
                               </td>
                             </tr>
@@ -213,7 +236,10 @@ const QuizResultContent = () => {
                 )}
 
                 <div className="mt-5">
-                  <Link href={`/lesson/${attemptData.lesson_id}`} className="rbt-btn btn-gradient hover-icon-reverse">
+                  <Link
+                    href={`/lesson/${attemptData.lesson_id}`}
+                    className="rbt-btn btn-gradient hover-icon-reverse"
+                  >
                     <span className="icon-reverse-wrapper">
                       <span className="btn-text">Retake Quiz</span>
                       <span className="btn-icon">

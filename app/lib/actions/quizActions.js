@@ -7,9 +7,18 @@ import { revalidatePath } from 'next/cache';
 // Validation Schemas - Simplified version
 const QuestionSchema = z.object({
   id: z.string(),
-  type: z.enum(['True/False', 'Single Choice', 'Multiple Choice', 'Open Ended', 'Fill in the Blanks', 'Sort Answer', 'Matching', 'Image Matching']),
-  question: z.string().min(1, "Question is required"),
-  points: z.number().positive("Points must be positive"),
+  type: z.enum([
+    'True/False',
+    'Single Choice',
+    'Multiple Choice',
+    'Open Ended',
+    'Fill in the Blanks',
+    'Sort Answer',
+    'Matching',
+    'Image Matching',
+  ]),
+  question: z.string().min(1, 'Question is required'),
+  points: z.number().positive('Points must be positive'),
   required: z.boolean().default(true),
   randomize: z.boolean().default(false),
   description: z.string().nullable().optional(),
@@ -25,11 +34,14 @@ const QuestionSchema = z.object({
   imageMatchingText: z.string().nullable().optional(),
   imageMatchingPairs: z.array(z.any()).nullable().optional(),
   questionImage: z.string().nullable().optional(),
-  matchingPairs: z.object({
-    leftItems: z.array(z.any()),
-    rightItems: z.array(z.any()),
-    correctMatches: z.record(z.string())
-  }).nullable().optional(),
+  matchingPairs: z
+    .object({
+      leftItems: z.array(z.any()),
+      rightItems: z.array(z.any()),
+      correctMatches: z.record(z.string()),
+    })
+    .nullable()
+    .optional(),
 });
 
 const QuizSettingsSchema = z.object({
@@ -43,81 +55,89 @@ const QuizSettingsSchema = z.object({
   questionsOrder: z.string().optional(),
   hideQuestionNumber: z.boolean().optional(),
   shortAnswerLimit: z.number().optional().nullable(),
-  essayAnswerLimit: z.number().optional().nullable()
+  essayAnswerLimit: z.number().optional().nullable(),
 });
 
 const QuizContentSchema = z.object({
-  questions: z.array(QuestionSchema).min(1, "At least one question is required"),
+  questions: z
+    .array(QuestionSchema)
+    .min(1, 'At least one question is required'),
   settings: QuizSettingsSchema,
-  metadata: z.object({
-    totalPoints: z.number(),
-    questionCount: z.number(),
-  }).optional(),
+  metadata: z
+    .object({
+      totalPoints: z.number(),
+      questionCount: z.number(),
+    })
+    .optional(),
 });
 
 // Create a quiz lesson
 export async function createQuizLesson(courseId, topicId, quizData) {
   try {
-    
     // 데이터 구조 검증
     if (!quizData || typeof quizData !== 'object') {
       throw new Error('퀴즈 데이터가 올바르지 않습니다.');
     }
-    
+
     if (!quizData.questions || !Array.isArray(quizData.questions)) {
       throw new Error('퀴즈 문제 목록이 없거나 올바르지 않습니다.');
     }
-    
+
     // Extract title and summary before validation
     const { title, summary, questions, settings } = quizData;
-    
+
     // questions와 settings만 포함한 객체 생성
     const quizContent = { questions, settings };
-    
+
     // Zod 검증 전에 데이터 정리
     const cleanedContent = {
-      questions: questions.map(q => {
+      questions: questions.map((q) => {
         const cleaned = { ...q };
         // undefined 값 제거
-        Object.keys(cleaned).forEach(key => {
+        Object.keys(cleaned).forEach((key) => {
           if (cleaned[key] === undefined) {
             delete cleaned[key];
           }
         });
         return cleaned;
       }),
-      settings: { ...settings }
+      settings: { ...settings },
     };
-    
+
     // Validate quiz data (only questions and settings)
     let validatedData;
     try {
       const parseResult = QuizContentSchema.safeParse(cleanedContent);
-      
+
       if (!parseResult.success) {
         console.error('Validation failed - Issues:', parseResult.error.issues);
-        const errorMessages = parseResult.error.issues.map(issue => {
-          const path = issue.path.length > 0 ? issue.path.join('.') : 'root';
-          return `${path}: ${issue.message}`;
-        }).join(', ');
-        
+        const errorMessages = parseResult.error.issues
+          .map((issue) => {
+            const path = issue.path.length > 0 ? issue.path.join('.') : 'root';
+            return `${path}: ${issue.message}`;
+          })
+          .join(', ');
+
         return {
           success: false,
-          error: `데이터 유효성 검증 실패: ${errorMessages}`
+          error: `데이터 유효성 검증 실패: ${errorMessages}`,
         };
       }
-      
+
       validatedData = parseResult.data;
     } catch (zodError) {
       console.error('Zod parsing error:', zodError);
       // Zod 에러 시 검증 건너뛰기
       validatedData = cleanedContent;
     }
-    
+
     // Calculate metadata
-    const totalPoints = validatedData.questions.reduce((sum, q) => sum + q.points, 0);
+    const totalPoints = validatedData.questions.reduce(
+      (sum, q) => sum + q.points,
+      0
+    );
     const questionCount = validatedData.questions.length;
-    
+
     validatedData.metadata = {
       totalPoints,
       questionCount,
@@ -134,7 +154,9 @@ export async function createQuizLesson(courseId, topicId, quizData) {
 
     if (orderError) throw orderError;
 
-    const nextOrderIndex = existingLessons?.[0]?.order_index ? existingLessons[0].order_index + 1 : 0;
+    const nextOrderIndex = existingLessons?.[0]?.order_index
+      ? existingLessons[0].order_index + 1
+      : 0;
 
     // Create the quiz lesson
     const { data, error } = await supabase
@@ -164,12 +186,12 @@ export async function createQuizLesson(courseId, topicId, quizData) {
       content_type: data.content_type,
       course_id: data.course_id,
       topic_id: data.topic_id,
-      order_index: data.order_index
+      order_index: data.order_index,
     });
 
     // revalidatePath를 제거하여 페이지 새로고침 방지
     // revalidatePath(`/instructor/courses/${courseId}/edit`);
-    
+
     // Ensure we return a plain object without any Zod references
     const plainData = JSON.parse(JSON.stringify(data));
     return { success: true, data: plainData };
@@ -186,42 +208,47 @@ export async function updateQuizLesson(lessonId, quizData) {
     if (!quizData) {
       throw new Error('Quiz data is undefined or null');
     }
-    
+
     // Extract title and summary before validation (same as createQuizLesson)
     const { title, summary, questions, settings } = quizData;
-    
-    
+
     // Check if questions and settings exist
     if (!questions || !settings) {
-      throw new Error(`Missing required data: questions=${!!questions}, settings=${!!settings}`);
+      throw new Error(
+        `Missing required data: questions=${!!questions}, settings=${!!settings}`
+      );
     }
-    
+
     // Create quiz content object with only questions and settings
     const quizContent = { questions, settings };
-    
-    
+
     // Use safeParse instead of parse to avoid throwing errors
     const parseResult = QuizContentSchema.safeParse(quizContent);
-    
+
     if (!parseResult.success) {
       console.error('Validation failed - Issues:', parseResult.error.issues);
-      const errorMessages = parseResult.error.issues.map(issue => {
-        const path = issue.path.length > 0 ? issue.path.join('.') : 'root';
-        return `${path}: ${issue.message}`;
-      }).join(', ');
-      
+      const errorMessages = parseResult.error.issues
+        .map((issue) => {
+          const path = issue.path.length > 0 ? issue.path.join('.') : 'root';
+          return `${path}: ${issue.message}`;
+        })
+        .join(', ');
+
       return {
         success: false,
-        error: `데이터 유효성 검증 실패: ${errorMessages}`
+        error: `데이터 유효성 검증 실패: ${errorMessages}`,
       };
     }
-    
+
     const validatedData = parseResult.data;
-    
+
     // Calculate metadata
-    const totalPoints = validatedData.questions.reduce((sum, q) => sum + q.points, 0);
+    const totalPoints = validatedData.questions.reduce(
+      (sum, q) => sum + q.points,
+      0
+    );
     const questionCount = validatedData.questions.length;
-    
+
     validatedData.metadata = {
       totalPoints,
       questionCount,
@@ -245,14 +272,14 @@ export async function updateQuizLesson(lessonId, quizData) {
 
     // revalidatePath를 제거하여 페이지 새로고침 방지
     // revalidatePath(`/lesson/${lessonId}`);
-    
+
     // Ensure we're not returning any Zod objects - use JSON parse/stringify to create a plain object
     const plainData = JSON.parse(JSON.stringify(data));
-    
+
     return { success: true, data: plainData };
   } catch (error) {
     console.error('Error updating quiz lesson:', error);
-    
+
     return { success: false, error: error.message };
   }
 }
@@ -344,7 +371,7 @@ export async function submitQuizAttempt(attemptId, answers) {
     let totalScore = 0;
     const processedAnswers = {};
 
-    questions.forEach(question => {
+    questions.forEach((question) => {
       const userAnswer = answers[question.id];
       let isCorrect = false;
       let earnedPoints = 0;
@@ -353,51 +380,58 @@ export async function submitQuizAttempt(attemptId, answers) {
         case 'True/False':
           isCorrect = userAnswer === question.correctAnswer;
           break;
-        
+
         case 'Single Choice':
           isCorrect = userAnswer === question.correctAnswer;
           break;
-        
+
         case 'Multiple Choice':
-          if (Array.isArray(userAnswer) && Array.isArray(question.correctAnswer)) {
-            isCorrect = 
+          if (
+            Array.isArray(userAnswer) &&
+            Array.isArray(question.correctAnswer)
+          ) {
+            isCorrect =
               userAnswer.length === question.correctAnswer.length &&
-              userAnswer.every(ans => question.correctAnswer.includes(ans));
+              userAnswer.every((ans) => question.correctAnswer.includes(ans));
           }
           break;
-        
+
         case 'Fill in the Blanks':
           // Handle multiple blanks
           if (question.blanks && question.correctAnswer) {
             let allBlanksCorrect = true;
             let correctBlanks = 0;
             const totalBlanks = question.blanks.length;
-            
+
             // userAnswer should be an object with blank IDs as keys
             if (typeof userAnswer === 'object' && userAnswer !== null) {
-              question.blanks.forEach(blank => {
+              question.blanks.forEach((blank) => {
                 const userBlankAnswer = userAnswer[blank.id];
-                const acceptableAnswers = question.correctAnswer[blank.id] || [];
-                
+                const acceptableAnswers =
+                  question.correctAnswer[blank.id] || [];
+
                 let blankCorrect = false;
                 if (userBlankAnswer) {
                   // Check if user answer matches any acceptable answer
-                  blankCorrect = acceptableAnswers.some(acceptable => {
+                  blankCorrect = acceptableAnswers.some((acceptable) => {
                     if (blank.caseSensitive) {
                       return userBlankAnswer.trim() === acceptable.trim();
                     } else {
-                      return userBlankAnswer.trim().toLowerCase() === acceptable.trim().toLowerCase();
+                      return (
+                        userBlankAnswer.trim().toLowerCase() ===
+                        acceptable.trim().toLowerCase()
+                      );
                     }
                   });
                 }
-                
+
                 if (blankCorrect) {
                   correctBlanks++;
                 } else {
                   allBlanksCorrect = false;
                 }
               });
-              
+
               // Calculate partial credit
               if (correctBlanks > 0 && totalBlanks > 0) {
                 const percentage = correctBlanks / totalBlanks;
@@ -408,21 +442,30 @@ export async function submitQuizAttempt(attemptId, answers) {
               }
             } else {
               // Legacy support for old format (single answer)
-              isCorrect = userAnswer?.toLowerCase() === question.correctAnswer?.toLowerCase();
+              isCorrect =
+                userAnswer?.toLowerCase() ===
+                question.correctAnswer?.toLowerCase();
             }
           } else {
             // Legacy format
-            isCorrect = userAnswer?.toLowerCase() === question.correctAnswer?.toLowerCase();
+            isCorrect =
+              userAnswer?.toLowerCase() ===
+              question.correctAnswer?.toLowerCase();
           }
           break;
-        
+
         case 'Sort Answer':
           // Check if user sorted items correctly
-          if (Array.isArray(userAnswer) && Array.isArray(question.correctAnswer)) {
+          if (
+            Array.isArray(userAnswer) &&
+            Array.isArray(question.correctAnswer)
+          ) {
             if (userAnswer.length === question.correctAnswer.length) {
               // Check for exact match
-              const exactMatch = userAnswer.every((id, index) => id === question.correctAnswer[index]);
-              
+              const exactMatch = userAnswer.every(
+                (id, index) => id === question.correctAnswer[index]
+              );
+
               if (exactMatch) {
                 isCorrect = true;
                 earnedPoints = question.points;
@@ -434,30 +477,32 @@ export async function submitQuizAttempt(attemptId, answers) {
                     correctPositions++;
                   }
                 });
-                
+
                 // Give partial credit
-                const percentage = correctPositions / question.correctAnswer.length;
+                const percentage =
+                  correctPositions / question.correctAnswer.length;
                 earnedPoints = Math.round(question.points * percentage);
                 isCorrect = false; // Not fully correct, but has partial credit
               }
             }
           }
           break;
-        
+
         case 'Matching':
           // Check matching pairs
           if (question.matchingPairs && typeof userAnswer === 'object') {
-            const correctMatches = question.matchingPairs.correctMatches || question.correctAnswer;
+            const correctMatches =
+              question.matchingPairs.correctMatches || question.correctAnswer;
             if (correctMatches) {
               let correctCount = 0;
               const totalMatches = Object.keys(correctMatches).length;
-              
-              Object.keys(correctMatches).forEach(leftId => {
+
+              Object.keys(correctMatches).forEach((leftId) => {
                 if (userAnswer[leftId] === correctMatches[leftId]) {
                   correctCount++;
                 }
               });
-              
+
               // Calculate partial credit
               if (correctCount > 0 && totalMatches > 0) {
                 const percentage = correctCount / totalMatches;
@@ -467,7 +512,7 @@ export async function submitQuizAttempt(attemptId, answers) {
             }
           }
           break;
-          
+
         case 'Image Matching':
           // Check image matching pairs
           if (question.imageMatchingPairs && typeof userAnswer === 'object') {
@@ -475,16 +520,18 @@ export async function submitQuizAttempt(attemptId, answers) {
             if (correctAnswers) {
               let correctCount = 0;
               const totalPairs = question.imageMatchingPairs.length;
-              
-              question.imageMatchingPairs.forEach(pair => {
+
+              question.imageMatchingPairs.forEach((pair) => {
                 const userText = userAnswer[pair.id]?.trim().toLowerCase();
-                const correctText = (correctAnswers[pair.id] || pair.text).trim().toLowerCase();
-                
+                const correctText = (correctAnswers[pair.id] || pair.text)
+                  .trim()
+                  .toLowerCase();
+
                 if (userText === correctText) {
                   correctCount++;
                 }
               });
-              
+
               // Calculate partial credit
               if (correctCount > 0 && totalPairs > 0) {
                 const percentage = correctCount / totalPairs;
@@ -494,7 +541,7 @@ export async function submitQuizAttempt(attemptId, answers) {
             }
           }
           break;
-        
+
         // Open Ended needs manual grading
         default:
           isCorrect = false;
@@ -504,7 +551,7 @@ export async function submitQuizAttempt(attemptId, answers) {
       if (isCorrect && earnedPoints === 0) {
         earnedPoints = question.points;
       }
-      
+
       totalScore += earnedPoints;
 
       processedAnswers[question.id] = {
@@ -552,7 +599,8 @@ export async function getQuizAttempts(userId, lessonId = null) {
   try {
     let query = supabase
       .from('quiz_attempts')
-      .select(`
+      .select(
+        `
         *,
         lessons (
           title,
@@ -561,7 +609,8 @@ export async function getQuizAttempts(userId, lessonId = null) {
         courses (
           title
         )
-      `)
+      `
+      )
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
@@ -585,7 +634,8 @@ export async function getInstructorQuizAttempts(instructorId) {
   try {
     const { data, error } = await supabase
       .from('quiz_attempts')
-      .select(`
+      .select(
+        `
         *,
         user:user_id (
           name,
@@ -598,7 +648,8 @@ export async function getInstructorQuizAttempts(instructorId) {
           title,
           instructor_id
         )
-      `)
+      `
+      )
       .eq('courses.instructor_id', instructorId)
       .order('created_at', { ascending: false });
 

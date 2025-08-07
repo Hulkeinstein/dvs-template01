@@ -13,7 +13,9 @@ const QuestionType = ({ title, type, points, question, onEdit, onDelete }) => {
           <span className="text-muted">{points} points</span>
         </div>
         <div className="text-muted small mt-1" style={{ maxWidth: '400px' }}>
-          {question && question.length > 50 ? question.substring(0, 50) + '...' : question}
+          {question && question.length > 50
+            ? question.substring(0, 50) + '...'
+            : question}
         </div>
         <div className="inner d-flex align-items-center gap-2">
           <button
@@ -28,10 +30,10 @@ const QuestionType = ({ title, type, points, question, onEdit, onDelete }) => {
               fontWeight: '500',
               borderRadius: '4px',
               cursor: 'pointer',
-              transition: 'opacity 0.2s'
+              transition: 'opacity 0.2s',
             }}
-            onMouseOver={(e) => e.target.style.opacity = '0.9'}
-            onMouseOut={(e) => e.target.style.opacity = '1'}
+            onMouseOver={(e) => (e.target.style.opacity = '0.9')}
+            onMouseOut={(e) => (e.target.style.opacity = '1')}
             onClick={onEdit}
           >
             Edit
@@ -48,10 +50,10 @@ const QuestionType = ({ title, type, points, question, onEdit, onDelete }) => {
               fontWeight: '500',
               borderRadius: '4px',
               cursor: 'pointer',
-              transition: 'opacity 0.2s'
+              transition: 'opacity 0.2s',
             }}
-            onMouseOver={(e) => e.target.style.opacity = '0.9'}
-            onMouseOut={(e) => e.target.style.opacity = '1'}
+            onMouseOver={(e) => (e.target.style.opacity = '0.9')}
+            onMouseOut={(e) => (e.target.style.opacity = '1')}
             onClick={onDelete}
           >
             Delete

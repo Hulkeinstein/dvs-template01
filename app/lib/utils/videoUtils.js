@@ -2,9 +2,9 @@
 
 export const convertPlaceholdersToIframes = (htmlContent) => {
   if (!htmlContent) return htmlContent;
-  
+
   let processedContent = htmlContent;
-  
+
   // YouTube placeholder를 iframe으로 변환
   processedContent = processedContent.replace(
     /<div class="video-placeholder"[^>]*data-video-type="youtube"[^>]*data-video-id="([^"]+)"[^>]*>[\s\S]*?<\/div>/g,
@@ -19,7 +19,7 @@ export const convertPlaceholdersToIframes = (htmlContent) => {
       </div>`;
     }
   );
-  
+
   // Vimeo placeholder를 iframe으로 변환
   processedContent = processedContent.replace(
     /<div class="video-placeholder"[^>]*data-video-type="vimeo"[^>]*data-video-id="([^"]+)"[^>]*>[\s\S]*?<\/div>/g,
@@ -34,16 +34,16 @@ export const convertPlaceholdersToIframes = (htmlContent) => {
       </div>`;
     }
   );
-  
+
   return processedContent;
 };
 
 // iframe을 다시 placeholder로 변환하는 유틸리티 함수 (편집 시 사용)
 export const convertIframesToPlaceholders = (htmlContent) => {
   if (!htmlContent) return htmlContent;
-  
+
   let processedContent = htmlContent;
-  
+
   // YouTube iframe을 placeholder로 변환
   processedContent = processedContent.replace(
     /<div class="video-wrapper"[^>]*>[\s\S]*?<iframe[^>]*src="https:\/\/www\.youtube\.com\/embed\/([a-zA-Z0-9_-]+)"[^>]*>[\s\S]*?<\/iframe>[\s\S]*?<\/div>/g,
@@ -56,7 +56,7 @@ export const convertIframesToPlaceholders = (htmlContent) => {
       </div>`;
     }
   );
-  
+
   // Vimeo iframe을 placeholder로 변환
   processedContent = processedContent.replace(
     /<div class="video-wrapper"[^>]*>[\s\S]*?<iframe[^>]*src="https:\/\/player\.vimeo\.com\/video\/(\d+)"[^>]*>[\s\S]*?<\/iframe>[\s\S]*?<\/div>/g,
@@ -69,6 +69,6 @@ export const convertIframesToPlaceholders = (htmlContent) => {
       </div>`;
     }
   );
-  
+
   return processedContent;
 };

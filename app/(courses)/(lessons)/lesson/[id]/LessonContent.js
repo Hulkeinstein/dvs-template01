@@ -1,14 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonPagination from "@/components/Lesson/LessonPagination";
-import LessonTop from "@/components/Lesson/LessonTop";
-import LessonVideo from "@/components/Lesson/LessonVideo";
-import LessonQuiz from "@/components/Lesson/LessonQuiz";
-import { getQuizByLessonId, startQuizAttempt } from "@/app/lib/actions/quizActions";
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonPagination from '@/components/Lesson/LessonPagination';
+import LessonTop from '@/components/Lesson/LessonTop';
+import LessonVideo from '@/components/Lesson/LessonVideo';
+import LessonQuiz from '@/components/Lesson/LessonQuiz';
+import {
+  getQuizByLessonId,
+  startQuizAttempt,
+} from '@/app/lib/actions/quizActions';
 
 const LessonContent = ({ lessonId }) => {
   const { data: session } = useSession();
@@ -27,18 +30,21 @@ const LessonContent = ({ lessonId }) => {
   const loadLessonData = async () => {
     try {
       setLoading(true);
-      
+
       // For now, we'll check if this is a quiz lesson
       const quizResult = await getQuizByLessonId(lessonId);
-      
+
       if (quizResult.success && quizResult.data) {
         // This is a quiz lesson
         setLesson(quizResult.data);
         setQuizData(quizResult.data.content_data);
-        
+
         // Start a quiz attempt if user is logged in
         if (session?.user?.id) {
-          const attemptResult = await startQuizAttempt(lessonId, session.user.id);
+          const attemptResult = await startQuizAttempt(
+            lessonId,
+            session.user.id
+          );
           if (attemptResult.success) {
             setQuizAttempt(attemptResult.data);
           }
@@ -85,7 +91,9 @@ const LessonContent = ({ lessonId }) => {
   return (
     <div className="rbt-lesson-area bg-color-white">
       <div className="rbt-lesson-content-wrapper">
-        <div className={`rbt-lesson-leftsidebar ${sidebar ? "" : "sibebar-none"}`}>
+        <div
+          className={`rbt-lesson-leftsidebar ${sidebar ? '' : 'sibebar-none'}`}
+        >
           <LessonSidebar />
         </div>
 
@@ -103,8 +111,8 @@ const LessonContent = ({ lessonId }) => {
                   <p className="mb-4">{lesson.description}</p>
                 )}
                 {quizData && quizAttempt && (
-                  <LessonQuiz 
-                    quizData={quizData} 
+                  <LessonQuiz
+                    quizData={quizData}
                     attemptId={quizAttempt.id}
                     lessonId={lessonId}
                   />
