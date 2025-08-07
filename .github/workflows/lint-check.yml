@@ -36,4 +36,4 @@ jobs:
 
       # 5. Prettier를 실행하여 코드 포맷팅을 검사합니다.
       - name: Run Prettier Check
-        run: npm run format:check # package.json에 정의된 포맷 검사 스크립트 실행
+        run: npx prettier@3.5.3 --check . # 직접 Prettier 3.5.3 버전 실행 (package.json 스크립트 무시)
