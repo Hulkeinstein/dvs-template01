@@ -1,11 +1,11 @@
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const profiles = [
-  { name: "Ava Miller", src: "/images/shape/art-stu-2.png" },
-  { name: "Mark Jordan", src: "/images/shape/art-stu-1.png" },
-  { name: "Jordan", src: "/images/shape/art-stu-3.png" },
+  { name: 'Ava Miller', src: '/images/shape/art-stu-2.png' },
+  { name: 'Mark Jordan', src: '/images/shape/art-stu-1.png' },
+  { name: 'Jordan', src: '/images/shape/art-stu-3.png' },
 ];
 
 const CourseBreadcrumbFour = ({ getMatchCourse }) => {
@@ -68,7 +68,7 @@ const CourseBreadcrumbFour = ({ getMatchCourse }) => {
                 <i className="feather-user color-white"></i>
               </span>
               <h6 className="b3 w-400 mb--0 color-white">
-                <span className="opacity-8">by</span>{" "}
+                <span className="opacity-8">by</span>{' '}
                 <Link className="px-1" href={`/profile/${getMatchCourse.id}`}>
                   {getMatchCourse.userName}
                 </Link>

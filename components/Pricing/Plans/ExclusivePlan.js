@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
   const {
@@ -16,33 +16,33 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
   } = item;
 
   return (
-    <div className={`pricing-table ${parentClass} ${isActive ? "active" : ""}`}>
+    <div className={`pricing-table ${parentClass} ${isActive ? 'active' : ''}`}>
       <div className="pricing-header">
         <h3
           className={`title ${
             isPrimary
-              ? "color-primary"
+              ? 'color-primary'
               : isSecondary
-              ? "color-secondary"
-              : isPink
-              ? "color-pink"
-              : ""
+                ? 'color-secondary'
+                : isPink
+                  ? 'color-pink'
+                  : ''
           }`}
         >
           {title}
         </h3>
         <span className="rbt-badge mb--35">{badge}</span>
         <div className="price-wrap">
-          <div className={`yearly-pricing ${toggle ? "d-none" : "d-block"}`}>
+          <div className={`yearly-pricing ${toggle ? 'd-none' : 'd-block'}`}>
             <span
               className={`amount ${
                 isPrimary
-                  ? "color-primary"
+                  ? 'color-primary'
                   : isSecondary
-                  ? "color-secondary"
-                  : isPink
-                  ? "color-pink"
-                  : ""
+                    ? 'color-secondary'
+                    : isPink
+                      ? 'color-pink'
+                      : ''
               }`}
             >
               ${yearlyAmount}
@@ -50,28 +50,28 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
             <span
               className={`duration ms-1 ${
                 isPrimary
-                  ? "color-primary"
+                  ? 'color-primary'
                   : isSecondary
-                  ? "color-secondary"
-                  : isPink
-                  ? "color-pink"
-                  : ""
+                    ? 'color-secondary'
+                    : isPink
+                      ? 'color-pink'
+                      : ''
               }`}
             >
               /{yearlyDuration}
             </span>
           </div>
 
-          <div className={`monthly-pricing ${toggle ? "d-block" : "d-none"}`}>
+          <div className={`monthly-pricing ${toggle ? 'd-block' : 'd-none'}`}>
             <span
               className={`amount ${
                 isPrimary
-                  ? "color-primary"
+                  ? 'color-primary'
                   : isSecondary
-                  ? "color-secondary"
-                  : isPink
-                  ? "color-pink"
-                  : ""
+                    ? 'color-secondary'
+                    : isPink
+                      ? 'color-pink'
+                      : ''
               }`}
             >
               ${monthlyAmount}.00
@@ -79,12 +79,12 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
             <span
               className={`duration ms-1 ${
                 isPrimary
-                  ? "color-primary"
+                  ? 'color-primary'
                   : isSecondary
-                  ? "color-secondary"
-                  : isPink
-                  ? "color-pink"
-                  : ""
+                    ? 'color-secondary'
+                    : isPink
+                      ? 'color-pink'
+                      : ''
               }`}
             >
               /{monthlyDuration}
@@ -92,11 +92,11 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
           </div>
         </div>
       </div>
-      {styleType === "two" ? (
+      {styleType === 'two' ? (
         <div className="pricing-btn">
           <Link
             className={`rbt-btn ${
-              !isActive ? "bg-primary-opacity" : ""
+              !isActive ? 'bg-primary-opacity' : ''
             } hover-icon-reverse w-100`}
             href="#"
           >
@@ -112,19 +112,19 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
           </Link>
         </div>
       ) : (
-        ""
+        ''
       )}
-      {styleType === "three" ? (
+      {styleType === 'three' ? (
         <div className="pricing-btn">
           <Link
             className={`rbt-btn ${
               isPrimary
-                ? "bg-primary-opacity"
+                ? 'bg-primary-opacity'
                 : isSecondary
-                ? "bg-secondary-opacity"
-                : isPink
-                ? "bg-pink-opacity"
-                : ""
+                  ? 'bg-secondary-opacity'
+                  : isPink
+                    ? 'bg-pink-opacity'
+                    : ''
             } hover-icon-reverse w-100`}
             href="#"
           >
@@ -140,23 +140,23 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
           </Link>
         </div>
       ) : (
-        ""
+        ''
       )}
       <div className="pricing-body">
         <ul className="list-item">
           {list.map((item, innerIndex) => (
-            <li key={innerIndex} className={`${item.isCheck ? "" : "off"}`}>
-              <i className={`feather-${item.isCheck ? "check" : "x"}`}></i>
+            <li key={innerIndex} className={`${item.isCheck ? '' : 'off'}`}>
+              <i className={`feather-${item.isCheck ? 'check' : 'x'}`}></i>
               {item.text}
             </li>
           ))}
         </ul>
       </div>
-      {styleType === "one" ? (
+      {styleType === 'one' ? (
         <div className="pricing-btn">
           <Link
             className={`rbt-btn ${
-              !isActive ? "bg-primary-opacity" : ""
+              !isActive ? 'bg-primary-opacity' : ''
             } hover-icon-reverse w-100`}
             href="#"
           >
@@ -172,7 +172,7 @@ const ExclusivePlan = ({ item, parentClass, styleType, toggle }) => {
           </Link>
         </div>
       ) : (
-        ""
+        ''
       )}
     </div>
   );

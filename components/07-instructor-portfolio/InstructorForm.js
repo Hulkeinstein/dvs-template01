@@ -1,7 +1,7 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
-import contactImg from "../../public/images/about/contact-2.jpg";
+import contactImg from '../../public/images/about/contact-2.jpg';
 
 const InstructorForm = () => {
   return (

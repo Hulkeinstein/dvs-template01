@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TeamData from "../../data/elements/team.json";
+import TeamData from '../../data/elements/team.json';
 
 const TeamTwo = () => {
   return (
@@ -13,7 +13,7 @@ const TeamTwo = () => {
               TeamData.team.map((data, index) => (
                 <div
                   className={`tab-pane fade ${
-                    data.isActive ? "active" : ""
+                    data.isActive ? 'active' : ''
                   } show`}
                   id={`team-tab${index}`}
                   role="tabpanel"
@@ -95,7 +95,7 @@ const TeamTwo = () => {
               TeamData.team.slice(0, 6).map((data, index) => (
                 <li key={index}>
                   <Link
-                    className={`${data.isActive ? "active" : ""}`}
+                    className={`${data.isActive ? 'active' : ''}`}
                     id={`team-tab${index}-tab`}
                     data-bs-toggle="tab"
                     data-bs-target={`#team-tab${index}`}

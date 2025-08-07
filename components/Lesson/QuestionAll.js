@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 import {
   DndContext,
@@ -10,23 +10,23 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import CourseData from "../../data/course-details/courseData.json";
+import CourseData from '../../data/course-details/courseData.json';
 
-import MutipleSelect from "./Quiz/MutipleSelect";
-import SingleSelect from "./Quiz/SingleSelect";
-import TrueFalse from "./Quiz/TrueFalse";
-import FillBlanks from "./Quiz/FillBlanks";
-import Summary from "./Quiz/Summary";
-import Ordering from "./Quiz/Ordering";
+import MutipleSelect from './Quiz/MutipleSelect';
+import SingleSelect from './Quiz/SingleSelect';
+import TrueFalse from './Quiz/TrueFalse';
+import FillBlanks from './Quiz/FillBlanks';
+import Summary from './Quiz/Summary';
+import Ordering from './Quiz/Ordering';
 
 const QuestionAll = ({ point }) => {
   const [courseList, setCourseList] = useState(CourseData.courseDetails);
@@ -92,7 +92,7 @@ const QuestionAll = ({ point }) => {
                 </span>
               </div>
             ) : (
-              ""
+              ''
             )}
             <div className="row g-3 mt--10">
               <div className="col-lg-12">

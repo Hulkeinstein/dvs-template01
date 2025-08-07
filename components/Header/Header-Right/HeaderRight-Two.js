@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
-import User from "../Offcanvas/User";
-import { useSession } from "next-auth/react"; // ← 추가
+import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
+import User from '../Offcanvas/User';
+import { useSession } from 'next-auth/react'; // ← 추가
 
 const HeaderRightTwo = ({ btnClass, btnText }) => {
-  const { mobile, setMobile, search, setSearch, cartToggle, setCart } = useAppContext();
+  const { mobile, setMobile, search, setSearch, cartToggle, setCart } =
+    useAppContext();
   const { total_items } = useSelector((state) => state.CartReducer);
   const { data: session, status } = useSession(); // ← 추가
 
@@ -16,7 +17,7 @@ const HeaderRightTwo = ({ btnClass, btnText }) => {
       <ul className="quick-access">
         <li className="access-icon">
           <Link
-            className={`search-trigger-active rbt-round-btn ${search ? "" : "open"}`}
+            className={`search-trigger-active rbt-round-btn ${search ? '' : 'open'}`}
             href="#"
             onClick={() => setSearch(!search)}
           >
@@ -36,15 +37,22 @@ const HeaderRightTwo = ({ btnClass, btnText }) => {
         </li>
 
         <li className="account-access rbt-user-wrapper d-none d-xl-block">
-          <Link href={session ? "/dashboard" : "/login"}>
+          <Link href={session ? '/dashboard' : '/login'}>
             <i className="feather-user"></i>
-            {status === "loading" ? "..." : session ? session.user.name : "Login"}
+            {status === 'loading'
+              ? '...'
+              : session
+                ? session.user.name
+                : 'Login'}
           </Link>
           <User />
         </li>
 
         <li className="access-icon rbt-user-wrapper d-block d-xl-none">
-          <Link className="rbt-round-btn" href={session ? "/dashboard" : "/login"}>
+          <Link
+            className="rbt-round-btn"
+            href={session ? '/dashboard' : '/login'}
+          >
             <i className="feather-user"></i>
           </Link>
           <User />

@@ -1,35 +1,35 @@
-import React, { useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { ParallaxProvider } from "react-scroll-parallax";
+import React, { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ParallaxProvider } from 'react-scroll-parallax';
 
-import OnlineAcademyBanner from "./OnlineAcademy-Banner";
-import CategoryOne from "../Category/CategoryOne";
-import AboutTwo from "../Abouts/About-Two";
-import Counter from "../Counters/Counter";
-import EventCarouse from "../Events/EventCarouse";
-import TestimonialFour from "../Testimonials/Testimonial-Four";
-import BlogGrid from "../Blogs/BlogGrid";
+import OnlineAcademyBanner from './OnlineAcademy-Banner';
+import CategoryOne from '../Category/CategoryOne';
+import AboutTwo from '../Abouts/About-Two';
+import Counter from '../Counters/Counter';
+import EventCarouse from '../Events/EventCarouse';
+import TestimonialFour from '../Testimonials/Testimonial-Four';
+import BlogGrid from '../Blogs/BlogGrid';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
-import brand1 from "../../public/images/brand/partner-5.webp";
-import brand2 from "../../public/images/brand/partner-1.webp";
-import brand3 from "../../public/images/brand/partner-6.webp";
-import brand4 from "../../public/images/brand/partner-3.webp";
+import brand1 from '../../public/images/brand/partner-5.webp';
+import brand2 from '../../public/images/brand/partner-1.webp';
+import brand3 from '../../public/images/brand/partner-6.webp';
+import brand4 from '../../public/images/brand/partner-3.webp';
 
 const OnlineAcademy = ({ blogdata }) => {
   let getAllCourse = JSON.parse(JSON.stringify(CourseDetails.courseDetails));
 
   const [courseFilter, setCourseFilter] = useState(getAllCourse);
-  const [activeTab, setActiveTab] = useState("All Course");
+  const [activeTab, setActiveTab] = useState('All Course');
 
   const filterItem = (types) => {
     const updateItem = getAllCourse.filter((curElm) => {
       return curElm.courseType === types;
     });
 
-    if (types !== "All Course") {
+    if (types !== 'All Course') {
       setCourseFilter(updateItem);
     } else {
       setCourseFilter(getAllCourse);
@@ -79,7 +79,7 @@ const OnlineAcademy = ({ blogdata }) => {
                     Top Popular Course
                   </span>
                   <h2 className="title w-600">
-                    Histudy Course Student <br /> Can{" "}
+                    Histudy Course Student <br /> Can{' '}
                     <span className="theme-gradient">Join With Us</span>
                   </h2>
                 </div>
@@ -94,15 +94,15 @@ const OnlineAcademy = ({ blogdata }) => {
                     role="tablist"
                   >
                     {[
-                      "All Course",
-                      "featured",
-                      "popular",
-                      "trending",
-                      "latest",
+                      'All Course',
+                      'featured',
+                      'popular',
+                      'trending',
+                      'latest',
                     ].map((courseType, index) => (
                       <li key={index} className="nav-item" role="presentation">
                         <button
-                          className={activeTab === courseType ? "active" : ""}
+                          className={activeTab === courseType ? 'active' : ''}
                           type="button"
                           onClick={() => handleButtonClick(courseType)}
                         >
@@ -137,7 +137,7 @@ const OnlineAcademy = ({ blogdata }) => {
                                   <span>Off</span>
                                 </div>
                               ) : (
-                                ""
+                                ''
                               )}
                             </Link>
                           </div>
@@ -258,8 +258,8 @@ const OnlineAcademy = ({ blogdata }) => {
                   Making
                   <span className="theme-gradient ms-2">
                     sensitive clients
-                  </span>{" "}
-                  more valuable for{" "}
+                  </span>{' '}
+                  more valuable for{' '}
                   <span className="theme-gradient me-2">companies</span>
                   like
                 </h5>
@@ -314,7 +314,7 @@ const OnlineAcademy = ({ blogdata }) => {
                       alt="Brand Image"
                     />
                   </a>
-                </li>{" "}
+                </li>{' '}
                 <li>
                   <a href="#">
                     <Image
@@ -341,7 +341,7 @@ const OnlineAcademy = ({ blogdata }) => {
                     News & Blog
                   </span>
                   <h2 className="title w-600">
-                    Have a Look on{" "}
+                    Have a Look on{' '}
                     <span className="theme-gradient">Our Update</span>
                   </h2>
                 </div>

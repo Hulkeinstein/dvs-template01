@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import { useDispatch, useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
-import { addToCartAction } from "@/redux/action/CartAction";
+import { useDispatch, useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
+import { addToCartAction } from '@/redux/action/CartAction';
 
 const EventViedo = ({ getEventData }) => {
   const { toggle, setToggle, cartToggle, setCart } = useAppContext();
@@ -26,14 +26,14 @@ const EventViedo = ({ getEventData }) => {
   };
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
   }, [cart]);
 
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
 
@@ -44,10 +44,10 @@ const EventViedo = ({ getEventData }) => {
       setHideOnScroll(isHide);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
@@ -55,7 +55,7 @@ const EventViedo = ({ getEventData }) => {
       <div className="inner">
         <Link
           className={`video-popup-with-text video-popup-wrapper text-center popup-video sidebar-video-hidden mb--15 ${
-            hideOnScroll ? "d-none" : ""
+            hideOnScroll ? 'd-none' : ''
           }`}
           data-vbtype="video"
           href="https://www.youtube.com/watch?v=nA1Aqp0sPQo"
@@ -110,7 +110,7 @@ const EventViedo = ({ getEventData }) => {
 
           <div
             className={`rbt-widget-details has-show-more ${
-              !toggle ? "active" : ""
+              !toggle ? 'active' : ''
             }`}
           >
             <ul className="has-show-more-inner-content rbt-course-details-list-wrapper">
@@ -124,7 +124,7 @@ const EventViedo = ({ getEventData }) => {
               ))}
             </ul>
             <div
-              className={`rbt-show-more-btn ${!toggle ? "active" : ""}`}
+              className={`rbt-show-more-btn ${!toggle ? 'active' : ''}`}
               onClick={() => setToggle(!toggle)}
             >
               Show More

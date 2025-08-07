@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import CourseData from "../../data/elements/accordion.json";
+import CourseData from '../../data/elements/accordion.json';
 
 const Course = ({ title, tag }) => {
   return (
@@ -14,7 +14,7 @@ const Course = ({ title, tag }) => {
                   {tag ? (
                     <span className="subtitle bg-pink-opacity">{tag}</span>
                   ) : (
-                    ""
+                    ''
                   )}
                   <h2 className="title">{title}</h2>
                 </div>
@@ -32,7 +32,7 @@ const Course = ({ title, tag }) => {
                         >
                           <button
                             className={`accordion-button ${
-                              !item.collapsed ? "collapsed" : ""
+                              !item.collapsed ? 'collapsed' : ''
                             }`}
                             type="button"
                             data-bs-toggle="collapse"
@@ -46,7 +46,7 @@ const Course = ({ title, tag }) => {
                         <div
                           id={item.collapse}
                           className={`accordion-collapse collapse ${
-                            item.show ? "show" : ""
+                            item.show ? 'show' : ''
                           }`}
                           aria-labelledby={item.heading}
                           data-bs-parent="#tutionaccordionExamplea1"

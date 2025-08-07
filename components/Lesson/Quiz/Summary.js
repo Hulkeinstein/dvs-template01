@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Summary = ({ point, pointNum }) => {
   return (
@@ -12,11 +12,11 @@ const Summary = ({ point, pointNum }) => {
             </span>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div className="row g-3">
           <div className="col-lg-12">
-            <div className="rbt-form-chec" style={{ lineHeight: "55px" }}>
+            <div className="rbt-form-chec" style={{ lineHeight: '55px' }}>
               <span className="form-check-label">Next.js is a popular</span>
               <input className="form-blank-input mx-2" type="text" />
               <span className="form-check-label">framework </span>

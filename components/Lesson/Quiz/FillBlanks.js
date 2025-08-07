@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const FillBlanks = ({ num, point, pointNum }) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const maxChars = 500;
 
   const handleInputChange = (event) => {
@@ -16,7 +16,7 @@ const FillBlanks = ({ num, point, pointNum }) => {
     <>
       <div className="rbt-single-quiz">
         <h4>
-          {num === undefined ? "5" : num}. What are the key features of Next.js
+          {num === undefined ? '5' : num}. What are the key features of Next.js
           ?
         </h4>
         {point ? (
@@ -26,7 +26,7 @@ const FillBlanks = ({ num, point, pointNum }) => {
             </span>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div className="row g-3">
           <div className="col-lg-12">
@@ -38,7 +38,7 @@ const FillBlanks = ({ num, point, pointNum }) => {
                   onChange={handleInputChange}
                 ></textarea>
                 <span className="focus-border"></span>
-              </div>{" "}
+              </div>{' '}
               <span className="chr">
                 Character Remaining: {maxChars - inputValue.length}
               </span>

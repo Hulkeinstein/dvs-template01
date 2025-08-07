@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const CountDown = ({ targetDate, targetTime }) => {
   const [remaining, setRemaining] = useState({
@@ -15,7 +15,7 @@ const CountDown = ({ targetDate, targetTime }) => {
 
   const setDate = () => {
     const now = new Date().getTime();
-    const countDownDate = new Date(targetDate + " " + targetTime).getTime();
+    const countDownDate = new Date(targetDate + ' ' + targetTime).getTime();
 
     distance = countDownDate - now;
 

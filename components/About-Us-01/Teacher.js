@@ -1,5 +1,5 @@
-import Image from "next/image";
-import AboutUsData from "../../data/pages/aboutUs01.json";
+import Image from 'next/image';
+import AboutUsData from '../../data/pages/aboutUs01.json';
 
 const Teacher = () => {
   return (

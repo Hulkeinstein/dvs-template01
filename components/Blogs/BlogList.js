@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import BlogListItems from "./Blog-Sections/BlogList-Items";
-import Pagination from "../Common/Pagination";
+import BlogListItems from './Blog-Sections/BlogList-Items';
+import Pagination from '../Common/Pagination';
 
 const BlogList = ({ isPagination, blogdata }) => {
   const [blogs, setBlogs] = useState([]);
@@ -19,7 +19,7 @@ const BlogList = ({ isPagination, blogdata }) => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -107,7 +107,7 @@ const BlogList = ({ isPagination, blogdata }) => {
             </div>
           </div>
         ) : (
-          ""
+          ''
         )}
       </>
     </>

@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import SingleCourseData from "../../data/pages/11-singleCourse.json";
-import TeamData from "../../data/elements/team.json";
+import SingleCourseData from '../../data/pages/11-singleCourse.json';
+import TeamData from '../../data/elements/team.json';
 
-import SingleCourseBanner from "./SingleCourseBanner";
-import TestimonialSeven from "../Testimonials/Testimonial-Seven";
-import PricingFive from "../Pricing/Pricing-Five";
-import NewsletterFour from "../Newsletters/Newsletter-Four";
-import SingleCourseProp from "./SingleCourseProp";
+import SingleCourseBanner from './SingleCourseBanner';
+import TestimonialSeven from '../Testimonials/Testimonial-Seven';
+import PricingFive from '../Pricing/Pricing-Five';
+import NewsletterFour from '../Newsletters/Newsletter-Four';
+import SingleCourseProp from './SingleCourseProp';
 
-import courseImg from "../../public/images/course/course-elegant-01.jpg";
-import CourseLessonProp from "./CourseLessonProp";
+import courseImg from '../../public/images/course/course-elegant-01.jpg';
+import CourseLessonProp from './CourseLessonProp';
 
 const SingleCourse = () => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);

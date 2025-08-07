@@ -1,6 +1,6 @@
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonPagination from "@/components/Lesson/LessonPagination";
-import LessonTop from "@/components/Lesson/LessonTop";
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonPagination from '@/components/Lesson/LessonPagination';
+import LessonTop from '@/components/Lesson/LessonTop';
 
 const LessonPage = () => {
   return (
@@ -18,7 +18,7 @@ const LessonPage = () => {
                 <iframe
                   className="w-100"
                   src="https://www.youtube.com/embed/qKzhrXqT6oE"
-                  style={{ minHeight: "615px" }}
+                  style={{ minHeight: '615px' }}
                 ></iframe>
               </div>
               <div className="content">

@@ -5,7 +5,7 @@ name: Lint and Format Check
 on:
   # 'main' 브랜치로 향하는 Pull Request가 생성되거나 업데이트될 때 실행됩니다.
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 # 실제로 수행할 작업들을 정의합니다.
 jobs:

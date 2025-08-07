@@ -1,8 +1,8 @@
-import HeaderStylePage from "./(header-style)";
+import HeaderStylePage from './(header-style)';
 
 export const metadata = {
-  title: "Header Style - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Header Style - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const HeaderStyleLayout = () => {

@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Assignments from "@/components/Instructor/Assignments";
-import InstructorDashboardHeader from "@/components/Instructor/InstructorDashboardHeader";
-import InstructorDashboardSidebar from "@/components/Instructor/InstructorDashboardSidebar";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Assignments from '@/components/Instructor/Assignments';
+import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
+import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
 const AssignmentsPage = () => {
   return (

@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import ServiceData from "../../data/elements/service.json";
+import ServiceData from '../../data/elements/service.json';
 
 const ServiceTwelve = ({ head }) => {
   return (
@@ -18,7 +18,7 @@ const ServiceTwelve = ({ head }) => {
                 </div>
               </div>
             ) : (
-              ""
+              ''
             )}
             <div className="row row--15 mt_dec--30">
               {data.body.map((item, innerIndex) => (

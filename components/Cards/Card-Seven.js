@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
 const CardSeven = ({ start, end, col, mt, isDesc, isUser }) => {
   return (
@@ -36,7 +36,7 @@ const CardSeven = ({ start, end, col, mt, isDesc, isUser }) => {
                     {data.courseTitle}
                   </Link>
                 </h4>
-                {isDesc ? <p className="rbt-card-text">{data.desc}</p> : ""}
+                {isDesc ? <p className="rbt-card-text">{data.desc}</p> : ''}
                 <div className="rbt-review">
                   <div className="rating">
                     <i className="fas fa-star"></i>
@@ -69,7 +69,7 @@ const CardSeven = ({ start, end, col, mt, isDesc, isUser }) => {
                     </div>
                   </div>
                 ) : (
-                  ""
+                  ''
                 )}
                 <div className="rbt-card-bottom">
                   <div className="rbt-price">

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const SingleSelect = ({ point, pointNum }) => {
   return (
@@ -12,7 +12,7 @@ const SingleSelect = ({ point, pointNum }) => {
             </span>
           </div>
         ) : (
-          ""
+          ''
         )}
         <div className="row g-3">
           <div className="col-lg-6">

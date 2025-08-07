@@ -15,13 +15,13 @@ export class DemoCourseProvider extends CourseProvider {
     try {
       const numericId = parseInt(courseId);
       const courseDetails = CourseData.courseDetails;
-      
-      const course = courseDetails.find(c => c.id === numericId);
-      
+
+      const course = courseDetails.find((c) => c.id === numericId);
+
       if (!course) {
         throw new Error(`Demo course with ID ${courseId} not found`);
       }
-      
+
       return this.transformCourse(course);
     } catch (error) {
       console.error('Error fetching demo course:', error);
@@ -52,7 +52,7 @@ export class DemoCourseProvider extends CourseProvider {
       courseInstructor: rawData.courseInstructor || [],
       featuredReview: rawData.featuredReview || [],
       relatedCourse: rawData.relatedCourse || [],
-      similarCourse: rawData.similarCourse || []
+      similarCourse: rawData.similarCourse || [],
     };
   }
 
@@ -66,7 +66,7 @@ export class DemoCourseProvider extends CourseProvider {
       const numId = parseInt(courseId);
       return numId >= 1 && numId <= 10; // Assuming demo has up to 10 courses
     }
-    
+
     // Handle special demo keywords
     return courseId === 'demo' || courseId.startsWith('demo-');
   }

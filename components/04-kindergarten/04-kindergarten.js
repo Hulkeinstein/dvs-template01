@@ -1,24 +1,24 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import img from "../../public/images/testimonial/client-02.png";
+import img from '../../public/images/testimonial/client-02.png';
 
-import CallToAction from "../Call-To-Action/CallToAction";
-import ServiceEleven from "../Services/Service-Eleven";
+import CallToAction from '../Call-To-Action/CallToAction';
+import ServiceEleven from '../Services/Service-Eleven';
 
-import CardFive from "../Cards/Card-Five";
-import CounterTwo from "../Counters/Counter-Two";
-import Pricing from "../Pricing/Pricing";
-import TeamFour from "../Team/TeamFour";
-import Testimonial from "../Testimonials/Testimonial";
-import Gallery from "../Gallery/Gallery";
+import CardFive from '../Cards/Card-Five';
+import CounterTwo from '../Counters/Counter-Two';
+import Pricing from '../Pricing/Pricing';
+import TeamFour from '../Team/TeamFour';
+import Testimonial from '../Testimonials/Testimonial';
+import Gallery from '../Gallery/Gallery';
 
 const Kindergarten = ({ blogs }) => {
   return (
     <>
       <div
         className="rbt-banner-area rbt-banner-4 bg_image bg_image--13 header-transperent-spacer"
-        style={{ paddingTop: "140px" }}
+        style={{ paddingTop: '140px' }}
       >
         <div className="wrapper">
           <div className="container">

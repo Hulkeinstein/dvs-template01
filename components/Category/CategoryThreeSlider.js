@@ -1,12 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-import useCategoryCount from "@/context/useCategoryCount";
+import useCategoryCount from '@/context/useCategoryCount';
 
 const CategoryThreeSlider = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -18,8 +18,8 @@ const CategoryThreeSlider = () => {
         slidesPerView={1}
         modules={[Navigation]}
         navigation={{
-          nextEl: ".rbt-arrow-left",
-          prevEl: ".rbt-arrow-right",
+          nextEl: '.rbt-arrow-left',
+          prevEl: '.rbt-arrow-right',
         }}
         breakpoints={{
           480: {
@@ -87,7 +87,7 @@ const CategoryThreeSlider = () => {
                               className="rbt-btn-link"
                               href={`/course-filter-one-toggle/${item.category}`}
                             >
-                              {count} Course{count !== 1 ? "s" : ""}
+                              {count} Course{count !== 1 ? 's' : ''}
                               <i className="feather-arrow-right"></i>
                             </Link>
                           </div>

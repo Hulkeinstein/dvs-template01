@@ -1,5 +1,5 @@
-import React from "react";
-import CountDown from "../Maintenance/CountDonw";
+import React from 'react';
+import CountDown from '../Maintenance/CountDonw';
 
 const CountDownTwo = () => {
   return (

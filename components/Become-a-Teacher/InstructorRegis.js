@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import img from "../../public/images/tab/tabs-10.jpg";
+import img from '../../public/images/tab/tabs-10.jpg';
 
 const InstructorRegistration = () => {
   return (

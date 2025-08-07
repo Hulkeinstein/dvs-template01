@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useAppContext } from "@/context/Context";
+import React from 'react';
+import { useAppContext } from '@/context/Context';
 
 /**
  * 테마 로딩 중 표시되는 프리로더 컴포넌트
@@ -9,21 +9,21 @@ import { useAppContext } from "@/context/Context";
  */
 const ThemePreloader = () => {
   const { isLightTheme } = useAppContext();
-  
+
   // 테마에 따라 배경색 결정 (기본값은 라이트 모드)
-  const bgColor = isLightTheme !== false ? "#ffffff" : "#192335";
-  
+  const bgColor = isLightTheme !== false ? '#ffffff' : '#192335';
+
   return (
     <div
       className="theme-preloader"
       style={{
-        width: "100%",
-        height: "100vh",
+        width: '100%',
+        height: '100vh',
         backgroundColor: bgColor,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "fixed",
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'fixed',
         top: 0,
         left: 0,
         zIndex: 9999,
@@ -90,4 +90,4 @@ const ThemePreloader = () => {
   );
 };
 
-export default ThemePreloader; 
+export default ThemePreloader;

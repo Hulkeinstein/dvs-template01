@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const SingleCourseBanner = () => {
   return (
@@ -76,6 +76,6 @@ const SingleCourseBanner = () => {
       </div>
     </>
   );
-}
+};
 
-export default SingleCourseBanner
+export default SingleCourseBanner;

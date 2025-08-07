@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import sal from "sal.js";
+import { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import sal from 'sal.js';
 
-import CardData from "../../data/elements/card";
+import CardData from '../../data/elements/card';
 
 const CardFive = () => {
   useEffect(() => {

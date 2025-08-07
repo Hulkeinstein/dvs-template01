@@ -1,10 +1,10 @@
-import BackToTop from "../backToTop";
-import { getAllPostsMeta } from "@/mdx";
-import IslamicCenterPage from "./(islamic-center)";
+import BackToTop from '../backToTop';
+import { getAllPostsMeta } from '@/mdx';
+import IslamicCenterPage from './(islamic-center)';
 
 export const metadata = {
-  title: "Islamic Center - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Islamic Center - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const IslamicCenterLayout = async () => {

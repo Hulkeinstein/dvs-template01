@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TeamData from "../../data/elements/team.json";
-import TeamHead from "./TeamHead";
+import TeamData from '../../data/elements/team.json';
+import TeamHead from './TeamHead';
 
 const TeamSeven = () => {
   return (

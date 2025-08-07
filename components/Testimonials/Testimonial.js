@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TestimonialData from "../../data/elements/testimonial.json";
+import TestimonialData from '../../data/elements/testimonial.json';
 
 const Testimonial = () => {
   return (
@@ -17,7 +17,7 @@ const Testimonial = () => {
                 {data.body.map((item, innerIndex) => (
                   <div
                     className={`tab-pane fade ${
-                      item.isSelected ? "active show" : ""
+                      item.isSelected ? 'active show' : ''
                     }`}
                     id={item.target}
                     role="tabpanel"
@@ -62,7 +62,7 @@ const Testimonial = () => {
                 {data.user.map((user, indexUser) => (
                   <li key={indexUser}>
                     <Link
-                      className={`${user.isSelected ? "active" : ""}`}
+                      className={`${user.isSelected ? 'active' : ''}`}
                       id={user.tab}
                       role="tab"
                       href="#"

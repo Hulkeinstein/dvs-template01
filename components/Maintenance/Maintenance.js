@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const Maintenance = () => {
   return (
@@ -51,6 +51,6 @@ const Maintenance = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Maintenance
+export default Maintenance;

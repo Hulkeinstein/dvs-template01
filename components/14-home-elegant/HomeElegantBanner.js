@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import Typed from "typed.js";
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import Typed from 'typed.js';
 
-import treeSvg from "../../public/images/icons/tree-shape.svg";
+import treeSvg from '../../public/images/icons/tree-shape.svg';
 
 const HomeElegantBanner = () => {
   useEffect(() => {
-    const typeitInstance = new Typed(".is-visible", {
-      strings: ["English.", "Finance.", "Math."],
+    const typeitInstance = new Typed('.is-visible', {
+      strings: ['English.', 'Finance.', 'Math.'],
       typeSpeed: 80,
       backSpeed: 60,
       startDelay: 200,

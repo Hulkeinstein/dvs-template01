@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-import Pagination from "../Common/Pagination";
+import Pagination from '../Common/Pagination';
 
-const BlogGridMinimal = ({ isPagination,blogdata, start, end }) => {
+const BlogGridMinimal = ({ isPagination, blogdata, start, end }) => {
   const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -17,7 +17,7 @@ const BlogGridMinimal = ({ isPagination,blogdata, start, end }) => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -87,7 +87,7 @@ const BlogGridMinimal = ({ isPagination,blogdata, start, end }) => {
           </div>
         </div>
       ) : (
-        ""
+        ''
       )}
     </>
   );

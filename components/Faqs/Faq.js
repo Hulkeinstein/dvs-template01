@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import AccordionData from "../../data/elements/accordion.json";
+import AccordionData from '../../data/elements/accordion.json';
 
 const Faq = () => {
   return (
@@ -23,7 +23,7 @@ const Faq = () => {
                         >
                           <button
                             className={`accordion-button ${
-                              !item.collapsed ? "collapsed" : ""
+                              !item.collapsed ? 'collapsed' : ''
                             }`}
                             type="button"
                             data-bs-toggle="collapse"
@@ -37,7 +37,7 @@ const Faq = () => {
                         <div
                           id={item.collapse}
                           className={`accordion-collapse collapse ${
-                            item.show ? "show" : ""
+                            item.show ? 'show' : ''
                           }`}
                           aria-labelledby={item.heading}
                           data-bs-parent="#accordionExamplec3"
@@ -67,7 +67,7 @@ const Faq = () => {
                         >
                           <button
                             className={`accordion-button ${
-                              !item.collapsed ? "collapsed" : ""
+                              !item.collapsed ? 'collapsed' : ''
                             }`}
                             type="button"
                             data-bs-toggle="collapse"
@@ -81,7 +81,7 @@ const Faq = () => {
                         <div
                           id={`faq-${item.collapse}`}
                           className={`accordion-collapse collapse ${
-                            item.show ? "show" : ""
+                            item.show ? 'show' : ''
                           }`}
                           aria-labelledby={`faq-${item.heading}`}
                           data-bs-parent="#faqs-accordionExamplec3"

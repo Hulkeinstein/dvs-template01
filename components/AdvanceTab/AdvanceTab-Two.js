@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TabData from "../../data/elements/advanceTab.json";
-import SectionHead from "./SectionHead";
+import TabData from '../../data/elements/advanceTab.json';
+import SectionHead from './SectionHead';
 
 const AdvancetabTwo = () => {
   return (
@@ -17,7 +17,7 @@ const AdvancetabTwo = () => {
                   {data.body.map((item, innerIndex) => (
                     <div
                       className={`tab-pane fade advance-tab-content-1 ${
-                        item.isActive ? "active show" : ""
+                        item.isActive ? 'active show' : ''
                       }`}
                       id={item.target}
                       role="tabpanel"
@@ -52,7 +52,7 @@ const AdvancetabTwo = () => {
                         <Link
                           href="#"
                           className={`nav-link tab-button ${
-                            item.isActive ? "active" : ""
+                            item.isActive ? 'active' : ''
                           }`}
                           id={item.tab}
                           data-bs-toggle="tab"

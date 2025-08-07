@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 // 원래 템플릿에서 사용하던 CounterWidget 컴포넌트를 그대로 import합니다.
-import CounterWidget from "./Dashboard-Section/widgets/CounterWidget";
-import MyCourses from "./Dashboard-Section/MyCourses";
+import CounterWidget from './Dashboard-Section/widgets/CounterWidget';
+import MyCourses from './Dashboard-Section/MyCourses';
 
 // 이 컴포넌트는 이제 부모로부터 stats prop을 전달받습니다.
 const Dashboard = ({ stats }) => {
@@ -28,7 +28,7 @@ const Dashboard = ({ stats }) => {
 
           <div className="row g-5">
             {/* --- 각 CounterWidget에 빠졌던 iconClass, numberClass 등을 모두 복원했습니다. --- */}
-            
+
             <div className="col-lg-4 col-md-4 col-sm-6 col-12">
               <CounterWidget
                 counterStyle="two"

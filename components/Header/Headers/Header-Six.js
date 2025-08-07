@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-import logo from "../../../public/images/logo/logo.png";
-import logoLight from "../../../public/images/dark/logo/logo-light.png";
+import logo from '../../../public/images/logo/logo.png';
+import logoLight from '../../../public/images/dark/logo/logo-light.png';
 
-import Nav from "../Nav";
-import { useAppContext } from "@/context/Context";
+import Nav from '../Nav';
+import { useAppContext } from '@/context/Context';
 
 const HeaderSix = ({
   gapSpaceBetween,
@@ -31,18 +31,18 @@ const HeaderSix = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
     <>
       <div
         className={`rbt-header-wrapper ${gapSpaceBetween} ${sticky} ${
-          isSticky ? "rbt-sticky" : ""
-        } ${isShadow ? "shadow-none" : ""}`}
+          isSticky ? 'rbt-sticky' : ''
+        } ${isShadow ? 'shadow-none' : ''}`}
       >
         <div className="container">
           <div className={`mainbar-row ${navigationEnd} align-items-center`}>

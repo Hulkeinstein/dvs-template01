@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const CourseActionBottom = ({ checkMatchCourses }) => {
   const path = usePathname();
@@ -13,7 +13,7 @@ const CourseActionBottom = ({ checkMatchCourses }) => {
     const handleScroll = () => {
       const ScrollPosition = window.pageYOffset;
       let isHide;
-      if (path === "/course-detail-2/[courseId]") {
+      if (path === '/course-detail-2/[courseId]') {
         isHide = ScrollPosition > 4365 && ScrollPosition < 5609;
       } else {
         isHide = ScrollPosition > 4365;
@@ -22,17 +22,17 @@ const CourseActionBottom = ({ checkMatchCourses }) => {
       setHideOnScroll(isHide);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [path]);
   return (
     <>
       <div
         className={`rbt-course-action-bottom ${
-          hideOnScroll ? "rbt-course-action-active" : ""
+          hideOnScroll ? 'rbt-course-action-active' : ''
         }`}
       >
         <div className="container">

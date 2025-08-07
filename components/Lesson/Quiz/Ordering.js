@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import Image from "next/image";
+import React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import Image from 'next/image';
 
 const Ordering = (props) => {
   const { id, courseTitle, courseImg } = props.course;

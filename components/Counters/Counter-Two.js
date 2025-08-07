@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import dynamic from "next/dynamic";
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
 
-import CounterData from "../../data/elements/counter.json";
-import CounterWrap from "./CounterWrap";
+import CounterData from '../../data/elements/counter.json';
+import CounterWrap from './CounterWrap';
 
 const CounterTwo = () => {
   return (
@@ -65,12 +65,12 @@ const CounterTwo = () => {
                         <div
                           className={`icon ${
                             item.primary
-                              ? "bg-primary-opacity"
-                              : "" || item.secondary
-                              ? "bg-secondary-opacity"
-                              : "" || item.pink
-                              ? "bg-pink-opacity"
-                              : ""
+                              ? 'bg-primary-opacity'
+                              : '' || item.secondary
+                                ? 'bg-secondary-opacity'
+                                : '' || item.pink
+                                  ? 'bg-pink-opacity'
+                                  : ''
                           }`}
                         >
                           <i className={item.icon}></i>

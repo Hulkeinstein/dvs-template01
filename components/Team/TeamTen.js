@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import TeamData from "../../data/elements/team.json";
+import TeamData from '../../data/elements/team.json';
 
 const TeamTen = () => {
   return (
@@ -39,8 +39,8 @@ const TeamTen = () => {
               <div
                 className={`${
                   data.isLarge
-                    ? "col-lg-3 col-md-6 col-sm-6 col-12"
-                    : "col-lg-2 col-md-3 col-sm-4 col-12"
+                    ? 'col-lg-3 col-md-6 col-sm-6 col-12'
+                    : 'col-lg-2 col-md-3 col-sm-4 col-12'
                 }`}
                 key={index}
               >

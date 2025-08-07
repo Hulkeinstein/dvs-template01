@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useEffect, useState } from 'react';
 
-import BreadCrumb from "../Common/BreadCrumb";
+import BreadCrumb from '../Common/BreadCrumb';
 
-import ShopData from "../../data/shop.json";
+import ShopData from '../../data/shop.json';
 
-import { addToCartAction, toggleAmount } from "@/redux/action/CartAction";
-import { useDispatch, useSelector } from "react-redux";
+import { addToCartAction, toggleAmount } from '@/redux/action/CartAction';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Wishlist = () => {
   const dispatch = useDispatch();
@@ -23,10 +23,10 @@ const Wishlist = () => {
     setCart(!cartToggle);
   };
   const increasePrice = () => {
-    dispatch(toggleAmount(product.id, "inc"));
+    dispatch(toggleAmount(product.id, 'inc'));
   };
   const decreasePrice = () => {
-    dispatch(toggleAmount(product.id, "dec"));
+    dispatch(toggleAmount(product.id, 'dec'));
   };
 
   const handleRemoveItem = (id) => {
@@ -34,8 +34,8 @@ const Wishlist = () => {
   };
 
   useEffect(() => {
-    dispatch({ type: "COUNT_CART_TOTALS" });
-    localStorage.setItem("hiStudy", JSON.stringify(cart));
+    dispatch({ type: 'COUNT_CART_TOTALS' });
+    localStorage.setItem('hiStudy', JSON.stringify(cart));
   }, [cart]);
 
   return (

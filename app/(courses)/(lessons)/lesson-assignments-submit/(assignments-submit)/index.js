@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import LessonSidebar from "@/components/Lesson/LessonSidebar";
-import LessonTop from "@/components/Lesson/LessonTop";
-import LessonAssignmentsSubmit from "@/components/Lesson/LessonAssignmentsSubmit";
+import LessonSidebar from '@/components/Lesson/LessonSidebar';
+import LessonTop from '@/components/Lesson/LessonTop';
+import LessonAssignmentsSubmit from '@/components/Lesson/LessonAssignmentsSubmit';
 
 const AssignmentsSubmitPage = () => {
   const [sidebar, setSidebar] = useState(true);
@@ -15,7 +15,7 @@ const AssignmentsSubmitPage = () => {
         <div className="rbt-lesson-content-wrapper">
           <div
             className={`rbt-lesson-leftsidebar ${
-              sidebar ? "" : "sibebar-none"
+              sidebar ? '' : 'sibebar-none'
             }`}
           >
             <LessonSidebar />

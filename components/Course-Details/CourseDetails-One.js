@@ -1,13 +1,13 @@
-import Content from "./Course-Sections/Content";
-import CourseBanner from "./Course-Sections/Course-Banner";
-import CourseMenu from "./Course-Sections/Course-Menu";
-import Featured from "./Course-Sections/Featured";
-import Instructor from "./Course-Sections/Instructor";
-import Overview from "./Course-Sections/Overview";
-import RelatedCourse from "./Course-Sections/RelatedCourse";
-import Requirements from "./Course-Sections/Requirements";
-import Review from "./Course-Sections/Review";
-import Viedo from "./Course-Sections/Viedo";
+import Content from './Course-Sections/Content';
+import CourseBanner from './Course-Sections/Course-Banner';
+import CourseMenu from './Course-Sections/Course-Menu';
+import Featured from './Course-Sections/Featured';
+import Instructor from './Course-Sections/Instructor';
+import Overview from './Course-Sections/Overview';
+import RelatedCourse from './Course-Sections/RelatedCourse';
+import Requirements from './Course-Sections/Requirements';
+import Review from './Course-Sections/Review';
+import Viedo from './Course-Sections/Viedo';
 
 const CourseDetailsOne = ({ checkMatchCourses }) => {
   return (

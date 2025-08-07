@@ -2,8 +2,8 @@ import { redirect } from 'next/navigation';
 
 // 메타데이터 설정
 export const metadata = {
-  title: "Instructor Dashboard - DVS-TEMPLATE01",
-  description: "Instructor Dashboard for DVS-TEMPLATE01",
+  title: 'Instructor Dashboard - DVS-TEMPLATE01',
+  description: 'Instructor Dashboard for DVS-TEMPLATE01',
 };
 
 const InstructorDashboardLayout = () => {

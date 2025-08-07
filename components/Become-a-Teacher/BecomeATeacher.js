@@ -1,7 +1,7 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import Teacher from "../../data/pages/become-A-Teacher.json";
-import InstructorRegistration from "./InstructorRegis";
+import Teacher from '../../data/pages/become-A-Teacher.json';
+import InstructorRegistration from './InstructorRegis';
 
 const BecomeATeacher = () => {
   return (
@@ -33,7 +33,7 @@ const BecomeATeacher = () => {
                         <Link
                           href="#"
                           className={`tab-button ${
-                            item.isActive ? "active" : ""
+                            item.isActive ? 'active' : ''
                           }`}
                           id={item.tab}
                           data-bs-toggle="tab"
@@ -52,7 +52,7 @@ const BecomeATeacher = () => {
                   {data.body.map((item, innerIndex) => (
                     <div
                       className={`tab-pane fade ${
-                        item.isActive ? "active show" : ""
+                        item.isActive ? 'active show' : ''
                       }`}
                       id={item.target}
                       role="tabpanel"

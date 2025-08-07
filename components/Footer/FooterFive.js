@@ -1,11 +1,11 @@
-import Image from "next/image";
-import React, { useEffect } from "react";
-import Link from "next/link";
-import sal from "sal.js";
+import Image from 'next/image';
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import sal from 'sal.js';
 
-import footerGd from "../../public/images/shape/footer-gd-01.png";
-import hello from "../../public/images/shape/w-hello.png";
-import { useParallax } from "react-scroll-parallax";
+import footerGd from '../../public/images/shape/footer-gd-01.png';
+import hello from '../../public/images/shape/w-hello.png';
+import { useParallax } from 'react-scroll-parallax';
 
 const FooterFive = () => {
   const { ref: ref1, style: style1 } = useParallax({
@@ -72,8 +72,9 @@ const FooterFive = () => {
             <div className="row align-items-center">
               <div className="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">
                 <p className="rbt-link-hover text-center text-lg-start">
-                  © 2025 <a href="https://rainbowthemes.net">Rainbow-Themes.</a>{" "}
-                  All Rights Reserved
+                  © 2025{' '}
+                  <a href="https://rainbowthemes.net">Rainbow-Themes.</a> All
+                  Rights Reserved
                 </p>
               </div>
               <div className="col-xxl-6 col-xl-6 col-lg-6 col-md-12 col-12">

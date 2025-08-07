@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useDispatch } from "react-redux";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useDispatch } from 'react-redux';
 
-import { deleteProduct, toggleAmount } from "@/redux/action/CartAction";
+import { deleteProduct, toggleAmount } from '@/redux/action/CartAction';
 
 const CartItems = ({ id, product, amount }) => {
   const dispatch = useDispatch();
 
   const increasePrice = () => {
-    dispatch(toggleAmount(id, "inc"));
+    dispatch(toggleAmount(id, 'inc'));
   };
   const decreasePrice = () => {
-    dispatch(toggleAmount(id, "dec"));
+    dispatch(toggleAmount(id, 'dec'));
   };
 
   return (
@@ -24,8 +24,8 @@ const CartItems = ({ id, product, amount }) => {
             product.productType
               ? `/single-product/${id}`
               : product.title
-              ? `/event-details/${id}`
-              : `/course-details/${id}`
+                ? `/event-details/${id}`
+                : `/course-details/${id}`
           }
         >
           <Image
@@ -42,8 +42,8 @@ const CartItems = ({ id, product, amount }) => {
             product.productType
               ? `/single-product/${id}`
               : product.title
-              ? `/event-details/${id}`
-              : `/course-details/${id}`
+                ? `/event-details/${id}`
+                : `/course-details/${id}`
           }
         >
           {product.courseTitle || product.title}
@@ -57,7 +57,7 @@ const CartItems = ({ id, product, amount }) => {
           <span className="dec qtybtn" onClick={decreasePrice}>
             -
           </span>
-          <span style={{ color: "var(--color-white-off)" }}>{amount}</span>
+          <span style={{ color: 'var(--color-white-off)' }}>{amount}</span>
           <span className="inc qtybtn" onClick={increasePrice}>
             +
           </span>

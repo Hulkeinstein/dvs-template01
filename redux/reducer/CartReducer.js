@@ -1,6 +1,6 @@
 const getLocalStorage = () => {
-  if (typeof window !== "undefined") {
-    let cart = localStorage.getItem("hiStudy");
+  if (typeof window !== 'undefined') {
+    let cart = localStorage.getItem('hiStudy');
 
     if (cart) {
       return JSON.parse(cart);
@@ -19,21 +19,21 @@ const init = {
   shipping_fee: 80,
   loading: false,
   error: false,
-  msg: "",
+  msg: '',
 };
 
 export const CartReducer = (state = init, action) => {
-  if (action.type === "CART_REQ") {
+  if (action.type === 'CART_REQ') {
     return {
       ...state,
       loading: true,
     };
-  } else if (action.type === "CART_REQ_OUT") {
+  } else if (action.type === 'CART_REQ_OUT') {
     return {
       ...state,
       loading: false,
     };
-  } else if (action.type === "ADD_TO_CART") {
+  } else if (action.type === 'ADD_TO_CART') {
     const { id, amount, product, category } = action.payload;
 
     const tempItem = state.cart.find((i) => i.id === id);
@@ -53,7 +53,7 @@ export const CartReducer = (state = init, action) => {
       return {
         ...state,
         cart: tempCart,
-        msg: "already added !!!",
+        msg: 'already added !!!',
       };
     } else {
       const newItem = {
@@ -66,15 +66,15 @@ export const CartReducer = (state = init, action) => {
       return {
         ...state,
         cart: [...state.cart, newItem],
-        msg: "item add successfully",
+        msg: 'item add successfully',
       };
     }
-  } else if (action.type === "TOGGLE_CART_AMOUNT") {
+  } else if (action.type === 'TOGGLE_CART_AMOUNT') {
     const { id, value } = action.payload;
 
     const tempCart = state.cart.map((item) => {
       if (item.id === id) {
-        if (value === "inc") {
+        if (value === 'inc') {
           let newAmount = item.amount + 1;
           if (newAmount > item.max) {
             newAmount = item.max;
@@ -82,7 +82,7 @@ export const CartReducer = (state = init, action) => {
 
           return { ...item, amount: newAmount };
         }
-        if (value === "dec") {
+        if (value === 'dec') {
           let newAmount = item.amount - 1;
           if (newAmount < 1) {
             newAmount = 1;
@@ -97,7 +97,7 @@ export const CartReducer = (state = init, action) => {
       ...state,
       cart: tempCart,
     };
-  } else if (action.type === "COUNT_CART_TOTALS") {
+  } else if (action.type === 'COUNT_CART_TOTALS') {
     const { total_items, total_amount } = state.cart.reduce(
       (total, cartItem) => {
         const { amount, price } = cartItem;
@@ -116,27 +116,27 @@ export const CartReducer = (state = init, action) => {
       total_items,
       total_amount,
     };
-  } else if (action.type === "DELETE_CART_ITEM") {
+  } else if (action.type === 'DELETE_CART_ITEM') {
     const tempCart = state.cart.filter((item) => item.id !== action.payload);
     return {
       ...state,
       cart: tempCart,
     };
-  } else if (action.type === "CLEAR_CART") {
+  } else if (action.type === 'CLEAR_CART') {
     return {
       ...state,
       cart: [],
     };
-  } else if (action.type === "SET_CART_ERROR") {
+  } else if (action.type === 'SET_CART_ERROR') {
     return {
       ...state,
       error: true,
     };
-  } else if (action.type === "CLEAR_CART_ERROR") {
+  } else if (action.type === 'CLEAR_CART_ERROR') {
     return {
       ...state,
       error: false,
-      msg: "",
+      msg: '',
     };
   } else {
     return state;

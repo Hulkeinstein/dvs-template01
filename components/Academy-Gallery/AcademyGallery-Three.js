@@ -1,6 +1,6 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import aboutImg from "../../public/images/about/about-13.jpg";
+import aboutImg from '../../public/images/about/about-13.jpg';
 
 const AcademyGalleryThree = () => {
   return (

@@ -1,42 +1,42 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import Select, { components } from "react-select";
+import Link from 'next/link';
+import { useState } from 'react';
+import Select, { components } from 'react-select';
 
 const Announcement = () => {
   const components = { ValueContainer, MultiValue };
-  const [course, setCourses] = useState({ value: "", label: "" });
-  const [sortBy, setSortBy] = useState({ value: "Default", label: "Default" });
+  const [course, setCourses] = useState({ value: '', label: '' });
+  const [sortBy, setSortBy] = useState({ value: 'Default', label: 'Default' });
   const [sortByOffer, setSortByOffer] = useState({
-    value: "Free",
-    label: "Free",
+    value: 'Free',
+    label: 'Free',
   });
 
   const courses = [
-    { value: "Web Design HTML", label: "Web Design HTML" },
-    { value: "Graphic Photoshop", label: "Graphic Photoshop" },
-    { value: "English Career", label: "English Career" },
-    { value: "Spoken English Career", label: "Spoken English Career" },
-    { value: "Art Painting Experts", label: "Art Painting Experts" },
-    { value: "App Development Experts", label: "App Development Experts" },
-    { value: "Web Application Experts", label: "Web Application Experts" },
-    { value: "Php Development Experts", label: "Php Development Experts" },
+    { value: 'Web Design HTML', label: 'Web Design HTML' },
+    { value: 'Graphic Photoshop', label: 'Graphic Photoshop' },
+    { value: 'English Career', label: 'English Career' },
+    { value: 'Spoken English Career', label: 'Spoken English Career' },
+    { value: 'Art Painting Experts', label: 'Art Painting Experts' },
+    { value: 'App Development Experts', label: 'App Development Experts' },
+    { value: 'Web Application Experts', label: 'Web Application Experts' },
+    { value: 'Php Development Experts', label: 'Php Development Experts' },
   ];
 
   const sortByOptions = [
-    { value: "Default", label: "Default" },
-    { value: "Latest", label: "Latest" },
-    { value: "Popularity", label: "Popularity" },
-    { value: "Trending", label: "Trending" },
-    { value: "Price: low to high", label: "Price: low to high" },
-    { value: "Price: high to low", label: "Price: high to low" },
+    { value: 'Default', label: 'Default' },
+    { value: 'Latest', label: 'Latest' },
+    { value: 'Popularity', label: 'Popularity' },
+    { value: 'Trending', label: 'Trending' },
+    { value: 'Price: low to high', label: 'Price: low to high' },
+    { value: 'Price: high to low', label: 'Price: high to low' },
   ];
 
   const sortByOffers = [
-    { value: "Free", label: "Free" },
-    { value: "Paid", label: "Paid" },
-    { value: "Premium", label: "Premium" },
+    { value: 'Free', label: 'Free' },
+    { value: 'Paid', label: 'Paid' },
+    { value: 'Premium', label: 'Premium' },
   ];
 
   return (
@@ -242,5 +242,5 @@ const ValueContainer = ({ children, ...props }) => {
 };
 
 const MultiValue = (props) => {
-  return "3 Selected";
+  return '3 Selected';
 };

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
 const CountdownTimer = () => {
   const [time, setTime] = useState(3600);
@@ -31,7 +31,7 @@ const CountdownTimer = () => {
         <span>
           Time remaining:
           <strong className="ps-2">
-            {getHours}h {getMinutes}m {getSeconds}s{" "}
+            {getHours}h {getMinutes}m {getSeconds}s{' '}
           </strong>
         </span>
       )}

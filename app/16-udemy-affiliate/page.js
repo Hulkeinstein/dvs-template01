@@ -1,9 +1,9 @@
-import BackToTop from "../backToTop";
-import UdemyAffiliatePage from "./(udemy-affiliate)";
+import BackToTop from '../backToTop';
+import UdemyAffiliatePage from './(udemy-affiliate)';
 
 export const metadata = {
-  title: "Udemy Affiliate - Online Courses & Education NEXTJS14 Template",
-  description: "Online Courses & Education NEXTJS14 Template",
+  title: 'Udemy Affiliate - Online Courses & Education NEXTJS14 Template',
+  description: 'Online Courses & Education NEXTJS14 Template',
 };
 
 const UdemyAffiliateLayout = () => {

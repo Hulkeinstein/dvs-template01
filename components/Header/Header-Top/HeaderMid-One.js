@@ -1,11 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import { useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
 
-import logo from "../../../public/images/logo/logo.png";
-import User from "../Offcanvas/User";
+import logo from '../../../public/images/logo/logo.png';
+import User from '../Offcanvas/User';
 
 const HeaderMidOne = ({
   gapSpaceBetween,

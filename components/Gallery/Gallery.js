@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import GalleryData from "../../data/elements/gallery.json";
+import GalleryData from '../../data/elements/gallery.json';
 
 const Gallery = () => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".child-gallery-single",
+        selector: '.child-gallery-single',
         numeration: true,
         infinigall: true,
-        spinner: "rotating-plane",
+        spinner: 'rotating-plane',
       });
     });
   }, []);

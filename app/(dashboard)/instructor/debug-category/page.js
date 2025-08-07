@@ -1,8 +1,8 @@
-import { debugCategoryIssue } from '@/app/lib/actions/debugCategoryIssue'
+import { debugCategoryIssue } from '@/app/lib/actions/debugCategoryIssue';
 
 export default async function DebugCategoryPage() {
-  const debugResults = await debugCategoryIssue()
-  
+  const debugResults = await debugCategoryIssue();
+
   return (
     <div className="container mt-5">
       <h1>Category Column Debug Results</h1>
@@ -13,8 +13,10 @@ export default async function DebugCategoryPage() {
       </div>
       <div className="alert alert-info mt-4">
         <h5>Check the server console for detailed logs</h5>
-        <p>The detailed debug information has been logged to the server console.</p>
+        <p>
+          The detailed debug information has been logged to the server console.
+        </p>
       </div>
     </div>
-  )
+  );
 }

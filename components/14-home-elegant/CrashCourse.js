@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import CardSix from "../Cards/Card-Six";
+import CardSix from '../Cards/Card-Six';
 
 const CrashCourse = () => {
   return (

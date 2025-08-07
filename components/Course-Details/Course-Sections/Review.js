@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const Review = () => {
   return (
@@ -125,7 +125,7 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "63%" }}
+                    style={{ width: '63%' }}
                     aria-valuenow="63"
                     aria-valuemin="0"
                     aria-valuemax="100"
@@ -191,7 +191,7 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "29%" }}
+                    style={{ width: '29%' }}
                     aria-valuenow="29"
                     aria-valuemin="0"
                     aria-valuemax="100"
@@ -257,7 +257,7 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "6%" }}
+                    style={{ width: '6%' }}
                     aria-valuenow="6"
                     aria-valuemin="0"
                     aria-valuemax="100"
@@ -323,7 +323,7 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "1%" }}
+                    style={{ width: '1%' }}
                     aria-valuenow="1"
                     aria-valuemin="0"
                     aria-valuemax="100"
@@ -389,7 +389,7 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: "1%" }}
+                    style={{ width: '1%' }}
                     aria-valuenow="1"
                     aria-valuemin="0"
                     aria-valuemax="100"

@@ -1,7 +1,7 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-import CourseDetails from "../../data/course-details/courseData.json";
+import CourseDetails from '../../data/course-details/courseData.json';
 
 const CategoryFive = () => {
   return (

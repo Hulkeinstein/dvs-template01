@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
 const CourseLessonProp = ({ courseImg, courseContent }) => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);
@@ -66,7 +66,7 @@ const CourseLessonProp = ({ courseImg, courseContent }) => {
                     >
                       <button
                         className={`accordion-button ${
-                          data.isShow ? "" : "collapsed"
+                          data.isShow ? '' : 'collapsed'
                         }`}
                         type="button"
                         data-bs-toggle="collapse"
@@ -80,7 +80,7 @@ const CourseLessonProp = ({ courseImg, courseContent }) => {
                     <div
                       id={`collapseTwo${index + 1}`}
                       className={`accordion-collapse collapse ${
-                        data.isShow ? "show" : ""
+                        data.isShow ? 'show' : ''
                       }`}
                       aria-labelledby={`headingTwo${index + 1}`}
                       data-bs-parent="#accordionExampleb2"
@@ -93,14 +93,14 @@ const CourseLessonProp = ({ courseImg, courseContent }) => {
                                 <div className="course-content-left">
                                   <i
                                     className={`feather-${
-                                      list.isPlay ? "play-circle" : "file-text"
+                                      list.isPlay ? 'play-circle' : 'file-text'
                                     }`}
                                   ></i>
                                   <span className="text">{list.text}</span>
                                 </div>
                                 <div
                                   className={`course-content-right ${
-                                    list.isLoc ? "only-lock" : ""
+                                    list.isLoc ? 'only-lock' : ''
                                   }`}
                                 >
                                   {list.isLoc ? (

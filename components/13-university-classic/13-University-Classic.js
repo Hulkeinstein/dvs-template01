@@ -1,40 +1,40 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import sal from "sal.js";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import sal from 'sal.js';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-import EventData from "../../data/events.json";
-import UniversityBanner from "./UniversityBanner";
-import ServiceEight from "../Services/Service-Eight";
-import AdvanceTab from "../AdvanceTab/AdvanceTab";
-import CardThree from "../Cards/Card-Three";
-import BlogGrid from "../Blogs/BlogGrid";
-import Events from "../Events/Events";
-import Course from "../Accordions/Course";
-import Testimonial from "../Testimonials/Testimonial";
-import Gallery from "../Gallery/Gallery";
-import BrandOne from "../Brand/Brand-One";
+import EventData from '../../data/events.json';
+import UniversityBanner from './UniversityBanner';
+import ServiceEight from '../Services/Service-Eight';
+import AdvanceTab from '../AdvanceTab/AdvanceTab';
+import CardThree from '../Cards/Card-Three';
+import BlogGrid from '../Blogs/BlogGrid';
+import Events from '../Events/Events';
+import Course from '../Accordions/Course';
+import Testimonial from '../Testimonials/Testimonial';
+import Gallery from '../Gallery/Gallery';
+import BrandOne from '../Brand/Brand-One';
 
-import imgOne from "../../public/images/gallery/gallery-03.jpg";
-import imgTwo from "../../public/images/gallery/gallery-01.jpg";
-import imgThree from "../../public/images/gallery/gallery-05.jpg";
-import hiImgOne from "../../public/images/banner/hi_1.png";
-import hiImgTwo from "../../public/images/banner/hi_2.png";
-import hiImgThree from "../../public/images/banner/hi_3.png";
-import videoImg from "../../public/images/others/video-06.jpg";
+import imgOne from '../../public/images/gallery/gallery-03.jpg';
+import imgTwo from '../../public/images/gallery/gallery-01.jpg';
+import imgThree from '../../public/images/gallery/gallery-05.jpg';
+import hiImgOne from '../../public/images/banner/hi_1.png';
+import hiImgTwo from '../../public/images/banner/hi_2.png';
+import hiImgThree from '../../public/images/banner/hi_3.png';
+import videoImg from '../../public/images/others/video-06.jpg';
 
 const UniversityClassic = ({ blogdata }) => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
 
@@ -136,8 +136,8 @@ const UniversityClassic = ({ blogdata }) => {
                 slidesPerView={1}
                 modules={[Navigation]}
                 navigation={{
-                  nextEl: ".rbt-arrow-left",
-                  prevEl: ".rbt-arrow-right",
+                  nextEl: '.rbt-arrow-left',
+                  prevEl: '.rbt-arrow-right',
                 }}
               >
                 <div className="swiper-wrapper">

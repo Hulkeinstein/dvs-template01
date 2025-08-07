@@ -1,33 +1,33 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import sal from "sal.js";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import sal from 'sal.js';
 
-import CourseDetails from "../../data/course-details/courseData.json";
-import EventData from "../../data/events.json";
+import CourseDetails from '../../data/course-details/courseData.json';
+import EventData from '../../data/events.json';
 
-import ServiceThree from "../Services/Service-Three";
-import CourseTagTwo from "../Common/CourseTag-Two";
-import TeamSix from "../Team/TeamSix";
-import TestimonialThree from "../Testimonials/Testimonial-Three";
-import Events from "../Events/Events";
-import BlogGridTop from "../Blogs/Blog-Sections/BlogGrid-Top";
-import NewsletterThree from "../Newsletters/Newsletter-Three";
+import ServiceThree from '../Services/Service-Three';
+import CourseTagTwo from '../Common/CourseTag-Two';
+import TeamSix from '../Team/TeamSix';
+import TestimonialThree from '../Testimonials/Testimonial-Three';
+import Events from '../Events/Events';
+import BlogGridTop from '../Blogs/Blog-Sections/BlogGrid-Top';
+import NewsletterThree from '../Newsletters/Newsletter-Three';
 
 const CourseSchool = ({ blogs }) => {
   let getAllCourse = JSON.parse(JSON.stringify(CourseDetails.courseTab));
 
   const [courseFilter, setCourseFilter] = useState(getAllCourse);
-  const [activeTab, setActiveTab] = useState("All Course");
+  const [activeTab, setActiveTab] = useState('All Course');
 
   const filterItem = (types) => {
     const updateItem = getAllCourse.filter((curElm) => {
       return curElm.courseType === types;
     });
 
-    if (types !== "All Course") {
+    if (types !== 'All Course') {
       setCourseFilter(updateItem);
     } else {
       setCourseFilter(getAllCourse);
@@ -102,20 +102,20 @@ const CourseSchool = ({ blogs }) => {
                 role="tablist"
               >
                 {[
-                  "All Course",
-                  "featured",
-                  "popular",
-                  "trending",
-                  "latest",
+                  'All Course',
+                  'featured',
+                  'popular',
+                  'trending',
+                  'latest',
                 ].map((courseType, index) => (
                   <li key={index} className="nav-item" role="presentation">
                     <button
-                      className={activeTab === courseType ? "active" : ""}
+                      className={activeTab === courseType ? 'active' : ''}
                       type="button"
                       onClick={() => handleButtonClick(courseType)}
                     >
                       <span className="filter-text">{courseType}</span>
-                      {courseType === "All Course" ? (
+                      {courseType === 'All Course' ? (
                         <span className="course-number">
                           {getAllCourse.filter((course) => course).length}
                         </span>

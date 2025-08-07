@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const CourseSidebar = () => {
   const [show, setShow] = useState(true);
@@ -20,7 +20,7 @@ const CourseSidebar = () => {
 
         <div
           className={`rbt-single-widget rbt-widget-categories ${
-            show ? "has-show-more" : ""
+            show ? 'has-show-more' : ''
           }`}
         >
           <div className="inner">
@@ -97,7 +97,7 @@ const CourseSidebar = () => {
             </ul>
           </div>
           <div
-            className={`rbt-show-more-btn ${show ? "" : "active"}`}
+            className={`rbt-show-more-btn ${show ? '' : 'active'}`}
             onClick={() => setShow(!show)}
           >
             Show More

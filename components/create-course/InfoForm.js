@@ -1,22 +1,33 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { fileToBase64, validateFileSize, validateFileType } from '@/app/lib/utils/fileUpload';
-import { logger } from '@/app/lib/utils/logger';
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import {
+  fileToBase64,
+  validateFileSize,
+  validateFileType,
+} from '@/app/lib/utils/fileUpload';
 
-import img from "../../public/images/others/thumbnail-placeholder.svg";
+import img from '../../public/images/others/thumbnail-placeholder.svg';
 
 const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
-  logger.log('InfoForm rendered with thumbnailPreview:', formData.thumbnailPreview);
-  const [thumbnailPreview, setThumbnailPreview] = useState(formData.thumbnailPreview || null);
+  console.log(
+    'InfoForm rendered with thumbnailPreview:',
+    formData.thumbnailPreview
+  );
+  const [thumbnailPreview, setThumbnailPreview] = useState(
+    formData.thumbnailPreview || null
+  );
   const [fileError, setFileError] = useState('');
   const fileInputRef = useRef(null);
 
   // formData.thumbnailPreview가 변경될 때 로컬 상태 업데이트
   useEffect(() => {
-    logger.log('useEffect - thumbnailPreview changed:', formData.thumbnailPreview);
+    console.log(
+      'useEffect - thumbnailPreview changed:',
+      formData.thumbnailPreview
+    );
     if (formData.thumbnailPreview) {
       setThumbnailPreview(formData.thumbnailPreview);
     }
@@ -26,41 +37,47 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
     const { name, value, type, checked } = e.target;
     onFormDataChange({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     });
   };
 
   const handleNumberInputChange = (e) => {
     const { value } = e.target;
     // Allow only numeric characters
-    const sanitizedValue = value.replace(/[^0-9]/g, "");
+    const sanitizedValue = value.replace(/[^0-9]/g, '');
     onFormDataChange({
       ...formData,
-      maxStudents: sanitizedValue
+      maxStudents: sanitizedValue,
     });
   };
 
   const handleIncrement = () => {
     onFormDataChange({
       ...formData,
-      maxStudents: parseInt(formData.maxStudents || 0) + 1
+      maxStudents: parseInt(formData.maxStudents || 0) + 1,
     });
   };
 
   const handleDecrement = () => {
     onFormDataChange({
       ...formData,
-      maxStudents: Math.max(0, parseInt(formData.maxStudents || 0) - 1)
+      maxStudents: Math.max(0, parseInt(formData.maxStudents || 0) - 1),
     });
   };
 
   const handleThumbnailChange = async (e) => {
     const file = e.target.files[0];
     setFileError('');
-    
+
     if (file) {
       // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp',
+      ];
       if (!validateFileType(file, allowedTypes)) {
         setFileError('Only image files (JPEG, PNG, GIF, WebP) are allowed');
         e.target.value = '';
@@ -77,20 +94,20 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
       try {
         // Convert to base64
         const base64 = await fileToBase64(file);
-        
+
         // Set preview
         setThumbnailPreview(base64);
-        
+
         // Pass both file and base64 to parent
         onThumbnailChange({
           file: file,
-          base64: base64
+          base64: base64,
         });
-        
+
         // Update form data with preview
         onFormDataChange({
           ...formData,
-          thumbnailPreview: base64
+          thumbnailPreview: base64,
         });
       } catch (error) {
         setFileError('Failed to process the image file');
@@ -104,71 +121,75 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
       <div className="rbt-course-field-wrapper rbt-default-form">
         <div className="course-field mb--15">
           <label htmlFor="field-1">Course Title</label>
-          <input 
-            id="field-1" 
+          <input
+            id="field-1"
             name="title"
-            type="text" 
-            placeholder="Course Title*" 
+            type="text"
+            placeholder="Course Title*"
             value={formData.title || ''}
             onChange={handleInputChange}
             required
           />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Title should be descriptive and clear.
+            <i className="feather-info"></i> Title should be descriptive and
+            clear.
           </small>
         </div>
         <div className="course-field mb--15">
           <label htmlFor="field-2">Short Description</label>
-          <input 
-            id="field-2" 
+          <input
+            id="field-2"
             name="shortDescription"
-            type="text" 
-            placeholder="Brief description of the course" 
+            type="text"
+            placeholder="Brief description of the course"
             value={formData.shortDescription || ''}
             onChange={handleInputChange}
             required
           />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> A brief summary that appears in course listings.
+            <i className="feather-info"></i> A brief summary that appears in
+            course listings.
           </small>
         </div>
 
         <div className="course-field mb--15">
           <label htmlFor="field-slug">Course Slug</label>
-          <input 
-            id="field-slug" 
+          <input
+            id="field-slug"
             name="slug"
-            type="text" 
-            placeholder="Course Slug*" 
+            type="text"
+            placeholder="Course Slug*"
             value={formData.slug || ''}
             onChange={handleInputChange}
             required
           />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> URL-friendly version of the course name.
+            <i className="feather-info"></i> URL-friendly version of the course
+            name.
           </small>
         </div>
 
         <div className="course-field mb--15">
           <label htmlFor="field-duration">Course Duration (hours)</label>
-          <input 
-            id="field-duration" 
+          <input
+            id="field-duration"
             name="duration"
-            type="number" 
-            placeholder="Course Duration*" 
+            type="number"
+            placeholder="Course Duration*"
             value={formData.duration || ''}
             onChange={handleInputChange}
             required
           />
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Total duration of the course in hours.
+            <i className="feather-info"></i> Total duration of the course in
+            hours.
           </small>
         </div>
 
         <div className="course-field mb--15">
           <label htmlFor="description">Course Description</label>
-          <textarea 
-            id="description" 
+          <textarea
+            id="description"
             name="description"
             rows="10"
             value={formData.description || ''}
@@ -176,7 +197,8 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
             placeholder="Describe what students will learn in this course..."
           ></textarea>
           <small className="d-block mt_dec--5">
-            <i className="feather-info"></i> Detailed description of the course content and objectives.
+            <i className="feather-info"></i> Detailed description of the course
+            content and objectives.
           </small>
         </div>
 
@@ -263,8 +285,8 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     <div className="course-field mb--20">
                       <label htmlFor="field-4">Difficulty Level</label>
                       <div className="rbt-modern-select bg-transparent height-45 mb--10">
-                        <select 
-                          className="w-100" 
+                        <select
+                          className="w-100"
                           id="field-4"
                           name="level"
                           value={formData.level || 'all_levels'}
@@ -300,7 +322,8 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                         />
                       </div>
                       <small>
-                        <i className="feather-info"></i> Issue certificates to students who complete the course.
+                        <i className="feather-info"></i> Issue certificates to
+                        students who complete the course.
                       </small>
                     </div>
 
@@ -323,7 +346,8 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                         />
                       </div>
                       <small>
-                        <i className="feather-info"></i> Students can access the course forever
+                        <i className="feather-info"></i> Students can access the
+                        course forever
                       </small>
                     </div>
                   </div>
@@ -385,7 +409,9 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                               name="contentDripType"
                               value="after_enrollment"
                               id="rbt-radio-2"
-                              checked={formData.contentDripType === 'after_enrollment'}
+                              checked={
+                                formData.contentDripType === 'after_enrollment'
+                              }
                               onChange={handleInputChange}
                             />
                             <label
@@ -402,7 +428,9 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                               name="contentDripType"
                               value="sequential"
                               id="rbt-radio-3"
-                              checked={formData.contentDripType === 'sequential'}
+                              checked={
+                                formData.contentDripType === 'sequential'
+                              }
                               onChange={handleInputChange}
                             />
                             <label
@@ -419,7 +447,10 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                               name="contentDripType"
                               value="after_prerequisites"
                               id="rbt-radio-4"
-                              checked={formData.contentDripType === 'after_prerequisites'}
+                              checked={
+                                formData.contentDripType ===
+                                'after_prerequisites'
+                              }
                               onChange={handleInputChange}
                             />
                             <label
@@ -454,14 +485,19 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     <li className="nav-item w-100" role="presentation">
                       <a
                         href="#"
-                        className={formData.price > 0 ? "active" : ""}
+                        className={formData.price > 0 ? 'active' : ''}
                         id="paid-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#paid"
                         role="tab"
                         aria-controls="paid"
                         aria-selected={formData.price > 0}
-                        onClick={() => onFormDataChange({ ...formData, price: formData.price || 1 })}
+                        onClick={() =>
+                          onFormDataChange({
+                            ...formData,
+                            price: formData.price || 1,
+                          })
+                        }
                       >
                         <span>Paid</span>
                       </a>
@@ -469,14 +505,16 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     <li className="nav-item w-100" role="presentation">
                       <a
                         href="#"
-                        className={formData.price === 0 ? "active" : ""}
+                        className={formData.price === 0 ? 'active' : ''}
                         id="free-tab"
                         data-bs-toggle="tab"
                         data-bs-target="#free"
                         role="tab"
                         aria-controls="free"
                         aria-selected={formData.price === 0}
-                        onClick={() => onFormDataChange({ ...formData, price: 0 })}
+                        onClick={() =>
+                          onFormDataChange({ ...formData, price: 0 })
+                        }
                       >
                         <span>Free</span>
                       </a>
@@ -547,7 +585,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
         <div className="course-field mb--20">
           <h6>Choose Categories</h6>
           <div className="rbt-modern-select bg-transparent height-45 w-100 mb--10">
-            <select 
+            <select
               className="w-100"
               name="category"
               value={formData.category || ''}
@@ -571,7 +609,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
           <label htmlFor="createinputfile">Course Thumbnail*</label>
           <div className="rbt-create-course-thumbnail upload-area">
             <div className="upload-area">
-              <div className="brows-file-wrapper" data-black-overlay="9" style={{ maxWidth: '100%', overflow: 'hidden' }}>
+              <div className="brows-file-wrapper" data-black-overlay="9">
                 <input
                   name="createinputfile"
                   id="createinputfile"
@@ -587,13 +625,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                   width={797}
                   height={262}
                   alt="file image"
-                  style={{ 
-                    objectFit: 'cover',
-                    width: '100%',
-                    height: 'auto',
-                    maxWidth: '100%',
-                    display: 'block'
-                  }}
+                  style={{ objectFit: 'cover' }}
                 />
 
                 <label
@@ -623,4 +655,4 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
   );
 };
 
-export default React.memo(InfoForm);
+export default InfoForm;

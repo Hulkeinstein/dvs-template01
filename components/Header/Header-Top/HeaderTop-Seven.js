@@ -1,6 +1,5 @@
-
-import { useAppContext } from "@/context/Context";
-import HeaderLanguage from "./Header-Language";
+import { useAppContext } from '@/context/Context';
+import HeaderLanguage from './Header-Language';
 
 const HeaderTopSeven = ({ gapSpaceBetween, bgColor, flexDirection }) => {
   const { toggle, setToggle } = useAppContext();
@@ -8,7 +7,7 @@ const HeaderTopSeven = ({ gapSpaceBetween, bgColor, flexDirection }) => {
     <>
       <div
         className={`rbt-header-top rbt-header-top-1 variation-height-60 ${gapSpaceBetween} ${bgColor} top-expended-activation ${
-          !toggle ? "d-none" : ""
+          !toggle ? 'd-none' : ''
         }`}
       >
         <div className="container">

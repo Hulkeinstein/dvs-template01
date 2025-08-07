@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const Profile = ({ userProfile }) => {
   // 사용자 데이터가 없을 때 기본값 설정
@@ -9,7 +9,7 @@ const Profile = ({ userProfile }) => {
     phone_number: null,
     skill: null,
     biography: null,
-    role: 'N/A'
+    role: 'N/A',
   };
 
   // created_at 날짜 포맷팅
@@ -22,7 +22,7 @@ const Profile = ({ userProfile }) => {
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: true,
     });
   };
 
@@ -83,7 +83,9 @@ const Profile = ({ userProfile }) => {
               <div className="rbt-profile-content b2">Role</div>
             </div>
             <div className="col-lg-8 col-md-8">
-              <div className="rbt-profile-content b2">{userData.role || 'N/A'}</div>
+              <div className="rbt-profile-content b2">
+                {userData.role || 'N/A'}
+              </div>
             </div>
           </div>
           <div className="rbt-profile-row row row--15 mt--15">

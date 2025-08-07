@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Link as ScrollLink } from "react-scroll";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Link as ScrollLink } from 'react-scroll';
 
-import logo from "../../public/images/logo/logo.png";
-import { useAppContext } from "@/context/Context";
+import logo from '../../public/images/logo/logo.png';
+import { useAppContext } from '@/context/Context';
 
 const SideNav = () => {
   const { mobile, setMobile } = useAppContext();
-  const [currentSection, setCurrentSection] = useState("home");
+  const [currentSection, setCurrentSection] = useState('home');
 
   const sections = [
-    { id: "home", label: "Home" },
-    { id: "about", label: "About Us" },
-    { id: "guideline", label: "Course Guideline" },
-    { id: "coursecontent", label: "Course Content" },
-    { id: "career", label: "Career" },
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About Us' },
+    { id: 'guideline', label: 'Course Guideline' },
+    { id: 'coursecontent', label: 'Course Content' },
+    { id: 'career', label: 'Career' },
   ];
 
   useEffect(() => {
     const sectionIds = [
-      "home",
-      "about",
-      "guideline",
-      "coursecontent",
-      "career",
+      'home',
+      'about',
+      'guideline',
+      'coursecontent',
+      'career',
     ];
 
     const handleScroll = () => {
@@ -41,16 +41,16 @@ const SideNav = () => {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [currentSection]);
 
   return (
     <>
-      <div className={`side-menu ${!mobile ? "side-menu-active" : ""}`}>
+      <div className={`side-menu ${!mobile ? 'side-menu-active' : ''}`}>
         <div className="inner-wrapper side-menu-wrapper">
           <div className="inner-top">
             <div className="content">
@@ -94,7 +94,7 @@ const SideNav = () => {
             <ul className="navbar-nav">
               {sections.map((sec, i) => (
                 <li
-                  className={currentSection === sec.id ? "current" : ""}
+                  className={currentSection === sec.id ? 'current' : ''}
                   key={i}
                 >
                   <ScrollLink
@@ -103,7 +103,7 @@ const SideNav = () => {
                     smooth={true}
                     duration={500}
                     offset={-70}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                   >
                     {sec.label}
                   </ScrollLink>

@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import CourseDetails from "../../../data/course-details/courseData.json";
+import CourseDetails from '../../../data/course-details/courseData.json';
 
-import { Provider } from "react-redux";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import CategoryHead from "@/components/Category/CategoryHead";
-import CourseTab from "@/components/Category/Filter/CourseTab";
+import { Provider } from 'react-redux';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import CategoryHead from '@/components/Category/CategoryHead';
+import CourseTab from '@/components/Category/Filter/CourseTab';
 
 const CourseTabPage = () => {
   let getAllCourse = JSON.parse(
@@ -26,7 +26,7 @@ const CourseTabPage = () => {
       return curElm.courseType === types;
     });
 
-    if (types !== "All Course") {
+    if (types !== 'All Course') {
       setCourseFilter(updateItem);
     } else {
       setCourseFilter(getAllCourse);

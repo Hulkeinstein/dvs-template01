@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import Image from 'next/image';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import img from "../../../../public/images/others/header.png";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
+import img from '../../../../public/images/others/header.png';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
 
 const HeaderStylePage = () => {
   return (

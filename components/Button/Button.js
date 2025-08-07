@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import React, { useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
 
-import "venobox/dist/venobox.min.css";
+import 'venobox/dist/venobox.min.css';
 
-import videoImg1 from "../../public/images/others/video-01.jpg";
-import videoImg2 from "../../public/images/others/video-02.jpg";
-import videoImg3 from "../../public/images/others/video-03.jpg";
-import videoImg4 from "../../public/images/others/video-04.jpg";
+import videoImg1 from '../../public/images/others/video-01.jpg';
+import videoImg2 from '../../public/images/others/video-02.jpg';
+import videoImg3 from '../../public/images/others/video-03.jpg';
+import videoImg4 from '../../public/images/others/video-04.jpg';
 
-import ColorButton from "./ButtonProps/ColorButton";
-import HoverButton from "./ButtonProps/HoverButton";
-import SectionHead from "./ButtonProps/SectionHead";
+import ColorButton from './ButtonProps/ColorButton';
+import HoverButton from './ButtonProps/HoverButton';
+import SectionHead from './ButtonProps/SectionHead';
 
 const Button = () => {
   useEffect(() => {
-    import("venobox/dist/venobox.min.js").then((venobox) => {
+    import('venobox/dist/venobox.min.js').then((venobox) => {
       new venobox.default({
-        selector: ".popup-video",
+        selector: '.popup-video',
       });
     });
   }, []);

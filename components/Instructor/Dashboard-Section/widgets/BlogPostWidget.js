@@ -1,10 +1,10 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-const BlogPostWidget = ({ post, postStyle = "list" }) => {
+const BlogPostWidget = ({ post, postStyle = 'list' }) => {
   return (
     <>
-      {postStyle === "list" && (
+      {postStyle === 'list' && (
         <div className="rbt-card card-list variation-02 rbt-hover mt--30">
           <div className="rbt-card-img">
             <Link href={`/blog/${post.slug}`}>
@@ -42,7 +42,7 @@ const BlogPostWidget = ({ post, postStyle = "list" }) => {
         </div>
       )}
 
-      {postStyle === "grid" && (
+      {postStyle === 'grid' && (
         <div className="rbt-card variation-02 height-auto rbt-hover">
           <div className="rbt-card-img">
             <Link href={`/blog/${post.slug}`}>
@@ -83,7 +83,7 @@ const BlogPostWidget = ({ post, postStyle = "list" }) => {
         </div>
       )}
 
-      {postStyle === "grid-minimal" && (
+      {postStyle === 'grid-minimal' && (
         <div className="rbt-card variation-02 rbt-hover card-minimal">
           <div className="rbt-card-body">
             <ul className="meta-list justify-content-start mb--30">
@@ -116,7 +116,7 @@ const BlogPostWidget = ({ post, postStyle = "list" }) => {
         </div>
       )}
 
-      {postStyle === "grid-style-2" && (
+      {postStyle === 'grid-style-2' && (
         <div className="rbt-blog-grid rbt-card variation-02 rbt-hover">
           <div className="rbt-card-img">
             <Link href={`/blog/${post.slug}`}>

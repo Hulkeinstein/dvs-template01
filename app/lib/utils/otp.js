@@ -31,19 +31,19 @@ export function normalizePhoneNumber(phone) {
   if (phone.startsWith('+')) {
     // 숫자와 + 기호만 남기고 제거
     const cleaned = phone.replace(/[^+\d]/g, '');
-    
+
     // E.164 형식 검증: +로 시작하고 10-15자리 숫자
     if (/^\+\d{10,15}$/.test(cleaned)) {
       return cleaned;
     }
   }
-  
+
   // E.164 형식이 아닌 경우 숫자만 추출해서 +를 붙여서 반환
   const digits = phone.replace(/\D/g, '');
   if (digits.length >= 10 && digits.length <= 15) {
     return '+' + digits;
   }
-  
+
   return null;
 }
 
@@ -56,14 +56,14 @@ export function normalizePhoneNumber(phone) {
  */
 export function verifyOTP(inputOTP, savedOTP, expiryTime) {
   const now = new Date();
-  
+
   if (now > new Date(expiryTime)) {
     return { valid: false, error: 'OTP has expired' };
   }
-  
+
   if (inputOTP !== savedOTP) {
     return { valid: false, error: 'Invalid OTP' };
   }
-  
+
   return { valid: true };
 }

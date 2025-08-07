@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import CourseData from "../../../data/course-details/courseData.json";
-import UserProfile from "@/components/User-Profile/User-Profile";
-import Biography from "@/components/User-Profile/User-Biography";
-import UserCourses from "@/components/User-Profile/User-Courses";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
+import CourseData from '../../../data/course-details/courseData.json';
+import UserProfile from '@/components/User-Profile/User-Profile';
+import Biography from '@/components/User-Profile/User-Biography';
+import UserCourses from '@/components/User-Profile/User-Courses';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
 
 const SingleProfile = ({ getParams }) => {
   const router = useRouter();
@@ -27,7 +27,7 @@ const SingleProfile = ({ getParams }) => {
 
   useEffect(() => {
     if (postId && checkMatchProfile === undefined) {
-      router.push("/profile/1");
+      router.push('/profile/1');
     }
   }, [checkMatchProfile, router]);
 

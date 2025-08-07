@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-import HeaderTopTwo from "./Header-Top/HeaderTop-Two";
-import HeaderTwo from "./Headers/Header-Two";
-import { useAppContext } from "@/context/Context";
-import DarkSwitch from "./dark-switch";
+import HeaderTopTwo from './Header-Top/HeaderTop-Two';
+import HeaderTwo from './Headers/Header-Two';
+import { useAppContext } from '@/context/Context';
+import DarkSwitch from './dark-switch';
 
 const HeaderStyleSeven = ({ headerSticky }) => {
   const { isLightTheme, toggleTheme } = useAppContext();

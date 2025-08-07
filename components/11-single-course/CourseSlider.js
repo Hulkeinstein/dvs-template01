@@ -1,11 +1,11 @@
-import Image from "next/image";
-import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import Image from 'next/image';
+import React from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
 
-import sliderImg1 from "../../public/images/course/single-course-07.jpg";
-import sliderImg2 from "../../public/images/course/single-course-08.jpg";
-import sliderImg3 from "../../public/images/course/single-course-09.jpg";
+import sliderImg1 from '../../public/images/course/single-course-07.jpg';
+import sliderImg2 from '../../public/images/course/single-course-08.jpg';
+import sliderImg3 from '../../public/images/course/single-course-09.jpg';
 
 const CourseSlider = () => {
   return (
@@ -16,8 +16,8 @@ const CourseSlider = () => {
           modules={[Navigation]}
           loop={true}
           navigation={{
-            nextEl: ".rbt-arrow-left",
-            prevEl: ".rbt-arrow-right",
+            nextEl: '.rbt-arrow-left',
+            prevEl: '.rbt-arrow-right',
           }}
           slidesPerView={1}
         >

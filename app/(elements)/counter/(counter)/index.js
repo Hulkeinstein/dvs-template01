@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
-import Cart from "@/components/Header/Offcanvas/Cart";
-import MobileMenu from "@/components/Header/MobileMenu";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Counter from "@/components/Counters/Counter";
-import CounterTwo from "@/components/Counters/Counter-Two";
-import CounterThree from "@/components/Counters/Counter-Three";
-import CounterFour from "@/components/Counters/Counter-Four";
-import CounterFive from "@/components/Counters/Counter-Five";
-import CounterSix from "@/components/Counters/Counter-Six";
+import Cart from '@/components/Header/Offcanvas/Cart';
+import MobileMenu from '@/components/Header/MobileMenu';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Counter from '@/components/Counters/Counter';
+import CounterTwo from '@/components/Counters/Counter-Two';
+import CounterThree from '@/components/Counters/Counter-Three';
+import CounterFour from '@/components/Counters/Counter-Four';
+import CounterFive from '@/components/Counters/Counter-Five';
+import CounterSix from '@/components/Counters/Counter-Six';
 
 const CounterPage = () => {
   return (

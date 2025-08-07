@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Setting from "@/components/Student/Settings";
-import StudentDashboardHeader from "@/components/Student/StudentDashboardHeader";
-import StudentDashboardSidebar from "@/components/Student/StudentDashboardSidebar";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
-import RoleProtection from "@/components/Auth/RoleProtection";
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Setting from '@/components/Student/Settings';
+import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
+import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
+import RoleProtection from '@/components/Auth/RoleProtection';
 
 const StudentSetting = ({ userProfile }) => {
   return (
@@ -29,7 +29,7 @@ const StudentSetting = ({ userProfile }) => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={["student"]}>
+                  <RoleProtection allowedRoles={['student']}>
                     <StudentDashboardHeader />
 
                     <div className="row g-5">

@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import { Provider } from "react-redux";
-import sal from "sal.js";
+import { useEffect } from 'react';
+import { Provider } from 'react-redux';
+import sal from 'sal.js';
 
-import Store from "@/redux/store";
-import Context from "@/context/Context";
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Banner from "@/components/Common/Banner";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import BlogGridMinimal from "@/components/Blogs/BlogGridMinimal";
+import Store from '@/redux/store';
+import Context from '@/context/Context';
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Banner from '@/components/Common/Banner';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import BlogGridMinimal from '@/components/Blogs/BlogGridMinimal';
 
 const BlogGridMinimalPage = ({ getAllBlogs }) => {
   useEffect(() => {

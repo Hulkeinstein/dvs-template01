@@ -1,5 +1,5 @@
-import CounterData from "../../data/elements/counter.json";
-import CounterWrap from "./CounterWrap";
+import CounterData from '../../data/elements/counter.json';
+import CounterWrap from './CounterWrap';
 
 const CounterFive = () => {
   return (

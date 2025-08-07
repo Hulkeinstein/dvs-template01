@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useEffect } from "react";
-import sal from "sal.js";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import { Provider } from "react-redux";
+import { useEffect } from 'react';
+import sal from 'sal.js';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import { Provider } from 'react-redux';
 
-import CallToAction from "@/components/Call-To-Action/CallToAction";
-import CallToActionFive from "@/components/Call-To-Action/CallToAction-Five";
-import CallToActionFour from "@/components/Call-To-Action/CallToAction-Four";
-import CallToActionSix from "@/components/Call-To-Action/CallToAction-Six";
-import CallToActionThree from "@/components/Call-To-Action/CallToAction-Three";
-import CallToActionTwo from "@/components/Call-To-Action/CallToAction-Two";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
+import CallToAction from '@/components/Call-To-Action/CallToAction';
+import CallToActionFive from '@/components/Call-To-Action/CallToAction-Five';
+import CallToActionFour from '@/components/Call-To-Action/CallToAction-Four';
+import CallToActionSix from '@/components/Call-To-Action/CallToAction-Six';
+import CallToActionThree from '@/components/Call-To-Action/CallToAction-Three';
+import CallToActionTwo from '@/components/Call-To-Action/CallToAction-Two';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
 
 const CallToActionPage = () => {
   useEffect(() => {

@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
-import HeaderTopEight from "./Header-Top/HeaderTop-Eight";
-import HeaderTopBar from "./HeaderTopBar/HeaderTopBar";
-import HeaderEight from "./Headers/Header-Eight";
-import { useAppContext } from "@/context/Context";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import HeaderTopEight from './Header-Top/HeaderTop-Eight';
+import HeaderTopBar from './HeaderTopBar/HeaderTopBar';
+import HeaderEight from './Headers/Header-Eight';
+import { useAppContext } from '@/context/Context';
 
 // 클라이언트 사이드에서만 렌더링되도록 동적 임포트
 const DynamicDarkSwitch = dynamic(() => import('./dark-switch'), {
@@ -29,9 +29,9 @@ const HeaderStyleTen = ({ headerSticky }) => {
         <DynamicDarkSwitch isLight={isLightTheme} switchTheme={toggleTheme} />
       )}
       <header className="rbt-header rbt-header-10">
-        {router.pathname === "/01-main-demo" &&
-        "/16-udemy-affiliate" &&
-        "/01-main-demo" ? (
+        {router.pathname === '/01-main-demo' &&
+        '/16-udemy-affiliate' &&
+        '/01-main-demo' ? (
           <HeaderTopBar />
         ) : (
           <HeaderTopEight

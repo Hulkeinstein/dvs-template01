@@ -1,10 +1,10 @@
-"use client";
-import React from "react";
-import { usePathname } from "next/navigation";
-import HeaderSix from "./Headers/Header-Six";
-import HeaderTopSeven from "./Header-Top/HeaderTop-Seven";
-import DarkSwitch from "./dark-switch";
-import { useAppContext } from "@/context/Context";
+'use client';
+import React from 'react';
+import { usePathname } from 'next/navigation';
+import HeaderSix from './Headers/Header-Six';
+import HeaderTopSeven from './Header-Top/HeaderTop-Seven';
+import DarkSwitch from './dark-switch';
+import { useAppContext } from '@/context/Context';
 
 const HeaderStyleEight = () => {
   const pathname = usePathname();
@@ -14,7 +14,7 @@ const HeaderStyleEight = () => {
       <DarkSwitch isLight={isLightTheme} switchTheme={toggleTheme} />
       <header
         className={`rbt-header ${
-          pathname === "/08-language-academy" ? "" : "rbt-dark-header-8"
+          pathname === '/08-language-academy' ? '' : 'rbt-dark-header-8'
         } rbt-header-8 rbt-transparent-header`}
       >
         <div className="rbt-sticky-placeholder"></div>

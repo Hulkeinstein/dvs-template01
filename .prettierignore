@@ -1,0 +1,72 @@
+# Dependencies
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Production
+*.min.js
+*.min.css
+
+# Version control
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Public static files
+public/css/
+public/js/vendor/
+public/images/
+
+# Files with HTML entities (ESLint conflict prevention)
+app/certificate/
+components/18-instructors-coaches/
+components/19-modern-university/
+components/21-art-design-school/
+components/23-coaching/
+components/24-health-wellness-institute/
+components/25-life-coach/
+components/26-islamic-center/
+components/Testimonials/Testimonial-Four.js
+components/Student/Certificates.js
+components/create-course/lesson/Lesson.js
+components/create-course/QuizModals/QuizModal.js
+components/create-course/QuizTab/Question.js
+
+# Already formatted files (optional)
+app/lib/certificate/
+
+# Markdown and documentation
+*.md
+docs/
+
+# SCSS files (format separately if needed)
+*.scss

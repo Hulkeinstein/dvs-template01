@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import Service from "@/components/Services/Service";
-import ServiceTwo from "@/components/Services/Service-Two";
-import ServiceThree from "@/components/Services/Service-Three";
-import ServiceFour from "@/components/Services/Service-Four";
-import ServiceFive from "@/components/Services/Service-Five";
-import ServiceSix from "@/components/Services/Service-Six";
-import ServiceSaven from "@/components/Services/Service-Saven";
-import ServiceEight from "@/components/Services/Service-Eight";
-import ServiceNine from "@/components/Services/Service-Nine";
-import ServiceTen from "@/components/Services/Service-Ten";
-import ServiceEleven from "@/components/Services/Service-Eleven";
-import ServiceTwelve from "@/components/Services/Service-Twelve";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import FooterOne from "@/components/Footer/Footer-One";
-import BreadCrumb from "@/components/Common/BreadCrumb";
-import Cart from "@/components/Header/Offcanvas/Cart";
+import Service from '@/components/Services/Service';
+import ServiceTwo from '@/components/Services/Service-Two';
+import ServiceThree from '@/components/Services/Service-Three';
+import ServiceFour from '@/components/Services/Service-Four';
+import ServiceFive from '@/components/Services/Service-Five';
+import ServiceSix from '@/components/Services/Service-Six';
+import ServiceSaven from '@/components/Services/Service-Saven';
+import ServiceEight from '@/components/Services/Service-Eight';
+import ServiceNine from '@/components/Services/Service-Nine';
+import ServiceTen from '@/components/Services/Service-Ten';
+import ServiceEleven from '@/components/Services/Service-Eleven';
+import ServiceTwelve from '@/components/Services/Service-Twelve';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import FooterOne from '@/components/Footer/Footer-One';
+import BreadCrumb from '@/components/Common/BreadCrumb';
+import Cart from '@/components/Header/Offcanvas/Cart';
 
 const ServicePage = () => {
   return (

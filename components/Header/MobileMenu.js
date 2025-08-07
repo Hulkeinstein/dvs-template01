@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react"; // useState, useEffect 추가
-import Image from "next/image";
-import Link from "next/link";
+import { useState, useEffect } from 'react'; // useState, useEffect 추가
+import Image from 'next/image';
+import Link from 'next/link';
 
-import logo from "../../public/images/logo/logo.png";
+import logo from '../../public/images/logo/logo.png';
 
-import Nav from "./Nav";
-import { useAppContext } from "@/context/Context";
+import Nav from './Nav';
+import { useAppContext } from '@/context/Context';
 
 const MobileMenu = () => {
   // mobile 상태와 함께 mounted 상태도 가져오거나, 여기서 직접 생성합니다.
@@ -26,7 +26,7 @@ const MobileMenu = () => {
 
   return (
     <>
-      <div className={`popup-mobile-menu ${mobile ? "" : "active"}`}>
+      <div className={`popup-mobile-menu ${mobile ? '' : 'active'}`}>
         <div className="backdrop" onClick={() => setMobile(!mobile)}></div>
         <div className="inner-wrapper">
           <div className="inner-top">

@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import CategoryHeadTwo from "@/components/Category/CategoryHeadTwo";
-import CourseFilterOneToggle from "@/components/Category/Filter/CourseFilterOneToggle";
-import Pagination from "@/components/Common/Pagination";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import CategoryHeadTwo from '@/components/Category/CategoryHeadTwo';
+import CourseFilterOneToggle from '@/components/Category/Filter/CourseFilterOneToggle';
+import Pagination from '@/components/Common/Pagination';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
 
-import CourseDetails from "../../../data/course-details/courseData.json";
+import CourseDetails from '../../../data/course-details/courseData.json';
 
 const CourseFilteTwoOpen = () => {
   const [courses, setCourse] = useState([]);
@@ -33,7 +33,7 @@ const CourseFilteTwoOpen = () => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -67,7 +67,7 @@ const CourseFilteTwoOpen = () => {
                     </div>
                   </div>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </div>

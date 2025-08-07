@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useRef } from "react";
-import Link from "next/link";
+import React, { useRef } from 'react';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Navigation } from 'swiper/modules';
 
 const UniversityBanner = () => {
   const thumbsSwiperRef = useRef(null);
@@ -20,8 +20,8 @@ const UniversityBanner = () => {
         loop={false}
         autoHeight={true}
         navigation={{
-          nextEl: ".rbt-arrow-left",
-          prevEl: ".rbt-arrow-right",
+          nextEl: '.rbt-arrow-left',
+          prevEl: '.rbt-arrow-right',
           clickable: true,
         }}
       >

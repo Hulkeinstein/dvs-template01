@@ -15,18 +15,20 @@ export class CourseProviderFactory {
     // Create instances of providers
     const demoProvider = new DemoCourseProvider();
     const databaseProvider = new DatabaseCourseProvider(options.session);
-    
+
     // Check which provider can handle this ID
     if (demoProvider.canHandle(courseId)) {
       return demoProvider;
     }
-    
+
     if (databaseProvider.canHandle(courseId)) {
       return databaseProvider;
     }
-    
+
     // Default to demo provider for unknown IDs
-    console.warn(`No provider found for course ID: ${courseId}, defaulting to demo provider`);
+    console.warn(
+      `No provider found for course ID: ${courseId}, defaulting to demo provider`
+    );
     return demoProvider;
   }
 

@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
 const BlogGridTop = ({ BlogData }) => {
   return (
@@ -65,7 +65,7 @@ const BlogGridTop = ({ BlogData }) => {
           {BlogData.slice(1, 4).map((data, index) => (
             <div
               className={`rbt-card card-list variation-02 rbt-hover ${
-                index !== 0 ? "mt--30" : ""
+                index !== 0 ? 'mt--30' : ''
               }`}
               key={index}
             >

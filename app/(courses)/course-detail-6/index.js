@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import sal from "sal.js";
-import CourseData from "../../../data/course-details/courseData.json";
-import { Provider } from "react-redux";
-import Store from "@/redux/store";
-import Context from "@/context/Context";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import sal from 'sal.js';
+import CourseData from '../../../data/course-details/courseData.json';
+import { Provider } from 'react-redux';
+import Store from '@/redux/store';
+import Context from '@/context/Context';
 
-import MobileMenu from "@/components/Header/MobileMenu";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import CourseHead from "@/components/Course-Details/Course-Sections/course-head";
-import CourseActionBottom from "@/components/Course-Details/Course-Sections/Course-Action-Bottom";
-import RelatedCourse from "@/components/Course-Details/Course-Sections/RelatedCourse";
-import CourseDetailsSix from "@/components/Course-Details/CourseDetails-Six";
+import MobileMenu from '@/components/Header/MobileMenu';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import CourseHead from '@/components/Course-Details/Course-Sections/course-head';
+import CourseActionBottom from '@/components/Course-Details/Course-Sections/Course-Action-Bottom';
+import RelatedCourse from '@/components/Course-Details/Course-Sections/RelatedCourse';
+import CourseDetailsSix from '@/components/Course-Details/CourseDetails-Six';
 
 const SingleCourseSix = ({ getParams }) => {
   const router = useRouter();
@@ -29,7 +29,7 @@ const SingleCourseSix = ({ getParams }) => {
 
   useEffect(() => {
     if (postId && checkMatch === undefined) {
-      router.push("/course-card-2");
+      router.push('/course-card-2');
     }
 
     sal({
@@ -48,7 +48,7 @@ const SingleCourseSix = ({ getParams }) => {
 
           <div className="rbt-breadcrumb-default rbt-breadcrumb-style-3 version-03">
             <CourseHead
-              checkMatch={checkMatch !== undefined ? checkMatch : ""}
+              checkMatch={checkMatch !== undefined ? checkMatch : ''}
             />
           </div>
 
@@ -56,14 +56,14 @@ const SingleCourseSix = ({ getParams }) => {
             <div className="container">
               <div className="row g-5">
                 <CourseDetailsSix
-                  checkMatchCourses={checkMatch !== undefined ? checkMatch : ""}
+                  checkMatchCourses={checkMatch !== undefined ? checkMatch : ''}
                 />
               </div>
             </div>
           </div>
 
           <CourseActionBottom
-            checkMatchCourses={checkMatch !== undefined ? checkMatch : ""}
+            checkMatchCourses={checkMatch !== undefined ? checkMatch : ''}
           />
 
           <div className="rbt-related-course-area bg-color-white rbt-section-gapBottom">

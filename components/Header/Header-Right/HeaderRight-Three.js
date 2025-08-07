@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import Link from 'next/link';
 
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
-import { useAppContext } from "@/context/Context";
+import { useAppContext } from '@/context/Context';
 
 const HeaderRightThree = ({ btnClass, btnText }) => {
   const { mobile, setMobile, search, setSearch, cartToggle, setCart } =
@@ -29,7 +29,7 @@ const HeaderRightThree = ({ btnClass, btnText }) => {
         <li className="access-icon">
           <Link
             className={`search-trigger-active rbt-round-btn ${
-              search ? "" : "open"
+              search ? '' : 'open'
             }`}
             href="#"
             onClick={() => setSearch(!search)}

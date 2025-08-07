@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import AboutData from "../../data/elements/about.json";
+import AboutData from '../../data/elements/about.json';
 
 const AboutThree = () => {
   return (

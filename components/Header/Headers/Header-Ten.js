@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useSelector } from "react-redux";
-import { useAppContext } from "@/context/Context";
+import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useSelector } from 'react-redux';
+import { useAppContext } from '@/context/Context';
 
-import Nav from "../Nav";
-import User from "../Offcanvas/User";
-import SearchWithCategory from "../Category/SearchWithCategory";
+import Nav from '../Nav';
+import User from '../Offcanvas/User';
+import SearchWithCategory from '../Category/SearchWithCategory';
 
-import logo from "../../../public/images/logo/logo.png";
-import logoLight from "../../../public/images/dark/logo/logo-light.png";
+import logo from '../../../public/images/logo/logo.png';
+import logoLight from '../../../public/images/dark/logo/logo-light.png';
 
 const HeaderTen = ({
   headerType,
@@ -44,17 +44,17 @@ const HeaderTen = ({
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, []);
   return (
     <>
       <div
         className={`rbt-header-wrapper rbt-header-wrapper height-50 ${gapSpaceBetween} ${sticky}  ${
-          !headerType && isSticky ? `${headerSticky}` : ""
+          !headerType && isSticky ? `${headerSticky}` : ''
         }`}
       >
         <div className={`${container}`}>
@@ -65,7 +65,7 @@ const HeaderTen = ({
                   <li className="access-icon">
                     <Link
                       className={`search-trigger-active rbt-round-btn ${
-                        search ? "" : "open"
+                        search ? '' : 'open'
                       }`}
                       href="#"
                       onClick={() => setSearch(!search)}

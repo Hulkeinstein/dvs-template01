@@ -1,12 +1,12 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination } from 'swiper/modules';
 
-import TeamData from "../../data/elements/team.json";
-import TeamHead from "./TeamHead";
+import TeamData from '../../data/elements/team.json';
+import TeamHead from './TeamHead';
 
 const TeamEight = ({ head }) => {
   return (
@@ -18,7 +18,7 @@ const TeamEight = ({ head }) => {
             desc="Awesome Carousel Style."
           />
         ) : (
-          ""
+          ''
         )}
 
         <div className="row row--15">
@@ -30,12 +30,12 @@ const TeamEight = ({ head }) => {
               spaceBetween={30}
               slidesPerView={1}
               pagination={{
-                el: ".rbt-swiper-pagination",
+                el: '.rbt-swiper-pagination',
                 clickable: true,
               }}
               navigation={{
-                nextEl: ".rbt-arrow-left",
-                prevEl: ".rbt-arrow-right",
+                nextEl: '.rbt-arrow-left',
+                prevEl: '.rbt-arrow-right',
               }}
               breakpoints={{
                 575: {
@@ -100,7 +100,7 @@ const TeamEight = ({ head }) => {
 
               <div
                 className="rbt-swiper-pagination"
-                style={{ bottom: "0" }}
+                style={{ bottom: '0' }}
               ></div>
             </Swiper>
           </div>

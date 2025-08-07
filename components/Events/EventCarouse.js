@@ -1,11 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination } from 'swiper/modules';
 
-import EventData from "../../data/events.json";
+import EventData from '../../data/events.json';
 
 const EventCarouse = () => {
   return (
@@ -16,12 +16,12 @@ const EventCarouse = () => {
         spaceBetween={30}
         modules={[Navigation, Pagination]}
         pagination={{
-          el: ".rbt-swiper-pagination",
+          el: '.rbt-swiper-pagination',
           clickable: true,
         }}
         navigation={{
-          nextEl: ".rbt-arrow-left",
-          prevEl: ".rbt-arrow-right",
+          nextEl: '.rbt-arrow-left',
+          prevEl: '.rbt-arrow-right',
         }}
         breakpoints={{
           481: {
@@ -106,7 +106,7 @@ const EventCarouse = () => {
           </div>
         </div>
 
-        <div className="rbt-swiper-pagination" style={{ bottom: "0" }}></div>
+        <div className="rbt-swiper-pagination" style={{ bottom: '0' }}></div>
       </Swiper>
     </>
   );

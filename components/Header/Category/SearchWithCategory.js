@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { useAppContext } from "@/context/Context";
-import React from "react";
+import { useAppContext } from '@/context/Context';
+import React from 'react';
 
 const SearchWithCategory = () => {
   const { search } = useAppContext();
@@ -9,7 +9,7 @@ const SearchWithCategory = () => {
     <>
       <div
         className={`rbt-search-dropdown search-with-category-popup ${
-          !search ? "active" : ""
+          !search ? 'active' : ''
         }`}
       >
         <div className="wrapper">

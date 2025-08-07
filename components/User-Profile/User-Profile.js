@@ -1,7 +1,7 @@
-import Image from "next/image";
-import React from "react";
+import Image from 'next/image';
+import React from 'react';
 
-import bgImage from "../../public/images/bg/bg-image-22.jpg";
+import bgImage from '../../public/images/bg/bg-image-22.jpg';
 
 const UserProfile = ({ checkMatchProfile }) => {
   return (

@@ -1,11 +1,11 @@
-import Image from "next/image";
+import Image from 'next/image';
 
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper, SwiperSlide } from 'swiper/react';
 
-import { Pagination } from "swiper/modules";
+import { Pagination } from 'swiper/modules';
 
-import TeamData from "../../data/elements/team.json";
-import TeamHead from "./TeamHead";
+import TeamData from '../../data/elements/team.json';
+import TeamHead from './TeamHead';
 
 const TeamNine = () => {
   return (
@@ -25,7 +25,7 @@ const TeamNine = () => {
               spaceBetween={30}
               slidesPerView={1}
               pagination={{
-                el: ".rbt-swiper-pagination",
+                el: '.rbt-swiper-pagination',
                 clickable: true,
               }}
               breakpoints={{
@@ -79,7 +79,7 @@ const TeamNine = () => {
                 ))}
               <div
                 className="rbt-swiper-pagination"
-                style={{ bottom: "0" }}
+                style={{ bottom: '0' }}
               ></div>
             </Swiper>
           </div>

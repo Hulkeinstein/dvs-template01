@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import CourseDetails from "../../../data/course-details/courseData.json";
+import CourseDetails from '../../../data/course-details/courseData.json';
 
-import { Provider } from "react-redux";
-import Context from "@/context/Context";
-import Store from "@/redux/store";
-import HeaderStyleTen from "@/components/Header/HeaderStyle-Ten";
-import MobileMenu from "@/components/Header/MobileMenu";
-import Cart from "@/components/Header/Offcanvas/Cart";
-import Separator from "@/components/Common/Separator";
-import FooterOne from "@/components/Footer/Footer-One";
-import CategoryHead from "@/components/Category/CategoryHead";
-import CourseFilterOneToggle from "@/components/Category/Filter/CourseFilterOneToggle";
-import Pagination from "@/components/Common/Pagination";
+import { Provider } from 'react-redux';
+import Context from '@/context/Context';
+import Store from '@/redux/store';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import MobileMenu from '@/components/Header/MobileMenu';
+import Cart from '@/components/Header/Offcanvas/Cart';
+import Separator from '@/components/Common/Separator';
+import FooterOne from '@/components/Footer/Footer-One';
+import CategoryHead from '@/components/Category/CategoryHead';
+import CourseFilterOneToggle from '@/components/Category/Filter/CourseFilterOneToggle';
+import Pagination from '@/components/Common/Pagination';
 
 const CourseFilerOneOpenPage = () => {
   const [courses, setCourse] = useState([]);
@@ -33,7 +33,7 @@ const CourseFilerOneOpenPage = () => {
     setPage(num);
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   };
 
@@ -67,7 +67,7 @@ const CourseFilerOneOpenPage = () => {
                     </div>
                   </div>
                 ) : (
-                  ""
+                  ''
                 )}
               </div>
             </div>

@@ -1,37 +1,37 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
+import Image from 'next/image';
+import Link from 'next/link';
 
-import AboutData from "../../data/elements/about.json";
+import AboutData from '../../data/elements/about.json';
 
-import { useParallax } from "react-scroll-parallax";
+import { useParallax } from 'react-scroll-parallax';
 
-import aboutImg1 from "../../public/images/about/about-01.png";
-import aboutImg2 from "../../public/images/about/about-02.png";
-import aboutImg3 from "../../public/images/about/about-03.png";
-import { usePathname } from "next/navigation";
+import aboutImg1 from '../../public/images/about/about-01.png';
+import aboutImg2 from '../../public/images/about/about-02.png';
+import aboutImg3 from '../../public/images/about/about-03.png';
+import { usePathname } from 'next/navigation';
 
 const AboutTwo = () => {
   const pathname = usePathname();
 
   const { ref: ref1, style: style1 } = useParallax({
     translateY: [0, -20],
-    easing: "easeOutQuad",
+    easing: 'easeOutQuad',
     speed: 10,
     shouldAlwaysCompleteAnimation: true,
   });
 
   const { ref: ref2, style: style2 } = useParallax({
     translateY: [0, 20],
-    easing: "easeOutQuad",
+    easing: 'easeOutQuad',
     speed: 10,
     shouldAlwaysCompleteAnimation: true,
   });
 
   const { ref: ref3, style: style3 } = useParallax({
     translateY: [0, 20],
-    easing: "easeOutQuad",
+    easing: 'easeOutQuad',
     speed: 10,
     shouldAlwaysCompleteAnimation: true,
   });
@@ -102,8 +102,8 @@ const AboutTwo = () => {
                       <div
                         className={`icon ${
                           item.isPrimary
-                            ? "bg-primary-opacity"
-                            : "bg-pink-opacity"
+                            ? 'bg-primary-opacity'
+                            : 'bg-pink-opacity'
                         }`}
                       >
                         <i className={item.icon}></i>
@@ -116,8 +116,8 @@ const AboutTwo = () => {
                   ))}
                 </div>
 
-                {pathname === "/17-online-academy" ? (
-                  ""
+                {pathname === '/17-online-academy' ? (
+                  ''
                 ) : (
                   <div className="about-btn mt--40">
                     <Link

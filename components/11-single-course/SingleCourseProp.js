@@ -1,6 +1,6 @@
-import Image from "next/image";
-import React from "react";
-import CourseSlider from "./CourseSlider";
+import Image from 'next/image';
+import React from 'react';
+import CourseSlider from './CourseSlider';
 
 export default function SingleCourseProp({ courseData, image }) {
   return (

@@ -17,10 +17,10 @@ export async function GET() {
 
     if (error) {
       console.error('Table check error:', error);
-      return NextResponse.json({ 
-        tableExists: false, 
+      return NextResponse.json({
+        tableExists: false,
         error: error.message || 'Table not found',
-        details: error
+        details: error,
       });
     }
 
@@ -29,18 +29,20 @@ export async function GET() {
       .rpc('get_table_columns', { table_name: 'phone_verifications' })
       .catch(() => ({ data: null, error: 'RPC function not available' }));
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       tableExists: true,
       message: 'phone_verifications table exists',
       sampleData: data,
-      tableInfo: tableInfo || 'Unable to fetch table structure'
+      tableInfo: tableInfo || 'Unable to fetch table structure',
     });
-
   } catch (error) {
     console.error('Test DB error:', error);
-    return NextResponse.json({ 
-      error: 'Internal server error',
-      details: error.message
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Internal server error',
+        details: error.message,
+      },
+      { status: 500 }
+    );
   }
 }

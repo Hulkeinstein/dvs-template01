@@ -1,8 +1,8 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
-import CourseDetails from "../../data/course-details/courseData.json";
-import useCategoryCount from "@/context/useCategoryCount";
+import CourseDetails from '../../data/course-details/courseData.json';
+import useCategoryCount from '@/context/useCategoryCount';
 
 const CategoryFour = () => {
   const { categoryCounts } = useCategoryCount(CourseDetails.courseDetails);
@@ -25,7 +25,7 @@ const CategoryFour = () => {
                       />
                       <div className="read-more-btn">
                         <span className="rbt-btn btn-sm btn-white radius-round">
-                          {count} Course{count !== 1 ? "s" : ""}
+                          {count} Course{count !== 1 ? 's' : ''}
                         </span>
                       </div>
                     </Link>
