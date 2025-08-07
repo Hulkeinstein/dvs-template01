@@ -286,11 +286,24 @@ const blob = base64ToBlob(base64Data)
 - [ ] 권한 관리 테이블 구조
 - [ ] 감사(Audit) 추적 기능
 
+## Recent Updates (2025-01-31)
+
+### ESLint 설정 완료
+- ESLint 8.57.0 및 eslint-config-next 설치
+- HTML entity 에러 모두 해결
+- GitHub Actions CI 통과
+- Warning (의존성 배열) 약 50개 남음 - 앱 실행에는 영향 없음
+
+### 작업 관리 파일 추가
+- `.claude/workflow.md` - 워크플로우 가이드
+- `.claude/context.md` - 프로젝트 컨텍스트 및 히스토리
+
 ## Git Workflow Guide (GitHub Flow)
 
 ### 브랜치 전략
 - **main**: 항상 배포 가능한 상태 유지
 - **feature branches**: 모든 새 작업은 main에서 분기
+- **현재 작업 브랜치**: `feature/quiz-system-quill-experiment`
 
 ### 브랜치 네이밍 규칙
 - `feature/*` - 새로운 기능 (예: feature/certificate-templates)
