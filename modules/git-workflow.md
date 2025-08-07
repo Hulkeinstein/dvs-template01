@@ -1,4 +1,4 @@
-# Git Workflow Guide (GitHub Flow)
+# Git 워크플로우 가이드 (GitHub Flow)
 
 ## 브랜치 전략
 - **main**: 항상 배포 가능한 상태 유지
@@ -16,6 +16,8 @@
 - **IMPORTANT**: main 브랜치에서 새로운 작업을 시작하기 전에 항상 새 브랜치 생성 여부를 확인
 - main 브랜치에서는 직접 작업하지 않음
 - 브랜치 머지 후 main으로 돌아왔을 때, 다음 작업 시작 전 반드시 새 브랜치 생성 프롬프트 표시
+- **"Don't Make It Worse" 원칙**: 빠른 수정보다 안정성 우선
+- **Ultra Think 모드**: 복잡한 문제는 충분한 분석 후 해결
 
 ## 워크플로우 단계
 
@@ -28,6 +30,11 @@ git checkout -b feature/your-feature-name
 
 ### 2. 작업 & 커밋
 ```bash
+# 커밋 전 필수 실행
+npm run lint        # ESLint 체크
+npm run format:check # Prettier 체크
+
+# 커밋
 git add .
 git commit -m "feat: Your feature description"
 ```
@@ -116,6 +123,13 @@ fix: 퀴즈 시스템 _zod 에러 및 데이터 로드 문제 해결
 - `npm run lint` 사용
 - Error는 반드시 수정, Warning은 선택적
 
+## PR 체크리스트
+- [ ] ESLint 에러 0개
+- [ ] Prettier 포맷팅 통과
+- [ ] 모든 변경사항 테스트 완료
+- [ ] CLAUDE.md 업데이트 (필요시)
+- [ ] 커밋 메시지 컨벤션 준수
+
 ## 간단한 작업의 브랜치 전략
 
 ### 브랜치 생성이 필요 없는 경우
@@ -130,3 +144,15 @@ fix: 퀴즈 시스템 _zod 에러 및 데이터 로드 문제 해결
 - 버그 수정
 - 패키지 업데이트
 - 데이터베이스 스키마 변경
+
+## 트러블슈팅
+
+### ESLint 에러 발생 시
+1. `npm run lint`로 에러 확인
+2. HTML entity 에러가 대부분 (`'` → `&apos;`)
+3. 자동 수정 시도: `npx next lint --fix` (주의: 부작용 확인 필요)
+
+### PR이 CI에서 막힐 때
+1. GitHub Actions 로그 확인
+2. `lint-check.yml` 워크플로우 체크
+3. 로컬에서 `npm run lint` 실행하여 동일한 에러 재현

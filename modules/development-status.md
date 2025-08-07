@@ -1,6 +1,6 @@
-# Development Status
+# 개발 현황
 
-## Dashboard Implementation Status (2025-02-07)
+## 대시보드 구현 현황 (2025-02-07)
 
 ### 교사 대시보드 (90% 완성)
 **구현됨:**
@@ -43,7 +43,7 @@
 - 리뷰 시스템
 - 코스 상세 페이지 (학생용)
 
-## Recent Updates (2025-02-07)
+## 최근 업데이트 (2025-02-07)
 
 ### 퀴즈 시스템 구현 완료
 - Quill 에디터 통합
@@ -71,9 +71,9 @@
 2. `.env.local`에서 `NEXT_PUBLIC_CERTIFICATE_ENABLED=true`로 변경
 3. Supabase에서 마이그레이션 SQL 실행
 
-## Overall Project Status (2025-02-07)
+## 전체 프로젝트 현황 (2025-02-07)
 
-### Completed ✅
+### 완료됨 ✅
 - Instructor dashboard (90%)
 - Course creation/editing
 - Lesson management
@@ -82,41 +82,41 @@
 - Database schema
 - Certificate system (inactive)
 
-### In Progress 🚧
-- Student enrollment system
-- Payment integration
-- Learning experience
+### 진행 중 🚧
+- 학생 등록 시스템
+- 결제 통합
+- 학습 경험
 
-### Not Started ❌
-- Admin dashboard
-- Review system
-- Mobile app
-- Advanced analytics
+### 시작 안함 ❌
+- 관리자 대시보드
+- 리뷰 시스템
+- 모바일 앱
+- 고급 분석
 
-### Estimated Completion
-- **Core Platform**: 2 weeks
-- **Admin System**: 1 week
-- **Full MVP**: 3-4 weeks
+### 예상 완료 시점
+- **핵심 플랫폼**: 2주
+- **관리자 시스템**: 1주
+- **전체 MVP**: 3-4주
 
-## Priority Matrix
+## 우선순위 매트릭스
 
-### P0 - Critical (Must have for launch)
-- [ ] Student course enrollment
-- [ ] Payment processing
-- [ ] Lesson viewing
-- [ ] Progress tracking
-- [ ] Basic admin dashboard
+### P0 - 필수 (출시에 반드시 필요)
+- [ ] 학생 코스 등록
+- [ ] 결제 처리
+- [ ] 레슨 보기
+- [ ] 진도 추적
+- [ ] 기본 관리자 대시보드
 
-### P1 - Important (Should have)
-- [ ] Review system
-- [ ] Course search
-- [ ] Email notifications
-- [ ] Certificate generation
-- [ ] Advanced analytics
+### P1 - 중요 (있어야 함)
+- [ ] 리뷰 시스템
+- [ ] 코스 검색
+- [ ] 이메일 알림
+- [ ] 수료증 생성
+- [ ] 고급 분석
 
-### P2 - Nice to have
-- [ ] Social features
-- [ ] Mobile app
-- [ ] AI recommendations
-- [ ] Gamification
-- [ ] Multi-language
+### P2 - 있으면 좋음
+- [ ] 소셜 기능
+- [ ] 모바일 앱
+- [ ] AI 추천
+- [ ] 게이미피케이션
+- [ ] 다국어 지원

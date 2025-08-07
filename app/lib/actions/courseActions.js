@@ -644,6 +644,8 @@ export async function getInstructorCourses() {
       return { error: 'User not found' };
     }
 
+    console.log('Fetching courses for instructor:', userData.id);
+
     const { data: courses, error } = await supabase
       .from('courses')
       .select(
@@ -656,6 +658,18 @@ export async function getInstructorCourses() {
       )
       .eq('instructor_id', userData.id)
       .order('created_at', { ascending: false });
+
+    // Debug log to check the structure of returned data
+    if (courses && courses.length > 0) {
+      console.log('Sample course data structure:', {
+        id: courses[0].id,
+        title: courses[0].title,
+        lessons: courses[0].lessons,
+        enrollments: courses[0].enrollments,
+        lessonsType: typeof courses[0].lessons,
+        enrollmentsType: typeof courses[0].enrollments,
+      });
+    }
 
     if (error) {
       console.error('Fetch courses error - Full details:', {

@@ -55,10 +55,10 @@ const MyCourses = () => {
     courseDuration: course.total_duration_hours
       ? `${course.total_duration_hours} hours`
       : 'TBD',
-    lectures: course.lessons?.[0]?.count || 0,
-    courseLecture: course.lessons?.[0]?.count || 0,
-    enrolledStudent: course.enrollments?.[0]?.count || 0,
-    courseEnrolled: course.enrollments?.[0]?.count || 0,
+    lectures: course.lessons?.count || 0,
+    courseLecture: course.lessons?.count || 0,
+    enrolledStudent: course.enrollments?.count || 0,
+    courseEnrolled: course.enrollments?.count || 0,
     courseLevel: course.difficulty_level || 'All Levels',
     status: course.status,
     rating: { average: 0 },
