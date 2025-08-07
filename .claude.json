@@ -1,7 +1,7 @@
 {
-  "workspace": {
-    "path": "D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01",
-    "unixPath": "/d/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01"
+  "language": "en",
+  "project": {
+    "type": "nextjs-app"
   },
   "ide": {
     "name": "cursor",

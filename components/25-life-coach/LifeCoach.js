@@ -247,7 +247,7 @@ const LifeCoach = ({ blogdata }) => {
                     </h2>
                     <p className="mt--20">
                       At Histudy University, we are moving boldly - and
-                      concertedly - to expand tomorrow's frontiers. We believe
+                      concertedly - to expand tomorrow&apos;s frontiers. We believe
                       that we have the power to shape the future, for the better
                     </p>
                   </div>
@@ -362,7 +362,7 @@ const LifeCoach = ({ blogdata }) => {
                       <span className="subtitle bg-primary-opacity">
                         EDUCATION FOR EVERYONE
                       </span>
-                      <h2 className="title w-600">Student's Feedback</h2>
+                      <h2 className="title w-600">Student&apos;s Feedback</h2>
                     </div>
                   </div>
                 </div>

@@ -416,7 +416,7 @@ const InstructorsCoaches = ({ blogdata }) => {
                         <span className="theme-gradient">Testimonials</span>
                       </h6>
                       <h2 className="title">
-                        Student's
+                        Student&apos;s
                         <span className="theme-gradient ms-2">Feedback</span>
                       </h2>
                     </div>

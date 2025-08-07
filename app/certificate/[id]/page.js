@@ -26,7 +26,7 @@ const CertificatePage = async ({ params }) => {
     return (
       <div className="container mt-5 mb-5 text-center">
         <h2>Certificate not found</h2>
-        <p>The certificate you're looking for doesn't exist or you don't have permission to view it.</p>
+        <p>The certificate you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.</p>
         <a href="/student-certificates" className="rbt-btn btn-gradient">Back to My Certificates</a>
       </div>
     );

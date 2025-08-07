@@ -157,7 +157,7 @@ const Coaching = ({ blogdata }) => {
                     </div>
                     <p className="mt--20">
                       At Histudy University, we are moving boldly - and
-                      concertedly - to expand tomorrow's frontiers. We believe
+                      concertedly - to expand tomorrow&apos;s frontiers. We believe
                       that we have the power to shape the future, for the better
                     </p>
                     <ul className="mt--30 mb--25">
@@ -492,7 +492,7 @@ const Coaching = ({ blogdata }) => {
                           {data.tag}
                         </span>
                         <h2 className="title w-600">
-                          Student's{" "}
+                          Student&apos;s{" "}
                           <span className="theme-gradient">Feedback</span>
                         </h2>
                       </div>

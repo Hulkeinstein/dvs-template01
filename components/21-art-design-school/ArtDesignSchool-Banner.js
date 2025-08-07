@@ -279,7 +279,7 @@ const ArtDesignSchoolBanner = () => {
                 <p className="description">
                   Start today get <span className="parcent">-20%</span> less for
                   first-time <span className="bold">Histudy admission.</span>{" "}
-                  Don't miss this offer!!
+                  Don&apos;t miss this offer!!
                 </p>
               </div>
               <Link

@@ -190,7 +190,7 @@ const HealthGoal = () => {
                       >
                         <p className="mt--20">
                           At Histudy University, we are moving boldly - and
-                          concertedly - to expand tomorrow's frontiers. We
+                          concertedly - to expand tomorrow&apos;s frontiers. We
                           believe that we have the power to shape the future,
                           for the better
                         </p>
@@ -241,7 +241,7 @@ const HealthGoal = () => {
                       >
                         <p className="mt--20">
                           At Histudy University, we are moving boldly - and
-                          concertedly - to expand tomorrow's frontiers. We
+                          concertedly - to expand tomorrow&apos;s frontiers. We
                           believe that we have the power to shape the future,
                           for the better
                         </p>
@@ -292,7 +292,7 @@ const HealthGoal = () => {
                       >
                         <p className="mt--20">
                           At Histudy University, we are moving boldly - and
-                          concertedly - to expand tomorrow's frontiers. We
+                          concertedly - to expand tomorrow&apos;s frontiers. We
                           believe that we have the power to shape the future,
                           for the better
                         </p>

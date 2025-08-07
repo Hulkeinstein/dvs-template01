@@ -190,7 +190,7 @@ const DefaultCertificateTemplate = ({ data }) => {
 
           {/* QR Code placeholder */}
           {qrCodeUrl && (
-            <Image style={styles.qrCode} src={qrCodeUrl} />
+            <Image style={styles.qrCode} src={qrCodeUrl} alt="QR Code" />
           )}
         </View>
       </Page>

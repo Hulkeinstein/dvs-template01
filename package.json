@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "npx prettier@3.5.3 --write .",
+    "format:check": "npx prettier@3.5.3 --check .",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -18,13 +18,13 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@react-pdf/renderer": "^4.3.0",
+    "@supabase/mcp-server-supabase": "^0.4.5",
     "@supabase/supabase-js": "^2.50.0",
     "bootstrap": "^5.3.2",
     "framer-motion": "^11.0.8",
     "gray-matter": "^4.0.3",
-    "jodit-react": "^4.1.2",
     "luxon": "^3.4.4",
-    "next": "^14.0.4",
+    "next": "^14.2.31",
     "next-auth": "^4.24.11",
     "next-mdx-remote": "^4.4.1",
     "plyr": "^3.7.8",
@@ -36,6 +36,7 @@
     "react-intersection-observer": "^9.5.3",
     "react-odometerjs": "^3.1.0",
     "react-phone-input-2": "^2.15.1",
+    "react-quill": "^2.0.0",
     "react-redux": "^8.0.5",
     "react-scroll": "^1.9.0",
     "react-scroll-parallax": "^3.4.5",
@@ -51,7 +52,8 @@
     "twilio": "^5.7.3",
     "typed.js": "^2.1.0",
     "venobox": "^2.1.3",
-    "wowjs": "^1.1.3"
+    "wowjs": "^1.1.3",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -59,8 +61,13 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "dotenv": "^17.2.0",
+    "dunder-proto": "^1.0.0",
+    "eslint": "8.57.0",
+    "eslint-config-next": "^15.4.5",
+    "import-fresh": "^3.3.1",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
-    "prettier": "^3.5.3"
+    "prettier": "3.5.3",
+    "styled-jsx": "^5.1.6"
   }
 }

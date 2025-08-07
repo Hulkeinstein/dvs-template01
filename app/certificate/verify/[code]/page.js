@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { verifyCertificate } from "@/app/lib/certificate/actions/certificateActions";
 
 export const metadata = {
@@ -66,9 +67,9 @@ const CertificateVerifyPage = async ({ params }) => {
               )}
               
               <div className="mt-5">
-                <a href="/" className="rbt-btn btn-gradient">
+                <Link href="/" className="rbt-btn btn-gradient">
                   Back to Home
-                </a>
+                </Link>
               </div>
             </div>
           </div>
