@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
     "test": "jest",
     "test:watch": "jest --watch"
   },
