@@ -30,14 +30,12 @@ git checkout -b feature/your-feature-name
 
 ### 2. 작업 & 커밋
 ```bash
-# 커밋 전 필수 실행
-npm run lint        # ESLint 체크
-npm run format:check # Prettier 체크
-
 # 커밋
 git add .
 git commit -m "feat: Your feature description"
+# 자동으로 Pre-commit hook 실행 (ESLint, Prettier)
 ```
+> 💡 코드 품질 검사는 자동으로 실행됩니다. 자세한 내용은 `task-automation.md` 참조
 
 ### 3. main 브랜치와 동기화
 ```bash
@@ -50,18 +48,25 @@ git merge main
 ### 4. 푸시 & PR 생성
 ```bash
 git push origin feature/your-feature-name
-# GitHub에서 Pull Request 생성
+
+# GitHub CLI 사용 시 (선택사항)
+gh pr create --title "feat: 기능 설명" --body "상세 내용"
 ```
 
 ### 5. 머지 후 정리
 ```bash
+# GitHub CLI로 자동 머지 (선택사항)
+gh pr merge --squash --delete-branch
+
+# 또는 수동으로
 git checkout main
 git pull origin main
 git branch -d feature/your-feature-name
-git push origin --delete feature/your-feature-name
 ```
 
 ## 커밋 메시지 컨벤션
+
+### 기본 타입
 - `feat:` 새로운 기능
 - `fix:` 버그 수정
 - `docs:` 문서 수정
@@ -70,15 +75,11 @@ git push origin --delete feature/your-feature-name
 - `test:` 테스트 추가/수정
 - `chore:` 빌드, 패키지 등 기타 작업
 
-### 예시
-- `feat: Add certificate template selection UI`
-- `fix: Resolve course enrollment error`
-- `docs: Update README with setup instructions`
+### 특수 패턴 (태스크 완료)
+- `Closes: Phase X, Task Y` - 태스크 자동 아카이빙
+> 💡 main 브랜치에서만 작동. 자세한 내용은 `task-automation.md` 참조
 
-## 커밋 메시지 작성 가이드
-**자세한 커밋 메시지를 작성하세요** - 미래의 디버깅과 코드 리뷰를 위해 충분한 맥락을 포함
-
-### 추천 형식
+### 커밋 메시지 형식
 ```
 <type>: <짧은 요약> (50자 이내)
 
@@ -87,7 +88,6 @@ git push origin --delete feature/your-feature-name
 <무엇을 변경했는지> (상세 내용)
 - 변경사항 1
 - 변경사항 2
-- ...
 
 <어떤 문제를 해결했는지>
 ```
@@ -102,12 +102,9 @@ fix: 퀴즈 시스템 _zod 에러 및 데이터 로드 문제 해결
 변경사항:
 - Zod v4.0.14 → v3.25.76 다운그레이드
 - 샘플 퀴즈 True/False correctAnswer 타입 수정
-- course_topics 정렬 컬럼 수정 (order_index → sort_order)
-- 퀴즈 로드 로직 개선
 
 해결된 이슈:
 - 퀴즈 저장 시 "_zod" 에러
-- 토픽 로드 실패
 - 퀴즈가 레슨 목록에 표시되지 않음
 ```
 
@@ -145,14 +142,58 @@ fix: 퀴즈 시스템 _zod 에러 및 데이터 로드 문제 해결
 - 패키지 업데이트
 - 데이터베이스 스키마 변경
 
-## 트러블슈팅
+## GitHub CLI 사용법
 
-### ESLint 에러 발생 시
-1. `npm run lint`로 에러 확인
-2. HTML entity 에러가 대부분 (`'` → `&apos;`)
-3. 자동 수정 시도: `npx next lint --fix` (주의: 부작용 확인 필요)
+### 설치
+```bash
+# Windows
+winget install --id GitHub.cli
+
+# Mac
+brew install gh
+
+# Linux
+sudo apt install gh
+```
+
+### 주요 명령어
+```bash
+# 인증
+gh auth login
+
+# PR 생성
+gh pr create --title "제목" --body "설명"
+
+# PR 목록 보기
+gh pr list
+
+# PR 머지
+gh pr merge --squash --delete-branch
+
+# PR 상태 확인
+gh pr view
+```
+
+## 트러블슈팅
 
 ### PR이 CI에서 막힐 때
 1. GitHub Actions 로그 확인
-2. `lint-check.yml` 워크플로우 체크
-3. 로컬에서 `npm run lint` 실행하여 동일한 에러 재현
+2. 로컬에서 다음 명령어 실행:
+   - `npm run lint` - ESLint 체크
+   - `npm run format:check` - Prettier 체크
+3. 자동 수정: `npm run format`
+
+### 브랜치 충돌 해결
+```bash
+git checkout main
+git pull origin main
+git checkout feature/your-branch
+git merge main
+# 충돌 해결 후
+git add .
+git commit -m "fix: merge conflicts"
+```
+
+## 관련 문서
+- 자동화 시스템: `modules/task-automation.md`
+- 사용 예시: `docs/WORKFLOW_EXAMPLES.md`
