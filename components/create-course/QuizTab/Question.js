@@ -1276,7 +1276,7 @@ const Question = ({
             <div className="mb--20">
               <h6>Question with Blanks</h6>
               <small className="d-block mb-2">
-                <i className="feather-info"></i> Write your question and click "Add Blank" to insert blank spaces. 
+                <i className="feather-info"></i> Write your question and click &quot;Add Blank&quot; to insert blank spaces. 
                 Blanks will appear as [1], [2], etc.
               </small>
               <div className="d-flex gap-2 align-items-center">

@@ -658,7 +658,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                                 <div className="text-center py-4">
                                   <i className="feather-info fs-3 text-muted mb-3 d-block"></i>
                                   <p className="text-muted">
-                                    No questions added yet. Click "Add Question" to create your first question.
+                                    No questions added yet. Click &quot;Add Question&quot; to create your first question.
                                   </p>
                                 </div>
                               ) : (

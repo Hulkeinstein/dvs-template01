@@ -148,7 +148,7 @@ const Lesson = ({
             {courseList.length === 0 ? (
               <div className="text-center py-3 mb-3">
                 <p className="text-muted">
-                  <i className="feather-info"></i> No content added yet. Click the "Lesson" or "Quiz" buttons below to add content.
+                  <i className="feather-info"></i> No content added yet. Click the &quot;Lesson&quot; or &quot;Quiz&quot; buttons below to add content.
                 </p>
               </div>
             ) : (
