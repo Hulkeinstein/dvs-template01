@@ -1,130 +1,285 @@
 #!/usr/bin/env node
 import { execSync } from 'child_process';
 import * as path from 'path';
-import { fileExists, readFile } from './lib/file-utils';
+import * as fs from 'fs';
+import {
+  fileExists,
+  readFile,
+  writeFile,
+  getKoreanDate,
+} from './lib/file-utils';
+import { parseClosesPattern, getCurrentBranch } from './lib/git-utils';
+
+/**
+ * 색상 코드
+ */
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+};
 
 /**
  * 자동화 시스템 테스트
  */
 async function testAutomationSystem() {
-  console.log('🧪 자동화 시스템 테스트 시작...\n');
+  console.log(`${colors.cyan}🧪 자동화 시스템 통합 테스트${colors.reset}\n`);
+  console.log('='.repeat(50));
 
   const tests = [
     {
-      name: 'Git 유틸리티 테스트',
-      test: () => {
-        const branch = execSync('git branch --show-current', {
-          encoding: 'utf8',
-        }).trim();
-        console.log(`  현재 브랜치: ${branch}`);
-        return true;
-      },
-    },
-    {
-      name: '파일 시스템 테스트',
+      name: '📦 필수 파일 존재 여부',
       test: () => {
         const projectRoot = path.resolve(__dirname, '../..');
-        const devPlanExists = fileExists(
-          path.join(projectRoot, 'DEVELOPMENT_PLAN.md')
-        );
-        const completedExists = fileExists(
-          path.join(projectRoot, 'COMPLETED_TASKS.md')
-        );
-        console.log(
-          `  DEVELOPMENT_PLAN.md 존재: ${devPlanExists ? '✅' : '❌'}`
-        );
-        console.log(
-          `  COMPLETED_TASKS.md 존재: ${completedExists ? '✅' : '❌'}`
-        );
-        return devPlanExists && completedExists;
+        const requiredFiles = [
+          'DEVELOPMENT_PLAN.md',
+          'COMPLETED_TASKS.md',
+          '.husky/pre-commit',
+          '.husky/post-commit',
+          '.lintstagedrc.json',
+          'docs/AUTOMATION_GUIDE.md',
+          'docs/WORKFLOW_EXAMPLES.md',
+        ];
+
+        let allExist = true;
+        for (const file of requiredFiles) {
+          const fullPath = path.join(projectRoot, file);
+          const exists = fileExists(fullPath);
+          console.log(`  ${exists ? '✅' : '❌'} ${file}`);
+          if (!exists) allExist = false;
+        }
+        return allExist;
       },
     },
     {
-      name: 'Husky hooks 테스트',
+      name: '🔧 npm 스크립트 설정',
       test: () => {
-        const preCommitExists = fileExists(
-          path.join(__dirname, '../../.husky/pre-commit')
+        const packageJson = JSON.parse(
+          readFile(path.join(__dirname, '../../package.json'))
         );
-        const postCommitExists = fileExists(
-          path.join(__dirname, '../../.husky/post-commit')
-        );
-        console.log(`  pre-commit hook: ${preCommitExists ? '✅' : '❌'}`);
-        console.log(`  post-commit hook: ${postCommitExists ? '✅' : '❌'}`);
-        return preCommitExists && postCommitExists;
+        const requiredScripts = [
+          'lint',
+          'format',
+          'format:check',
+          'prepare',
+          'task:archive',
+          'pre-commit',
+          'automation:test',
+          'pr:create',
+          'pr:merge',
+        ];
+
+        let allExist = true;
+        for (const script of requiredScripts) {
+          const exists = packageJson.scripts && packageJson.scripts[script];
+          console.log(`  ${exists ? '✅' : '❌'} ${script}`);
+          if (!exists) allExist = false;
+        }
+        return allExist;
       },
     },
     {
-      name: 'lint-staged 설정 테스트',
+      name: '🌿 Git 환경',
       test: () => {
-        const configExists = fileExists(
-          path.join(__dirname, '../../.lintstagedrc.json')
-        );
-        console.log(`  .lintstagedrc.json 존재: ${configExists ? '✅' : '❌'}`);
-        return configExists;
+        try {
+          const branch = getCurrentBranch();
+          const hasRemote = execSync('git remote -v', {
+            encoding: 'utf8',
+          }).includes('origin');
+
+          console.log(`  브랜치: ${branch}`);
+          console.log(`  원격 저장소: ${hasRemote ? '✅ 설정됨' : '❌ 없음'}`);
+
+          return true;
+        } catch (error) {
+          console.log(`  ❌ Git 설정 오류`);
+          return false;
+        }
       },
     },
     {
-      name: 'TypeScript 스크립트 테스트',
+      name: '🎯 Closes 패턴 파싱',
       test: () => {
-        const scriptsExist = [
-          'update-development-plan.ts',
-          'pre-commit-checks.ts',
-          'lib/git-utils.ts',
-          'lib/file-utils.ts',
-        ].every((file) => {
-          const exists = fileExists(path.join(__dirname, file));
-          console.log(`  ${file}: ${exists ? '✅' : '❌'}`);
-          return exists;
-        });
-        return scriptsExist;
+        const testCases = [
+          {
+            msg: 'Closes: Phase 1, Task 2',
+            expected: { phase: '1', task: '2' },
+          },
+          { msg: 'Closes: P3, T4', expected: { phase: '3', task: '4' } },
+          { msg: '완료: Phase 5, Task 6', expected: { phase: '5', task: '6' } },
+          { msg: 'Done: Phase 7, Task 8', expected: { phase: '7', task: '8' } },
+          { msg: 'Closes: 9-10', expected: { phase: '9', task: '10' } },
+          {
+            msg: 'Fixes: Phase 11, Task 12',
+            expected: { phase: '11', task: '12' },
+          },
+        ];
+
+        let allPassed = true;
+        for (const testCase of testCases) {
+          const result = parseClosesPattern(testCase.msg);
+          const passed =
+            result &&
+            result.phase === testCase.expected.phase &&
+            result.task === testCase.expected.task;
+
+          console.log(`  ${passed ? '✅' : '❌'} "${testCase.msg}"`);
+          if (!passed) allPassed = false;
+        }
+        return allPassed;
+      },
+    },
+    {
+      name: '🚀 GitHub CLI 설치 (선택사항)',
+      test: () => {
+        try {
+          execSync('gh --version', { stdio: 'ignore' });
+          console.log(`  ✅ GitHub CLI 설치됨`);
+
+          // 인증 상태 확인
+          try {
+            execSync('gh auth status', { stdio: 'ignore' });
+            console.log(`  ✅ GitHub 인증 완료`);
+          } catch {
+            console.log(`  ⚠️  GitHub 인증 필요 (gh auth login)`);
+          }
+          return true;
+        } catch {
+          // Windows 전체 경로 시도
+          try {
+            execSync('"C:\\Program Files\\GitHub CLI\\gh.exe" --version', {
+              stdio: 'ignore',
+            });
+            console.log(`  ✅ GitHub CLI 설치됨 (Windows)`);
+            return true;
+          } catch {
+            console.log(`  ℹ️  GitHub CLI 미설치 (PR 자동화 불가)`);
+            return true; // 선택사항이므로 true 반환
+          }
+        }
       },
     },
   ];
 
   let allPassed = true;
+  const results: { name: string; passed: boolean }[] = [];
 
   for (const testCase of tests) {
-    console.log(`\n📋 ${testCase.name}`);
+    console.log(`\n${colors.blue}${testCase.name}${colors.reset}`);
     try {
       const passed = testCase.test();
-      if (passed) {
-        console.log(`✅ 테스트 통과`);
-      } else {
-        console.log(`❌ 테스트 실패`);
+      results.push({ name: testCase.name, passed });
+      if (!passed) {
         allPassed = false;
       }
     } catch (error) {
-      console.log(`❌ 테스트 실패:`, error);
+      console.log(`  ${colors.red}❌ 테스트 실행 오류${colors.reset}`);
+      results.push({ name: testCase.name, passed: false });
       allPassed = false;
     }
   }
 
+  // 시뮬레이션 테스트
+  console.log(`\n${colors.magenta}📝 시뮬레이션 테스트${colors.reset}`);
+  await runSimulationTest();
+
+  // 결과 요약
   console.log('\n' + '='.repeat(50));
+  console.log(`${colors.cyan}📊 테스트 결과 요약${colors.reset}\n`);
+
+  const passedCount = results.filter((r) => r.passed).length;
+  const totalCount = results.length;
+  const percentage = Math.round((passedCount / totalCount) * 100);
+
+  console.log(`통과: ${passedCount}/${totalCount} (${percentage}%)`);
+
+  const progressBar =
+    '█'.repeat(Math.floor(percentage / 5)) +
+    '░'.repeat(20 - Math.floor(percentage / 5));
+  console.log(`진행도: [${progressBar}]`);
 
   if (allPassed) {
     console.log(`
-✅ 모든 테스트 통과!
+${colors.green}✅ 모든 테스트 통과!${colors.reset}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-자동화 시스템이 정상적으로 설정되었습니다.
+자동화 시스템이 완벽하게 구성되었습니다.
 
-다음 단계:
-1. feature 브랜치에서 테스트 커밋
-2. main 브랜치에서 Closes 패턴 테스트
+${colors.yellow}🚀 사용 가능한 명령어:${colors.reset}
+• npm run lint          - ESLint 실행
+• npm run format        - Prettier 포맷팅
+• npm run task:archive  - 태스크 아카이빙 (수동)
+• npm run pr:create     - PR 생성 도우미
+• npm run pr:merge      - PR 머지 도우미
+• npm run automation:test - 시스템 테스트
+
+${colors.cyan}📚 문서:${colors.reset}
+• docs/AUTOMATION_GUIDE.md - 사용 가이드
+• docs/WORKFLOW_EXAMPLES.md - 워크플로우 예시
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     `);
   } else {
     console.log(`
-❌ 일부 테스트 실패
+${colors.red}⚠️  일부 테스트 실패${colors.reset}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-문제를 해결한 후 다시 테스트하세요.
+위의 실패한 항목을 확인하고 해결하세요.
+
+${colors.yellow}💡 일반적인 해결 방법:${colors.reset}
+1. npm install - 의존성 설치
+2. npm run prepare - Husky 설정
+3. 필수 파일 생성 확인
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     `);
     process.exit(1);
   }
 }
 
+/**
+ * 시뮬레이션 테스트 실행
+ */
+async function runSimulationTest() {
+  const testDir = path.join(__dirname, '../../.test-automation');
+
+  // 테스트 디렉토리 생성
+  if (!fs.existsSync(testDir)) {
+    fs.mkdirSync(testDir, { recursive: true });
+  }
+
+  // 테스트 파일 생성
+  const testFile = path.join(testDir, 'test-task.md');
+  const testContent = `## Phase 99: Test Phase
+- [ ] Task 1: 테스트 태스크
+  - 이것은 시뮬레이션 테스트입니다
+- [ ] Task 2: 다른 테스트
+  - 자동화 검증용`;
+
+  writeFile(testFile, testContent);
+  console.log(`  ✅ 테스트 파일 생성`);
+
+  // Closes 패턴 테스트
+  const testMessage = 'Closes: Phase 99, Task 1 - 시뮬레이션 테스트';
+  const parsed = parseClosesPattern(testMessage);
+
+  if (parsed) {
+    console.log(
+      `  ✅ 패턴 파싱 성공: Phase ${parsed.phase}, Task ${parsed.task}`
+    );
+  } else {
+    console.log(`  ❌ 패턴 파싱 실패`);
+  }
+
+  // 정리
+  if (fs.existsSync(testDir)) {
+    fs.rmSync(testDir, { recursive: true, force: true });
+    console.log(`  ✅ 테스트 파일 정리 완료`);
+  }
+}
+
 // 메인 실행
 testAutomationSystem().catch((error) => {
-  console.error('❌ 테스트 중 오류:', error);
+  console.error(`${colors.red}❌ 테스트 중 오류:${colors.reset}`, error);
   process.exit(1);
 });

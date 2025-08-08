@@ -88,12 +88,28 @@ export function getChangedFiles(maxFiles: number = 5): string[] {
 export function parseClosesPattern(
   message: string
 ): { phase: string; task: string } | null {
-  // 다양한 패턴 지원
+  // 다양한 패턴 지원 (더 유연한 형식 허용)
   const patterns = [
+    // 표준 형식
     /Closes:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
     /Closes:\s*P(\d+),\s*T(\d+)/i,
+
+    // 한국어 지원
     /완료:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
+    /완료:\s*P(\d+),\s*T(\d+)/i,
+
+    // 영어 변형
     /Done:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
+    /Completed:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
+    /Finished:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
+
+    // 축약형
+    /Closes:\s*(\d+)-(\d+)/i,
+    /Done:\s*(\d+)-(\d+)/i,
+
+    // GitHub 스타일
+    /Fixes:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
+    /Resolves:\s*Phase\s*(\d+),\s*Task\s*(\d+)/i,
   ];
 
   for (const pattern of patterns) {

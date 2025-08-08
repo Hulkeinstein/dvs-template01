@@ -1,7 +1,7 @@
 # 태스크 및 코드 품질 자동화 시스템
 
 ## 개요
-GitHub Flow와 완벽하게 호환되는 자동화 시스템으로, 태스크 관리와 코드 품질을 자동화합니다.
+GitHub Flow와 완벽하게 호환되는 완전한 자동화 시스템으로, 태스크 관리, 코드 품질 검사, PR 관리를 자동화합니다.
 
 ## 1. 태스크 아카이빙 시스템
 
@@ -14,8 +14,13 @@ GitHub Flow와 완벽하게 호환되는 자동화 시스템으로, 태스크 �
 지원되는 패턴:
 - `Closes: Phase 1, Task 2` (표준)
 - `Closes: P1, T2` (축약형)
-- `완료: Phase 1, Task 2` (한국어)
-- `Done: Phase 1, Task 2` (대체)
+- `완료: Phase 1, Task 2` / `완료: P1, T2` (한국어)
+- `Done: Phase 1, Task 2` (영어)
+- `Completed: Phase 1, Task 2` (영어)
+- `Finished: Phase 1, Task 2` (영어)
+- `Closes: 1-2` / `Done: 1-2` (축약형)
+- `Fixes: Phase 1, Task 2` (GitHub 스타일)
+- `Resolves: Phase 1, Task 2` (GitHub 스타일)
 
 예시:
 ```bash
@@ -96,7 +101,10 @@ package.json                     # npm 스크립트
   "prepare": "husky",
   "task:archive": "tsx scripts/automation/update-development-plan.ts",
   "pre-commit": "tsx scripts/automation/pre-commit-checks.ts",
-  "automation:test": "tsx scripts/automation/test-automation.ts"
+  "automation:test": "tsx scripts/automation/test-automation.ts",
+  "pr:create": "tsx scripts/automation/gh-pr-helper.ts create",
+  "pr:merge": "tsx scripts/automation/gh-pr-helper.ts merge",
+  "pr:help": "tsx scripts/automation/gh-pr-helper.ts"
 }
 ```
 
@@ -200,7 +208,16 @@ gh pr merge --squash
 - Windows, Mac, Linux 모두 지원
 - Git Bash 권장 (Windows)
 
-## 9. 관련 문서
+## 9. 개선 사항 (2025-02-08)
+- Pre-commit hook 개선: 사용자 친화적 메시지 추가
+- Post-commit hook 개선: 브랜치 확인 로직 강화
+- Closes 패턴 확장: 11가지 패턴 지원
+- GitHub PR 헬퍼: 대화형 PR 생성/머지 도구 추가
+- 테스트 자동화: 색상 코드, 시뮬레이션, 진행도 표시
+- 문서화: 상세한 가이드 및 워크플로우 예시 추가
+
+## 10. 관련 문서
 - Git 워크플로우: `modules/git-workflow.md`
 - 사용 가이드: `docs/AUTOMATION_GUIDE.md`
 - 워크플로우 예시: `docs/WORKFLOW_EXAMPLES.md`
+- PR 헬퍼 스크립트: `scripts/automation/gh-pr-helper.ts`

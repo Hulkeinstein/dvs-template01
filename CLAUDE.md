@@ -1,13 +1,19 @@
+# 프로젝트 메모리
+
+## 📊 프로젝트 관리
 - @./DEVELOPMENT_PLAN.md
-- @./modules/commercial-template-guide.md
-- @./modules/project-context.md
-- @./modules/ui-rules.md
+
+## 🏗️ 프로젝트 구조
 - @./modules/architecture.md
-- @./modules/development-status.md
-- @./modules/quiz-system.md
+- @./modules/ui-rules.md
+
+## 🚀 개발 가이드
+- @./modules/development-guide.md
 - @./modules/git-workflow.md
 - @./modules/task-automation.md
-- @./modules/testing-guide.md
+
+## 📚 기능 문서
+- @./modules/quiz-system.md
+
+## 🔧 문제 해결
 - @./modules/common-issues.md
-- @./modules/recent-features.md
-- @./modules/roadmap.md

@@ -1,11 +1,24 @@
 # 아키텍처 개요
 
+## 프로젝트 개요
+- **프로젝트명**: DVS-TEMPLATE01
+- **목적**: 온라인 교육 플랫폼 (교사/학생 대시보드, 코스 관리, 퀴즈 시스템)
+- **개발 방식**: Solo Developer + Claude Code 협업
+- **GitHub**: https://github.com/Hulkeinstein/dvs-template01
+
 ## 기술 스택
 - **Next.js 14** with App Router
 - **Supabase** for database and authentication
 - **NextAuth.js** for OAuth (Google) authentication
-- **Bootstrap 5** with custom SCSS
+- **Bootstrap 5** with custom SCSS (HiStudy 템플릿 기반)
 - **Redux + Context API** for state management
+
+## 템플릿 특징 (HiStudy 기반)
+- **다중 데모 지원**: 다양한 교육 기관 레이아웃 변형 가능
+- **테마 시스템**: Dark/Light 모드 완벽 지원
+- **반응형 디자인**: 4+ 컬럼 레이아웃 지원
+- **역할별 대시보드**: 교사/학생/관리자 전용 UI/UX
+- **퀴즈 시스템**: 9가지 문제 유형 지원
 
 ## 프로젝트 구조
 ```

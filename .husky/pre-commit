@@ -1,5 +1,17 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# lint-staged 실행
+# Pre-commit 시작 알림
+echo "🔍 Pre-commit 검사 시작..."
+
+# lint-staged 실행 (자동으로 .lintstagedrc.json 설정 사용)
 npx lint-staged
+
+# 결과 확인
+if [ $? -eq 0 ]; then
+  echo "✅ Pre-commit 검사 통과!"
+else
+  echo "❌ Pre-commit 검사 실패! 위의 오류를 수정하세요."
+  echo "💡 팁: 'npm run lint -- --fix'로 자동 수정을 시도해보세요."
+  exit 1
+fi

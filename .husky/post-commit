@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# 현재 브랜치 확인
+CURRENT_BRANCH=$(git branch --show-current)
+
 # main 브랜치에서만 태스크 아카이빙 실행
-npm run task:archive 2>/dev/null || true
+if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
+  echo "📋 태스크 아카이빙 확인 중..."
+  npm run task:archive 2>/dev/null || true
+fi
