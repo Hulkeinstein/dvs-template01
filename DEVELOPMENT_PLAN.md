@@ -16,6 +16,10 @@
   - ❌ 등록/결제, 리뷰, 학생용 상세 페이지
 
 ## 🚀 현재 작업 중인 기능
+- **Assignment 기능 구현** (Edit Course 페이지)
+  - Add Assignment 버튼 활성화
+  - 과제 생성/수정/삭제 기능
+  - content_type: 'assignment' 지원
 - 학생 코스 등록 시스템
 - 결제 통합 (Stripe/Local payment)
 - 레슨 뷰어 구현
