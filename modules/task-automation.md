@@ -1,37 +1,40 @@
-# 태스크 및 코드 품질 자동화 시스템
+# 코드 품질 자동화 시스템
 
 ## 개요
-GitHub Flow와 완벽하게 호환되는 완전한 자동화 시스템으로, 태스크 관리, 코드 품질 검사, PR 관리를 자동화합니다.
+GitHub Flow와 호환되는 코드 품질 자동화 시스템으로, 코드 품질 검사와 GitHub Issues를 활용한 프로젝트 관리를 지원합니다.
 
-## 1. 태스크 아카이빙 시스템
+## 1. GitHub Issues를 활용한 작업 관리
 
-### 1.1 동작 원리
-- **DEVELOPMENT_PLAN.md**: 진행 중인 태스크 관리
-- **COMPLETED_TASKS.md**: 완료된 태스크 아카이브
-- **자동 이동**: main 브랜치에서 특정 패턴 커밋 시 자동 처리
+### 1.1 작업 관리 체계
+- **DEVELOPMENT_PLAN.md**: 전체 로드맵 및 마일스톤 관리
+- **GitHub Issues**: 실제 작업 추적 및 관리
+- **자동 연동**: PR 머지 시 Issue 자동 닫기
 
-### 1.2 Closes 패턴
-지원되는 패턴:
-- `Closes: Phase 1, Task 2` (표준)
-- `Closes: P1, T2` (축약형)
-- `완료: Phase 1, Task 2` / `완료: P1, T2` (한국어)
-- `Done: Phase 1, Task 2` (영어)
-- `Completed: Phase 1, Task 2` (영어)
-- `Finished: Phase 1, Task 2` (영어)
-- `Closes: 1-2` / `Done: 1-2` (축약형)
-- `Fixes: Phase 1, Task 2` (GitHub 스타일)
-- `Resolves: Phase 1, Task 2` (GitHub 스타일)
+### 1.2 GitHub Issue 자동 닫기
+커밋 메시지에 특정 키워드와 Issue 번호를 포함하면 PR 머지 시 자동으로 Issue가 닫힙니다.
+
+지원되는 키워드:
+- `Closes #123`
+- `Fixes #123`
+- `Resolves #123`
 
 예시:
 ```bash
-git commit -m "Closes: Phase 1, Task 2 - 결제 시스템 구현 완료"
+# 단일 이슈 닫기
+git commit -m "feat: 결제 시스템 구현 - Closes #10"
+
+# 여러 이슈 동시 닫기
+git commit -m "refactor: 인증 시스템 개선 - Closes #12, #13"
+
+# PR 제목에도 사용 가능
+gh pr create --title "feat: 새 기능 추가 - Closes #15"
 ```
 
-### 1.3 자동 추가되는 메타데이터
-- 완료 날짜 (KST)
-- 작업자 이름
-- 커밋 해시
-- 변경된 파일 목록 (최대 5개)
+### 1.3 Issue 관리 모범 사례
+- 작업 시작 전 Issue 생성
+- 적절한 라벨 사용 (bug, feature, enhancement 등)
+- 마일스톤 설정으로 진행 상황 추적
+- PR과 Issue 연결로 작업 내역 추적
 
 ## 2. 코드 품질 자동화
 
@@ -46,29 +49,21 @@ git commit -m "Closes: Phase 1, Task 2 - 결제 시스템 구현 완료"
 - Prettier 오류: 커밋 차단
 - TypeScript 오류: 경고만 표시
 
-### 2.2 Post-commit Hook (main 브랜치만)
-**자동 실행 내용:**
-1. 브랜치 확인 (main인지)
-2. 커밋 메시지에서 Closes 패턴 검색
-3. DEVELOPMENT_PLAN.md에서 해당 태스크 찾기
-4. COMPLETED_TASKS.md로 이동
-5. 메타데이터 추가
 
 ## 3. 파일 구조
 
 ### 3.1 Hook 파일
 ```
 .husky/
-├── pre-commit        # lint-staged 실행
-└── post-commit       # 태스크 아카이빙 실행
+└── pre-commit        # lint-staged 실행 (ESLint + Prettier)
 ```
 
 ### 3.2 자동화 스크립트
 ```
 scripts/automation/
-├── update-development-plan.ts  # 태스크 아카이빙 로직
 ├── pre-commit-checks.ts        # 코드 품질 검사
 ├── test-automation.ts           # 시스템 테스트
+├── gh-pr-helper.ts             # GitHub PR 헬퍼
 └── lib/
     ├── git-utils.ts            # Git 명령어 유틸리티
     └── file-utils.ts           # 파일 조작 유틸리티
@@ -99,7 +94,6 @@ package.json                     # npm 스크립트
 ```json
 {
   "prepare": "husky",
-  "task:archive": "tsx scripts/automation/update-development-plan.ts",
   "pre-commit": "tsx scripts/automation/pre-commit-checks.ts",
   "automation:test": "tsx scripts/automation/test-automation.ts",
   "pr:create": "tsx scripts/automation/gh-pr-helper.ts create",
@@ -118,23 +112,24 @@ git commit -m "feat: 새 기능 구현"
 # ✅ Pre-commit hook만 실행 (코드 품질 검사)
 ```
 
-### 5.2 태스크 완료 (main 브랜치)
+### 5.2 Issue 자동 닫기
 ```bash
-# main 브랜치에서
-git commit -m "Closes: Phase 1, Task 2 - 기능 완료"
+# feature 브랜치에서
+git commit -m "feat: 새 기능 구현 - Closes #10"
 # ✅ Pre-commit hook 실행 (코드 품질)
-# ✅ Post-commit hook 실행 (태스크 아카이빙)
+# PR 머지 시 Issue #10 자동으로 닫힘
 ```
 
 ### 5.3 수동 실행
 ```bash
-# 태스크 아카이빙 수동 실행
-npm run task:archive
-
 # 코드 품질 검사
 npm run lint          # ESLint
 npm run format        # Prettier 포맷팅
 npm run format:check  # Prettier 체크만
+
+# GitHub PR 관리
+npm run pr:create     # PR 생성
+npm run pr:merge      # PR 머지
 ```
 
 ## 6. 문제 해결
@@ -154,11 +149,12 @@ npm run lint -- --fix
 npm run format
 ```
 
-### 6.3 Post-commit 작동 안 함
+### 6.3 Issue 자동 닫기 작동 안 함
 체크리스트:
-1. 현재 브랜치가 main인지 확인
-2. 커밋 메시지에 Closes 패턴이 있는지 확인
-3. DEVELOPMENT_PLAN.md에 해당 태스크가 있는지 확인
+1. 커밋 메시지에 올바른 키워드 사용 (Closes, Fixes, Resolves)
+2. Issue 번호 형식 확인 (#123)
+3. Issue가 실제로 존재하는지 확인
+4. PR이 main 브랜치로 머지되는지 확인
 
 ### 6.4 Windows 경로 문제
 ```bash
@@ -197,7 +193,7 @@ gh pr merge --squash
 
 ### 8.1 브랜치별 동작
 - **모든 브랜치**: Pre-commit hook (코드 품질)
-- **main 브랜치만**: Post-commit hook (태스크 아카이빙)
+- **GitHub**: PR 머지 시 Issue 자동 닫기
 
 ### 8.2 커밋 차단 조건
 - ESLint 오류 발견 시
@@ -208,13 +204,11 @@ gh pr merge --squash
 - Windows, Mac, Linux 모두 지원
 - Git Bash 권장 (Windows)
 
-## 9. 개선 사항 (2025-02-08)
-- Pre-commit hook 개선: 사용자 친화적 메시지 추가
-- Post-commit hook 개선: 브랜치 확인 로직 강화
-- Closes 패턴 확장: 11가지 패턴 지원
-- GitHub PR 헬퍼: 대화형 PR 생성/머지 도구 추가
-- 테스트 자동화: 색상 코드, 시뮬레이션, 진행도 표시
-- 문서화: 상세한 가이드 및 워크플로우 예시 추가
+## 9. 개선 사항 (2025-02-10)
+- 태스크 관리 시스템을 GitHub Issues로 일원화
+- 중복 파일 제거 (COMPLETED_TASKS.md, work-logs)
+- Post-commit hook 제거로 시스템 간소화
+- GitHub 표준 워크플로우 채택
 
 ## 10. 관련 문서
 - Git 워크플로우: `modules/git-workflow.md`

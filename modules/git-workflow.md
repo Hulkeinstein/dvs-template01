@@ -28,9 +28,17 @@
 - `test:` 테스트 추가/수정
 - `chore:` 빌드, 패키지 등 기타 작업
 
-### 특수 패턴 (태스크 완료)
-- `Closes: Phase X, Task Y` - 태스크 자동 아카이빙 (main 브랜치에서만 작동)
-- 지원 형식: `Closes: P1, T2`, `완료: Phase 1, Task 2`, `Done: Phase 1, Task 2`
+### GitHub Issue 연동
+- `Closes #123` - PR 머지 시 Issue 자동 닫기
+- `Fixes #123` - 버그 수정 시 사용
+- `Resolves #123` - 일반 작업 완료 시
+
+예시:
+```bash
+git commit -m "feat: 새 기능 구현 - Closes #10"
+git commit -m "fix: 로그인 버그 수정 - Fixes #11"
+git commit -m "refactor: 인증 시스템 개선 - Closes #12, #13"
+```
 
 ## 간단한 작업의 브랜치 전략
 
@@ -89,4 +97,4 @@ git push origin --delete branch-name
 main과 merge 후 충돌 해결하고 커밋
 
 ## 관련 문서
-- 자동화 시스템: `modules/task-automation.md`
+- 코드 품질 자동화: `modules/task-automation.md`

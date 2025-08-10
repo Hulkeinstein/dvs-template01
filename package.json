@@ -12,7 +12,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "prepare": "husky",
-    "task:archive": "tsx scripts/automation/update-development-plan.ts",
     "pre-commit": "tsx scripts/automation/pre-commit-checks.ts",
     "automation:test": "tsx scripts/automation/test-automation.ts",
     "pr:create": "tsx scripts/automation/gh-pr-helper.ts create",
