@@ -1,8 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const Settings = () => {
+const Settings = ({ quizData, setQuizData }) => {
+  // 고유 ID 생성
+  const uniqueId = useRef(
+    `accordion_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  );
+  const accordionId = uniqueId.current;
+  const collapseId = `collapse_${accordionId}`;
+  const headerId = `header_${accordionId}`;
+
   const [maxQuestions, setMaxQuestions] = useState(10);
   const [passingGrade, setPassingGrade] = useState(50);
   const [time, setTime] = useState(0);
@@ -12,6 +20,11 @@ const Settings = () => {
   const handleInputChange = (setter) => (event) => {
     const value = Math.max(0, Number(event.target.value));
     setter(value);
+  };
+
+  // 아코디언 클릭 시 이벤트 버블링 방지
+  const handleAccordionClick = (e) => {
+    e.stopPropagation();
   };
   return (
     <>
@@ -158,24 +171,24 @@ const Settings = () => {
         </div>
         <div className="course-field rbt-accordion-style rbt-accordion-01 rbt-accordion-06 accordion mt--30">
           <div className="accordion-item card">
-            <h2 className="accordion-header card-header" id="accThree3">
+            <h2 className="accordion-header card-header" id={headerId}>
               <button
                 className="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#accCollapseThree3"
+                data-bs-target={`#${collapseId}`}
                 aria-expanded="false"
-                aria-controls="accCollapseThree3"
+                aria-controls={collapseId}
+                onClick={handleAccordionClick}
               >
                 <i className="feather-settings me-3"></i>
                 Advance Settings
               </button>
             </h2>
             <div
-              id="accCollapseThree3"
+              id={collapseId}
               className="accordion-collapse collapse"
-              aria-labelledby="accThree3"
-              data-bs-parent="#tutionaccordionExamplea12"
+              aria-labelledby={headerId}
             >
               <div className="accordion-body card-body">
                 <div className="form-check form-switch mb--5">

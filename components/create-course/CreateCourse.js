@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Select from 'react-select';
@@ -87,15 +87,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     topics: [],
   });
 
-  // Load course data in edit mode
-  useEffect(() => {
-    console.log('useEffect triggered:', { editMode, courseId });
-    if (editMode && courseId) {
-      loadCourseData();
-    }
-  }, [editMode, courseId]);
-
-  const loadCourseData = async () => {
+  const loadCourseData = useCallback(async () => {
     try {
       console.log('Loading course with ID:', courseId);
       setLoading(true);
@@ -139,6 +131,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         }
 
         // Load topics from server response
+        // 통합 lessons 배열 사용 - content_type으로 구분 (서버는 통합 배열만 제공)
         const topics = [];
 
         if (course.topics && course.topics.length > 0) {
@@ -148,19 +141,53 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               id: topicData.id,
               name: topicData.title,
               summary: topicData.description || '',
-              lessons: (topicData.lessons || []).map((lesson) => ({
-                id: lesson.id,
-                title: lesson.title,
-                description: lesson.description || '',
-                videoUrl: lesson.video_url || '',
-                videoSource: lesson.video_source || 'youtube',
-                duration: lesson.duration_minutes || 0,
-                enablePreview: lesson.is_preview || false,
-                thumbnail: lesson.thumbnail_url || null,
-                attachments: lesson.attachments || [],
-              })),
-              quizzes: [],
-              assignments: [],
+              // 모든 콘텐츠를 통합 lessons 배열로 관리
+              lessons: (topicData.lessons || []).map((lesson) => {
+                // content_type에 따라 적절한 데이터 매핑
+                if (lesson.content_type === 'quiz') {
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    content_type: 'quiz',
+                    questions: lesson.content_data?.questions || [],
+                    settings: lesson.content_data?.settings || {},
+                    summary: lesson.description || '',
+                  };
+                } else if (lesson.content_type === 'assignment') {
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    content_type: 'assignment',
+                    summary:
+                      lesson.content_data?.instructions ||
+                      lesson.description ||
+                      '',
+                    totalPoints: lesson.content_data?.totalPoints || 100,
+                    passingPoints: lesson.content_data?.passingPoints || 70,
+                    maxUploads: lesson.content_data?.maxUploads || 1,
+                    maxFileSize: lesson.content_data?.maxFileSize || 10,
+                    attachments: lesson.content_data?.attachments || [],
+                    timeLimit: lesson.content_data?.timeLimit || {
+                      value: 0,
+                      unit: 'weeks',
+                    },
+                  };
+                } else {
+                  // video or other content types
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    content_type: lesson.content_type || 'video',
+                    description: lesson.description || '',
+                    videoUrl: lesson.video_url || '',
+                    videoSource: lesson.video_source || 'youtube',
+                    duration: lesson.duration_minutes || 0,
+                    enablePreview: lesson.is_preview || false,
+                    thumbnail: lesson.thumbnail_url || null,
+                    attachments: lesson.attachments || [],
+                  };
+                }
+              }),
             };
 
             topics.push(topic);
@@ -183,19 +210,51 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
               id: 'general-topic',
               name: 'Course Content',
               summary: 'Main course content',
-              lessons: lessonsWithoutTopic.map((lesson) => ({
-                id: lesson.id,
-                title: lesson.title,
-                description: lesson.description || '',
-                videoUrl: lesson.video_url || '',
-                videoSource: lesson.video_source || 'youtube',
-                duration: lesson.duration_minutes || 0,
-                enablePreview: lesson.is_preview || false,
-                thumbnail: lesson.thumbnail_url || null,
-                attachments: lesson.attachments || [],
-              })),
-              quizzes: [],
-              assignments: [],
+              lessons: lessonsWithoutTopic.map((lesson) => {
+                // content_type에 따라 적절한 데이터 매핑
+                if (lesson.content_type === 'quiz') {
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    content_type: 'quiz',
+                    questions: lesson.content_data?.questions || [],
+                    settings: lesson.content_data?.settings || {},
+                    summary: lesson.description || '',
+                  };
+                } else if (lesson.content_type === 'assignment') {
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    content_type: 'assignment',
+                    summary:
+                      lesson.content_data?.instructions ||
+                      lesson.description ||
+                      '',
+                    totalPoints: lesson.content_data?.totalPoints || 100,
+                    passingPoints: lesson.content_data?.passingPoints || 70,
+                    maxUploads: lesson.content_data?.maxUploads || 1,
+                    maxFileSize: lesson.content_data?.maxFileSize || 10,
+                    attachments: lesson.content_data?.attachments || [],
+                    timeLimit: lesson.content_data?.timeLimit || {
+                      value: 0,
+                      unit: 'weeks',
+                    },
+                  };
+                } else {
+                  return {
+                    id: lesson.id,
+                    title: lesson.title,
+                    content_type: lesson.content_type || 'video',
+                    description: lesson.description || '',
+                    videoUrl: lesson.video_url || '',
+                    videoSource: lesson.video_source || 'youtube',
+                    duration: lesson.duration_minutes || 0,
+                    enablePreview: lesson.is_preview || false,
+                    thumbnail: lesson.thumbnail_url || null,
+                    attachments: lesson.attachments || [],
+                  };
+                }
+              }),
             };
 
             topics.push(generalTopic);
@@ -215,7 +274,15 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
+
+  // Load course data in edit mode
+  useEffect(() => {
+    console.log('useEffect triggered:', { editMode, courseId });
+    if (editMode && courseId) {
+      loadCourseData();
+    }
+  }, [editMode, courseId, loadCourseData]);
 
   const previewImages = CreateCourseData.createCourse[0].landscape.filter(
     (item) => item.type === 'preview'
@@ -415,50 +482,80 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   const handleAddQuiz = (topicId, quizData) => {
     const newQuiz = {
-      id: Date.now(),
+      id: quizData.id || Date.now(),
       ...quizData,
+      content_type: 'quiz',
     };
 
     setFormData({
       ...formData,
       topics: formData.topics.map((topic) =>
         topic.id === topicId
-          ? { ...topic, quizzes: [...topic.quizzes, newQuiz] }
+          ? { ...topic, lessons: [...topic.lessons, newQuiz] }
           : topic
       ),
     });
+
+    // Return success for QuizModal
+    return { success: true };
   };
 
   const handleAddAssignment = (topicId, assignmentData) => {
-    const newAssignment = {
-      id: Date.now(),
-      ...assignmentData,
-    };
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      topics: prevFormData.topics.map((topic) => {
+        if (topic.id === topicId) {
+          const newAssignment = {
+            id: assignmentData.id || Date.now(),
+            ...assignmentData,
+            content_type: 'assignment',
+          };
 
-    setFormData({
-      ...formData,
-      topics: formData.topics.map((topic) =>
-        topic.id === topicId
-          ? { ...topic, assignments: [...topic.assignments, newAssignment] }
-          : topic
-      ),
-    });
+          // 통합 lessons 배열에서 관리
+          if (assignmentData.id) {
+            // 기존 assignment 수정
+            return {
+              ...topic,
+              lessons: topic.lessons.map((lesson) =>
+                lesson.id === assignmentData.id ? newAssignment : lesson
+              ),
+            };
+          } else {
+            // 새 assignment 추가
+            return {
+              ...topic,
+              lessons: [...topic.lessons, newAssignment],
+            };
+          }
+        }
+        return topic;
+      }),
+    }));
+
+    // Return success for AssignmentModal
+    return { success: true };
   };
 
-  const handleDeleteLesson = (topicId, lessonId) => {
-    console.log('레슨 삭제:', topicId, lessonId);
+  // 통합 lessons 배열에서 모든 content_type(video, quiz, assignment) 삭제 처리
+  const handleDeleteContent = (topicId, contentId) => {
+    console.log('콘텐츠 삭제:', topicId, contentId);
     setFormData({
       ...formData,
       topics: formData.topics.map((topic) =>
         topic.id === topicId
           ? {
               ...topic,
-              lessons: topic.lessons.filter((lesson) => lesson.id !== lessonId),
+              lessons: topic.lessons.filter(
+                (lesson) => lesson.id !== contentId
+              ),
             }
           : topic
       ),
     });
   };
+
+  // 기존 함수명 유지 (하위 호환성)
+  const handleDeleteLesson = handleDeleteContent;
 
   const handleEditLesson = (topicId, lesson) => {
     console.log('레슨 편집:', topicId, lesson);
@@ -614,6 +711,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                           onAddAssignment={(assignmentData) =>
                             handleAddAssignment(topic.id, assignmentData)
                           }
+                          onDeleteContent={handleDeleteContent}
                           onDeleteLesson={handleDeleteLesson}
                           onEditLesson={handleEditLesson}
                           onUploadLesson={handleUploadLesson}

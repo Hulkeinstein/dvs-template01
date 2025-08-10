@@ -56,6 +56,7 @@ const Lesson = ({
   const [toggle, setToggle] = useState(expanded || false);
   const [editingLesson, setEditingLesson] = useState(null);
   const [editingQuiz, setEditingQuiz] = useState(null);
+  const [editingAssignment, setEditingAssignment] = useState(null);
   
   // Update courseList when topicData changes - combine lessons and quizzes
   useEffect(() => {
@@ -72,7 +73,7 @@ const Lesson = ({
     });
     
     setCourseList(combinedContents);
-  }, [topicData, id]);
+  }, [topicData, id, topicId]);
 
   useEffect(() => {
     setHydrated(true);
@@ -172,7 +173,7 @@ const Lesson = ({
                           // course 객체 전체를 전달
                           const contentToDelete = courseList.find(c => c.id === lessonId);
                           if (contentToDelete) {
-                            onDeleteContent(topicId, contentToDelete);
+                            onDeleteContent(topicData.id, lessonId);
                           }
                         }
                       }}
@@ -182,6 +183,7 @@ const Lesson = ({
                           title: lesson.title,
                           content_type: lesson.content_type,
                           isQuiz: lesson.content_type === 'quiz',
+                          isAssignment: lesson.content_type === 'assignment',
                           hasThumbnail: !!lesson.thumbnail,
                           thumbnailValue: lesson.thumbnail,
                           hasAttachments: !!lesson.attachments,
@@ -191,6 +193,8 @@ const Lesson = ({
                         
                         if (lesson.content_type === 'quiz') {
                           setEditingQuiz(lesson);
+                        } else if (lesson.content_type === 'assignment') {
+                          setEditingAssignment(lesson);
                         } else {
                           setEditingLesson(lesson);
                           if (onEditLesson) {
@@ -312,6 +316,8 @@ const Lesson = ({
       <AssignmentModal 
         modalId={`AssignmentModal${id}`}
         onAddAssignment={onAddAssignment}
+        editingAssignment={editingAssignment}
+        onEditComplete={() => setEditingAssignment(null)}
       />
       
       {/* Update Modal for this topic */}

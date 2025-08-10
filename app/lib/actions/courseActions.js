@@ -332,16 +332,42 @@ export async function updateCourse(courseId, formData) {
                 course_id: courseId,
                 topic_id: null,
                 title: lesson.title,
-                description: lesson.description || '',
+                description: lesson.description || lesson.summary || '',
                 video_url: lesson.videoUrl || '',
                 video_source: lesson.videoSource || 'youtube',
                 duration_minutes:
                   typeof lesson.duration === 'number' ? lesson.duration : 0,
                 sort_order: lessonIndex + 1,
                 is_preview: lesson.enablePreview || false,
-                content_type: 'video',
+                content_type: lesson.content_type || 'video',
                 thumbnail_url: lesson.thumbnail || null,
                 attachments: lesson.attachments || [],
+                // Add content_data for quiz and assignment types
+                ...(lesson.content_type === 'quiz' && lesson.questions
+                  ? {
+                      content_data: {
+                        questions: lesson.questions,
+                        settings: lesson.settings || {},
+                        metadata: lesson.metadata || {},
+                      },
+                    }
+                  : {}),
+                ...(lesson.content_type === 'assignment'
+                  ? {
+                      content_data: {
+                        summary: lesson.summary || '',
+                        timeLimit: lesson.timeLimit || {
+                          value: 0,
+                          unit: 'weeks',
+                        },
+                        totalPoints: lesson.totalPoints || 100,
+                        passingPoints: lesson.passingPoints || 70,
+                        maxUploads: lesson.maxUploads || 1,
+                        maxFileSize: lesson.maxFileSize || 10,
+                        attachments: lesson.attachments || [],
+                      },
+                    }
+                  : {}),
               };
 
               console.log('Lesson data to insert:', lessonData);
@@ -399,16 +425,42 @@ export async function updateCourse(courseId, formData) {
               course_id: courseId,
               topic_id: topicData.id,
               title: lesson.title,
-              description: lesson.description || '',
+              description: lesson.description || lesson.summary || '',
               video_url: lesson.videoUrl || '',
               video_source: lesson.videoSource || 'youtube',
               duration_minutes:
                 typeof lesson.duration === 'number' ? lesson.duration : 0,
               sort_order: lessonIndex,
               is_preview: lesson.enablePreview || false,
-              content_type: 'video',
+              content_type: lesson.content_type || 'video',
               thumbnail_url: lesson.thumbnail || null,
               attachments: lesson.attachments || [],
+              // Add content_data for quiz and assignment types
+              ...(lesson.content_type === 'quiz' && lesson.questions
+                ? {
+                    content_data: {
+                      questions: lesson.questions,
+                      settings: lesson.settings || {},
+                      metadata: lesson.metadata || {},
+                    },
+                  }
+                : {}),
+              ...(lesson.content_type === 'assignment'
+                ? {
+                    content_data: {
+                      summary: lesson.summary || '',
+                      timeLimit: lesson.timeLimit || {
+                        value: 0,
+                        unit: 'weeks',
+                      },
+                      totalPoints: lesson.totalPoints || 100,
+                      passingPoints: lesson.passingPoints || 70,
+                      maxUploads: lesson.maxUploads || 1,
+                      maxFileSize: lesson.maxFileSize || 10,
+                      attachments: lesson.attachments || [],
+                    },
+                  }
+                : {}),
             };
 
             console.log('Lesson data to insert:', lessonData);
@@ -692,6 +744,8 @@ export async function getInstructorCourses() {
 }
 
 // Get single course details
+// 서버는 통합 lessons 배열만 반환 - 순서/일관성 보장과 타입 추가 시 비용 최소화를 위해
+// content_type으로 구분되며, 클라이언트에서 필요시 필터링
 export async function getCourseById(courseId) {
   try {
     console.log('getCourseById called with ID:', courseId);

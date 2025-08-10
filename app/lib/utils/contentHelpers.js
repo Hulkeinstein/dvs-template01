@@ -1,5 +1,45 @@
 import { deleteLesson } from '@/app/lib/actions/courseActions';
 import { deleteQuizLesson } from '@/app/lib/actions/quizActions';
+import { deleteAssignmentLesson } from '@/app/lib/actions/assignmentActions';
+
+// Assignment 데이터 검증 - 서버/클라이언트 동일 규칙 단일 소스
+export function validateAssignmentData(data) {
+  if (!data) {
+    return { success: false, error: '데이터가 없습니다' };
+  }
+
+  if (!data.title || !data.title.trim()) {
+    return { success: false, error: '제목은 필수입니다' };
+  }
+
+  const totalPoints = data.totalPoints || 0;
+  const passingPoints = data.passingPoints || 0;
+
+  if (typeof totalPoints !== 'number' || totalPoints <= 0) {
+    return { success: false, error: '총점이 올바르지 않습니다' };
+  }
+
+  if (typeof passingPoints !== 'number' || passingPoints < 0) {
+    return { success: false, error: '통과 점수가 올바르지 않습니다' };
+  }
+
+  if (passingPoints > totalPoints) {
+    return { success: false, error: '통과 점수가 총점을 초과할 수 없습니다' };
+  }
+
+  return { success: true };
+}
+
+// Topics 데이터를 저장용으로 변환 - UI 순서를 truth로 삼아 sort_order 갱신
+export function transformTopicsForSave(topics) {
+  return topics.map((topic) => ({
+    ...topic,
+    lessons: (topic.lessons || []).map((lesson, idx) => ({
+      ...lesson,
+      sort_order: idx, // UI 순서를 그대로 sort_order로 사용
+    })),
+  }));
+}
 
 export const contentHelpers = {
   // 타입별 필터링
@@ -45,8 +85,7 @@ export const contentHelpers = {
       case 'video':
         return deleteLesson(content.id);
       case 'assignment':
-        // TODO: assignment 삭제 API 추가 시 구현
-        return deleteLesson(content.id);
+        return deleteAssignmentLesson(content.id);
       default:
         throw new Error(`Unknown content type: ${contentType}`);
     }
@@ -81,7 +120,7 @@ export const contentHelpers = {
           contents.push({
             ...lesson,
             type: lesson.content_type || 'lesson',
-            order: lesson.order || index + 1,
+            order: lesson.order || lesson.sort_order || index + 1,
           });
         }
       });
@@ -95,7 +134,10 @@ export const contentHelpers = {
             ...quiz,
             type: 'quiz',
             content_type: 'quiz',
-            order: quiz.order || (topic.lessons?.length || 0) + index + 1,
+            order:
+              quiz.order ||
+              quiz.sort_order ||
+              (topic.lessons?.length || 0) + index + 1,
           });
         }
       });
@@ -108,8 +150,10 @@ export const contentHelpers = {
           contents.push({
             ...assignment,
             type: 'assignment',
+            content_type: 'assignment',
             order:
               assignment.order ||
+              assignment.sort_order ||
               (topic.lessons?.length || 0) +
                 (topic.quizzes?.length || 0) +
                 index +

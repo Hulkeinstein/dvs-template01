@@ -66,31 +66,31 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
   
   // 모달 상태를 초기화하는 함수 - useEffect 전에 정의
   const resetModalState = () => {
-    // 편집 모드가 아닐 때만 quizData 초기화
-    if (!editingQuiz) {
-      setQuizData({
-        title: '',
-        summary: '',
-        questions: [],
-        settings: {
-          passingScore: 70,
-          feedbackMode: 'default',
-          randomizeQuestions: false,
-          showAnswersAfterSubmit: true,
-          maxQuestions: 0,
-          maxAttempts: 3,
-          questionLayout: 'random',
-          questionsOrder: 'single_question',
-          hideQuestionNumber: false,
-          shortAnswerLimit: 200,
-          essayAnswerLimit: 500
-        }
-      });
-    }
-    // 항상 초기화해야 하는 상태들
+    // 항상 모든 상태를 초기화 (편집 모드 여부와 관계없이)
+    setQuizData({
+      title: '',
+      summary: '',
+      questions: [],
+      settings: {
+        passingScore: 70,
+        feedbackMode: 'default',
+        randomizeQuestions: false,
+        showAnswersAfterSubmit: true,
+        maxQuestions: 0,
+        maxAttempts: 3,
+        questionLayout: 'random',
+        questionsOrder: 'single_question',
+        hideQuestionNumber: false,
+        shortAnswerLimit: 200,
+        essayAnswerLimit: 500
+      }
+    });
+    
+    // 기타 상태들 초기화
     setCurrentStep(1);
     setToggle(true);
     setEditingQuestionIndex(null);
+    setIsSaving(false);
     setCurrentQuestion({
       question: '',
       questionImage: null,
@@ -841,8 +841,10 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                           // 편집 모드: updateQuizLesson 호출
                           result = await updateQuizLesson(editingQuiz.id, cleanedQuizData);
                         } else {
-                          // 생성 모드: onAddQuiz 호출
-                          result = await onAddQuiz(cleanedQuizData);
+                          // 생성 모드: onAddQuiz 호출 (Promise처럼 처리)
+                          const addResult = onAddQuiz(cleanedQuizData);
+                          // onAddQuiz가 직접 객체를 반환하는 경우 처리
+                          result = addResult && typeof addResult === 'object' ? addResult : { success: true };
                         }
                         
                         if (result && result.success) {
@@ -861,31 +863,54 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                             }
                           }
                           
-                          // Close modal first
+                          // Reset modal state first
+                          resetModalState();
+                          
+                          // Close modal with proper cleanup
+                          console.log('[Save Success] Closing modal with ID:', modalId);
                           const modalElement = document.getElementById(modalId);
-                          if (modalElement && window.bootstrap?.Modal) {
-                            const modalInstance = window.bootstrap.Modal.getInstance(modalElement) || new window.bootstrap.Modal(modalElement);
-                            modalInstance.hide();
-                            
-                            // 모달이 완전히 닫힌 후 페이지 이동
-                            modalElement.addEventListener('hidden.bs.modal', function handleHidden() {
-                              modalElement.removeEventListener('hidden.bs.modal', handleHidden);
-                              
-                              if (editingQuiz && editingQuiz.course_id) {
-                                // 편집 모드에서는 페이지 완전 새로고침으로 이동
-                                window.location.href = `/create-course?edit=${editingQuiz.course_id}`;
-                              } else {
-                                // 새 퀴즈 추가 성공 후 페이지 새로고침
-                                window.location.reload();
+                          if (modalElement) {
+                            // Bootstrap Modal 인스턴스 확인 및 닫기
+                            if (window.bootstrap && window.bootstrap.Modal) {
+                              try {
+                                const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
+                                if (modalInstance) {
+                                  modalInstance.hide();
+                                } else {
+                                  // 인스턴스가 없으면 새로 생성하여 닫기
+                                  const newInstance = new window.bootstrap.Modal(modalElement);
+                                  newInstance.hide();
+                                }
+                              } catch (error) {
+                                console.error('[Modal Close Error]:', error);
+                                // Fallback: data-bs-dismiss를 사용한 닫기 시뮬레이션
+                                const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+                                if (closeButton) {
+                                  closeButton.click();
+                                }
                               }
-                            });
-                          } else {
-                            // Bootstrap Modal이 없는 경우 바로 이동
-                            if (editingQuiz && editingQuiz.course_id) {
-                              window.location.href = `/create-course?edit=${editingQuiz.course_id}`;
                             } else {
-                              window.location.reload();
+                              // Bootstrap이 없는 경우 fallback
+                              const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
+                              if (closeButton) {
+                                closeButton.click();
+                              }
                             }
+                            
+                            // 추가 정리 작업
+                            setTimeout(() => {
+                              // 백드롭 제거
+                              const backdrop = document.querySelector('.modal-backdrop');
+                              if (backdrop) {
+                                backdrop.remove();
+                              }
+                              // body 클래스 정리
+                              document.body.classList.remove('modal-open');
+                              document.body.style.removeProperty('padding-right');
+                              document.body.style.removeProperty('overflow');
+                            }, 100);
+                          } else {
+                            console.error('[Modal Element Not Found] ID:', modalId);
                           }
                         } else {
                           // 실패한 경우 에러 메시지 표시

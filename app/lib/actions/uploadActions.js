@@ -123,7 +123,93 @@ export async function uploadCourseThumbnail(base64Data, fileName) {
   }
 }
 
-// Upload lesson attachment - accepts base64 data
+// Upload lesson attachment directly (NEW - Production standard)
+export async function uploadLessonAttachmentDirect(formData) {
+  try {
+    const file = formData.get('file');
+    const fileName = formData.get('fileName');
+
+    if (!file || !fileName) {
+      return {
+        success: false,
+        error: '파일이 선택되지 않았습니다.',
+      };
+    }
+
+    // 파일 크기 체크 (3MB)
+    const maxSize = 3 * 1024 * 1024;
+    if (file.size > maxSize) {
+      return {
+        success: false,
+        error: `파일 크기가 너무 큽니다. 최대 ${maxSize / 1024 / 1024}MB까지 가능합니다.`,
+      };
+    }
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { success: false, error: '로그인이 필요합니다.' };
+    }
+
+    // Get user ID
+    const { data: userData } = await supabase
+      .from('user')
+      .select('id')
+      .eq('email', session.user.email)
+      .single();
+
+    if (!userData) {
+      return { success: false, error: '사용자를 찾을 수 없습니다.' };
+    }
+
+    // 파일명 정리
+    const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '-');
+    const uniqueFileName = `${Date.now()}-${sanitizedFileName}`;
+    const filePath = `lessons/attachments/${uniqueFileName}`;
+
+    // Supabase Storage에 직접 업로드
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('courses')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+
+      // 사용자 친화적 에러 메시지
+      let errorMessage = '파일 업로드에 실패했습니다.';
+      if (uploadError.message?.includes('bucket')) {
+        errorMessage = '저장소 설정에 문제가 있습니다. 관리자에게 문의하세요.';
+      } else if (uploadError.message?.includes('row level security')) {
+        errorMessage = '업로드 권한이 없습니다.';
+      }
+
+      return { success: false, error: errorMessage };
+    }
+
+    // Get public URL
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('courses').getPublicUrl(filePath);
+
+    return {
+      success: true,
+      url: publicUrl,
+      path: filePath,
+      fileName: sanitizedFileName,
+      fileSize: file.size,
+    };
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    return {
+      success: false,
+      error: '예상치 못한 오류가 발생했습니다. 다시 시도해주세요.',
+    };
+  }
+}
+
+// Upload lesson attachment - accepts base64 data (DEPRECATED - kept for backward compatibility)
 export async function uploadLessonAttachment(base64Data, fileName) {
   const context = { fileName, dataSize: base64Data?.length };
 

@@ -16,10 +16,11 @@
   - ❌ 등록/결제, 리뷰, 학생용 상세 페이지
 
 ## 🚀 현재 작업 중인 기능
-- **Assignment 기능 구현** (Edit Course 페이지)
-  - Add Assignment 버튼 활성화
-  - 과제 생성/수정/삭제 기능
-  - content_type: 'assignment' 지원
+- **Assignment 기능 구현** (✅ 완료 - 머지 대기)
+  - ✅ 과제 생성/수정/삭제 기능
+  - ✅ 6가지 샘플 데이터 템플릿
+  - ✅ Load Sample 기능
+  - ✅ 통합 lessons 배열 구조
 - 학생 코스 등록 시스템
 - 결제 통합 (Stripe/Local payment)
 - 레슨 뷰어 구현
@@ -66,6 +67,13 @@
 - [ ] Full user journey testing
 - [ ] Payment flow verification
 - [ ] Performance optimization
+
+### Assignment 템플릿 시스템 (선택사항)
+**목표**: 선생님들이 자주 사용하는 과제를 템플릿으로 저장
+
+- [ ] "템플릿으로 저장" 버튼 추가
+- [ ] "내 템플릿" 목록에서 불러오기
+- [ ] 템플릿 삭제 기능
 
 ### Phase 2: Admin System Integration (Week 3)
 **목표**: PreSkool 템플릿을 활용한 관리자 대시보드 구축

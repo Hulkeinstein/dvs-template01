@@ -47,6 +47,37 @@
 - 패키지 업데이트
 - 데이터베이스 스키마 변경
 
+## PR 머지 후 체크리스트
+
+### 1. GitHub에서 브랜치 삭제
+- PR 머지 화면에서 "Delete branch" 버튼 클릭
+- 또는 Settings > General > "Automatically delete head branches" 활성화 권장
+
+### 2. 로컬 환경 정리
+```bash
+# main 브랜치로 전환
+git checkout main
+git pull origin main
+
+# 머지된 원격 브랜치 참조 정리
+git remote prune origin
+
+# 머지된 로컬 브랜치 확인
+git branch --merged main
+
+# 안전한 로컬 브랜치 삭제
+git branch -d feature/branch-name
+```
+
+### 3. 원격 브랜치 수동 삭제 (필요시)
+```bash
+# 원격 브랜치 확인
+git branch -r --merged origin/main
+
+# 특정 원격 브랜치 삭제
+git push origin --delete branch-name
+```
+
 ## 트러블슈팅
 
 ### PR이 CI에서 막힐 때

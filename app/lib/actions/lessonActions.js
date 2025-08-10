@@ -58,12 +58,23 @@ export async function createLesson(lessonData) {
     const { data: newLesson, error: createError } = await supabase
       .from('lessons')
       .insert({
-        course_id: lessonData.courseId,
+        course_id: lessonData.course_id || lessonData.courseId,
+        topic_id: lessonData.topic_id || lessonData.topicId,
         title: lessonData.title,
         description: lessonData.description || '',
-        video_url: lessonData.videoUrl || '',
-        sort_order: orderIndex,
-        duration_minutes: lessonData.duration || 0,
+        video_url: lessonData.video_url || lessonData.videoUrl || '',
+        video_source:
+          lessonData.video_source || lessonData.videoSource || 'youtube',
+        sort_order:
+          lessonData.sort_order !== undefined
+            ? lessonData.sort_order
+            : orderIndex,
+        duration_minutes:
+          lessonData.duration_minutes || lessonData.duration || 0,
+        is_preview: lessonData.is_preview || lessonData.enablePreview || false,
+        content_type: 'lesson',
+        thumbnail_url: lessonData.thumbnail_url || lessonData.thumbnail || null,
+        attachments: lessonData.attachments || [],
       })
       .select()
       .single();
@@ -117,25 +128,37 @@ export async function updateLesson(lessonId, updates) {
       };
     }
 
-    // Filter out fields that shouldn't be updated
-    const allowedFields = [
-      'title',
-      'description',
-      'video_url',
-      'duration_minutes',
-      'content',
-    ];
-    const filteredUpdates = Object.keys(updates)
-      .filter((key) => allowedFields.includes(key))
-      .reduce((obj, key) => {
-        obj[key] = updates[key];
-        return obj;
-      }, {});
+    // Prepare update data with field mapping
+    const updateData = {};
+
+    // Map fields from different sources
+    if (updates.title !== undefined) updateData.title = updates.title;
+    if (updates.description !== undefined)
+      updateData.description = updates.description;
+    if (updates.video_url !== undefined)
+      updateData.video_url = updates.video_url;
+    if (updates.video_source !== undefined)
+      updateData.video_source = updates.video_source;
+    if (updates.duration_minutes !== undefined)
+      updateData.duration_minutes = updates.duration_minutes;
+    if (updates.is_preview !== undefined)
+      updateData.is_preview = updates.is_preview;
+    if (updates.sort_order !== undefined)
+      updateData.sort_order = updates.sort_order;
+    if (updates.thumbnail_url !== undefined)
+      updateData.thumbnail_url = updates.thumbnail_url;
+    if (updates.attachments !== undefined)
+      updateData.attachments = updates.attachments;
+
+    // Ensure content_type is set to 'lesson' for regular lessons
+    if (!updates.content_type || updates.content_type === 'video') {
+      updateData.content_type = 'lesson';
+    }
 
     // Update the lesson
     const { error: updateError } = await supabase
       .from('lessons')
-      .update(filteredUpdates)
+      .update(updateData)
       .eq('id', lessonId);
 
     if (updateError) {

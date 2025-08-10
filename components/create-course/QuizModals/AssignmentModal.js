@@ -1,10 +1,15 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-
+import { sampleAssignmentData } from '@/constants/sampleAssignmentData';
 import TextEditorWrapper from '../TextEditorWrapper';
 
-const AssignmentModal = ({ modalId = 'Assignment', onAddAssignment }) => {
+const AssignmentModal = ({
+  modalId = 'Assignment',
+  onAddAssignment,
+  editingAssignment,
+  onEditComplete,
+}) => {
   const [content, setContent] = useState('');
   const [assignmentData, setAssignmentData] = useState({
     title: '',
@@ -16,20 +21,138 @@ const AssignmentModal = ({ modalId = 'Assignment', onAddAssignment }) => {
     maxUploads: 1,
     maxFileSize: 10,
   });
+  const [showDropdown, setShowDropdown] = useState(false);
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const handleImportClick = (e) => {
-    e.preventDefault();
-    fileInputRef.current.click();
+  // Local validateFile function (avoiding import issues)
+  const validateFile = (file, maxSizeMB = 10) => {
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+    if (file.size > maxSizeBytes) {
+      return {
+        valid: false,
+        error: `File size exceeds ${maxSizeMB}MB limit`,
+      };
+    }
+
+    // Allowed file types for assignments
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = [
+      'pdf',
+      'doc',
+      'docx',
+      'ppt',
+      'pptx',
+      'xls',
+      'xlsx',
+      'zip',
+      'jpg',
+      'jpeg',
+      'png',
+      'txt',
+      'csv',
+    ];
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      return {
+        valid: false,
+        error:
+          'File type not allowed. Allowed types: PDF, Word, PowerPoint, Excel, ZIP, Images',
+      };
+    }
+
+    return { valid: true };
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      console.log('Selected file:', file.name);
+  // File upload handlers
+  const handleFileChange = async (e) => {
+    const files = Array.from(e.target.files || []);
+
+    // Validate file count
+    if (
+      assignmentData.attachments.length + files.length >
+      assignmentData.maxUploads
+    ) {
+      alert(`Maximum ${assignmentData.maxUploads} files allowed`);
+      return;
     }
+
+    // Validate and process files
+    const uploadedFiles = [];
+    for (const file of files) {
+      // Validate file
+      const validation = validateFile(file, assignmentData.maxFileSize);
+      if (!validation.valid) {
+        alert(`${file.name}: ${validation.error}`);
+        continue;
+      }
+
+      // For now, store file info locally with preview URL
+      // TODO: In production, implement actual upload to Supabase using Server Actions
+      uploadedFiles.push({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: URL.createObjectURL(file), // Temporary URL for preview
+      });
+    }
+
+    // Update state with new files
+    if (uploadedFiles.length > 0) {
+      setAssignmentData({
+        ...assignmentData,
+        attachments: [...assignmentData.attachments, ...uploadedFiles],
+      });
+    }
+
+    // Reset input
+    e.target.value = '';
   };
+
+  const removeFile = (index) => {
+    const newAttachments = [...assignmentData.attachments];
+    newAttachments.splice(index, 1);
+    setAssignmentData({
+      ...assignmentData,
+      attachments: newAttachments,
+    });
+  };
+
+  // Load editing data when editingAssignment changes
+  React.useEffect(() => {
+    if (editingAssignment) {
+      setAssignmentData({
+        id: editingAssignment.id,
+        title: editingAssignment.title || '',
+        summary:
+          editingAssignment.summary || editingAssignment.description || '',
+        attachments: editingAssignment.attachments || [],
+        timeLimit: editingAssignment.timeLimit || { value: 0, unit: 'weeks' },
+        totalPoints: editingAssignment.totalPoints || 100,
+        passingPoints: editingAssignment.passingPoints || 70,
+        maxUploads: editingAssignment.maxUploads || 1,
+        maxFileSize: editingAssignment.maxFileSize || 10,
+      });
+      setContent(
+        editingAssignment.summary || editingAssignment.description || ''
+      );
+    }
+  }, [editingAssignment]);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showDropdown && !event.target.closest('.dropdown')) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   return (
     <>
@@ -58,8 +181,147 @@ const AssignmentModal = ({ modalId = 'Assignment', onAddAssignment }) => {
                   <div className="col-lg-12">
                     <form action="#">
                       <h5 className="modal-title mb--20" id={`${modalId}Label`}>
-                        Add Assignment
+                        {editingAssignment
+                          ? 'Edit Assignment'
+                          : 'Add Assignment'}
                       </h5>
+                      {!editingAssignment && (
+                        <div className="mb--20">
+                          <div
+                            className="dropdown position-relative"
+                            style={{ display: 'inline-block' }}
+                          >
+                            <button
+                              className="btn btn-sm btn-primary"
+                              type="button"
+                              onClick={() => setShowDropdown(!showDropdown)}
+                            >
+                              <i className="feather-download me-2"></i>
+                              Load Sample Data
+                              <i
+                                className={`feather-chevron-${showDropdown ? 'up' : 'down'} ms-2`}
+                              ></i>
+                            </button>
+                            {showDropdown && (
+                              <ul
+                                className="dropdown-menu show"
+                                style={{
+                                  position: 'absolute',
+                                  top: '100%',
+                                  left: 0,
+                                  zIndex: 1051,
+                                }}
+                              >
+                                <li>
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const sample = sampleAssignmentData.basic;
+                                      setAssignmentData({
+                                        ...assignmentData,
+                                        ...sample,
+                                      });
+                                      setShowDropdown(false);
+                                    }}
+                                  >
+                                    Basic Project
+                                  </a>
+                                </li>
+                                <li>
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const sample =
+                                        sampleAssignmentData.advanced;
+                                      setAssignmentData({
+                                        ...assignmentData,
+                                        ...sample,
+                                      });
+                                      setShowDropdown(false);
+                                    }}
+                                  >
+                                    Final Project
+                                  </a>
+                                </li>
+                                <li>
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const sample = sampleAssignmentData.quiz;
+                                      setAssignmentData({
+                                        ...assignmentData,
+                                        ...sample,
+                                      });
+                                      setShowDropdown(false);
+                                    }}
+                                  >
+                                    Coding Test
+                                  </a>
+                                </li>
+                                <li>
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const sample =
+                                        sampleAssignmentData.report;
+                                      setAssignmentData({
+                                        ...assignmentData,
+                                        ...sample,
+                                      });
+                                      setShowDropdown(false);
+                                    }}
+                                  >
+                                    Research Report
+                                  </a>
+                                </li>
+                                <li>
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const sample = sampleAssignmentData.group;
+                                      setAssignmentData({
+                                        ...assignmentData,
+                                        ...sample,
+                                      });
+                                      setShowDropdown(false);
+                                    }}
+                                  >
+                                    Team Project
+                                  </a>
+                                </li>
+                                <li>
+                                  <a
+                                    className="dropdown-item"
+                                    href="#"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const sample =
+                                        sampleAssignmentData.practice;
+                                      setAssignmentData({
+                                        ...assignmentData,
+                                        ...sample,
+                                      });
+                                      setShowDropdown(false);
+                                    }}
+                                  >
+                                    CSS Practice
+                                  </a>
+                                </li>
+                              </ul>
+                            )}
+                          </div>
+                        </div>
+                      )}
                       <div className="course-field mb--20">
                         <label htmlFor="assignmentModalTitle">
                           Assignment Title
@@ -91,31 +353,54 @@ const AssignmentModal = ({ modalId = 'Assignment', onAddAssignment }) => {
                         />
                       </div>
                       <div className="course-field mb--20">
-                        <h6>Attachments</h6>
-                        <div className="rbt-modern-select bg-transparent height-45 w-100 mb--10">
+                        <label>Upload Attachments</label>
+                        <div className="rbt-create-course-btn text-center">
                           <button
-                            className="rbt-btn btn-md btn-border hover-icon-reverse"
-                            onClick={handleImportClick}
+                            type="button"
+                            className="rbt-btn btn-gradient btn-sm"
+                            onClick={() => fileInputRef.current?.click()}
                           >
-                            <span className="icon-reverse-wrapper">
-                              <span className="btn-text">
-                                Upload Attachments
-                              </span>
-                              <span className="btn-icon">
-                                <i className="feather-paperclip"></i>
-                              </span>
-                              <span className="btn-icon">
-                                <i className="feather-paperclip"></i>
-                              </span>
+                            <span className="icon">
+                              <i className="feather-upload-cloud"></i>
                             </span>
+                            <span>Upload Files</span>
                           </button>
                           <input
-                            type="file"
                             ref={fileInputRef}
+                            type="file"
+                            multiple
                             style={{ display: 'none' }}
                             onChange={handleFileChange}
+                            accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.jpg,.jpeg,.png"
                           />
                         </div>
+                        {assignmentData.attachments.length > 0 && (
+                          <div className="mt-3">
+                            <small className="text-muted">
+                              Uploaded Files:
+                            </small>
+                            <ul className="list-unstyled mt-2">
+                              {assignmentData.attachments.map((file, index) => (
+                                <li
+                                  key={index}
+                                  className="d-flex align-items-center mb-2"
+                                >
+                                  <i className="feather-file mr-2"></i>
+                                  <span className="flex-grow-1">
+                                    {file.name}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="btn btn-sm"
+                                    onClick={() => removeFile(index)}
+                                  >
+                                    <i className="feather-x text-danger"></i>
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                       <div className="course-field mb--15">
                         <label>Time Limit</label>
@@ -273,31 +558,69 @@ const AssignmentModal = ({ modalId = 'Assignment', onAddAssignment }) => {
                 className="rbt-btn btn-gradient btn-md"
                 onClick={() => {
                   if (assignmentData.title.trim() && onAddAssignment) {
-                    onAddAssignment(assignmentData);
-                    // Reset form
-                    setAssignmentData({
-                      title: '',
-                      summary: '',
-                      attachments: [],
-                      timeLimit: { value: 0, unit: 'weeks' },
-                      totalPoints: 100,
-                      passingPoints: 70,
-                      maxUploads: 1,
-                      maxFileSize: 10,
-                    });
-                    setContent('');
+                    const result = onAddAssignment(assignmentData);
 
-                    // Close modal
-                    const modal = document.getElementById(modalId);
-                    const modalInstance =
-                      window.bootstrap?.Modal?.getInstance(modal);
-                    if (modalInstance) {
-                      modalInstance.hide();
+                    // Check if assignment was successfully added
+                    if (result && result.success) {
+                      // If editing, call onEditComplete
+                      if (editingAssignment && onEditComplete) {
+                        onEditComplete();
+                      }
+
+                      // Reset form
+                      setAssignmentData({
+                        title: '',
+                        summary: '',
+                        attachments: [],
+                        timeLimit: { value: 0, unit: 'weeks' },
+                        totalPoints: 100,
+                        passingPoints: 70,
+                        maxUploads: 1,
+                        maxFileSize: 10,
+                      });
+                      setContent('');
+
+                      // Close modal using Bootstrap's data-bs-dismiss
+                      const closeButton = document.querySelector(
+                        `#${modalId} [data-bs-dismiss="modal"]`
+                      );
+                      if (closeButton) {
+                        closeButton.click();
+                      } else {
+                        // Fallback: Try to get modal instance
+                        const modal = document.getElementById(modalId);
+                        if (modal && window.bootstrap?.Modal) {
+                          const modalInstance =
+                            window.bootstrap.Modal.getInstance(modal) ||
+                            new window.bootstrap.Modal(modal);
+                          if (modalInstance) {
+                            modalInstance.hide();
+                          }
+                        }
+                      }
+
+                      // Open Course Builder accordion after modal closes
+                      setTimeout(() => {
+                        const courseBuilderAccordion =
+                          document.querySelector('#headingTwo button');
+                        if (
+                          courseBuilderAccordion &&
+                          courseBuilderAccordion.classList.contains('collapsed')
+                        ) {
+                          courseBuilderAccordion.click();
+                        }
+                      }, 300);
+                    } else {
+                      // Show error message if assignment save failed
+                      alert(
+                        result?.error ||
+                          '과제 저장에 실패했습니다. 다시 시도해주세요.'
+                      );
                     }
                   }
                 }}
               >
-                Add Assignment
+                {editingAssignment ? 'Update Assignment' : 'Add Assignment'}
               </button>
             </div>
           </div>

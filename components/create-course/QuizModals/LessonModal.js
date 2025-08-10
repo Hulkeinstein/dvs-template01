@@ -3,8 +3,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { debugLog, trackError } from '@/app/lib/utils/debugHelper';
-import { fileToBase64 } from '@/app/lib/utils/fileUpload';
-import { uploadLessonAttachment } from '@/app/lib/actions/uploadActions';
+import { uploadLessonAttachmentDirect } from '@/app/lib/actions/uploadActions';
 
 import img from '../../../public/images/others/thumbnail-placeholder.svg';
 
@@ -19,6 +18,7 @@ const LessonModal = ({
   const [featureImagePreview, setFeatureImagePreview] = useState(null);
   const [featureImageUrl, setFeatureImageUrl] = useState(null);
   const [uploadingFeatureImage, setUploadingFeatureImage] = useState(false);
+  const [featureImageError, setFeatureImageError] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [attachmentErrors, setAttachmentErrors] = useState([]);
@@ -136,6 +136,7 @@ const LessonModal = ({
       });
       setFeatureImagePreview(null);
       setFeatureImageUrl(null);
+      setFeatureImageError(null);
       setAttachments([]);
       setAttachmentErrors([]);
 
@@ -182,18 +183,28 @@ const LessonModal = ({
     setAttachmentErrors([]); // 이전 에러 초기화
     setUploadingAttachment(true);
 
+    const maxSize = 3 * 1024 * 1024; // 3MB
+
     for (const file of files) {
       try {
-        // Base64 변환
-        const base64 = await fileToBase64(file);
+        // 파일 크기 체크
+        if (file.size > maxSize) {
+          throw new Error(
+            `파일 크기가 너무 큽니다. 최대 ${maxSize / 1024 / 1024}MB까지 가능합니다.`
+          );
+        }
 
         debugLog('LessonModal', 'handleAttachmentChange:uploading', {
           fileName: file.name,
           fileSize: file.size,
         });
 
-        // 업로드
-        const result = await uploadLessonAttachment(base64, file.name);
+        // FormData로 업로드
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('fileName', file.name);
+
+        const result = await uploadLessonAttachmentDirect(formData);
 
         if (result.success) {
           const newAttachment = {
@@ -212,7 +223,7 @@ const LessonModal = ({
             attachment: newAttachment,
           });
         } else {
-          throw new Error(result.error || 'Upload failed');
+          throw new Error(result.error || '업로드에 실패했습니다.');
         }
       } catch (error) {
         const errorInfo = {
@@ -223,9 +234,6 @@ const LessonModal = ({
 
         setAttachmentErrors((prev) => [...prev, errorInfo]);
         trackError('LessonModal.handleAttachmentChange', error, { file });
-
-        // 사용자에게 에러 표시
-        alert(`파일 업로드 실패 (${file.name}): ${error.message}`);
       }
     }
 
@@ -248,13 +256,25 @@ const LessonModal = ({
       try {
         // Validate file type
         if (!file.type.startsWith('image/')) {
-          alert('Please select a valid image file');
+          setFeatureImageError(
+            '이미지 파일을 선택해주세요. (JPG, PNG, GIF, WEBP)'
+          );
+          return;
+        }
+
+        // Validate file size (3MB limit)
+        const maxSize = 3 * 1024 * 1024;
+        if (file.size > maxSize) {
+          setFeatureImageError(
+            `파일 크기가 너무 큽니다. 최대 ${maxSize / 1024 / 1024}MB까지 가능합니다.`
+          );
           return;
         }
 
         setUploadingFeatureImage(true);
+        setFeatureImageError(null);
 
-        // Create preview
+        // Create preview using FileReader
         const reader = new FileReader();
         reader.onloadend = () => {
           setFeatureImagePreview(reader.result);
@@ -265,15 +285,18 @@ const LessonModal = ({
         };
         reader.readAsDataURL(file);
 
-        // Upload to storage
+        // Upload to storage using FormData
         try {
-          const base64 = await fileToBase64(file);
           debugLog('LessonModal', 'featureImage:uploading', {
             fileName: file.name,
-            base64Length: base64.length,
+            fileSize: file.size,
           });
 
-          const result = await uploadLessonAttachment(base64, file.name);
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('fileName', file.name);
+
+          const result = await uploadLessonAttachmentDirect(formData);
 
           if (result.success) {
             setFeatureImageUrl(result.url);
@@ -282,13 +305,16 @@ const LessonModal = ({
               url: result.url,
             });
           } else {
-            throw new Error(result.error || 'Upload failed');
+            throw new Error(result.error || '업로드에 실패했습니다.');
           }
         } catch (uploadError) {
           trackError('LessonModal.handleFileChange:upload', uploadError, {
             file,
           });
-          alert('Failed to upload image. Please try again.');
+          setFeatureImageError(
+            uploadError.message ||
+              '이미지 업로드에 실패했습니다. 다시 시도해주세요.'
+          );
         } finally {
           setUploadingFeatureImage(false);
         }
@@ -306,6 +332,8 @@ const LessonModal = ({
         tabIndex="-1"
         aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
@@ -409,9 +437,17 @@ const LessonModal = ({
                         </div>
                       )}
 
+                      {/* 에러 메시지 표시 */}
+                      {featureImageError && (
+                        <div className="alert alert-danger mt-2" role="alert">
+                          <small>{featureImageError}</small>
+                        </div>
+                      )}
+
                       <small>
-                        <i className="feather-info"></i> <b>Size:</b> 700x430
-                        pixels, <b>File Support:</b> JPG, JPEG, PNG, GIF, WEBP
+                        <i className="feather-info"></i> <b>권장 크기:</b>{' '}
+                        700x430 픽셀, <b>파일 형식:</b> JPG, PNG, GIF, WEBP
+                        (최대 3MB)
                       </small>
                     </div>
                     <div className="course-field mb--20">
@@ -601,10 +637,14 @@ const LessonModal = ({
                       {/* 에러 표시 */}
                       {attachmentErrors.length > 0 && (
                         <div className="mt-2">
-                          <small className="text-danger">
-                            업로드 실패:{' '}
-                            {attachmentErrors.map((e) => e.fileName).join(', ')}
-                          </small>
+                          {attachmentErrors.map((e, idx) => (
+                            <div key={idx}>
+                              <small className="text-danger">
+                                <i className="feather-alert-circle"></i>{' '}
+                                {e.fileName}: {e.error}
+                              </small>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
