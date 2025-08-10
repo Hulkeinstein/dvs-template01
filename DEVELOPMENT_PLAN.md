@@ -16,17 +16,12 @@
   - ❌ 등록/결제, 리뷰, 학생용 상세 페이지
 
 ## 🚀 현재 작업 중인 기능
-- **Assignment 기능 구현** (✅ 완료 - 머지 대기)
-  - ✅ 과제 생성/수정/삭제 기능
-  - ✅ 6가지 샘플 데이터 템플릿
-  - ✅ Load Sample 기능
-  - ✅ 통합 lessons 배열 구조
 - 학생 코스 등록 시스템
 - 결제 통합 (Stripe/Local payment)
 - 레슨 뷰어 구현
 
 ## ✅ 최근 완료된 작업
-> 완료된 작업들은 COMPLETED_TASKS.md에서 확인할 수 있습니다.
+> 완료된 작업들은 COMPLETED_TASKS.md와 docs/work-logs/에서 확인할 수 있습니다.
 
 ## 📅 개발 로드맵
 
