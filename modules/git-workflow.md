@@ -40,6 +40,46 @@ git commit -m "fix: 로그인 버그 수정 - Fixes #11"
 git commit -m "refactor: 인증 시스템 개선 - Closes #12, #13"
 ```
 
+## Milestones 체계 (2025년 1월 11일 도입)
+
+### 현재 Milestones
+- **Phase 1: Core Platform** (목표: 2025년 8월 31일)
+  - 학생/교사 핵심 기능 완성
+  - 코스 등록, 결제, 레슨 뷰어, 진도 추적
+  
+- **Phase 2: Admin System** (목표: 2025년 9월 15일)
+  - PreSkool 템플릿 활용 관리자 대시보드
+  - SSO 통합, Badge 관리 시스템
+  
+- **Phase 3: Enhancement & Optimization** (오픈)
+  - 성능 최적화, AI 기능, 다국어 지원
+
+### Issue 생성 시 Milestone 지정
+```bash
+# Issue 생성 시 Milestone 지정
+gh issue create --title "[Feature] 기능명" --milestone "Phase 1: Core Platform"
+
+# Milestone별 Issue 확인
+gh issue list --milestone "Phase 1: Core Platform"
+```
+
+### Issue 템플릿
+```markdown
+## 📋 개요
+[기능 설명]
+
+## ✅ Tasks
+- [ ] 작업 1
+- [ ] 작업 2
+
+## 🎯 Acceptance Criteria
+- 조건 1
+- 조건 2
+
+## 📅 예상 작업 시간
+- 총 X시간
+```
+
 ## 간단한 작업의 브랜치 전략
 
 ### 브랜치 생성이 필요 없는 경우
