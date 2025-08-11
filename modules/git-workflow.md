@@ -80,6 +80,32 @@ gh issue list --milestone "Phase 1: Core Platform"
 - 총 X시간
 ```
 
+### 💡 Solo Developer + Claude Code 협업 방식
+
+이 프로젝트는 Solo Developer + Claude Code 협업으로 진행됩니다.
+
+#### Claude Code 작업 가이드
+1. **작업 시작 전**
+   - GitHub Issues 확인 (`gh issue list --state open`)
+   - 해당 Issue에 맞는 브랜치 생성
+   - TodoWrite 도구로 작업 계획 수립
+
+2. **작업 진행 중**
+   - Issue의 Tasks 체크리스트 기반 작업
+   - 각 Task 완료 시 TodoWrite로 진행 상황 추적
+   - 중요 변경사항은 커밋으로 기록
+
+3. **작업 완료 후**
+   - 커밋 메시지에 `Closes #번호` 포함
+   - PR 생성 또는 직접 push (브랜치에 따라)
+   - Issue 자동 종료 확인
+
+#### Projects Board 활용 (선택)
+- **To Do**: 새로 생성된 Issues
+- **In Progress**: 작업 중인 Issues
+- **Done**: 완료된 Issues
+- GitHub Projects로 전체 진행 상황 시각화
+
 ## 간단한 작업의 브랜치 전략
 
 ### 브랜치 생성이 필요 없는 경우
