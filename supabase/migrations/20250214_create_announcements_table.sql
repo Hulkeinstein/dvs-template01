@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS announcements (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   course_id UUID REFERENCES courses(id) ON DELETE CASCADE,
-  instructor_id UUID NOT NULL REFERENCES user(id),
+  instructor_id UUID NOT NULL REFERENCES "user"(id),
   title VARCHAR(255) NOT NULL,
   content TEXT,
   priority VARCHAR(20) DEFAULT 'normal' CHECK (priority IN ('normal', 'important', 'urgent')),
@@ -25,29 +25,29 @@ ALTER TABLE announcements ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Instructors can create announcements" ON announcements
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM user 
-      WHERE user.id = announcements.instructor_id 
-      AND user.role = 'instructor'
+      SELECT 1 FROM "user" 
+      WHERE "user".id = announcements.instructor_id 
+      AND "user".role = 'instructor'
     )
   );
 
 CREATE POLICY "Instructors can update own announcements" ON announcements
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM user 
-      WHERE user.id = announcements.instructor_id 
-      AND user.id = auth.uid()
-      AND user.role = 'instructor'
+      SELECT 1 FROM "user" 
+      WHERE "user".id = announcements.instructor_id 
+      AND "user".id = auth.uid()
+      AND "user".role = 'instructor'
     )
   );
 
 CREATE POLICY "Instructors can delete own announcements" ON announcements
   FOR DELETE USING (
     EXISTS (
-      SELECT 1 FROM user 
-      WHERE user.id = announcements.instructor_id 
-      AND user.id = auth.uid()
-      AND user.role = 'instructor'
+      SELECT 1 FROM "user" 
+      WHERE "user".id = announcements.instructor_id 
+      AND "user".id = auth.uid()
+      AND "user".role = 'instructor'
     )
   );
 
@@ -55,10 +55,10 @@ CREATE POLICY "Instructors can delete own announcements" ON announcements
 CREATE POLICY "Instructors can view own announcements" ON announcements
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM user 
-      WHERE user.id = announcements.instructor_id 
-      AND user.id = auth.uid()
-      AND user.role = 'instructor'
+      SELECT 1 FROM "user" 
+      WHERE "user".id = announcements.instructor_id 
+      AND "user".id = auth.uid()
+      AND "user".role = 'instructor'
     )
   );
 
