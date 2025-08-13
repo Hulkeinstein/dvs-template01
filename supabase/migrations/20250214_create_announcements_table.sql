@@ -90,4 +90,3 @@ CREATE TRIGGER update_announcements_updated_at_trigger
 
 -- Grant permissions
 GRANT ALL ON announcements TO authenticated;
-GRANT USAGE ON SEQUENCE announcements_id_seq TO authenticated;
