@@ -35,11 +35,11 @@ export async function createAnnouncement(data) {
       };
     }
 
-    // If course_id is provided, verify ownership
+    // If course_id is provided, verify ownership and status
     if (data.course_id) {
       const { data: courseCheck } = await supabase
         .from('courses')
-        .select('instructor_id')
+        .select('instructor_id, status')
         .eq('id', data.course_id)
         .single();
 
@@ -48,6 +48,13 @@ export async function createAnnouncement(data) {
           success: false,
           error:
             'You do not have permission to create announcements for this course',
+        };
+      }
+
+      if (courseCheck.status !== 'published') {
+        return {
+          success: false,
+          error: 'Announcements can only be created for published courses',
         };
       }
     }
@@ -251,11 +258,12 @@ export async function getInstructorAnnouncements() {
       return { success: false, error: 'Failed to fetch announcements' };
     }
 
-    // Get instructor's courses for the filter dropdown
+    // Get instructor's published courses for the filter dropdown
     const { data: courses } = await supabase
       .from('courses')
-      .select('id, title')
+      .select('id, title, status')
       .eq('instructor_id', userData.id)
+      .eq('status', 'published')
       .order('title');
 
     return {
@@ -323,11 +331,12 @@ export async function getStudentAnnouncements() {
       return { success: false, error: 'Failed to fetch announcements' };
     }
 
-    // Get enrolled courses for filter
+    // Get enrolled courses for filter (only published courses)
     const { data: courses } = await supabase
       .from('courses')
-      .select('id, title')
+      .select('id, title, status')
       .in('id', courseIds)
+      .eq('status', 'published')
       .order('title');
 
     return {
