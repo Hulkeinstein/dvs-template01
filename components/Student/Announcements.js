@@ -1,42 +1,136 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Select, { components } from 'react-select';
+import { getStudentAnnouncements } from '@/app/lib/actions/announcementActions';
 
 const Announcement = () => {
   const components = { ValueContainer, MultiValue };
-  const [course, setCourses] = useState({ value: '', label: '' });
-  const [sortBy, setSortBy] = useState({ value: 'Default', label: 'Default' });
-  const [sortByOffer, setSortByOffer] = useState({
-    value: 'Free',
-    label: 'Free',
+  const [announcements, setAnnouncements] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Filter states
+  const [selectedCourses, setSelectedCourses] = useState([]);
+  const [sortBy, setSortBy] = useState({ value: 'latest', label: 'Latest' });
+  const [priorityFilter, setPriorityFilter] = useState({
+    value: 'all',
+    label: 'All Priorities',
   });
 
-  const courses = [
-    { value: 'Web Design HTML', label: 'Web Design HTML' },
-    { value: 'Graphic Photoshop', label: 'Graphic Photoshop' },
-    { value: 'English Career', label: 'English Career' },
-    { value: 'Spoken English Career', label: 'Spoken English Career' },
-    { value: 'Art Painting Experts', label: 'Art Painting Experts' },
-    { value: 'App Development Experts', label: 'App Development Experts' },
-    { value: 'Web Application Experts', label: 'Web Application Experts' },
-    { value: 'Php Development Experts', label: 'Php Development Experts' },
-  ];
-
   const sortByOptions = [
-    { value: 'Default', label: 'Default' },
-    { value: 'Latest', label: 'Latest' },
-    { value: 'Popularity', label: 'Popularity' },
-    { value: 'Trending', label: 'Trending' },
-    { value: 'Price: low to high', label: 'Price: low to high' },
-    { value: 'Price: high to low', label: 'Price: high to low' },
+    { value: 'latest', label: 'Latest' },
+    { value: 'oldest', label: 'Oldest' },
+    { value: 'priority', label: 'Priority' },
+    { value: 'title', label: 'Title (A-Z)' },
   ];
 
-  const sortByOffers = [
-    { value: 'Free', label: 'Free' },
-    { value: 'Paid', label: 'Paid' },
-    { value: 'Premium', label: 'Premium' },
+  const priorityOptions = [
+    { value: 'all', label: 'All Priorities' },
+    { value: 'urgent', label: 'Urgent Only' },
+    { value: 'important', label: 'Important & Urgent' },
   ];
+
+  // Load announcements
+  const loadAnnouncements = async () => {
+    setLoading(true);
+    try {
+      const result = await getStudentAnnouncements();
+      if (result.success) {
+        setAnnouncements(result.announcements);
+        // Format courses for Select component
+        const formattedCourses = result.courses.map((course) => ({
+          value: course.id,
+          label: course.title,
+        }));
+        setCourses(formattedCourses);
+      }
+    } catch (error) {
+      console.error('Error loading announcements:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAnnouncements();
+  }, []);
+
+  // Filter and sort announcements
+  const getFilteredAnnouncements = () => {
+    let filtered = [...announcements];
+
+    // Filter by courses
+    if (selectedCourses.length > 0) {
+      const selectedCourseIds = selectedCourses.map((c) => c.value);
+      filtered = filtered.filter(
+        (a) => a.course_id && selectedCourseIds.includes(a.course_id)
+      );
+    }
+
+    // Filter by priority
+    if (priorityFilter.value === 'urgent') {
+      filtered = filtered.filter((a) => a.priority === 'urgent');
+    } else if (priorityFilter.value === 'important') {
+      filtered = filtered.filter(
+        (a) => a.priority === 'urgent' || a.priority === 'important'
+      );
+    }
+
+    // Sort
+    switch (sortBy.value) {
+      case 'oldest':
+        filtered.sort(
+          (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        );
+        break;
+      case 'priority':
+        const priorityOrder = { urgent: 0, important: 1, normal: 2 };
+        filtered.sort(
+          (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
+        );
+        break;
+      case 'title':
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case 'latest':
+      default:
+        filtered.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+    }
+
+    return filtered;
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return {
+      date: date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+      }),
+      time: date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      }),
+    };
+  };
+
+  // Get priority badge
+  const getPriorityBadge = (priority) => {
+    const badges = {
+      urgent: <span className="badge bg-danger">Urgent</span>,
+      important: <span className="badge bg-warning">Important</span>,
+      normal: <span className="badge bg-info">Normal</span>,
+    };
+    return badges[priority] || null;
+  };
+
+  const filteredAnnouncements = getFilteredAnnouncements();
 
   return (
     <>
@@ -48,25 +142,16 @@ const Announcement = () => {
 
           <div className="rbt-callto-action rbt-cta-default style-2">
             <div className="content-wrapper overflow-hidden pt--30 pb--30 bg-color-primary-opacity">
-              <div className="row gy-5 align-items-end">
-                <div className="col-lg-8">
+              <div className="row gy-5 align-items-center">
+                <div className="col-lg-12">
                   <div className="inner">
-                    <div className="content text-left">
-                      <h5 className="mb--5">Notify your all students.</h5>
-                      <p className="b3">Create Announcement</p>
+                    <div className="content text-center">
+                      <h5 className="mb--5">Course Announcements</h5>
+                      <p className="b3">
+                        Stay updated with the latest announcements from your
+                        courses
+                      </p>
                     </div>
-                  </div>
-                </div>
-                <div className="col-lg-4">
-                  <div className="call-to-btn text-start text-lg-end position-relative">
-                    <a
-                      className="rbt-btn btn-sm rbt-switch-btn rbt-switch-y"
-                      href="#"
-                    >
-                      <span data-text="Add New Announcement">
-                        Add New Announcement
-                      </span>
-                    </a>
                   </div>
                 </div>
               </div>
@@ -82,23 +167,24 @@ const Announcement = () => {
                     instanceId="sortByAuthor"
                     className="react-select"
                     classNamePrefix="react-select"
-                    defaultValue={course}
-                    onChange={setCourses}
+                    value={selectedCourses}
+                    onChange={setSelectedCourses}
                     options={courses}
-                    closeMenuOnSelect={true}
+                    closeMenuOnSelect={false}
                     isMulti
                     components={components}
+                    placeholder="All Courses"
                   />
                 </div>
               </div>
               <div className="col-lg-3">
                 <div className="filter-select rbt-modern-select">
-                  <span className="select-label d-block">Short By</span>
+                  <span className="select-label d-block">Sort By</span>
                   <Select
                     instanceId="sortBySelect"
                     className="react-select"
                     classNamePrefix="react-select"
-                    defaultValue={sortBy}
+                    value={sortBy}
                     onChange={setSortBy}
                     options={sortByOptions}
                   />
@@ -106,14 +192,14 @@ const Announcement = () => {
               </div>
               <div className="col-lg-3">
                 <div className="filter-select rbt-modern-select">
-                  <span className="select-label d-block">Short By Offer</span>
+                  <span className="select-label d-block">Priority Filter</span>
                   <Select
-                    instanceId="sortBySelect"
+                    instanceId="prioritySelect"
                     className="react-select"
                     classNamePrefix="react-select"
-                    defaultValue={sortByOffer}
-                    onChange={setSortByOffer}
-                    options={sortByOffers}
+                    value={priorityFilter}
+                    onChange={setPriorityFilter}
+                    options={priorityOptions}
                   />
                 </div>
               </div>
@@ -122,99 +208,66 @@ const Announcement = () => {
 
           <hr className="mt--30" />
 
-          <div className="rbt-dashboard-table table-responsive mobile-table-750 mt--30">
-            <table className="rbt-table table table-borderless">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Announcements</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th>
-                    <span className="h6 mb--5">March 16, 2022</span>
-                    <p className="b3">10.00am</p>
-                  </th>
-                  <td>
-                    <span className="h6 mb--5">Announcement Title</span>
-                    <p className="b3">Course: Fundamentals 101</p>
-                  </td>
-                  <td>
-                    <div className="rbt-button-group justify-content-end">
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-edit"></i> Edit
-                      </a>
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-trash-2"></i> Delete
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <span className="h6 mb--5">Janu 16, 2022</span>
-                    <p className="b3">12.00am</p>
-                  </th>
-                  <td>
-                    <span className="h6 mb--5">Web Design</span>
-                    <p className="b3">Course: Web Design</p>
-                  </td>
-                  <td>
-                    <div className="rbt-button-group justify-content-end">
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-edit"></i> Edit
-                      </a>
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-trash-2"></i> Delete
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <span className="h6 mb--5">Janu 16, 2022</span>
-                    <p className="b3">12.00am</p>
-                  </th>
-                  <td>
-                    <span className="h6 mb--5">App Development</span>
-                    <p className="b3">Course: App Development</p>
-                  </td>
-                  <td>
-                    <div className="rbt-button-group justify-content-end">
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-edit"></i> Edit
-                      </a>
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-trash-2"></i> Delete
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <span className="h6 mb--5">Janu 16, 2022</span>
-                    <p className="b3">12.00am</p>
-                  </th>
-                  <td>
-                    <span className="h6 mb--5">Announcement Title</span>
-                    <p className="b3">Course: Web Design</p>
-                  </td>
-                  <td>
-                    <div className="rbt-button-group justify-content-end">
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-edit"></i> Edit
-                      </a>
-                      <a className="rbt-btn-link left-icon" href="#">
-                        <i className="feather-trash-2"></i> Delete
-                      </a>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : (
+            <div className="rbt-dashboard-table table-responsive mobile-table-750 mt--30">
+              <table className="rbt-table table table-borderless">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Announcements</th>
+                    <th>Priority</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAnnouncements.length === 0 ? (
+                    <tr>
+                      <td colSpan="3" className="text-center py-4">
+                        No announcements available for your enrolled courses.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredAnnouncements.map((announcement) => {
+                      const dateInfo = formatDate(announcement.created_at);
+                      return (
+                        <tr key={announcement.id}>
+                          <th>
+                            <span className="h6 mb--5">{dateInfo.date}</span>
+                            <p className="b3">{dateInfo.time}</p>
+                          </th>
+                          <td>
+                            <span className="h6 mb--5">
+                              {announcement.title}
+                            </span>
+                            <p className="b3">
+                              Course:{' '}
+                              {announcement.courses?.title ||
+                                'General Announcement'}
+                            </p>
+                            {/* Display content preview */}
+                            <div
+                              className="text-muted small mt-2"
+                              dangerouslySetInnerHTML={{
+                                __html:
+                                  announcement.content?.substring(0, 150) +
+                                  '...',
+                              }}
+                            />
+                          </td>
+                          <td>{getPriorityBadge(announcement.priority)}</td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </>
