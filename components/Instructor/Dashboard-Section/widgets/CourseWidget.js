@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { updateCourseStatus } from '@/app/lib/actions/courseActions';
+import CourseBadges from '@/components/Common/CourseBadges';
 
 const CourseWidget = ({
   data,
@@ -161,17 +162,29 @@ const CourseWidget = ({
               src={data.courseThumbnail}
               alt={data.title}
             />
+            {/* Multiple badges display */}
+            {data.badges && data.badges.length > 0 && (
+              <CourseBadges
+                badges={data.badges}
+                maxDisplay={4}
+                size="sm"
+                className="badges-card"
+                showTooltip={true}
+              />
+            )}
             {data.status === 'unpublished' && (
               <div className="rbt-badge-3 bg-dark">
                 <span>Unpublished</span>
               </div>
             )}
-            {data.status !== 'unpublished' && discountPercentage > 0 && (
-              <div className="rbt-badge-3 bg-white">
-                <span>{`-${discountPercentage}%`}</span>
-                <span>Off</span>
-              </div>
-            )}
+            {data.status !== 'unpublished' &&
+              discountPercentage > 0 &&
+              !data.badges?.some((b) => b.type === 'sale') && (
+                <div className="rbt-badge-3 bg-white">
+                  <span>{`-${discountPercentage}%`}</span>
+                  <span>Off</span>
+                </div>
+              )}
           </Link>
         </div>
         <div className="rbt-card-body">

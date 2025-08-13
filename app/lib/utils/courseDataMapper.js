@@ -82,7 +82,7 @@ export function mapFormDataToDB(formData) {
 export function mapDBToFormData(courseData) {
   if (DEBUG_MODE) {
     console.group('🔄 [CourseDataMapper] DB → FormData Conversion');
-    console.log('Input DB Data:', courseData);
+    // console.log('Input DB Data:', courseData);
   }
 
   const formData = {
@@ -139,7 +139,7 @@ export function mapDBToFormData(courseData) {
   };
 
   if (DEBUG_MODE) {
-    console.log('Output FormData:', formData);
+    // console.log('Output FormData:', formData);
     console.groupEnd();
   }
 
@@ -183,7 +183,7 @@ export function logUnmappedFields(formData, dbData) {
   });
 
   if (unmappedFields.length > 0) {
-    console.warn('[CourseDataMapper] Unmapped fields:', unmappedFields);
+    // console.warn('[CourseDataMapper] Unmapped fields:', unmappedFields);
   }
 }
 
@@ -207,10 +207,10 @@ export function testCourseDataMapping() {
   };
 
   console.group('🧪 Course Data Mapping Test');
-  console.log('1️⃣ Original FormData:', testData);
+  // console.log('1️⃣ Original FormData:', testData);
 
   const dbData = mapFormDataToDB(testData);
-  console.log('2️⃣ Converted to DB:', dbData);
+  // console.log('2️⃣ Converted to DB:', dbData);
 
   const backToForm = mapDBToFormData({
     ...dbData,
@@ -221,16 +221,14 @@ export function testCourseDataMapping() {
       },
     ],
   });
-  console.log('3️⃣ Converted back to Form:', backToForm);
+  // console.log('3️⃣ Converted back to Form:', backToForm);
 
-  console.log('✅ Test complete! Check if all fields mapped correctly.');
+  // console.log('✅ Test complete! Check if all fields mapped correctly.');
   console.groupEnd();
 }
 
 // 개발 모드에서 전역 함수로 제공
 if (typeof window !== 'undefined' && DEBUG_MODE) {
   window.testCourseDataMapping = testCourseDataMapping;
-  console.log(
-    '💡 Course data mapping test available: window.testCourseDataMapping()'
-  );
+  // console.log('💡 Course data mapping test available: window.testCourseDataMapping()');
 }

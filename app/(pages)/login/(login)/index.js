@@ -1,5 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import BreadCrumb from '@/components/Common/BreadCrumb';
 import FooterOne from '@/components/Footer/Footer-One';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
@@ -13,6 +16,32 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 const LoginPage = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    // 로딩 중일 때는 아무것도 하지 않음
+    if (status === 'loading') return;
+
+    // 이미 로그인된 경우 홈페이지로 리다이렉트
+    if (session) {
+      router.push('/');
+    }
+  }, [session, status, router]);
+
+  // 로딩 중이거나 로그인된 경우 로딩 표시
+  if (status === 'loading' || session) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: '100vh' }}
+      >
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       <Provider store={Store}>

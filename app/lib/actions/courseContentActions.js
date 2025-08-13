@@ -11,6 +11,11 @@ import {
   updateQuizLesson,
   deleteQuizLesson,
 } from './quizActions';
+import {
+  createAssignmentLesson,
+  updateAssignmentLesson,
+  deleteAssignmentLesson,
+} from './assignmentActions';
 
 // Save complete course content (topics, lessons, quizzes)
 export async function saveCourseContent(courseId, topics) {
@@ -136,6 +141,7 @@ export async function saveCourseContent(courseId, topics) {
               is_preview: lesson.enablePreview,
               sort_order: j,
               attachments: lesson.attachments,
+              thumbnail_url: lesson.thumbnail,
             });
           } else {
             // Update existing lesson
@@ -148,6 +154,7 @@ export async function saveCourseContent(courseId, topics) {
               is_preview: lesson.enablePreview,
               sort_order: j,
               attachments: lesson.attachments,
+              thumbnail_url: lesson.thumbnail,
             });
           }
         }
@@ -203,6 +210,44 @@ export async function saveCourseContent(courseId, topics) {
           }
         }
       }
+
+      // Process assignments for this topic
+      if (topic.assignments && topic.assignments.length > 0) {
+        const existingAssignments =
+          existingTopics
+            ?.find((t) => t.id === topic.id)
+            ?.lessons?.filter((l) => l.content_type === 'assignment') || [];
+        const existingAssignmentIds = existingAssignments.map((a) => a.id);
+        const newAssignmentIds = topic.assignments
+          .filter((a) => !a.id.toString().startsWith('temp_'))
+          .map((a) => a.id);
+
+        // Delete assignments that are no longer in the list
+        const assignmentsToDelete = existingAssignmentIds.filter(
+          (id) => !newAssignmentIds.includes(id)
+        );
+        for (const assignmentId of assignmentsToDelete) {
+          await deleteAssignmentLesson(assignmentId);
+        }
+
+        // Create or update assignments
+        for (let m = 0; m < topic.assignments.length; m++) {
+          const assignment = topic.assignments[m];
+          const assignmentOrder =
+            (topic.lessons?.length || 0) + (topic.quizzes?.length || 0) + m;
+
+          if (
+            assignment.id.toString().startsWith('temp_') ||
+            typeof assignment.id === 'number'
+          ) {
+            // Create new assignment
+            await createAssignmentLesson(courseId, topicId, assignment);
+          } else {
+            // Update existing assignment
+            await updateAssignmentLesson(assignment.id, assignment);
+          }
+        }
+      }
     }
 
     revalidatePath(`/instructor/courses/${courseId}/edit`);
@@ -250,6 +295,7 @@ export async function syncCourseContent(courseId, changes) {
       topics: { created: 0, updated: 0, deleted: 0 },
       lessons: { created: 0, updated: 0, deleted: 0 },
       quizzes: { created: 0, updated: 0, deleted: 0 },
+      assignments: { created: 0, updated: 0, deleted: 0 },
     };
 
     // Handle topic changes
@@ -307,6 +353,28 @@ export async function syncCourseContent(courseId, changes) {
       for (const quizId of changes.quizzes.deleted || []) {
         const result = await deleteQuizLesson(quizId);
         if (result.success) results.quizzes.deleted++;
+      }
+    }
+
+    // Handle assignment changes
+    if (changes.assignments) {
+      for (const change of changes.assignments.created || []) {
+        const result = await createAssignmentLesson(
+          change.courseId,
+          change.topicId,
+          change
+        );
+        if (result.success) results.assignments.created++;
+      }
+
+      for (const change of changes.assignments.updated || []) {
+        const result = await updateAssignmentLesson(change.id, change);
+        if (result.success) results.assignments.updated++;
+      }
+
+      for (const assignmentId of changes.assignments.deleted || []) {
+        const result = await deleteAssignmentLesson(assignmentId);
+        if (result.success) results.assignments.deleted++;
       }
     }
 

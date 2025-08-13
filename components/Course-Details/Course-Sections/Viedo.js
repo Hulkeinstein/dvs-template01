@@ -77,7 +77,10 @@ const Viedo = ({ checkMatchCourses }) => {
             hideOnScroll ? 'd-none' : ''
           }`}
           data-vbtype="video"
-          href="https://www.youtube.com/watch?v=nA1Aqp0sPQo"
+          href={
+            checkMatchCourses.previewVideoUrl ||
+            'https://www.youtube.com/watch?v=nA1Aqp0sPQo'
+          }
         >
           <div className="video-content">
             {checkMatchCourses.courseImg && (
@@ -111,7 +114,14 @@ const Viedo = ({ checkMatchCourses }) => {
           <div className="plyr__video-embed rbtplayer">
             <iframe
               className="radius-6 overflow-hidden"
-              src="https://www.youtube.com/embed/DR9lxZ8kPYQ?autoplay=0&controls=0&disablekb=1&playsinline=0&cc_load_policy=0&cc_lang_pref=auto&widget_referrer=http%3A%2F%2Flocalhost%3A3001%2Fcourse-details-3.html&rel=0&showinfo=0&iv_load_policy=3&modestbranding=1&customControls=true&noCookie=false&enablejsapi=1&origin=http%3A%2F%2Flocalhost%3A3001&widgetid=1"
+              src={
+                checkMatchCourses.previewVideoUrl
+                  ? checkMatchCourses.previewVideoUrl
+                      .replace('watch?v=', 'embed/')
+                      .replace('youtu.be/', 'youtube.com/embed/') +
+                    '?autoplay=0&controls=1&rel=0&modestbranding=1'
+                  : 'https://www.youtube.com/embed/DR9lxZ8kPYQ?autoplay=0&controls=1&rel=0&modestbranding=1'
+              }
               allowFullScreen
               width={355}
               height={200}

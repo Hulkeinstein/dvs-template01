@@ -1236,7 +1236,7 @@ const Question = ({
                     <span style={{ minWidth: '150px' }}>{leftItem.text}</span>
                     <i className="feather-arrow-right"></i>
                     <select
-                      className="form-select"
+                      className="form-select form-select-lg"
                       value={(currentQuestion.matchingPairs && currentQuestion.matchingPairs.correctMatches && currentQuestion.matchingPairs.correctMatches[leftItem.id]) || ''}
                       onChange={(e) => {
                         const updatedMatches = {
@@ -1288,11 +1288,11 @@ const Question = ({
                   onChange={(e) => setCurrentQuestion({ ...currentQuestion, question: e.target.value })}
                 />
                 <button 
-                  className="rbt-btn btn-sm btn-primary" 
+                  className="rbt-btn btn-sm btn-primary d-flex align-items-center text-nowrap" 
                   type="button"
                   onClick={addBlank}
                 >
-                  <i className="feather-plus"></i> Add Blank
+                  <i className="feather-plus me-1"></i> Add Blank
                 </button>
               </div>
             </div>

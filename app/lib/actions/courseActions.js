@@ -4,6 +4,7 @@ import { supabase } from '@/app/lib/supabase/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { revalidatePath } from 'next/cache';
+import { BADGE_CONFIG } from '@/app/lib/constants/badgeConfig';
 import {
   mapFormDataToDB,
   mapFormDataToSettings,
@@ -332,16 +333,42 @@ export async function updateCourse(courseId, formData) {
                 course_id: courseId,
                 topic_id: null,
                 title: lesson.title,
-                description: lesson.description || '',
+                description: lesson.description || lesson.summary || '',
                 video_url: lesson.videoUrl || '',
                 video_source: lesson.videoSource || 'youtube',
                 duration_minutes:
                   typeof lesson.duration === 'number' ? lesson.duration : 0,
                 sort_order: lessonIndex + 1,
                 is_preview: lesson.enablePreview || false,
-                content_type: 'video',
+                content_type: lesson.content_type || 'video',
                 thumbnail_url: lesson.thumbnail || null,
                 attachments: lesson.attachments || [],
+                // Add content_data for quiz and assignment types
+                ...(lesson.content_type === 'quiz' && lesson.questions
+                  ? {
+                      content_data: {
+                        questions: lesson.questions,
+                        settings: lesson.settings || {},
+                        metadata: lesson.metadata || {},
+                      },
+                    }
+                  : {}),
+                ...(lesson.content_type === 'assignment'
+                  ? {
+                      content_data: {
+                        summary: lesson.summary || '',
+                        timeLimit: lesson.timeLimit || {
+                          value: 0,
+                          unit: 'weeks',
+                        },
+                        totalPoints: lesson.totalPoints || 100,
+                        passingPoints: lesson.passingPoints || 70,
+                        maxUploads: lesson.maxUploads || 1,
+                        maxFileSize: lesson.maxFileSize || 10,
+                        attachments: lesson.attachments || [],
+                      },
+                    }
+                  : {}),
               };
 
               console.log('Lesson data to insert:', lessonData);
@@ -399,16 +426,42 @@ export async function updateCourse(courseId, formData) {
               course_id: courseId,
               topic_id: topicData.id,
               title: lesson.title,
-              description: lesson.description || '',
+              description: lesson.description || lesson.summary || '',
               video_url: lesson.videoUrl || '',
               video_source: lesson.videoSource || 'youtube',
               duration_minutes:
                 typeof lesson.duration === 'number' ? lesson.duration : 0,
               sort_order: lessonIndex,
               is_preview: lesson.enablePreview || false,
-              content_type: 'video',
+              content_type: lesson.content_type || 'video',
               thumbnail_url: lesson.thumbnail || null,
               attachments: lesson.attachments || [],
+              // Add content_data for quiz and assignment types
+              ...(lesson.content_type === 'quiz' && lesson.questions
+                ? {
+                    content_data: {
+                      questions: lesson.questions,
+                      settings: lesson.settings || {},
+                      metadata: lesson.metadata || {},
+                    },
+                  }
+                : {}),
+              ...(lesson.content_type === 'assignment'
+                ? {
+                    content_data: {
+                      summary: lesson.summary || '',
+                      timeLimit: lesson.timeLimit || {
+                        value: 0,
+                        unit: 'weeks',
+                      },
+                      totalPoints: lesson.totalPoints || 100,
+                      passingPoints: lesson.passingPoints || 70,
+                      maxUploads: lesson.maxUploads || 1,
+                      maxFileSize: lesson.maxFileSize || 10,
+                      attachments: lesson.attachments || [],
+                    },
+                  }
+                : {}),
             };
 
             console.log('Lesson data to insert:', lessonData);
@@ -644,14 +697,13 @@ export async function getInstructorCourses() {
       return { error: 'User not found' };
     }
 
-    console.log('Fetching courses for instructor:', userData.id);
-
     const { data: courses, error } = await supabase
       .from('courses')
       .select(
         `
         *,
         course_settings (*),
+        course_badges (*),
         lessons (count),
         enrollments (count)
       `
@@ -684,7 +736,29 @@ export async function getInstructorCourses() {
       };
     }
 
-    return { courses: courses || [] };
+    // Process badges for each course
+    const coursesWithBadges =
+      courses?.map((course) => {
+        try {
+          if (course.course_badges && Array.isArray(course.course_badges)) {
+            course.badges = course.course_badges
+              .sort((a, b) => a.priority - b.priority)
+              .map((badge) => ({
+                ...badge,
+                ...(BADGE_CONFIG[badge.badge_type] || {}),
+                type: badge.badge_type,
+              }));
+          } else {
+            course.badges = [];
+          }
+        } catch (error) {
+          console.warn('Badge processing failed for course:', course.id, error);
+          course.badges = [];
+        }
+        return course;
+      }) || [];
+
+    return { courses: coursesWithBadges };
   } catch (error) {
     console.error('Unexpected error:', error);
     return { error: 'An unexpected error occurred' };
@@ -692,6 +766,8 @@ export async function getInstructorCourses() {
 }
 
 // Get single course details
+// 서버는 통합 lessons 배열만 반환 - 순서/일관성 보장과 타입 추가 시 비용 최소화를 위해
+// content_type으로 구분되며, 클라이언트에서 필요시 필터링
 export async function getCourseById(courseId) {
   try {
     console.log('getCourseById called with ID:', courseId);
@@ -702,7 +778,8 @@ export async function getCourseById(courseId) {
       .select(
         `
         *,
-        course_settings (*)
+        course_settings (*),
+        course_badges (*)
       `
       )
       .eq('id', courseId)
@@ -742,6 +819,24 @@ export async function getCourseById(courseId) {
         // instructor 정보가 없어도 코스는 반환
         course.instructor = null;
       }
+    }
+
+    // 3. 배지 데이터 처리 (badge configuration 추가)
+    try {
+      if (course.course_badges && Array.isArray(course.course_badges)) {
+        course.badges = course.course_badges
+          .sort((a, b) => a.priority - b.priority)
+          .map((badge) => ({
+            ...badge,
+            ...(BADGE_CONFIG[badge.badge_type] || {}),
+            type: badge.badge_type,
+          }));
+      } else {
+        course.badges = [];
+      }
+    } catch (error) {
+      console.warn('Badge processing failed in getCourseById:', error);
+      course.badges = [];
     }
 
     console.log('Course found:', course.id, course.title);

@@ -1,0 +1,332 @@
+/*------------------------
+    Course Badges System
+--------------------------*/
+
+// 원본 스타일 타원형 배지 (코스 상세 페이지용)
+.rbt-badge-2 {
+  .badge-emoji-item {
+    font-size: 20px;
+    margin: 0 4px;
+    display: inline-block;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    
+    &:first-child {
+      margin-left: 0;
+    }
+    
+    &:last-child {
+      margin-right: 0;
+    }
+    
+    // 호버 효과
+    &:hover {
+      transform: scale(1.2);
+    }
+    
+    // 배지 타입별 호버 색상
+    &.badge-bestseller:hover {
+      filter: drop-shadow(0 0 10px #f39c12);
+    }
+    
+    &.badge-hot:hover {
+      filter: drop-shadow(0 0 10px #e74c3c);
+    }
+    
+    &.badge-new:hover {
+      filter: drop-shadow(0 0 10px #3498db);
+    }
+    
+    &.badge-featured:hover {
+      filter: drop-shadow(0 0 10px #9b59b6);
+    }
+    
+    &.badge-sale:hover {
+      filter: drop-shadow(0 0 10px #27ae60);
+    }
+    
+    &.badge-limited:hover {
+      filter: drop-shadow(0 0 10px #e67e22);
+    }
+    
+    &.badge-certified:hover {
+      filter: drop-shadow(0 0 10px #2c3e50);
+    }
+  }
+}
+
+.course-badges-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  
+  // In course cards
+  &.badges-card {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+    gap: 6px;
+  }
+  
+  // In course details page
+  &.badges-detail {
+    margin-left: 15px;
+    vertical-align: middle;
+    gap: 10px;
+  }
+}
+
+.rbt-badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  font-size: 14px;
+  
+  // Sizes - 이모지 크기 증가
+  &.badge-icon-sm {
+    width: auto;
+    height: auto;
+    font-size: 20px;
+    
+    .badge-emoji {
+      font-size: 20px;
+    }
+  }
+  
+  &.badge-icon-md {
+    width: auto;
+    height: auto;
+    font-size: 24px;
+    
+    .badge-emoji {
+      font-size: 24px;
+    }
+  }
+  
+  &.badge-icon-lg {
+    width: auto;
+    height: auto;
+    font-size: 28px;
+    
+    .badge-emoji {
+      font-size: 28px;
+    }
+  }
+  
+  // Hover effect
+  &:hover {
+    transform: scale(1.15);
+  }
+  
+  // Badge emoji container
+  .badge-emoji {
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  // Special badge types - no background, just animations
+  &.badge-bestseller {
+    // Golden glow effect on hover
+    &:hover {
+      filter: drop-shadow(0 0 8px #f39c12);
+    }
+  }
+  
+  &.badge-hot {
+    animation: pulse 2s infinite;
+  }
+  
+  &.badge-new {
+    // Sparkle effect on hover
+    &:hover {
+      filter: drop-shadow(0 0 8px #3498db);
+    }
+  }
+  
+  &.badge-featured {
+    // Purple glow on hover
+    &:hover {
+      filter: drop-shadow(0 0 8px #9b59b6);
+    }
+  }
+  
+  &.badge-limited {
+    animation: shake 0.5s infinite;
+  }
+  
+  &.badge-sale {
+    // Green glow on hover
+    &:hover {
+      filter: drop-shadow(0 0 8px #27ae60);
+    }
+  }
+  
+  &.badge-certified {
+    // Dark glow on hover
+    &:hover {
+      filter: drop-shadow(0 0 8px #2c3e50);
+    }
+  }
+  
+  // More badge indicator
+  &.badge-more {
+    background: rgba(108, 117, 125, 0.9);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(231, 76, 60, 0.6));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px rgba(231, 76, 60, 0.8));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(231, 76, 60, 0.6));
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+// Tooltip styling for badges
+.tooltip {
+  &.show {
+    opacity: 1;
+  }
+  
+  .tooltip-inner {
+    background-color: var(--color-heading);
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    max-width: 200px;
+  }
+  
+  .tooltip-arrow {
+    &::before {
+      border-top-color: var(--color-heading);
+    }
+  }
+}
+
+// Responsive adjustments
+@media #{$sm-layout} {
+  .course-badges-container {
+    gap: 6px;
+    
+    &.badges-card {
+      top: 10px;
+      left: 10px;
+    }
+  }
+  
+  .rbt-badge-icon {
+    // 모바일에서는 조금 작게
+    &.badge-icon-sm {
+      font-size: 18px;
+      
+      .badge-emoji {
+        font-size: 18px;
+      }
+    }
+    
+    &.badge-icon-md {
+      font-size: 20px;
+      
+      .badge-emoji {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+// Dark mode support
+.dark-mode {
+  .rbt-badge-icon {
+    background: transparent;
+    
+    // Brighter glow effects in dark mode
+    &.badge-bestseller:hover {
+      filter: drop-shadow(0 0 10px #f39c12);
+    }
+    
+    &.badge-hot {
+      filter: drop-shadow(0 0 6px rgba(231, 76, 60, 0.8));
+    }
+    
+    &.badge-new:hover {
+      filter: drop-shadow(0 0 10px #3498db);
+    }
+    
+    &.badge-featured:hover {
+      filter: drop-shadow(0 0 10px #9b59b6);
+    }
+    
+    &.badge-sale:hover {
+      filter: drop-shadow(0 0 10px #27ae60);
+    }
+    
+    &.badge-more {
+      background: rgba(200, 200, 200, 0.9);
+      color: var(--color-heading);
+    }
+  }
+}
+
+// Badge management dashboard styles
+.badge-info-card {
+  padding: 20px;
+  background: var(--color-gray-light);
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .badge-icon {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--color-heading);
+  }
+  
+  small {
+    color: var(--color-body);
+    font-size: 12px;
+  }
+}

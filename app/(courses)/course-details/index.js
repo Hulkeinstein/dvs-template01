@@ -34,13 +34,6 @@ const SingleCourse = ({ getParams }) => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        console.log('Fetching course:', {
-          courseId,
-          isPreview,
-          sessionStatus,
-          userEmail: session?.user?.email,
-        });
-
         // Use factory to get appropriate provider and fetch course
         const courseData = await CourseProviderFactory.getCourse(courseId, {
           session,

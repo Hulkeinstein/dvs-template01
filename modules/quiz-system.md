@@ -133,6 +133,8 @@ YouTube와 Vimeo 영상을 편집 중에는 placeholder로 표시하고, 저장 
 
 ## 알려진 이슈 및 해결책
 
+> 최신 버그 및 이슈는 [GitHub Issues](https://github.com/Hulkeinstein/dvs-template01/issues)를 참고하세요.
+
 ### Zod 버전 이슈
 - **문제**: Zod v4.0.14에서 "_zod" 에러 발생
 - **해결**: v3.25.76으로 다운그레이드

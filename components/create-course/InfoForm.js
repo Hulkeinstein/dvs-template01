@@ -12,10 +12,7 @@ import {
 import img from '../../public/images/others/thumbnail-placeholder.svg';
 
 const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
-  console.log(
-    'InfoForm rendered with thumbnailPreview:',
-    formData.thumbnailPreview
-  );
+  // console.log('InfoForm rendered with thumbnailPreview:', formData.thumbnailPreview);
   const [thumbnailPreview, setThumbnailPreview] = useState(
     formData.thumbnailPreview || null
   );
@@ -24,10 +21,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
 
   // formData.thumbnailPreview가 변경될 때 로컬 상태 업데이트
   useEffect(() => {
-    console.log(
-      'useEffect - thumbnailPreview changed:',
-      formData.thumbnailPreview
-    );
+    // console.log('useEffect - thumbnailPreview changed:', formData.thumbnailPreview);
     if (formData.thumbnailPreview) {
       setThumbnailPreview(formData.thumbnailPreview);
     }

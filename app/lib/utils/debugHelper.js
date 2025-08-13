@@ -24,10 +24,10 @@ export const debugLog = (component, action, data) => {
   };
 
   // 콘솔에 그룹으로 로그 출력
-  console.group(`🔍 [${component}] ${action}`);
-  console.log('Time:', timestamp);
-  console.log('Data:', data);
-  console.groupEnd();
+  // console.group(`🔍 [${component}] ${action}`);
+  // console.log('Time:', timestamp);
+  // console.log('Data:', data);
+  // console.groupEnd();
 
   // 로컬 스토리지에 저장 (최근 50개만 유지)
   try {
@@ -38,7 +38,7 @@ export const debugLog = (component, action, data) => {
     if (logs.length > 50) logs.shift();
     localStorage.setItem('attachmentDebugLogs', JSON.stringify(logs));
   } catch (e) {
-    console.warn('Failed to save debug log to localStorage:', e);
+    // console.warn('Failed to save debug log to localStorage:', e);
   }
 };
 
@@ -49,12 +49,12 @@ export const debugLog = (component, action, data) => {
  * @param {Object} context - 추가 컨텍스트 정보
  */
 export const trackError = (component, error, context = {}) => {
-  console.error(`❌ [${component}] Error:`, {
-    message: error.message,
-    stack: error.stack,
-    context,
-    timestamp: new Date().toISOString(),
-  });
+  // console.error(`❌ [${component}] Error:`, {
+  //   message: error.message,
+  //   stack: error.stack,
+  //   context,
+  //   timestamp: new Date().toISOString(),
+  // });
 
   // 개발 모드에서 에러 알림
   if (DEBUG_MODE && typeof window !== 'undefined') {
@@ -70,7 +70,7 @@ export const trackError = (component, error, context = {}) => {
         })
       );
     } catch (e) {
-      console.warn('Failed to save error to localStorage:', e);
+      // console.warn('Failed to save error to localStorage:', e);
     }
   }
 };
@@ -85,15 +85,15 @@ export const printDebugInfo = () => {
     const logs = JSON.parse(
       localStorage.getItem('attachmentDebugLogs') || '[]'
     );
-    console.log('📋 Attachment Debug Logs:');
+    // console.log('📋 Attachment Debug Logs:');
     console.table(logs.slice(-10)); // 최근 10개만 표시
 
     const lastError = localStorage.getItem('lastAttachmentError');
     if (lastError) {
-      console.log('❌ Last Error:', JSON.parse(lastError));
+      // console.log('❌ Last Error:', JSON.parse(lastError));
     }
   } catch (e) {
-    console.warn('Failed to print debug info:', e);
+    // console.warn('Failed to print debug info:', e);
   }
 };
 
@@ -106,9 +106,9 @@ export const clearDebugLogs = () => {
   try {
     localStorage.removeItem('attachmentDebugLogs');
     localStorage.removeItem('lastAttachmentError');
-    console.log('✅ Debug logs cleared');
+    // console.log('✅ Debug logs cleared');
   } catch (e) {
-    console.warn('Failed to clear debug logs:', e);
+    // console.warn('Failed to clear debug logs:', e);
   }
 };
 
@@ -119,7 +119,7 @@ if (DEBUG_MODE && typeof window !== 'undefined') {
       try {
         return JSON.parse(localStorage.getItem('attachmentDebugLogs') || '[]');
       } catch (e) {
-        console.error('Failed to get logs:', e);
+        // console.error('Failed to get logs:', e);
         return [];
       }
     },
@@ -129,16 +129,16 @@ if (DEBUG_MODE && typeof window !== 'undefined') {
         const error = localStorage.getItem('lastAttachmentError');
         return error ? JSON.parse(error) : null;
       } catch (e) {
-        console.error('Failed to get last error:', e);
+        // console.error('Failed to get last error:', e);
         return null;
       }
     },
     print: printDebugInfo,
   };
 
-  console.log('💡 Attachment debug tools available: window.attachmentDebug');
-  console.log('   - .logs()      : Get all debug logs');
-  console.log('   - .clearLogs() : Clear all logs');
-  console.log('   - .lastError() : Get last error');
-  console.log('   - .print()     : Print debug info table');
+  // console.log('💡 Attachment debug tools available: window.attachmentDebug');
+  // console.log('   - .logs()      : Get all debug logs');
+  // console.log('   - .clearLogs() : Clear all logs');
+  // console.log('   - .lastError() : Get last error');
+  // console.log('   - .print()     : Print debug info table');
 }

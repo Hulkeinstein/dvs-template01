@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 const InstructorDashboardHeader = () => {
   return (
@@ -31,7 +32,10 @@ const InstructorDashboardHeader = () => {
           </div>
           <div className="rbt-tutor-information-right">
             <div className="tutor-btn">
-              <a className="rbt-btn btn-md hover-icon-reverse" href="#">
+              <Link
+                className="rbt-btn btn-md hover-icon-reverse"
+                href="/create-course"
+              >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">Create a New Course</span>
                   <span className="btn-icon">
@@ -41,7 +45,7 @@ const InstructorDashboardHeader = () => {
                     <i className="feather-arrow-right" />
                   </span>
                 </span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

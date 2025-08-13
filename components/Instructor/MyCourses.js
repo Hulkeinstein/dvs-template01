@@ -48,6 +48,7 @@ const MyCourses = () => {
     courseThumbnail: course.thumbnail_url || '/images/course/course-01.jpg',
     title: course.title,
     courseTitle: course.title,
+    badges: course.badges || [],
     shortDescription: course.description || '',
     courseShortDescription: course.description || '',
     coursePrice: course.regular_price || 0,
