@@ -293,7 +293,7 @@ export async function getStudentAnnouncements() {
     const { data: enrollments } = await supabase
       .from('enrollments')
       .select('course_id')
-      .eq('student_id', userData.id);
+      .eq('user_id', userData.id);
 
     if (!enrollments || enrollments.length === 0) {
       return { success: true, announcements: [], courses: [] };
@@ -390,7 +390,7 @@ export async function getAnnouncementById(announcementId) {
       const { data: enrollment } = await supabase
         .from('enrollments')
         .select('id')
-        .eq('student_id', userData.id)
+        .eq('user_id', userData.id)
         .eq('course_id', announcement.course_id)
         .single();
 

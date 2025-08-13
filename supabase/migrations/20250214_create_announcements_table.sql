@@ -69,7 +69,7 @@ CREATE POLICY "Students can view enrolled course announcements" ON announcements
     EXISTS (
       SELECT 1 FROM enrollments 
       WHERE enrollments.course_id = announcements.course_id 
-      AND enrollments.student_id = auth.uid()
+      AND enrollments.user_id = auth.uid()
     )
   );
 
