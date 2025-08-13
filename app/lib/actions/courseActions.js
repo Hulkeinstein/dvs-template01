@@ -697,8 +697,6 @@ export async function getInstructorCourses() {
       return { error: 'User not found' };
     }
 
-    console.log('Fetching courses for instructor:', userData.id);
-
     const { data: courses, error } = await supabase
       .from('courses')
       .select(
