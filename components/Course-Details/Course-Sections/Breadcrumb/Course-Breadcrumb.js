@@ -1,7 +1,31 @@
+'use client';
+
+import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import CourseBadges from '@/components/Common/CourseBadges';
 
 const CourseBreadcrumb = ({ getMatchCourse }) => {
+  // Initialize Bootstrap tooltips for badges
+  useEffect(() => {
+    if (typeof window !== 'undefined' && getMatchCourse?.badges?.length > 0) {
+      const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+      );
+      const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => {
+        if (window.bootstrap && window.bootstrap.Tooltip) {
+          return new window.bootstrap.Tooltip(tooltipTriggerEl);
+        }
+        return null;
+      });
+
+      return () => {
+        tooltipList.forEach((tooltip) => {
+          if (tooltip) tooltip.dispose();
+        });
+      };
+    }
+  }, [getMatchCourse?.badges]);
   return (
     <>
       <div className="col-lg-8">
@@ -23,21 +47,24 @@ const CourseBreadcrumb = ({ getMatchCourse }) => {
           <p className="description">{getMatchCourse.desc}</p>
 
           <div className="d-flex align-items-center mb--20 flex-wrap rbt-course-details-feature">
-            <div className="feature-sin best-seller-badge">
-              <span className="rbt-badge-2">
-                <span className="image">
-                  {getMatchCourse.awardImg && (
-                    <Image
-                      src={getMatchCourse.awardImg}
-                      width={30}
-                      height={30}
-                      alt="Best Seller Icon"
-                    />
-                  )}
+            {/* Display badges in original position with pill shape */}
+            {getMatchCourse.badges && getMatchCourse.badges.length > 0 && (
+              <div className="feature-sin best-seller-badge">
+                <span className="rbt-badge-2">
+                  {getMatchCourse.badges.map((badge, index) => (
+                    <span
+                      key={`${badge.type}-${index}`}
+                      className={`badge-emoji-item badge-${badge.type}`}
+                      data-bs-toggle="tooltip"
+                      data-bs-placement="top"
+                      title={badge.tooltip || badge.type}
+                    >
+                      {badge.icon}
+                    </span>
+                  ))}
                 </span>
-                {getMatchCourse.sellsType}
-              </span>
-            </div>
+              </div>
+            )}
 
             <div className="feature-sin rating">
               <Link href="#">{getMatchCourse.star}</Link>

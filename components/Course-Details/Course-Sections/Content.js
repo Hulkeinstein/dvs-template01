@@ -44,7 +44,11 @@ const Content = ({ checkMatchCourses }) => {
                         <li key={subIndex}>
                           <Link href="/lesson">
                             <div className="course-content-left">
-                              {list.playIcon ? (
+                              {list.isQuiz ? (
+                                <i className="feather-help-circle"></i>
+                              ) : list.isAssignment ? (
+                                <i className="feather-file-text"></i>
+                              ) : list.playIcon ? (
                                 <i className="feather-play-circle"></i>
                               ) : (
                                 <i className="feather-file-text"></i>
@@ -53,8 +57,25 @@ const Content = ({ checkMatchCourses }) => {
                             </div>
                             {list.status ? (
                               <div className="course-content-right">
-                                <span className="min-lable">{list.time}</span>
-                                <span className="rbt-badge variation-03 bg-primary-opacity">
+                                {list.isQuiz ? (
+                                  <span className="badge bg-primary">Quiz</span>
+                                ) : list.isAssignment ? (
+                                  <span className="badge bg-warning">
+                                    Assignment
+                                  </span>
+                                ) : (
+                                  <>
+                                    <span className="badge bg-success">
+                                      Lesson
+                                    </span>
+                                    {list.time && (
+                                      <span className="min-lable ms-2">
+                                        {list.time}
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                                <span className="rbt-badge variation-03 bg-primary-opacity ms-2">
                                   <i className="feather-eye"></i> Preview
                                 </span>
                               </div>

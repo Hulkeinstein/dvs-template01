@@ -206,7 +206,7 @@ const Lesson = ({
                         if (onUploadLesson) {
                           onUploadLesson(id, lessonId);
                         } else {
-                          console.log('레슨 업로드:', lessonId);
+  // console.log('레슨 업로드:', lessonId);
                           // 업로드 기능 구현
                         }
                       }}

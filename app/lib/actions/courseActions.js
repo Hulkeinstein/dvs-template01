@@ -4,6 +4,7 @@ import { supabase } from '@/app/lib/supabase/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { revalidatePath } from 'next/cache';
+import { BADGE_CONFIG } from '@/app/lib/constants/badgeConfig';
 import {
   mapFormDataToDB,
   mapFormDataToSettings,
@@ -704,6 +705,7 @@ export async function getInstructorCourses() {
         `
         *,
         course_settings (*),
+        course_badges (*),
         lessons (count),
         enrollments (count)
       `
@@ -736,7 +738,29 @@ export async function getInstructorCourses() {
       };
     }
 
-    return { courses: courses || [] };
+    // Process badges for each course
+    const coursesWithBadges =
+      courses?.map((course) => {
+        try {
+          if (course.course_badges && Array.isArray(course.course_badges)) {
+            course.badges = course.course_badges
+              .sort((a, b) => a.priority - b.priority)
+              .map((badge) => ({
+                ...badge,
+                ...(BADGE_CONFIG[badge.badge_type] || {}),
+                type: badge.badge_type,
+              }));
+          } else {
+            course.badges = [];
+          }
+        } catch (error) {
+          console.warn('Badge processing failed for course:', course.id, error);
+          course.badges = [];
+        }
+        return course;
+      }) || [];
+
+    return { courses: coursesWithBadges };
   } catch (error) {
     console.error('Unexpected error:', error);
     return { error: 'An unexpected error occurred' };
@@ -756,7 +780,8 @@ export async function getCourseById(courseId) {
       .select(
         `
         *,
-        course_settings (*)
+        course_settings (*),
+        course_badges (*)
       `
       )
       .eq('id', courseId)
@@ -796,6 +821,24 @@ export async function getCourseById(courseId) {
         // instructor 정보가 없어도 코스는 반환
         course.instructor = null;
       }
+    }
+
+    // 3. 배지 데이터 처리 (badge configuration 추가)
+    try {
+      if (course.course_badges && Array.isArray(course.course_badges)) {
+        course.badges = course.course_badges
+          .sort((a, b) => a.priority - b.priority)
+          .map((badge) => ({
+            ...badge,
+            ...(BADGE_CONFIG[badge.badge_type] || {}),
+            type: badge.badge_type,
+          }));
+      } else {
+        course.badges = [];
+      }
+    } catch (error) {
+      console.warn('Badge processing failed in getCourseById:', error);
+      course.badges = [];
     }
 
     console.log('Course found:', course.id, course.title);

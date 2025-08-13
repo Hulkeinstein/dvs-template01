@@ -92,17 +92,14 @@ const SingleLesson = (props) => {
                 data-bs-target={getModalTarget()}
                 onClick={() => {
                   if (onEdit) {
-                    console.log(
-                      '[SingleLesson.js] Edit clicked, passing course:',
-                      {
-                        id: props.course.id,
-                        title: props.course.title || props.course.courseTitle,
-                        content_type: props.course.content_type,
-                        hasThumbnail: !!props.course.thumbnail,
-                        hasAttachments: !!props.course.attachments,
-                        fullCourse: props.course,
-                      }
-                    );
+                    // console.log('[SingleLesson.js] Edit clicked, passing course:', {
+                    //   id: props.course.id,
+                    //   title: props.course.title || props.course.courseTitle,
+                    //   content_type: props.course.content_type,
+                    //   hasThumbnail: !!props.course.thumbnail,
+                    //   hasAttachments: !!props.course.attachments,
+                    //   fullCourse: props.course,
+                    // });
                     onEdit(props.course);
                   }
                 }}

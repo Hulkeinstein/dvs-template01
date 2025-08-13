@@ -25,7 +25,7 @@ const CreateCoursePage = ({ searchParams }) => {
     if (status === 'loading') return;
 
     if (!session) {
-      router.push('/sign-in');
+      router.push('/login');
       return;
     }
 

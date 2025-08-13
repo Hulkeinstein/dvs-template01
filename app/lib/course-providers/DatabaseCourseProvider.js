@@ -52,9 +52,77 @@ export class DatabaseCourseProvider extends CourseProvider {
   }
 
   /**
+   * Convert various YouTube URL formats to standard format
+   */
+  convertYouTubeUrl(url) {
+    if (!url) return null;
+
+    // Remove query parameters after video ID
+    let videoId = null;
+
+    // Handle youtu.be format
+    if (url.includes('youtu.be/')) {
+      videoId = url.split('youtu.be/')[1].split('?')[0];
+    }
+    // Handle youtube.com/watch format
+    else if (url.includes('youtube.com/watch')) {
+      const urlParams = new URLSearchParams(url.split('?')[1]);
+      videoId = urlParams.get('v');
+    }
+    // Handle youtube.com/embed format
+    else if (url.includes('youtube.com/embed/')) {
+      videoId = url.split('youtube.com/embed/')[1].split('?')[0];
+    }
+
+    if (videoId) {
+      return `https://www.youtube.com/watch?v=${videoId}`;
+    }
+
+    return url; // Return original if not YouTube
+  }
+
+  /**
+   * Get preview video URL from course intro video or lessons
+   */
+  getPreviewVideoUrl(rawData) {
+    // 1. First priority: Course Intro Video
+    if (rawData.intro_video_url) {
+      const convertedUrl = this.convertYouTubeUrl(rawData.intro_video_url);
+      return convertedUrl;
+    }
+
+    // 2. Second priority: Lesson marked as preview
+    if (rawData.lessons && rawData.lessons.length > 0) {
+      const previewLesson = rawData.lessons.find((lesson) => lesson.is_preview);
+      if (previewLesson && previewLesson.video_url) {
+        const convertedUrl = this.convertYouTubeUrl(previewLesson.video_url);
+        return convertedUrl;
+      }
+
+      // 3. Third priority: First video lesson
+      const firstVideoLesson = rawData.lessons.find(
+        (lesson) =>
+          lesson.video_url &&
+          (lesson.content_type === 'video' ||
+            lesson.content_type === 'lesson' ||
+            !lesson.content_type)
+      );
+      if (firstVideoLesson) {
+        const convertedUrl = this.convertYouTubeUrl(firstVideoLesson.video_url);
+        return convertedUrl;
+      }
+    }
+
+    // 4. No video found - will use default YouTube video in Viedo.js
+    return null;
+  }
+
+  /**
    * Transform database data to match component structure
    */
   transformCourse(rawData) {
+    const previewUrl = this.getPreviewVideoUrl(rawData);
+
     return {
       ...rawData,
       // Map database fields to component expected fields
@@ -84,6 +152,12 @@ export class DatabaseCourseProvider extends CourseProvider {
         : '',
       language: rawData.language || 'English',
       days: '3', // TODO: Calculate from course duration
+
+      // Include badges data for course details page
+      badges: rawData.badges || rawData.course_badges || [],
+
+      // Preview video URL - use first preview lesson or first video lesson
+      previewVideoUrl: previewUrl,
 
       // Course sections
       courseOverview: [
@@ -119,11 +193,22 @@ export class DatabaseCourseProvider extends CourseProvider {
                     expand: true,
                     listItem: rawData.lessons.map((lesson) => ({
                       text: lesson.title,
-                      time: lesson.duration_minutes
-                        ? `${lesson.duration_minutes}min`
-                        : '',
+                      time:
+                        lesson.content_type === 'quiz'
+                          ? 'Quiz'
+                          : lesson.content_type === 'assignment'
+                            ? 'Assignment'
+                            : lesson.duration_minutes
+                              ? `${lesson.duration_minutes}min`
+                              : '',
                       status: true,
-                      playIcon: true,
+                      playIcon:
+                        lesson.content_type === 'video' ||
+                        lesson.content_type === 'lesson' ||
+                        !lesson.content_type,
+                      contentType: lesson.content_type || 'video',
+                      isQuiz: lesson.content_type === 'quiz',
+                      isAssignment: lesson.content_type === 'assignment',
                     })),
                   },
                 ]

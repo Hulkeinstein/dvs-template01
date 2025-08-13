@@ -9,33 +9,33 @@ export const logger = {
   // 일반 로그 - 개발 환경에서만
   log: (...args) => {
     if (isDevelopment) {
-      console.log(...args);
+      // console.log(...args);
     }
   },
 
   // 정보 로그 - 개발 환경에서만
   info: (...args) => {
     if (isDevelopment) {
-      console.info(...args);
+      // console.info(...args);
     }
   },
 
   // 경고 - 개발 환경에서만
   warn: (...args) => {
     if (isDevelopment) {
-      console.warn(...args);
+      // console.warn(...args);
     }
   },
 
   // 에러 - 항상 출력 (Production에서도 에러는 추적해야 함)
   error: (...args) => {
-    console.error(...args);
+    // console.error(...args);
   },
 
   // 디버그 - 개발 환경에서만, 더 상세한 정보
   debug: (...args) => {
     if (isDevelopment && process.env.NEXT_PUBLIC_DEBUG === 'true') {
-      console.log('[DEBUG]', ...args);
+      // console.log('[DEBUG]', ...args);
     }
   },
 

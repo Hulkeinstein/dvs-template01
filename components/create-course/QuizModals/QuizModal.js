@@ -114,17 +114,17 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
 
   // 모달을 닫는 함수
   const closeModal = () => {
-    console.log('[closeModal] Called with modalId:', modalId);
+  // console.log('[closeModal] Called with modalId:', modalId);
     const modalElement = document.getElementById(modalId);
-    console.log('[closeModal] Modal element found:', !!modalElement);
+  // console.log('[closeModal] Modal element found:', !!modalElement);
     
     if (modalElement && window.bootstrap?.Modal) {
-      console.log('[closeModal] Bootstrap Modal available');
+  // console.log('[closeModal] Bootstrap Modal available');
       const modalInstance = window.bootstrap.Modal.getInstance(modalElement);
-      console.log('[closeModal] Existing instance:', !!modalInstance);
+  // console.log('[closeModal] Existing instance:', !!modalInstance);
       
       if (!modalInstance) {
-        console.log('[closeModal] Creating new instance');
+  // console.log('[closeModal] Creating new instance');
         new window.bootstrap.Modal(modalElement);
       }
       
@@ -143,7 +143,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
   
   // 모달 ID 확인
   useEffect(() => {
-    console.log('[QuizModal] Mounted with modalId:', modalId);
+  // console.log('[QuizModal] Mounted with modalId:', modalId);
   }, [modalId]);
 
   // 모달 닫힘 이벤트 리스너 설정
@@ -171,14 +171,14 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
   // Load editing quiz data
   useEffect(() => {
     if (editingQuiz) {
-      console.log('Loading quiz for editing:', editingQuiz);
+  // console.log('Loading quiz for editing:', editingQuiz);
       
       // 안전성 체크 - editingQuiz 객체 구조 확인
       try {
-        console.log('editingQuiz keys:', Object.keys(editingQuiz));
-        console.log('content_data type:', typeof editingQuiz.content_data);
+  // console.log('editingQuiz keys:', Object.keys(editingQuiz));
+  // console.log('content_data type:', typeof editingQuiz.content_data);
       } catch (e) {
-        console.error('Error accessing editingQuiz properties:', e);
+  // console.error('Error accessing editingQuiz properties:', e);
       }
       
       // DB에서 온 데이터인지 로컬 데이터인지 구분
@@ -867,7 +867,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                           resetModalState();
                           
                           // Close modal with proper cleanup
-                          console.log('[Save Success] Closing modal with ID:', modalId);
+  // console.log('[Save Success] Closing modal with ID:', modalId);
                           const modalElement = document.getElementById(modalId);
                           if (modalElement) {
                             // Bootstrap Modal 인스턴스 확인 및 닫기
@@ -882,7 +882,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                                   newInstance.hide();
                                 }
                               } catch (error) {
-                                console.error('[Modal Close Error]:', error);
+  // console.error('[Modal Close Error]:', error);
                                 // Fallback: data-bs-dismiss를 사용한 닫기 시뮬레이션
                                 const closeButton = modalElement.querySelector('[data-bs-dismiss="modal"]');
                                 if (closeButton) {
@@ -910,7 +910,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                               document.body.style.removeProperty('overflow');
                             }, 100);
                           } else {
-                            console.error('[Modal Element Not Found] ID:', modalId);
+  // console.error('[Modal Element Not Found] ID:', modalId);
                           }
                         } else {
                           // 실패한 경우 에러 메시지 표시
@@ -918,7 +918,7 @@ const QuizModal = ({ modalId = "Quiz", topicId, onAddQuiz, onUpdateQuiz, editing
                         }
                         
                         } catch (error) {
-                          console.error('Quiz save error:', error);
+  // console.error('Quiz save error:', error);
                           // error.message가 없을 수 있으므로 안전하게 처리
                           const errorMessage = error?.message || error?.toString() || '알 수 없는 오류가 발생했습니다';
                           alert('퀴즈 저장 중 오류가 발생했습니다: ' + errorMessage);

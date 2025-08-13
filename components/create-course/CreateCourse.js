@@ -36,7 +36,7 @@ import UpdateModal from './QuizModals/UpdateModal';
 import Lesson from './lesson/Lesson';
 
 const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
-  console.log('CreateCourse component rendered:', { editMode, courseId });
+  // console.log('CreateCourse component rendered:', { editMode, courseId });
   const { data: session } = useSession();
   const router = useRouter();
   const fileInputRef = useRef(null);
