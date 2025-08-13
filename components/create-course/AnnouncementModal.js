@@ -252,16 +252,15 @@ const AnnouncementModal = ({
                   <label className="form-label">
                     Content <span className="text-danger">*</span>
                   </label>
-                  <div style={{ minHeight: '200px' }}>
-                    <ReactQuill
-                      theme="snow"
-                      value={formData.content}
-                      onChange={(value) => handleInputChange('content', value)}
-                      modules={modules}
-                      style={{ height: '150px', marginBottom: '50px' }}
-                      readOnly={loading}
-                    />
-                  </div>
+                  <ReactQuill
+                    theme="snow"
+                    value={formData.content}
+                    onChange={(value) => handleInputChange('content', value)}
+                    modules={modules}
+                    style={{ height: '200px' }}
+                    readOnly={loading}
+                  />
+                  <div style={{ marginBottom: '60px' }}></div>
                 </div>
 
                 {/* Active Status */}
