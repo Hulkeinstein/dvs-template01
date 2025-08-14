@@ -123,9 +123,11 @@ const Announcement = () => {
   // Get priority badge
   const getPriorityBadge = (priority) => {
     const badges = {
-      urgent: <span className="badge bg-danger">Urgent</span>,
-      important: <span className="badge bg-warning">Important</span>,
-      normal: <span className="badge bg-info">Normal</span>,
+      urgent: <span className="badge bg-danger fs-6 px-3 py-2">Urgent</span>,
+      important: (
+        <span className="badge bg-warning fs-6 px-3 py-2">Important</span>
+      ),
+      normal: <span className="badge bg-info fs-6 px-3 py-2">Normal</span>,
     };
     return badges[priority] || null;
   };
@@ -236,11 +238,11 @@ const Announcement = () => {
                       const dateInfo = formatDate(announcement.created_at);
                       return (
                         <tr key={announcement.id}>
-                          <th>
+                          <th className="align-middle">
                             <span className="h6 mb--5">{dateInfo.date}</span>
                             <p className="b3">{dateInfo.time}</p>
                           </th>
-                          <td>
+                          <td className="align-middle">
                             <span className="h6 mb--5">
                               {announcement.title}
                             </span>
@@ -259,7 +261,9 @@ const Announcement = () => {
                               }}
                             />
                           </td>
-                          <td>{getPriorityBadge(announcement.priority)}</td>
+                          <td className="align-middle">
+                            {getPriorityBadge(announcement.priority)}
+                          </td>
                         </tr>
                       );
                     })

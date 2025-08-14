@@ -145,9 +145,11 @@ const Announcement = () => {
   // Get priority badge
   const getPriorityBadge = (priority) => {
     const badges = {
-      urgent: <span className="badge bg-danger">Urgent</span>,
-      important: <span className="badge bg-warning">Important</span>,
-      normal: <span className="badge bg-info">Normal</span>,
+      urgent: <span className="badge bg-danger fs-6 px-3 py-2">Urgent</span>,
+      important: (
+        <span className="badge bg-warning fs-6 px-3 py-2">Important</span>
+      ),
+      normal: <span className="badge bg-info fs-6 px-3 py-2">Normal</span>,
     };
     return badges[priority] || null;
   };
@@ -272,11 +274,11 @@ const Announcement = () => {
                       const dateInfo = formatDate(announcement.created_at);
                       return (
                         <tr key={announcement.id}>
-                          <th>
+                          <th className="align-middle">
                             <span className="h6 mb--5">{dateInfo.date}</span>
                             <p className="b3">{dateInfo.time}</p>
                           </th>
-                          <td>
+                          <td className="align-middle">
                             <span className="h6 mb--5">
                               {announcement.title}
                             </span>
@@ -286,28 +288,30 @@ const Announcement = () => {
                                 'General Announcement'}
                             </p>
                           </td>
-                          <td>{getPriorityBadge(announcement.priority)}</td>
-                          <td>
+                          <td className="align-middle">
+                            {getPriorityBadge(announcement.priority)}
+                          </td>
+                          <td className="align-middle">
                             <div className="rbt-button-group justify-content-end">
                               <a
-                                className="rbt-btn-link left-icon"
+                                className="rbt-btn-link left-icon fs-6"
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   handleEdit(announcement);
                                 }}
-                                style={{ cursor: 'pointer' }}
+                                style={{ cursor: 'pointer', fontSize: '16px' }}
                               >
                                 <i className="feather-edit"></i> Edit
                               </a>
                               <a
-                                className="rbt-btn-link left-icon"
+                                className="rbt-btn-link left-icon fs-6"
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   handleDelete(announcement.id);
                                 }}
-                                style={{ cursor: 'pointer' }}
+                                style={{ cursor: 'pointer', fontSize: '16px' }}
                               >
                                 <i className="feather-trash-2"></i> Delete
                               </a>
