@@ -145,11 +145,11 @@ const Announcement = () => {
   // Get priority badge
   const getPriorityBadge = (priority) => {
     const badges = {
-      urgent: <span className="badge bg-danger fs-6 px-3 py-2">Urgent</span>,
+      urgent: <span className="badge bg-danger fs-5 px-4 py-2">Urgent</span>,
       important: (
-        <span className="badge bg-warning fs-6 px-3 py-2">Important</span>
+        <span className="badge bg-warning fs-5 px-4 py-2">Important</span>
       ),
-      normal: <span className="badge bg-info fs-6 px-3 py-2">Normal</span>,
+      normal: <span className="badge bg-info fs-5 px-4 py-2">Normal</span>,
     };
     return badges[priority] || null;
   };
@@ -294,24 +294,24 @@ const Announcement = () => {
                           <td className="align-middle">
                             <div className="rbt-button-group justify-content-end">
                               <a
-                                className="rbt-btn-link left-icon fs-6"
+                                className="rbt-btn btn-xs bg-primary-opacity radius-round"
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   handleEdit(announcement);
                                 }}
-                                style={{ cursor: 'pointer', fontSize: '16px' }}
+                                title="Edit"
                               >
                                 <i className="feather-edit"></i> Edit
                               </a>
                               <a
-                                className="rbt-btn-link left-icon fs-6"
+                                className="rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger"
                                 href="#"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   handleDelete(announcement.id);
                                 }}
-                                style={{ cursor: 'pointer', fontSize: '16px' }}
+                                title="Delete"
                               >
                                 <i className="feather-trash-2"></i> Delete
                               </a>

@@ -125,7 +125,10 @@ const AnnouncementModal = ({
         style={{ zIndex: 1050 }}
         tabIndex="-1"
       >
-        <div className="modal-dialog modal-lg modal-dialog-centered">
+        <div
+          className="modal-dialog modal-lg modal-dialog-centered"
+          style={{ marginTop: '100px' }}
+        >
           <div className="modal-content">
             <div className="modal-header">
               <h5 className="modal-title">
@@ -142,7 +145,7 @@ const AnnouncementModal = ({
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 {/* Title */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <label className="form-label">
                     Title <span className="text-danger">*</span>
                   </label>
@@ -158,15 +161,16 @@ const AnnouncementModal = ({
                 </div>
 
                 {/* Course Selection */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <label className="form-label">Course (Optional)</label>
                   <select
-                    className="form-select"
+                    className="form-select form-select-lg"
                     value={formData.course_id || ''}
                     onChange={(e) =>
                       handleInputChange('course_id', e.target.value || null)
                     }
                     disabled={loading}
+                    style={{ fontSize: '16px' }}
                   >
                     <option value="">General Announcement (All Courses)</option>
                     {courses.map((course) => (
@@ -181,7 +185,7 @@ const AnnouncementModal = ({
                 </div>
 
                 {/* Priority */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <label className="form-label">Priority</label>
                   <div className="d-flex gap-3">
                     <div className="form-check">
@@ -248,7 +252,7 @@ const AnnouncementModal = ({
                 </div>
 
                 {/* Content */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <label className="form-label">
                     Content <span className="text-danger">*</span>
                   </label>
@@ -257,14 +261,14 @@ const AnnouncementModal = ({
                     value={formData.content}
                     onChange={(value) => handleInputChange('content', value)}
                     modules={modules}
-                    style={{ height: '200px' }}
+                    style={{ height: '350px' }}
                     readOnly={loading}
                   />
-                  <div style={{ marginBottom: '60px' }}></div>
+                  <div style={{ marginBottom: '80px' }}></div>
                 </div>
 
                 {/* Active Status */}
-                <div className="mb-4">
+                <div className="mb-5">
                   <div className="form-check form-switch">
                     <input
                       className="form-check-input"
@@ -286,7 +290,7 @@ const AnnouncementModal = ({
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-secondary"
+                  className="rbt-btn btn-md btn-border"
                   onClick={onClose}
                   disabled={loading}
                 >
@@ -294,7 +298,7 @@ const AnnouncementModal = ({
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary"
+                  className="rbt-btn btn-md btn-gradient"
                   disabled={loading}
                 >
                   {loading ? (

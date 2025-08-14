@@ -123,11 +123,11 @@ const Announcement = () => {
   // Get priority badge
   const getPriorityBadge = (priority) => {
     const badges = {
-      urgent: <span className="badge bg-danger fs-6 px-3 py-2">Urgent</span>,
+      urgent: <span className="badge bg-danger fs-5 px-4 py-2">Urgent</span>,
       important: (
-        <span className="badge bg-warning fs-6 px-3 py-2">Important</span>
+        <span className="badge bg-warning fs-5 px-4 py-2">Important</span>
       ),
-      normal: <span className="badge bg-info fs-6 px-3 py-2">Normal</span>,
+      normal: <span className="badge bg-info fs-5 px-4 py-2">Normal</span>,
     };
     return badges[priority] || null;
   };
