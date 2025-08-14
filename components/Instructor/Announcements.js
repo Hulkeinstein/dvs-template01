@@ -289,18 +289,28 @@ const Announcement = () => {
                           <td>{getPriorityBadge(announcement.priority)}</td>
                           <td>
                             <div className="rbt-button-group justify-content-end">
-                              <button
+                              <a
                                 className="rbt-btn-link left-icon"
-                                onClick={() => handleEdit(announcement)}
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleEdit(announcement);
+                                }}
+                                style={{ cursor: 'pointer' }}
                               >
                                 <i className="feather-edit"></i> Edit
-                              </button>
-                              <button
+                              </a>
+                              <a
                                 className="rbt-btn-link left-icon"
-                                onClick={() => handleDelete(announcement.id)}
+                                href="#"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  handleDelete(announcement.id);
+                                }}
+                                style={{ cursor: 'pointer' }}
                               >
                                 <i className="feather-trash-2"></i> Delete
-                              </button>
+                              </a>
                             </div>
                           </td>
                         </tr>
