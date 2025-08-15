@@ -1,0 +1,136 @@
+{
+  "name": "typescript-migration",
+  "version": "1.0.0",
+  "description": "TypeScript Migration Agent for DVS-TEMPLATE01",
+  "author": "Claude Code + User",
+  "created": "2025-02-15",
+  "strategy": {
+    "type": "bottom-up-sequential",
+    "parallel": false,
+    "batchSize": 1,
+    "autoCommit": false,
+    "testAfterEach": true
+  },
+  "scope": {
+    "totalFiles": 793,
+    "targetFiles": 200,
+    "excludePatterns": [
+      "data/demo-*/**/*",
+      "node_modules/**/*",
+      ".next/**/*",
+      "public/scss/**/*",
+      "public/css/**/*"
+    ],
+    "includePatterns": [
+      "app/**/*.{js,jsx}",
+      "components/**/*.{js,jsx}",
+      "constants/**/*.js",
+      "store/**/*.js",
+      "utils/**/*.js"
+    ]
+  },
+  "phases": [
+    {
+      "id": "phase-0",
+      "name": "TypeScript Environment Setup",
+      "priority": 1,
+      "tasks": [
+        "Install TypeScript and type packages",
+        "Create tsconfig.json",
+        "Update ESLint configuration",
+        "Create type definition files"
+      ]
+    },
+    {
+      "id": "phase-1",
+      "name": "Foundation Layer",
+      "priority": 2,
+      "files": 30,
+      "targets": [
+        "app/lib/supabase/client.js",
+        "app/lib/utils/*.js",
+        "constants/*.js"
+      ]
+    },
+    {
+      "id": "phase-2",
+      "name": "Server Actions",
+      "priority": 3,
+      "files": 13,
+      "functions": 55,
+      "preserveDirective": "use server",
+      "targets": [
+        "app/lib/actions/*.js"
+      ]
+    },
+    {
+      "id": "phase-3",
+      "name": "Core Components",
+      "priority": 4,
+      "files": 50,
+      "preserveDirective": "use client",
+      "targets": [
+        "components/Instructor/*.{js,jsx}",
+        "components/Student/*.{js,jsx}",
+        "components/Common/*.{js,jsx}"
+      ]
+    },
+    {
+      "id": "phase-4",
+      "name": "App Routes",
+      "priority": 5,
+      "files": 30,
+      "targets": [
+        "app/(dashboard)/**/*.{js,jsx}",
+        "app/(courses)/**/*.{js,jsx}",
+        "app/api/**/*.js"
+      ]
+    }
+  ],
+  "validation": {
+    "typeCheck": "tsc --noEmit",
+    "lint": "npm run lint",
+    "build": "npm run build",
+    "test": "npm test"
+  },
+  "dependencies": {
+    "required": [
+      "typescript@^5.0.0",
+      "@types/react@^18.0.0",
+      "@types/node@^18.0.0",
+      "@types/react-dom@^18.0.0"
+    ],
+    "optional": [
+      "@typescript-eslint/parser",
+      "@typescript-eslint/eslint-plugin",
+      "@types/luxon",
+      "@types/react-icons"
+    ]
+  },
+  "settings": {
+    "preserveComments": true,
+    "preserveFormatting": false,
+    "useStrictMode": true,
+    "allowAny": false,
+    "incrementalMigration": true,
+    "generateTypes": true,
+    "logLevel": "info"
+  },
+  "rules": {
+    "naming": {
+      "interfaces": "PascalCase",
+      "types": "PascalCase",
+      "enums": "PascalCase",
+      "files": "kebab-case"
+    },
+    "imports": {
+      "preferTypeImports": true,
+      "organizeImports": true
+    }
+  },
+  "output": {
+    "logsDir": ".claude/agents/typescript-migration/logs",
+    "progressFile": ".claude/agents/typescript-migration/progress.json",
+    "reportFile": ".claude/agents/typescript-migration/report.md"
+  }
+}
