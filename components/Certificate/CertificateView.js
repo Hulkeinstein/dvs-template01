@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { PDFViewer } from '@react-pdf/renderer';
 import dynamic from 'next/dynamic';
 import { getTemplateComponent } from '@/app/lib/certificate/templates';
 import { generateCertificatePDF } from '@/app/lib/certificate/actions/generatePDF';
 
-// Dynamic import to avoid SSR issues
+// Dynamic imports to avoid SSR issues
+const PDFViewer = dynamic(
+  () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
+  { ssr: false }
+);
+
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   { ssr: false }
