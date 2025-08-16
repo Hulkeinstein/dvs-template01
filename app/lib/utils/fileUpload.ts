@@ -1,24 +1,24 @@
-export const fileToBase64 = (file) => {
+export const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onload = (e) => {
-      resolve(e.target.result);
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target?.result) {
+        resolve(e.target.result as string);
+      } else {
+        reject(new Error('Failed to read file: no result'));
+      }
     };
 
-    reader.onerror = (error) => {
-      reject(error.target.error || new Error('Failed to read file'));
+    reader.onerror = () => {
+      reject(reader.error || new Error('Failed to read file'));
     };
-
-    reader.addEventListener('error', (e) => {
-      reject(e.target.error || new Error('Failed to read file'));
-    });
 
     reader.readAsDataURL(file);
   });
 };
 
-export const base64ToBlob = (base64Data, contentType = '') => {
+export const base64ToBlob = (base64Data: string, contentType: string = ''): Blob => {
   let base64String = base64Data;
   let mimeType = contentType;
 
@@ -45,11 +45,11 @@ export const base64ToBlob = (base64Data, contentType = '') => {
   return new Blob([byteArray], { type: mimeType });
 };
 
-export const validateFileSize = (file, maxSizeMB) => {
+export const validateFileSize = (file: File, maxSizeMB: number): boolean => {
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
   return file.size <= maxSizeBytes;
 };
 
-export const validateFileType = (file, allowedTypes) => {
+export const validateFileType = (file: File, allowedTypes: string[]): boolean => {
   return allowedTypes.includes(file.type);
 };

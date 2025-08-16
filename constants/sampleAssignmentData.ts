@@ -1,5 +1,33 @@
 // Sample Assignment Data for Testing
-export const sampleAssignmentData = {
+
+interface TimeLimit {
+  value: number;
+  unit: 'hours' | 'days' | 'weeks' | 'months';
+}
+
+interface Attachment {
+  name: string;
+  size: number;
+  type: string;
+  url: string;
+}
+
+interface AssignmentData {
+  title: string;
+  summary: string;
+  timeLimit: TimeLimit;
+  totalPoints: number;
+  passingPoints: number;
+  maxUploads: number;
+  maxFileSize: number;
+  attachments: Attachment[];
+}
+
+type AssignmentType = 'basic' | 'advanced' | 'quiz' | 'report' | 'group' | 'practice';
+
+type SampleAssignmentData = Record<AssignmentType, AssignmentData>;
+
+export const sampleAssignmentData: SampleAssignmentData = {
   // 기본 Assignment 데이터
   basic: {
     title: '프로젝트 제출 과제',
@@ -295,16 +323,16 @@ Output: false
       },
     ],
   },
-};
+} as const;
 
 // 여러 Assignment를 한번에 테스트하기 위한 배열
-export const multipleAssignments = [
+export const multipleAssignments: AssignmentData[] = [
   sampleAssignmentData.basic,
   sampleAssignmentData.quiz,
   sampleAssignmentData.practice,
 ];
 
 // Assignment Modal에서 직접 사용할 수 있는 함수
-export const loadSampleAssignment = (type = 'basic') => {
+export const loadSampleAssignment = (type: AssignmentType = 'basic'): AssignmentData => {
   return sampleAssignmentData[type] || sampleAssignmentData.basic;
 };
