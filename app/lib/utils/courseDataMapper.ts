@@ -39,7 +39,14 @@ interface FormData {
   endDate?: string;
   lifetimeAccess?: boolean;
   thumbnailPreview?: string | null;
-  topics?: any[];
+  topics?: Array<{
+    id?: string;
+    name?: string;
+    summary?: string;
+    lessons?: unknown[];
+    quizzes?: unknown[];
+    assignments?: unknown[];
+  }>;
 }
 
 interface DBData {
@@ -87,12 +94,6 @@ interface CourseSettings {
   allow_lifetime_access?: boolean;
 }
 
-declare global {
-  interface Window {
-    testCourseDataMapping?: () => void;
-  }
-}
-
 /**
  * UI FormData를 DB 스키마로 변환
  * @param {FormData} formData - UI에서 사용하는 폼 데이터
@@ -104,17 +105,21 @@ export function mapFormDataToDB(formData: FormData): DBData {
     title: formData.title,
     description: formData.shortDescription, // UI: shortDescription → DB: description
     about_course: formData.description, // UI: description → DB: about_course
-    regular_price: typeof formData.price === 'string' ? parseFloat(formData.price) : formData.price || 0,
+    regular_price:
+      typeof formData.price === 'string'
+        ? parseFloat(formData.price)
+        : formData.price || 0,
     discounted_price: formData.discountPrice
-      ? typeof formData.discountPrice === 'string' 
+      ? typeof formData.discountPrice === 'string'
         ? parseFloat(formData.discountPrice)
         : formData.discountPrice
       : null,
     language: formData.language || 'English',
     difficulty_level: formData.level || 'All Levels',
-    max_students: typeof formData.maxStudents === 'string' 
-      ? parseInt(formData.maxStudents) 
-      : formData.maxStudents || 0,
+    max_students:
+      typeof formData.maxStudents === 'string'
+        ? parseInt(formData.maxStudents)
+        : formData.maxStudents || 0,
     intro_video_url: formData.introVideoUrl || null,
     is_free: formData.price === 0 || formData.price === '0',
 
@@ -125,12 +130,17 @@ export function mapFormDataToDB(formData: FormData): DBData {
 
     // Course Duration
     total_duration_hours:
-      (typeof formData.totalDurationHours === 'string' ? parseInt(formData.totalDurationHours) : formData.totalDurationHours) ||
-      (typeof formData.duration === 'string' ? parseInt(formData.duration) : formData.duration) || 
+      (typeof formData.totalDurationHours === 'string'
+        ? parseInt(formData.totalDurationHours)
+        : formData.totalDurationHours) ||
+      (typeof formData.duration === 'string'
+        ? parseInt(formData.duration)
+        : formData.duration) ||
       0,
-    total_duration_minutes: typeof formData.totalDurationMinutes === 'string' 
-      ? parseInt(formData.totalDurationMinutes) 
-      : formData.totalDurationMinutes || 0,
+    total_duration_minutes:
+      typeof formData.totalDurationMinutes === 'string'
+        ? parseInt(formData.totalDurationMinutes)
+        : formData.totalDurationMinutes || 0,
 
     // Content Drip
     content_drip_enabled: formData.contentDripEnabled || false,
@@ -247,12 +257,12 @@ export function mapFormDataToSettings(formData: FormData): CourseSettings {
   return {
     certificate_enabled: formData.certificateEnabled || false,
     certificate_title: formData.certificateTitle || null,
-    passing_grade: formData.passingGrade 
-      ? typeof formData.passingGrade === 'string' 
-        ? parseInt(formData.passingGrade) 
+    passing_grade: formData.passingGrade
+      ? typeof formData.passingGrade === 'string'
+        ? parseInt(formData.passingGrade)
         : formData.passingGrade
       : 70,
-    max_students: formData.maxStudents 
+    max_students: formData.maxStudents
       ? typeof formData.maxStudents === 'string'
         ? parseInt(formData.maxStudents)
         : formData.maxStudents
@@ -274,12 +284,16 @@ export function logUnmappedFields(formData: FormData, dbData: DBData): void {
     // topics는 별도 처리하므로 제외
     if (key === 'topics' || key === 'thumbnailPreview') return false;
 
+    // Type-safe access using key
+    const formDataKey = key as keyof FormData;
+    const formDataValue = formData[formDataKey];
+
     // DB에 매핑된 필드가 있는지 확인
     const isMapped = Object.values(dbData).some((value) =>
-      JSON.stringify(value)?.includes(String((formData as any)[key]))
+      JSON.stringify(value)?.includes(String(formDataValue))
     );
 
-    return !isMapped && (formData as any)[key] !== undefined && (formData as any)[key] !== '';
+    return !isMapped && formDataValue !== undefined && formDataValue !== '';
   });
 
   if (unmappedFields.length > 0) {
@@ -287,48 +301,5 @@ export function logUnmappedFields(formData: FormData, dbData: DBData): void {
   }
 }
 
-/**
- * 매핑 테스트 함수 - 브라우저 콘솔에서 실행 가능
- * window.testCourseDataMapping()으로 호출
- */
-export function testCourseDataMapping(): void {
-  const testData: FormData = {
-    title: 'Test Course',
-    shortDescription: 'Short desc',
-    description: 'Long description',
-    startDate: '2025-02-01',
-    requirements: 'Basic knowledge',
-    targetedAudience: 'Developers',
-    totalDurationHours: 10,
-    totalDurationMinutes: 30,
-    courseTags: 'react, javascript, web',
-    contentDripEnabled: true,
-    contentDripType: 'after_enrollment',
-  };
-
-  console.group('🧪 Course Data Mapping Test');
-  // console.log('1️⃣ Original FormData:', testData);
-
-  const dbData = mapFormDataToDB(testData);
-  // console.log('2️⃣ Converted to DB:', dbData);
-
-  const backToForm = mapDBToFormData({
-    ...dbData,
-    course_settings: [
-      {
-        certificate_enabled: true,
-        passing_grade: 80,
-      },
-    ],
-  });
-  // console.log('3️⃣ Converted back to Form:', backToForm);
-
-  // console.log('✅ Test complete! Check if all fields mapped correctly.');
-  console.groupEnd();
-}
-
-// 개발 모드에서 전역 함수로 제공
-if (typeof window !== 'undefined' && DEBUG_MODE) {
-  window.testCourseDataMapping = testCourseDataMapping;
-  // console.log('💡 Course data mapping test available: window.testCourseDataMapping()');
-}
+// 테스트 코드는 별도 테스트 파일로 분리됨
+// 테스트가 필요한 경우 app/lib/utils/__tests__/courseDataMapper.test.ts 파일 생성
