@@ -43,6 +43,8 @@ const Settings = ({ quizData, setQuizData }) => {
             </div>
             <div className="content">
               <select
+                id="timeLimitUnit"
+                name="timeLimitUnit"
                 className="w-100 rbt-select-dark"
                 style={{ height: '50px' }}
               >
@@ -211,7 +213,11 @@ const Settings = ({ quizData, setQuizData }) => {
                     <label className="form-check-label" htmlFor="option-1">
                       Question Layout
                     </label>
-                    <select className="w-100 rbt-select-dark">
+                    <select
+                      id="questionLayout"
+                      name="questionLayout"
+                      className="w-100 rbt-select-dark"
+                    >
                       <option value="Random">Random</option>
                       <option value="sorting">Sorting </option>
                       <option value="asc">Ascending </option>
@@ -222,7 +228,11 @@ const Settings = ({ quizData, setQuizData }) => {
                     <label className="form-check-label" htmlFor="option-1">
                       Questions Order
                     </label>
-                    <select className="w-100 rbt-select-dark">
+                    <select
+                      id="questionsOrder"
+                      name="questionsOrder"
+                      className="w-100 rbt-select-dark"
+                    >
                       <option value="Set question layout view">
                         Set question layout view
                       </option>

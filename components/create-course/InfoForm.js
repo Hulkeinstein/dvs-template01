@@ -619,7 +619,7 @@ const InfoForm = ({ formData, onFormDataChange, onThumbnailChange }) => {
                   width={797}
                   height={262}
                   alt="file image"
-                  style={{ objectFit: 'cover', height: 'auto' }}
+                  style={{ objectFit: 'cover' }}
                 />
 
                 <label

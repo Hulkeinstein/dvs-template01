@@ -407,6 +407,8 @@ const AssignmentModal = ({
                         <div className="row row--15">
                           <div className="col-sm-6 col-lg-4">
                             <input
+                              id="assignmentTimeLimit"
+                              name="assignmentTimeLimit"
                               className="shadow-none"
                               type="number"
                               placeholder="00"
@@ -424,6 +426,8 @@ const AssignmentModal = ({
                           </div>
                           <div className="col-sm-5 col-lg-4">
                             <select
+                              id="assignmentTimeLimitUnit"
+                              name="assignmentTimeLimitUnit"
                               className="w-75"
                               style={{ height: '50px' }}
                               value={assignmentData.timeLimit.unit}
@@ -449,6 +453,8 @@ const AssignmentModal = ({
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
+                              id="assignmentTotalPoints"
+                              name="assignmentTotalPoints"
                               className="shadow-none"
                               type="number"
                               placeholder="0"
@@ -472,6 +478,8 @@ const AssignmentModal = ({
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
+                              id="assignmentPassingPoints"
+                              name="assignmentPassingPoints"
                               className="shadow-none"
                               type="number"
                               placeholder="0"
@@ -496,6 +504,8 @@ const AssignmentModal = ({
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
+                              id="assignmentMaxUploads"
+                              name="assignmentMaxUploads"
                               className="shadow-none"
                               type="number"
                               placeholder="0"
@@ -521,6 +531,8 @@ const AssignmentModal = ({
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
+                              id="assignmentMaxFileSize"
+                              name="assignmentMaxFileSize"
                               className="shadow-none"
                               type="number"
                               placeholder="0"
