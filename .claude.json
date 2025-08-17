@@ -8,13 +8,18 @@
     "version": "latest"
   },
   "mcpServers": {
-    "supabase": {
+    "supabase-dvs": {
       "type": "stdio",
       "command": "cmd",
-      "args": ["/c", "npx", "-y", "@supabase/mcp-server-supabase@latest"],
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "datvqaemqzhgitxxfvar"
+      ],
       "env": {
-        "SUPABASE_URL": "https://datvqaemqzhgitxxfvar.supabase.co",
-        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhdHZxYWVtcXpoZ2l0eHhmdmFyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDc5OTg4MSwiZXhwIjoyMDYwMzc1ODgxfQ.o8LmzAqeLvodW1veKHgr5P0lizTwOHZdUhWq1YymHYU"
+        "SUPABASE_ACCESS_TOKEN": "sbp_3edab2322fa111f5036485eb68a072437df072a2"
       }
     },
     "filesystem": {

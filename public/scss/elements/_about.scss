@@ -39,6 +39,7 @@
 
                 img {
                     max-height: 490px;
+                    width: auto;
                     object-fit: cover;
 
                     @media #{$md-layout} {
@@ -99,6 +100,7 @@
 
                 img {
                     max-height: 530px;
+                    width: auto;
                     object-fit: cover;
 
                     @media #{$sm-layout} {

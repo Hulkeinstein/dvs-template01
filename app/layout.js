@@ -1,6 +1,9 @@
 import { cookies } from 'next/headers';
 import React from 'react';
 
+// ========= Next.js Fonts =========
+import { fontClassNames } from './fonts';
+
 // ========= Core Framework =========
 import 'bootstrap/scss/bootstrap.scss';
 
@@ -34,7 +37,7 @@ export default function RootLayout({ children }) {
   const isDark = theme === 'dark';
 
   return (
-    <html lang="en" dir="ltr" data-theme={theme}>
+    <html lang="en" dir="ltr" data-theme={theme} className={fontClassNames}>
       <body
         className={isDark ? 'active-dark-mode' : ''}
         suppressHydrationWarning={true}
