@@ -10,7 +10,7 @@ interface PhoneVerificationStatus {
   type: 'success' | 'warning' | 'error' | 'info';
 }
 
-type ProtectedFeature = 
+type ProtectedFeature =
   | 'create_course'
   | 'publish_course'
   | 'payment'
@@ -27,7 +27,9 @@ interface UserProfile extends Partial<User> {
  * @param {UserProfile} userProfile - User profile object
  * @returns {boolean} - Whether phone is verified
  */
-export const isPhoneVerified = (userProfile: UserProfile | null | undefined): boolean => {
+export const isPhoneVerified = (
+  userProfile: UserProfile | null | undefined
+): boolean => {
   return userProfile?.is_phone_verified === true;
 };
 
@@ -55,7 +57,9 @@ export const requiresPhoneVerification = (feature: string): boolean => {
  * @param {UserProfile} userProfile - User profile object
  * @returns {PhoneVerificationStatus} - Status object with message and type
  */
-export const getPhoneVerificationStatus = (userProfile: UserProfile | null | undefined): PhoneVerificationStatus => {
+export const getPhoneVerificationStatus = (
+  userProfile: UserProfile | null | undefined
+): PhoneVerificationStatus => {
   if (!userProfile) {
     return {
       verified: false,

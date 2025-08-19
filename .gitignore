@@ -49,3 +49,7 @@ logs/
 coverage/
 .cache/
 .tmp/
+.eslintcache
+
+# CI/CD artifacts
+artifacts/

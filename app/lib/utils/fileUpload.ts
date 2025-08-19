@@ -18,7 +18,10 @@ export const fileToBase64 = (file: File): Promise<string> => {
   });
 };
 
-export const base64ToBlob = (base64Data: string, contentType: string = ''): Blob => {
+export const base64ToBlob = (
+  base64Data: string,
+  contentType: string = ''
+): Blob => {
   let base64String = base64Data;
   let mimeType = contentType;
 
@@ -50,6 +53,9 @@ export const validateFileSize = (file: File, maxSizeMB: number): boolean => {
   return file.size <= maxSizeBytes;
 };
 
-export const validateFileType = (file: File, allowedTypes: string[]): boolean => {
+export const validateFileType = (
+  file: File,
+  allowedTypes: string[]
+): boolean => {
   return allowedTypes.includes(file.type);
 };

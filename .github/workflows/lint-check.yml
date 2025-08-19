@@ -1,39 +1,58 @@
-# 워크플로우의 이름입니다. GitHub의 Actions 탭에 이 이름이 표시됩니다.
-name: Lint and Format Check
+name: CI Checks
 
-# 이 워크플로우가 언제 실행될지를 정의합니다.
 on:
-  # 'main' 브랜치로 향하는 Pull Request가 생성되거나 업데이트될 때 실행됩니다.
   pull_request:
-    branches: [main]
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-# 실제로 수행할 작업들을 정의합니다.
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+  NODE_OPTIONS: --max-old-space-size=4096
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  # 작업의 ID입니다. 원하는 대로 정할 수 있습니다.
-  lint-and-format:
-    # 이 작업이 실행될 가상 환경을 지정합니다. (ubuntu 최신 버전)
+  ci-checks:
     runs-on: ubuntu-latest
-
-    # 작업의 단계들을 순서대로 정의합니다.
     steps:
-      # 1. 저장소의 코드를 가상 환경으로 가져옵니다. (체크아웃)
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Node.js 환경을 설정합니다.
-      - name: Set up Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x' # 프로젝트에 맞는 Node.js 버전을 사용하세요.
+          node-version: 20
+          cache: 'npm'
 
-      # 3. 프로젝트의 의존성 패키지들을 설치합니다.
       - name: Install dependencies
-        run: npm install # 만약 yarn을 사용하면 'yarn install', pnpm이면 'pnpm install'
+        run: npm ci
 
-      # 4. ESLint를 실행하여 코드 스타일(Lint)을 검사합니다.
+      - name: Run Type Check
+        run: npm run type-check
+
       - name: Run ESLint
-        run: npm run lint # package.json에 정의된 lint 스크립트 실행
+        run: npm run lint
 
-      # 5. Prettier를 실행하여 코드 포맷팅을 검사합니다.
       - name: Run Prettier Check
-        run: npx prettier@3.5.3 --check . # 직접 Prettier 3.5.3 버전 실행 (package.json 스크립트 무시)
+        run: npm run format:check
+
+      - name: Run Build Test
+        run: npm run build
+
+      - name: Run Tests (pass if no tests)
+        run: |
+          mkdir -p artifacts/test-reports
+          npm test -- --passWithNoTests --json --outputFile=artifacts/test-reports/results.json
+
+      - name: Upload test artifacts
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-artifacts
+          path: artifacts/test-reports
+          if-no-files-found: ignore
+          retention-days: 7
