@@ -218,6 +218,16 @@
                 }
             }
         }
+
+        &.card-list-2 {
+            .rbt-card-body {
+                padding: 45px 30px 35px;
+
+                @media #{$sm-layout} {
+                    padding: 45px 20px 35px;
+                }
+            }
+        }
     }
 
     &.height-auto {
@@ -364,13 +374,18 @@
 
     &.card-list {
         display: flex;
-        align-items: flex-start;
-        gap: 30px;
-        padding: 30px;
+        max-height: 150px;  // 원본 복원: 카드 높이 제한
+        border-radius: 2px;  // 원본 복원
+        align-items: center;  // 원본 복원: center 정렬
+        height: 100%;
+        // gap과 padding 제거 (원본에 없음)
 
         @media #{$sm-layout} {
-            flex-direction: column;
-            gap: 20px;
+            display: block;
+            max-height: inherit;
+            align-items: center;
+            height: auto;
+            border-radius: var(--radius);
         }
 
         .rbt-card-img {
@@ -384,19 +399,17 @@
                     max-height: initial;
                     max-width: 290px;
                     min-width: 290px;
-                    width: 100%;
-                    height: 100%;
                     object-fit: cover;
+                    height: 100%;  // 원본 복원: width 없이 height만
 
                     @media #{$lg-layout} {
-                        max-width: 230px;
-                        min-width: 230px;
+                        max-width: 200px;  // 원본 값
+                        min-width: 200px;  // 원본 값
                     }
 
                     @media #{$md-layout} {
-                        max-width: 230px;
-                        min-width: 230px;
-                        max-height: 100%;
+                        max-width: 200px;  // 원본 값
+                        min-width: 200px;  // 원본 값
                     }
 
                     @media #{$sm-layout} {
@@ -405,6 +418,89 @@
                         max-height: 220px;
                         border-radius: 4px;
                     }
+                }
+            }
+        }
+    }
+
+    &.card-list-2 {
+        display: flex;
+        border-radius: var(--radius);
+        align-items: center;
+        height: 100%;
+
+        @media #{$md-layout} {
+            display: block;
+        }
+
+        @media #{$sm-layout} {
+            display: block;
+        }
+
+        .rbt-card-img {
+            flex-basis: 40%;
+            height: 100%;
+
+            @media #{$md-layout} {
+                height: auto;
+            }
+
+            @media #{$sm-layout} {
+                height: auto;
+            }
+
+            a {
+                display: block;
+                height: 100%;
+                width: 100%;
+
+                img {
+                    border-radius: var(--radius);
+                    max-height: 100%;
+                    max-width: 100%;
+                }
+            }
+        }
+
+        .rbt-card-body {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-basis: 60%;
+            padding-left: 30px;
+
+            @media #{$lg-layout} {
+                padding-left: 20px;
+            }
+
+            @media #{$md-layout} {
+                padding-left: 0;
+                padding-top: 30px;
+            }
+
+            @media #{$sm-layout} {
+                padding-left: 0;
+                padding-top: 30px;
+            }
+
+            .rbt-card-title {
+                font-size: 26px;
+
+                @media #{$lg-layout} {
+                    font-size: 22px;
+                }
+
+                @media #{$md-layout} {
+                    font-size: 22px;
+                }
+
+                @media #{$sm-layout} {
+                    font-size: 22px;
+                }
+
+                @media #{$large-mobile} {
+                    font-size: 20px;
                 }
             }
         }
@@ -864,6 +960,180 @@
 
     &.variation-03 {
         box-shadow: none;
+        padding: 0;
+
+        .rbt-card-img {
+            a {
+                img {
+                    max-height: 300px;
+                }
+            }
+        }
+
+        .rbt-card-body {
+            display: flex;
+            align-items: center;
+            gap: 0px 30px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .rbt-badge-3 {
+            top: 20px;
+            left: 20px;
+        }
+
+        &.style_2 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-radius: 12px;
+            box-shadow: none;
+            position: relative;
+            padding: 50px 50px 40px 50px;
+
+            @media #{$lg-layout} {
+                padding: 20px;
+            }
+
+            @media #{$md-layout} {
+                padding: 20px;
+            }
+
+            @media #{$sm-layout} {
+                padding: 15px;
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(90deg, #5163FF 0%, #FB64AD 100%);
+                transition: all 0.3s ease;
+                opacity: 0.2;
+            }
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 0;
+                background: linear-gradient(90deg, rgba(47, 87, 239, 0.05) 0%, rgba(197, 134, 238, 0.05) 100%);
+                width: 100%;
+                height: calc(100% - 2px);
+            }
+
+            .rbt-card-body {
+                display: block;
+                padding-top: 0;
+                margin-bottom: 28px;
+                position: relative;
+                z-index: 2;
+
+                .rbt-card-title {
+                    margin-bottom: 10px;
+                    font-size: 32px;
+                    font-weight: var(--f-medium);
+
+                    @media #{$md-layout} {
+                        font-size: 28px;
+                    }
+
+                    @media #{$sm-layout} {
+                        font-size: 24px;
+                    }
+
+                    @media #{$large-mobile} {
+                        font-size: 22px;
+                    }
+                }
+
+                .rbt-card-text {
+                    font-size: 17px;
+                    margin-bottom: 0;
+                    white-space: wrap;
+                }
+            }
+
+            .rbt-card-img {
+                position: relative;
+                z-index: 2;
+            }
+
+            &:hover {
+                &::after {
+                    opacity: 1;
+                }
+            }
+
+            &.card-horizontal {
+                display: grid;
+                grid-template-columns: 0.6fr 1fr;
+                gap: 20px 100px;
+                padding: 50px 50px 0 74px;
+
+                @media #{$lg-layout, $md-layout, $sm-layout, $large-mobile} {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                @media #{$sm-layout} {
+                    padding: 40px 40px 0 40px;
+                }
+
+                @media #{$large-mobile} {
+                    padding: 20px 20px 0 20px;
+                }
+
+                .rbt-card-img-wrap {
+                    position: relative;
+
+                    .men-circle {
+                        position: absolute;
+                        left: -25px;
+                        top: -12px;
+                        z-index: 2;
+
+                        @media #{$large-mobile} {
+                            left: -15px;
+                            max-width: 75px;
+                        }
+                    }
+
+                    .shape-1 {
+                        position: absolute;
+                        top: 119px;
+                        left: 99px;
+                        z-index: 2;
+                        animation: edu_clip_show_left_to_right 1.5s linear infinite;
+
+                        @media #{$large-mobile} {
+                            top: 50px;
+                            left: 50px;
+                            max-width: 35px;
+                        }
+                    }
+
+                    .rbt-card-img {
+                        img {
+                            border-radius: 10px 10px 0 0;
+                            width: 100%;
+                            object-fit: cover;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.rbt-card-latest {
+        box-shadow: unset;
+        background: transparent;
+        border-radius: 0;
+        height: auto;
         padding: 0;
 
         .rbt-card-img {
