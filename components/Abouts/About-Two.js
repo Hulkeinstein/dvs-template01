@@ -53,6 +53,7 @@ const AboutTwo = () => {
                       width={366}
                       height={490}
                       alt="Education Images"
+                      style={{ height: 'auto' }}
                     />
                   </div>
                   <div
@@ -77,6 +78,7 @@ const AboutTwo = () => {
                       width={405}
                       height={490}
                       alt="Education Images"
+                      style={{ height: 'auto' }}
                     />
                   </div>
                 </div>

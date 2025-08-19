@@ -2,12 +2,32 @@
  * Phone verification utility functions
  */
 
+import type { User } from '@/types';
+
+interface PhoneVerificationStatus {
+  verified: boolean;
+  message: string;
+  type: 'success' | 'warning' | 'error' | 'info';
+}
+
+type ProtectedFeature = 
+  | 'create_course'
+  | 'publish_course'
+  | 'payment'
+  | 'withdrawal'
+  | 'certificate_generation'
+  | 'bulk_notifications';
+
+interface UserProfile extends Partial<User> {
+  is_phone_verified?: boolean;
+}
+
 /**
  * Check if user has verified their phone number
- * @param {Object} userProfile - User profile object
+ * @param {UserProfile} userProfile - User profile object
  * @returns {boolean} - Whether phone is verified
  */
-export const isPhoneVerified = (userProfile) => {
+export const isPhoneVerified = (userProfile: UserProfile | null | undefined): boolean => {
   return userProfile?.is_phone_verified === true;
 };
 
@@ -16,9 +36,9 @@ export const isPhoneVerified = (userProfile) => {
  * @param {string} feature - Feature name
  * @returns {boolean} - Whether the feature requires phone verification
  */
-export const requiresPhoneVerification = (feature) => {
+export const requiresPhoneVerification = (feature: string): boolean => {
   // List of features that require phone verification
-  const protectedFeatures = [
+  const protectedFeatures: ProtectedFeature[] = [
     'create_course',
     'publish_course',
     'payment',
@@ -27,15 +47,15 @@ export const requiresPhoneVerification = (feature) => {
     'bulk_notifications',
   ];
 
-  return protectedFeatures.includes(feature);
+  return protectedFeatures.includes(feature as ProtectedFeature);
 };
 
 /**
  * Get phone verification status message
- * @param {Object} userProfile - User profile object
- * @returns {Object} - Status object with message and type
+ * @param {UserProfile} userProfile - User profile object
+ * @returns {PhoneVerificationStatus} - Status object with message and type
  */
-export const getPhoneVerificationStatus = (userProfile) => {
+export const getPhoneVerificationStatus = (userProfile: UserProfile | null | undefined): PhoneVerificationStatus => {
   if (!userProfile) {
     return {
       verified: false,
@@ -72,7 +92,7 @@ export const getPhoneVerificationStatus = (userProfile) => {
  * @param {string} phone - Phone number
  * @returns {string} - Formatted phone number
  */
-export const formatPhoneNumber = (phone) => {
+export const formatPhoneNumber = (phone: string | null | undefined): string => {
   if (!phone) return '';
 
   // Remove all non-numeric characters except +
@@ -99,8 +119,8 @@ export const formatPhoneNumber = (phone) => {
  * @param {string} feature - Feature name
  * @returns {string} - Custom message for the feature
  */
-export const getVerificationPromptMessage = (feature) => {
-  const messages = {
+export const getVerificationPromptMessage = (feature: string): string => {
+  const messages: Record<ProtectedFeature, string> = {
     create_course:
       'Phone verification is required to create and publish courses. This helps us maintain quality and contact instructors when needed.',
     publish_course:
@@ -116,7 +136,7 @@ export const getVerificationPromptMessage = (feature) => {
   };
 
   return (
-    messages[feature] ||
+    messages[feature as ProtectedFeature] ||
     'This action requires phone verification for security purposes.'
   );
 };

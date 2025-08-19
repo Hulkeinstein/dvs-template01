@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb', // 기본 1mb에서 5mb로 증가
+    },
+  },
   images: {
     remotePatterns: [
       {

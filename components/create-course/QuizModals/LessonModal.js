@@ -358,6 +358,7 @@ const LessonModal = ({
                       <label htmlFor="lessonModalName">Lesson Name</label>
                       <input
                         id="lessonModalName"
+                        name="lessonModalName"
                         type="text"
                         value={lessonData.title}
                         onChange={(e) =>
@@ -377,6 +378,7 @@ const LessonModal = ({
                       <label htmlFor="lessonModalSummary">Lesson Summary</label>
                       <textarea
                         id="lessonModalSummary"
+                        name="lessonModalSummary"
                         value={lessonData.description}
                         onChange={(e) =>
                           setLessonData({
@@ -454,6 +456,8 @@ const LessonModal = ({
                       <h6>Video Source</h6>
                       <div className="rbt-modern-select bg-transparent height-45 w-100 mb--10">
                         <select
+                          id="lessonVideoSource"
+                          name="lessonVideoSource"
                           className="w-100"
                           value={lessonData.videoSource}
                           onChange={(e) =>
@@ -475,6 +479,7 @@ const LessonModal = ({
                       <label htmlFor="lessonVideoUrl">Video URL</label>
                       <input
                         id="lessonVideoUrl"
+                        name="lessonVideoUrl"
                         type="text"
                         placeholder="Enter video URL"
                         value={lessonData.videoUrl}
@@ -495,6 +500,8 @@ const LessonModal = ({
                       <div className="row row--15">
                         <div className="col-lg-4">
                           <input
+                            id="lessonHours"
+                            name="lessonHours"
                             type="number"
                             placeholder="00"
                             min="0"
@@ -512,6 +519,8 @@ const LessonModal = ({
                         </div>
                         <div className="col-lg-4">
                           <input
+                            id="lessonMinutes"
+                            name="lessonMinutes"
                             type="number"
                             placeholder="00"
                             min="0"
@@ -530,6 +539,8 @@ const LessonModal = ({
                         </div>
                         <div className="col-lg-4">
                           <input
+                            id="lessonSeconds"
+                            name="lessonSeconds"
                             type="number"
                             placeholder="00"
                             min="0"

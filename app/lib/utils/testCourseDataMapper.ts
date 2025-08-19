@@ -9,7 +9,7 @@ import {
   mapFormDataToDB,
   mapDBToFormData,
   mapFormDataToSettings,
-} from './courseDataMapper.js';
+} from './courseDataMapper';
 
 // 테스트용 샘플 FormData
 const sampleFormData = {
@@ -96,7 +96,7 @@ const sampleDBData = {
 };
 
 // 테스트 실행
-function runTests() {
+function runTests(): void {
   console.log('🧪 CourseDataMapper Test Suite\n');
 
   // Test 1: FormData → DB

@@ -1,24 +1,29 @@
 {
   "mcpServers": {
-    "supabase": {
-      "type": "stdio",
-      "command": "cmd",
-      "args": ["/c", "npx", "-y", "@supabase/mcp-server-supabase@latest"],
-      "env": {
-        "SUPABASE_URL": "https://datvqaemqzhgitxxfvar.supabase.co",
-        "SUPABASE_SERVICE_ROLE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhdHZxYWVtcXpoZ2l0eHhmdmFyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDc5OTg4MSwiZXhwIjoyMDYwMzc1ODgxfQ.o8LmzAqeLvodW1veKHgr5P0lizTwOHZdUhWq1YymHYU"
-      }
-    },
     "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+    "mcp-installer": {
+      "command": "npx",
+      "args": ["-y", "mcp-installer"]
+    },
+    "ide": {
+      "command": "npx",
+      "args": ["-y", "@claude-code/ide-mcp"]
+    },
+    "supabase-dvs": {
       "type": "stdio",
-      "command": "cmd",
+      "command": "npx",
       "args": [
-        "/c",
-        "npx",
         "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "."
-      ]
+        "@supabase/mcp-server-supabase@latest",
+        "--project-ref=datvqaemqzhgitxxfvar",
+        "--read-only"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_PAT}"
+      }
     }
   }
 }

@@ -4,7 +4,7 @@
  * 6자리 랜덤 OTP 생성
  * @returns {string} 6자리 숫자 문자열
  */
-export function generateOTP() {
+export function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
@@ -13,7 +13,7 @@ export function generateOTP() {
  * @param {number} minutes - 만료까지의 분 (기본값: 5)
  * @returns {Date} 만료 시간
  */
-export function getOTPExpiryTime(minutes = 5) {
+export function getOTPExpiryTime(minutes: number = 5): Date {
   const expiry = new Date();
   expiry.setMinutes(expiry.getMinutes() + minutes);
   return expiry;
@@ -26,7 +26,7 @@ export function getOTPExpiryTime(minutes = 5) {
  * @param {string} phone - 입력된 전화번호
  * @returns {string|null} 정규화된 전화번호 또는 null
  */
-export function normalizePhoneNumber(phone) {
+export function normalizePhoneNumber(phone: string): string | null {
   // 이미 + 로 시작하는 E.164 형식인지 확인
   if (phone.startsWith('+')) {
     // 숫자와 + 기호만 남기고 제거
@@ -47,17 +47,23 @@ export function normalizePhoneNumber(phone) {
   return null;
 }
 
+interface VerifyOTPResult {
+  valid: boolean;
+  error?: string;
+}
+
 /**
  * OTP 검증
  * @param {string} inputOTP - 사용자가 입력한 OTP
  * @param {string} savedOTP - 저장된 OTP
- * @param {Date} expiryTime - 만료 시간
- * @returns {Object} 검증 결과
+ * @param {Date | string} expiryTime - 만료 시간
+ * @returns {VerifyOTPResult} 검증 결과
  */
-export function verifyOTP(inputOTP, savedOTP, expiryTime) {
+export function verifyOTP(inputOTP: string, savedOTP: string, expiryTime: Date | string): VerifyOTPResult {
   const now = new Date();
+  const expiry = typeof expiryTime === 'string' ? new Date(expiryTime) : expiryTime;
 
-  if (now > new Date(expiryTime)) {
+  if (now > expiry) {
     return { valid: false, error: 'OTP has expired' };
   }
 

@@ -5,17 +5,45 @@
 
 const DEBUG_MODE = process.env.NODE_ENV === 'development';
 
+interface LogData {
+  timestamp: string;
+  component: string;
+  action: string;
+  data: any;
+  stackTrace?: string;
+}
+
+interface ErrorData {
+  component: string;
+  message: string;
+  context: Record<string, any>;
+  timestamp: string;
+}
+
+interface AttachmentDebug {
+  logs: () => LogData[];
+  clearLogs: () => void;
+  lastError: () => ErrorData | null;
+  print: () => void;
+}
+
+declare global {
+  interface Window {
+    attachmentDebug?: AttachmentDebug;
+  }
+}
+
 /**
  * 디버그 로그를 콘솔과 로컬스토리지에 기록
  * @param {string} component - 컴포넌트 이름
  * @param {string} action - 액션 이름
  * @param {any} data - 로그 데이터
  */
-export const debugLog = (component, action, data) => {
+export const debugLog = (component: string, action: string, data: any): void => {
   if (!DEBUG_MODE) return;
 
   const timestamp = new Date().toISOString();
-  const logData = {
+  const logData: LogData = {
     timestamp,
     component,
     action,
@@ -31,7 +59,7 @@ export const debugLog = (component, action, data) => {
 
   // 로컬 스토리지에 저장 (최근 50개만 유지)
   try {
-    const logs = JSON.parse(
+    const logs: LogData[] = JSON.parse(
       localStorage.getItem('attachmentDebugLogs') || '[]'
     );
     logs.push(logData);
@@ -46,9 +74,9 @@ export const debugLog = (component, action, data) => {
  * 에러를 추적하고 로그에 기록
  * @param {string} component - 컴포넌트 이름
  * @param {Error} error - 에러 객체
- * @param {Object} context - 추가 컨텍스트 정보
+ * @param {Record<string, any>} context - 추가 컨텍스트 정보
  */
-export const trackError = (component, error, context = {}) => {
+export const trackError = (component: string, error: Error, context: Record<string, any> = {}): void => {
   // console.error(`❌ [${component}] Error:`, {
   //   message: error.message,
   //   stack: error.stack,
@@ -78,11 +106,11 @@ export const trackError = (component, error, context = {}) => {
 /**
  * 디버그 정보를 콘솔에 테이블 형태로 출력
  */
-export const printDebugInfo = () => {
+export const printDebugInfo = (): void => {
   if (!DEBUG_MODE || typeof window === 'undefined') return;
 
   try {
-    const logs = JSON.parse(
+    const logs: LogData[] = JSON.parse(
       localStorage.getItem('attachmentDebugLogs') || '[]'
     );
     // console.log('📋 Attachment Debug Logs:');
@@ -100,7 +128,7 @@ export const printDebugInfo = () => {
 /**
  * 디버그 로그 초기화
  */
-export const clearDebugLogs = () => {
+export const clearDebugLogs = (): void => {
   if (typeof window === 'undefined') return;
 
   try {
@@ -115,7 +143,7 @@ export const clearDebugLogs = () => {
 // 개발 모드에서 전역 디버그 도구 제공
 if (DEBUG_MODE && typeof window !== 'undefined') {
   window.attachmentDebug = {
-    logs: () => {
+    logs: (): LogData[] => {
       try {
         return JSON.parse(localStorage.getItem('attachmentDebugLogs') || '[]');
       } catch (e) {
@@ -124,7 +152,7 @@ if (DEBUG_MODE && typeof window !== 'undefined') {
       }
     },
     clearLogs: clearDebugLogs,
-    lastError: () => {
+    lastError: (): ErrorData | null => {
       try {
         const error = localStorage.getItem('lastAttachmentError');
         return error ? JSON.parse(error) : null;

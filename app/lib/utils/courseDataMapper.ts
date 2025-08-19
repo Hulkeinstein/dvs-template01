@@ -9,24 +9,117 @@
 
 const DEBUG_MODE = process.env.NODE_ENV === 'development';
 
+interface FormData {
+  title?: string;
+  shortDescription?: string;
+  description?: string;
+  price?: number | string;
+  discountPrice?: number | string | null;
+  language?: string;
+  level?: string;
+  maxStudents?: number | string;
+  introVideoUrl?: string;
+  startDate?: string;
+  requirements?: string;
+  targetedAudience?: string;
+  totalDurationHours?: number | string;
+  totalDurationMinutes?: number | string;
+  duration?: number | string;
+  contentDripEnabled?: boolean;
+  contentDripType?: string;
+  courseTags?: string;
+  slug?: string;
+  category?: string;
+  thumbnail_url?: string;
+  status?: string;
+  certificateEnabled?: boolean;
+  certificateTitle?: string;
+  passingGrade?: number | string;
+  enrollmentDeadline?: string;
+  endDate?: string;
+  lifetimeAccess?: boolean;
+  thumbnailPreview?: string | null;
+  topics?: Array<{
+    id?: string;
+    name?: string;
+    summary?: string;
+    lessons?: unknown[];
+    quizzes?: unknown[];
+    assignments?: unknown[];
+  }>;
+}
+
+interface DBData {
+  title?: string;
+  description?: string;
+  about_course?: string;
+  regular_price?: number;
+  discounted_price?: number | null;
+  language?: string;
+  difficulty_level?: string;
+  max_students?: number;
+  intro_video_url?: string | null;
+  is_free?: boolean;
+  start_date?: string | null;
+  requirements?: string | null;
+  targeted_audience?: string | null;
+  total_duration_hours?: number;
+  total_duration_minutes?: number;
+  content_drip_enabled?: boolean;
+  content_drip_type?: string | null;
+  course_tags?: string[];
+  slug?: string;
+  category?: string;
+  thumbnail_url?: string;
+  status?: string;
+  end_date?: string;
+  course_settings?: Array<{
+    certificate_enabled?: boolean;
+    certificate_title?: string;
+    passing_grade?: number;
+    enrollment_deadline?: string;
+    end_date?: string;
+    allow_lifetime_access?: boolean;
+  }>;
+}
+
+interface CourseSettings {
+  certificate_enabled?: boolean;
+  certificate_title?: string | null;
+  passing_grade?: number;
+  max_students?: number | null;
+  enrollment_deadline?: string | null;
+  start_date?: string | null;
+  end_date?: string | null;
+  allow_lifetime_access?: boolean;
+}
+
 /**
  * UI FormData를 DB 스키마로 변환
- * @param {Object} formData - UI에서 사용하는 폼 데이터
- * @returns {Object} DB에 저장할 데이터
+ * @param {FormData} formData - UI에서 사용하는 폼 데이터
+ * @returns {DBData} DB에 저장할 데이터
  */
-export function mapFormDataToDB(formData) {
+export function mapFormDataToDB(formData: FormData): DBData {
   // 기본 필드들
-  const dbData = {
+  const dbData: DBData = {
     title: formData.title,
     description: formData.shortDescription, // UI: shortDescription → DB: description
     about_course: formData.description, // UI: description → DB: about_course
-    regular_price: parseFloat(formData.price) || 0,
+    regular_price:
+      typeof formData.price === 'string'
+        ? parseFloat(formData.price)
+        : formData.price || 0,
     discounted_price: formData.discountPrice
-      ? parseFloat(formData.discountPrice)
+      ? typeof formData.discountPrice === 'string'
+        ? parseFloat(formData.discountPrice)
+        : formData.discountPrice
       : null,
     language: formData.language || 'English',
     difficulty_level: formData.level || 'All Levels',
-    max_students: parseInt(formData.maxStudents) || 0,
+    max_students:
+      typeof formData.maxStudents === 'string'
+        ? parseInt(formData.maxStudents)
+        : formData.maxStudents || 0,
     intro_video_url: formData.introVideoUrl || null,
     is_free: formData.price === 0 || formData.price === '0',
 
@@ -37,8 +130,17 @@ export function mapFormDataToDB(formData) {
 
     // Course Duration
     total_duration_hours:
-      parseInt(formData.totalDurationHours) || parseInt(formData.duration) || 0,
-    total_duration_minutes: parseInt(formData.totalDurationMinutes) || 0,
+      (typeof formData.totalDurationHours === 'string'
+        ? parseInt(formData.totalDurationHours)
+        : formData.totalDurationHours) ||
+      (typeof formData.duration === 'string'
+        ? parseInt(formData.duration)
+        : formData.duration) ||
+      0,
+    total_duration_minutes:
+      typeof formData.totalDurationMinutes === 'string'
+        ? parseInt(formData.totalDurationMinutes)
+        : formData.totalDurationMinutes || 0,
 
     // Content Drip
     content_drip_enabled: formData.contentDripEnabled || false,
@@ -76,16 +178,16 @@ export function mapFormDataToDB(formData) {
 
 /**
  * DB 데이터를 UI FormData로 변환
- * @param {Object} courseData - DB에서 가져온 코스 데이터
- * @returns {Object} UI 폼에서 사용할 데이터
+ * @param {DBData} courseData - DB에서 가져온 코스 데이터
+ * @returns {FormData} UI 폼에서 사용할 데이터
  */
-export function mapDBToFormData(courseData) {
+export function mapDBToFormData(courseData: DBData): FormData {
   if (DEBUG_MODE) {
     console.group('🔄 [CourseDataMapper] DB → FormData Conversion');
     // console.log('Input DB Data:', courseData);
   }
 
-  const formData = {
+  const formData: FormData = {
     // 기본 정보
     title: courseData.title || '',
     shortDescription: courseData.description || '', // DB: description → UI: shortDescription
@@ -148,15 +250,23 @@ export function mapDBToFormData(courseData) {
 
 /**
  * Course Settings 데이터 매핑
- * @param {Object} formData - UI 폼 데이터
- * @returns {Object} course_settings 테이블용 데이터
+ * @param {FormData} formData - UI 폼 데이터
+ * @returns {CourseSettings} course_settings 테이블용 데이터
  */
-export function mapFormDataToSettings(formData) {
+export function mapFormDataToSettings(formData: FormData): CourseSettings {
   return {
     certificate_enabled: formData.certificateEnabled || false,
     certificate_title: formData.certificateTitle || null,
-    passing_grade: formData.passingGrade ? parseInt(formData.passingGrade) : 70,
-    max_students: formData.maxStudents ? parseInt(formData.maxStudents) : null,
+    passing_grade: formData.passingGrade
+      ? typeof formData.passingGrade === 'string'
+        ? parseInt(formData.passingGrade)
+        : formData.passingGrade
+      : 70,
+    max_students: formData.maxStudents
+      ? typeof formData.maxStudents === 'string'
+        ? parseInt(formData.maxStudents)
+        : formData.maxStudents
+      : null,
     enrollment_deadline: formData.enrollmentDeadline || null,
     start_date: formData.startDate || null,
     end_date: formData.endDate || null,
@@ -166,20 +276,24 @@ export function mapFormDataToSettings(formData) {
 
 /**
  * 디버깅용 - 매핑되지 않은 필드 확인
- * @param {Object} formData - UI 폼 데이터
- * @param {Object} dbData - 매핑된 DB 데이터
+ * @param {FormData} formData - UI 폼 데이터
+ * @param {DBData} dbData - 매핑된 DB 데이터
  */
-export function logUnmappedFields(formData, dbData) {
+export function logUnmappedFields(formData: FormData, dbData: DBData): void {
   const unmappedFields = Object.keys(formData).filter((key) => {
     // topics는 별도 처리하므로 제외
     if (key === 'topics' || key === 'thumbnailPreview') return false;
 
+    // Type-safe access using key
+    const formDataKey = key as keyof FormData;
+    const formDataValue = formData[formDataKey];
+
     // DB에 매핑된 필드가 있는지 확인
     const isMapped = Object.values(dbData).some((value) =>
-      JSON.stringify(value)?.includes(formData[key])
+      JSON.stringify(value)?.includes(String(formDataValue))
     );
 
-    return !isMapped && formData[key] !== undefined && formData[key] !== '';
+    return !isMapped && formDataValue !== undefined && formDataValue !== '';
   });
 
   if (unmappedFields.length > 0) {
@@ -187,48 +301,5 @@ export function logUnmappedFields(formData, dbData) {
   }
 }
 
-/**
- * 매핑 테스트 함수 - 브라우저 콘솔에서 실행 가능
- * window.testCourseDataMapping()으로 호출
- */
-export function testCourseDataMapping() {
-  const testData = {
-    title: 'Test Course',
-    shortDescription: 'Short desc',
-    description: 'Long description',
-    startDate: '2025-02-01',
-    requirements: 'Basic knowledge',
-    targetedAudience: 'Developers',
-    totalDurationHours: 10,
-    totalDurationMinutes: 30,
-    courseTags: 'react, javascript, web',
-    contentDripEnabled: true,
-    contentDripType: 'after_enrollment',
-  };
-
-  console.group('🧪 Course Data Mapping Test');
-  // console.log('1️⃣ Original FormData:', testData);
-
-  const dbData = mapFormDataToDB(testData);
-  // console.log('2️⃣ Converted to DB:', dbData);
-
-  const backToForm = mapDBToFormData({
-    ...dbData,
-    course_settings: [
-      {
-        certificate_enabled: true,
-        passing_grade: 80,
-      },
-    ],
-  });
-  // console.log('3️⃣ Converted back to Form:', backToForm);
-
-  // console.log('✅ Test complete! Check if all fields mapped correctly.');
-  console.groupEnd();
-}
-
-// 개발 모드에서 전역 함수로 제공
-if (typeof window !== 'undefined' && DEBUG_MODE) {
-  window.testCourseDataMapping = testCourseDataMapping;
-  // console.log('💡 Course data mapping test available: window.testCourseDataMapping()');
-}
+// 테스트 코드는 별도 테스트 파일로 분리됨
+// 테스트가 필요한 경우 app/lib/utils/__tests__/courseDataMapper.test.ts 파일 생성
