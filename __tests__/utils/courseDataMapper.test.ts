@@ -291,7 +291,7 @@ describe('Course Data Mapper', () => {
         course_tags: null,
       };
 
-      const formData = mapDBToFormData(dbData);
+      const formData = mapDBToFormData(dbData as any);
 
       expect(formData.shortDescription).toBe('');
       expect(formData.description).toBe('');

@@ -30,7 +30,7 @@ try {
   console.error('Supabase 클라이언트 생성 오류:', error);
 }
 
-export const authOptions = {
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
