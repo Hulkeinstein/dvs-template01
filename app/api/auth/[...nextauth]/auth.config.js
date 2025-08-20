@@ -1,23 +1,21 @@
 import GoogleProvider from 'next-auth/providers/google';
 import { createClient } from '@supabase/supabase-js';
 
-// Supabase 클라이언트 생성
-let supabase = null;
-try {
+// Supabase 클라이언트 생성 함수
+const getSupabaseClient = () => {
   if (
     !process.env.NEXT_PUBLIC_SUPABASE_URL ||
     !process.env.SUPABASE_SERVICE_ROLE_KEY
   ) {
-    throw new Error('Supabase 환경 변수가 설정되지 않았습니다.');
+    console.warn('Supabase 환경 변수가 설정되지 않았습니다.');
+    return null;
   }
 
-  supabase = createClient(
+  return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
-} catch (error) {
-  console.error('Supabase 클라이언트 생성 오류:', error);
-}
+};
 
 export const authOptions = {
   providers: [
@@ -32,9 +30,10 @@ export const authOptions = {
   },
   callbacks: {
     async signIn({ user }) {
+      const supabase = getSupabaseClient();
       if (!supabase) {
         console.error('Supabase 클라이언트가 초기화되지 않았습니다.');
-        return false;
+        return true; // Supabase 없이도 로그인 허용
       }
 
       try {
@@ -89,24 +88,31 @@ export const authOptions = {
         token.picture = user.image;
 
         // Supabase에서 추가 사용자 정보 가져오기
-        try {
-          const { data, error } = await supabase
-            .from('user')
-            .select('id, role, is_profile_complete')
-            .eq('email', user.email)
-            .single();
+        const supabase = getSupabaseClient();
+        if (supabase) {
+          try {
+            const { data, error } = await supabase
+              .from('user')
+              .select('id, role, is_profile_complete')
+              .eq('email', user.email)
+              .single();
 
-          if (error) {
-            console.error('JWT callback - user fetch error:', error);
+            if (error) {
+              console.error('JWT callback - user fetch error:', error);
+              token.role = 'student';
+              token.isProfileComplete = false;
+            } else {
+              token.id = data.id;
+              token.role = data.role;
+              token.isProfileComplete = data.is_profile_complete || false;
+            }
+          } catch (e) {
+            console.error('JWT callback error:', e);
             token.role = 'student';
             token.isProfileComplete = false;
-          } else {
-            token.id = data.id;
-            token.role = data.role;
-            token.isProfileComplete = data.is_profile_complete || false;
           }
-        } catch (e) {
-          console.error('JWT callback error:', e);
+        } else {
+          // Supabase가 없는 경우 기본값 설정
           token.role = 'student';
           token.isProfileComplete = false;
         }
