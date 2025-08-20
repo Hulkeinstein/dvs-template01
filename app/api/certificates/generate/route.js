@@ -17,15 +17,20 @@ async function buildPdf(certificateId, userId) {
 
   try {
     // Dynamic import - build 시점에 번들링되지 않음
-    const { pdf, Document, Page, Text, View, StyleSheet, Font } = await import('@react-pdf/renderer');
-    
+    const { pdf, Document, Page, Text, View, StyleSheet, Font } = await import(
+      '@react-pdf/renderer'
+    );
+
     // Font 등록 - 파일 존재 여부 체크
-    const fontPath = path.join(process.cwd(), 'public/fonts/NanumPenScript-Regular.ttf');
+    const fontPath = path.join(
+      process.cwd(),
+      'public/fonts/NanumPenScript-Regular.ttf'
+    );
     if (fs.existsSync(fontPath)) {
       try {
         Font.register({
           family: 'Nanum Pen Script',
-          src: fontPath
+          src: fontPath,
         });
       } catch (fontError) {
         console.warn('Font registration failed, using fallback:', fontError);
@@ -35,7 +40,8 @@ async function buildPdf(certificateId, userId) {
     // Get certificate data
     const { data: certificate, error } = await supabase
       .from('certificates')
-      .select(`
+      .select(
+        `
         id,
         certificate_number,
         template_id,
@@ -48,7 +54,8 @@ async function buildPdf(certificateId, userId) {
           full_name,
           email
         )
-      `)
+      `
+      )
       .eq('id', certificateId)
       .eq('user_id', userId)
       .single();
@@ -97,7 +104,8 @@ async function buildPdf(certificateId, userId) {
             {certificate.course?.title || 'Course'}
           </Text>
           <Text style={styles.text}>
-            Instructor: {certificate.course?.instructor?.full_name || 'Instructor'}
+            Instructor:{' '}
+            {certificate.course?.instructor?.full_name || 'Instructor'}
           </Text>
           <Text style={styles.certificateNumber}>
             Certificate Number: {certificate.certificate_number}
@@ -123,9 +131,9 @@ async function buildPdf(certificateId, userId) {
     }
 
     // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('certificates')
-      .getPublicUrl(fileName);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('certificates').getPublicUrl(fileName);
 
     // Update certificate record with PDF URL
     await supabase
@@ -156,16 +164,19 @@ export async function GET(request) {
     const pdfUrl = await buildPdf(certificateId, userId);
     return NextResponse.json({
       success: true,
-      pdfUrl
+      pdfUrl,
     });
   } catch (error) {
     console.error('PDF generation error:', error);
-    return NextResponse.json({
-      success: false,
-      error: PDF_ENABLED 
-        ? 'Failed to generate PDF. Please try again.'
-        : 'PDF generation is temporarily disabled.'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: PDF_ENABLED
+          ? 'Failed to generate PDF. Please try again.'
+          : 'PDF generation is temporarily disabled.',
+      },
+      { status: 500 }
+    );
   }
 }
 
@@ -183,15 +194,18 @@ export async function POST(request) {
     const pdfUrl = await buildPdf(certificateId, userId);
     return NextResponse.json({
       success: true,
-      pdfUrl
+      pdfUrl,
     });
   } catch (error) {
     console.error('PDF generation error:', error);
-    return NextResponse.json({
-      success: false,
-      error: PDF_ENABLED 
-        ? 'Failed to generate PDF. Please try again.'
-        : 'PDF generation is temporarily disabled.'
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: PDF_ENABLED
+          ? 'Failed to generate PDF. Please try again.'
+          : 'PDF generation is temporarily disabled.',
+      },
+      { status: 500 }
+    );
   }
 }

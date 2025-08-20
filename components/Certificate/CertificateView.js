@@ -34,12 +34,12 @@ const CertificateView = ({ certificate }) => {
         },
         body: JSON.stringify({
           certificateId: certificate.id,
-          userId: certificate.user_id
-        })
+          userId: certificate.user_id,
+        }),
       });
-      
+
       const result = await response.json();
-      
+
       if (result.success) {
         setPdfUrl(result.pdfUrl);
         window.open(result.pdfUrl, '_blank');
@@ -137,14 +137,18 @@ const CertificateView = ({ certificate }) => {
                   minHeight: '400px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
                 }}
               >
                 <div className="text-center p-5">
-                  <i className="feather-file-text" style={{ fontSize: '48px', color: '#6c757d' }}></i>
+                  <i
+                    className="feather-file-text"
+                    style={{ fontSize: '48px', color: '#6c757d' }}
+                  ></i>
                   <h4 className="mt-3">Certificate Preview</h4>
                   <p className="text-muted">
-                    Click &quot;Download PDF&quot; to generate and view your certificate
+                    Click &quot;Download PDF&quot; to generate and view your
+                    certificate
                   </p>
                 </div>
               </div>
