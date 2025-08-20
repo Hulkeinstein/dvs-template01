@@ -144,7 +144,7 @@ const CertificateView = ({ certificate }) => {
                   <i className="feather-file-text" style={{ fontSize: '48px', color: '#6c757d' }}></i>
                   <h4 className="mt-3">Certificate Preview</h4>
                   <p className="text-muted">
-                    Click "Download PDF" to generate and view your certificate
+                    Click &quot;Download PDF&quot; to generate and view your certificate
                   </p>
                 </div>
               </div>
