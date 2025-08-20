@@ -1,18 +1,35 @@
+import 'server-only';
 import { NextResponse } from 'next/server';
 import { supabase } from '@/app/lib/supabase/client';
+import path from 'node:path';
+import fs from 'node:fs';
 
 // IMPORTANT: Node.js runtime for PDF generation
 export const runtime = 'nodejs';
 
-export async function POST(request) {
-  try {
-    const { certificateId, userId } = await request.json();
+// PDF feature toggle
+const PDF_ENABLED = process.env.PDF_ENABLED !== 'false';
 
-    if (!certificateId || !userId) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required parameters' },
-        { status: 400 }
-      );
+async function buildPdf(certificateId, userId) {
+  if (!PDF_ENABLED) {
+    throw new Error('PDF generation is disabled');
+  }
+
+  try {
+    // Dynamic import - build 시점에 번들링되지 않음
+    const { pdf, Document, Page, Text, View, StyleSheet, Font } = await import('@react-pdf/renderer');
+    
+    // Font 등록 - 파일 존재 여부 체크
+    const fontPath = path.join(process.cwd(), 'public/fonts/NanumPenScript-Regular.ttf');
+    if (fs.existsSync(fontPath)) {
+      try {
+        Font.register({
+          family: 'Nanum Pen Script',
+          src: fontPath
+        });
+      } catch (fontError) {
+        console.warn('Font registration failed, using fallback:', fontError);
+      }
     }
 
     // Get certificate data
@@ -23,7 +40,6 @@ export async function POST(request) {
         certificate_number,
         template_id,
         metadata,
-        pdf_url,
         course:courses(
           title,
           instructor:user!courses_instructor_id_fkey(full_name)
@@ -38,33 +54,144 @@ export async function POST(request) {
       .single();
 
     if (error || !certificate) {
+      throw new Error('Certificate not found');
+    }
+
+    // PDF 스타일
+    const styles = StyleSheet.create({
+      page: {
+        padding: 50,
+        backgroundColor: '#ffffff',
+      },
+      title: {
+        fontSize: 32,
+        textAlign: 'center',
+        marginBottom: 20,
+        fontFamily: 'Helvetica-Bold',
+      },
+      text: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 10,
+        fontFamily: 'Helvetica',
+      },
+      certificateNumber: {
+        fontSize: 12,
+        textAlign: 'center',
+        marginTop: 30,
+        color: '#666666',
+      },
+    });
+
+    // PDF 문서 생성
+    const CertificateDocument = (
+      <Document>
+        <Page size="A4" orientation="landscape" style={styles.page}>
+          <Text style={styles.title}>Certificate of Completion</Text>
+          <Text style={styles.text}>This is to certify that</Text>
+          <Text style={[styles.text, { fontSize: 24, marginVertical: 20 }]}>
+            {certificate.user?.full_name || 'Student'}
+          </Text>
+          <Text style={styles.text}>has successfully completed</Text>
+          <Text style={[styles.text, { fontSize: 20, marginVertical: 20 }]}>
+            {certificate.course?.title || 'Course'}
+          </Text>
+          <Text style={styles.text}>
+            Instructor: {certificate.course?.instructor?.full_name || 'Instructor'}
+          </Text>
+          <Text style={styles.certificateNumber}>
+            Certificate Number: {certificate.certificate_number}
+          </Text>
+        </Page>
+      </Document>
+    );
+
+    // PDF 생성
+    const pdfBuffer = await pdf(CertificateDocument).toBuffer();
+
+    // Supabase Storage에 업로드
+    const fileName = `certificate-${certificateId}.pdf`;
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('certificates')
+      .upload(fileName, pdfBuffer, {
+        contentType: 'application/pdf',
+        upsert: true,
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('certificates')
+      .getPublicUrl(fileName);
+
+    // Update certificate record with PDF URL
+    await supabase
+      .from('certificates')
+      .update({ pdf_url: publicUrl })
+      .eq('id', certificateId);
+
+    return publicUrl;
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    throw error;
+  }
+}
+
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const certificateId = searchParams.get('certificateId');
+  const userId = searchParams.get('userId');
+
+  if (!certificateId || !userId) {
+    return NextResponse.json(
+      { success: false, error: 'Missing required parameters' },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const pdfUrl = await buildPdf(certificateId, userId);
+    return NextResponse.json({
+      success: true,
+      pdfUrl
+    });
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    return NextResponse.json({
+      success: false,
+      error: PDF_ENABLED 
+        ? 'Failed to generate PDF. Please try again.'
+        : 'PDF generation is temporarily disabled.'
+    }, { status: 500 });
+  }
+}
+
+export async function POST(request) {
+  try {
+    const { certificateId, userId } = await request.json();
+
+    if (!certificateId || !userId) {
       return NextResponse.json(
-        { success: false, error: 'Certificate not found' },
-        { status: 404 }
+        { success: false, error: 'Missing required parameters' },
+        { status: 400 }
       );
     }
 
-    // If PDF already exists, return it
-    if (certificate.pdf_url) {
-      return NextResponse.json({
-        success: true,
-        pdfUrl: certificate.pdf_url
-      });
-    }
-
-    // For now, return a placeholder response
-    // In production, you would generate the PDF here using a different approach
-    // such as puppeteer, or a separate PDF service
+    const pdfUrl = await buildPdf(certificateId, userId);
     return NextResponse.json({
-      success: false,
-      error: 'PDF generation is temporarily disabled. Please contact support.'
+      success: true,
+      pdfUrl
     });
-
   } catch (error) {
     console.error('PDF generation error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to generate PDF' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: false,
+      error: PDF_ENABLED 
+        ? 'Failed to generate PDF. Please try again.'
+        : 'PDF generation is temporarily disabled.'
+    }, { status: 500 });
   }
 }
