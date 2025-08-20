@@ -59,9 +59,14 @@ interface VerifyOTPResult {
  * @param {Date | string} expiryTime - 만료 시간
  * @returns {VerifyOTPResult} 검증 결과
  */
-export function verifyOTP(inputOTP: string, savedOTP: string, expiryTime: Date | string): VerifyOTPResult {
+export function verifyOTP(
+  inputOTP: string,
+  savedOTP: string,
+  expiryTime: Date | string
+): VerifyOTPResult {
   const now = new Date();
-  const expiry = typeof expiryTime === 'string' ? new Date(expiryTime) : expiryTime;
+  const expiry =
+    typeof expiryTime === 'string' ? new Date(expiryTime) : expiryTime;
 
   if (now > expiry) {
     return { valid: false, error: 'OTP has expired' };

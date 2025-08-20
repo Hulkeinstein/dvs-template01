@@ -153,7 +153,7 @@ const CourseWidget = ({
 
   return (
     <>
-      <div className="rbt-card variation-01 rbt-hover">
+      <div className="rbt-card variation-05 rbt-hover">
         <div className="rbt-card-img">
           <Link href={`/course-details/${data.id}`}>
             <Image

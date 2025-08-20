@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { getUserProfile } from '@/app/lib/actions/getUserProfile';
 import BackToTop from '@/app/backToTop';
 import InstructorProfile from './(profile)';

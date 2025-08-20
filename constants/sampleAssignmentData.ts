@@ -23,7 +23,13 @@ interface AssignmentData {
   attachments: Attachment[];
 }
 
-type AssignmentType = 'basic' | 'advanced' | 'quiz' | 'report' | 'group' | 'practice';
+type AssignmentType =
+  | 'basic'
+  | 'advanced'
+  | 'quiz'
+  | 'report'
+  | 'group'
+  | 'practice';
 
 type SampleAssignmentData = Record<AssignmentType, AssignmentData>;
 
@@ -333,6 +339,8 @@ export const multipleAssignments: AssignmentData[] = [
 ];
 
 // Assignment Modal에서 직접 사용할 수 있는 함수
-export const loadSampleAssignment = (type: AssignmentType = 'basic'): AssignmentData => {
+export const loadSampleAssignment = (
+  type: AssignmentType = 'basic'
+): AssignmentData => {
   return sampleAssignmentData[type] || sampleAssignmentData.basic;
 };

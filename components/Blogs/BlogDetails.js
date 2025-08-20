@@ -4,6 +4,9 @@ import React, { useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { FreeMode, Navigation } from 'swiper/modules';
 

@@ -2,20 +2,6 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
-import { getTemplateComponent } from '@/app/lib/certificate/templates';
-import { generateCertificatePDF } from '@/app/lib/certificate/actions/generatePDF';
-
-// Dynamic imports to avoid SSR issues
-const PDFViewer = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
-  { ssr: false }
-);
-
-const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
-  { ssr: false }
-);
 
 const CertificateView = ({ certificate }) => {
   const [loading, setLoading] = useState(false);
@@ -33,8 +19,6 @@ const CertificateView = ({ certificate }) => {
     issuedDate: certificate.issued_date,
   };
 
-  const TemplateComponent = getTemplateComponent(certificate.template_id);
-
   const handleGeneratePDF = async () => {
     if (pdfUrl) {
       window.open(pdfUrl, '_blank');
@@ -43,10 +27,19 @@ const CertificateView = ({ certificate }) => {
 
     setLoading(true);
     try {
-      const result = await generateCertificatePDF(
-        certificate.id,
-        certificate.user_id
-      );
+      const response = await fetch('/api/certificates/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          certificateId: certificate.id,
+          userId: certificate.user_id,
+        }),
+      });
+
+      const result = await response.json();
+
       if (result.success) {
         setPdfUrl(result.pdfUrl);
         window.open(result.pdfUrl, '_blank');
@@ -130,23 +123,6 @@ const CertificateView = ({ certificate }) => {
                         </>
                       )}
                     </button>
-
-                    <PDFDownloadLink
-                      document={<TemplateComponent data={certificateData} />}
-                      fileName={`certificate_${certificate.certificate_number}.pdf`}
-                      className="rbt-btn btn-border"
-                    >
-                      {({ blob, url, loading, error }) =>
-                        loading ? (
-                          'Preparing...'
-                        ) : (
-                          <>
-                            <i className="feather-file-text me-2"></i>
-                            Direct Download
-                          </>
-                        )
-                      }
-                    </PDFDownloadLink>
                   </div>
                 </div>
               </div>
@@ -158,12 +134,22 @@ const CertificateView = ({ certificate }) => {
                   borderRadius: '8px',
                   overflow: 'hidden',
                   backgroundColor: '#f8f9fa',
+                  minHeight: '400px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <div style={{ height: '600px' }}>
-                  <PDFViewer width="100%" height="100%" showToolbar={false}>
-                    <TemplateComponent data={certificateData} />
-                  </PDFViewer>
+                <div className="text-center p-5">
+                  <i
+                    className="feather-file-text"
+                    style={{ fontSize: '48px', color: '#6c757d' }}
+                  ></i>
+                  <h4 className="mt-3">Certificate Preview</h4>
+                  <p className="text-muted">
+                    Click &quot;Download PDF&quot; to generate and view your
+                    certificate
+                  </p>
                 </div>
               </div>
 

@@ -1,36 +1,29 @@
 /**
  * Certificate Template Registry
- * Exports all available certificate templates
+ * Templates are now handled by API route only
+ * UI components should use the API to generate PDFs
  */
 
-import dynamic from 'next/dynamic';
-
-// Dynamically import templates to avoid SSR issues with React PDF
-export const DefaultTemplate = dynamic(
-  () => import('./DefaultTemplate'),
-  { ssr: false }
-);
-
-// Map template IDs to components
-export const TEMPLATE_COMPONENTS = {
-  'default': DefaultTemplate,
-  'template1': DefaultTemplate, // Using default for now
-  'template2': DefaultTemplate, // Will create unique designs later
-  'template3': DefaultTemplate,
-  'template4': DefaultTemplate,
-  'template5': DefaultTemplate,
-  'template-port1': DefaultTemplate,
-  'template-port2': DefaultTemplate,
-  'template-port3': DefaultTemplate,
-  'template-port5': DefaultTemplate,
-  'template-port6': DefaultTemplate,
+// Template metadata only - no components
+export const TEMPLATE_METADATA = {
+  'default': { name: 'Default Template', orientation: 'landscape' },
+  'template1': { name: 'Template 1', orientation: 'landscape' },
+  'template2': { name: 'Template 2', orientation: 'landscape' },
+  'template3': { name: 'Template 3', orientation: 'landscape' },
+  'template4': { name: 'Template 4', orientation: 'landscape' },
+  'template5': { name: 'Template 5', orientation: 'landscape' },
+  'template-port1': { name: 'Portrait Template 1', orientation: 'portrait' },
+  'template-port2': { name: 'Portrait Template 2', orientation: 'portrait' },
+  'template-port3': { name: 'Portrait Template 3', orientation: 'portrait' },
+  'template-port5': { name: 'Portrait Template 5', orientation: 'portrait' },
+  'template-port6': { name: 'Portrait Template 6', orientation: 'portrait' },
 };
 
 /**
- * Get template component by ID
+ * Get template metadata by ID
  * @param {string} templateId - Template identifier
- * @returns {React.Component} Template component
+ * @returns {Object} Template metadata
  */
-export function getTemplateComponent(templateId) {
-  return TEMPLATE_COMPONENTS[templateId] || TEMPLATE_COMPONENTS['default'];
+export function getTemplateMetadata(templateId) {
+  return TEMPLATE_METADATA[templateId] || TEMPLATE_METADATA['default'];
 }

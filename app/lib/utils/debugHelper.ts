@@ -39,7 +39,11 @@ declare global {
  * @param {string} action - 액션 이름
  * @param {any} data - 로그 데이터
  */
-export const debugLog = (component: string, action: string, data: any): void => {
+export const debugLog = (
+  component: string,
+  action: string,
+  data: any
+): void => {
   if (!DEBUG_MODE) return;
 
   const timestamp = new Date().toISOString();
@@ -65,7 +69,7 @@ export const debugLog = (component: string, action: string, data: any): void => 
     logs.push(logData);
     if (logs.length > 50) logs.shift();
     localStorage.setItem('attachmentDebugLogs', JSON.stringify(logs));
-  } catch (e) {
+  } catch {
     // console.warn('Failed to save debug log to localStorage:', e);
   }
 };
@@ -76,7 +80,11 @@ export const debugLog = (component: string, action: string, data: any): void => 
  * @param {Error} error - 에러 객체
  * @param {Record<string, any>} context - 추가 컨텍스트 정보
  */
-export const trackError = (component: string, error: Error, context: Record<string, any> = {}): void => {
+export const trackError = (
+  component: string,
+  error: Error,
+  context: Record<string, any> = {}
+): void => {
   // console.error(`❌ [${component}] Error:`, {
   //   message: error.message,
   //   stack: error.stack,
@@ -97,7 +105,7 @@ export const trackError = (component: string, error: Error, context: Record<stri
           timestamp: new Date().toISOString(),
         })
       );
-    } catch (e) {
+    } catch {
       // console.warn('Failed to save error to localStorage:', e);
     }
   }
@@ -120,7 +128,7 @@ export const printDebugInfo = (): void => {
     if (lastError) {
       // console.log('❌ Last Error:', JSON.parse(lastError));
     }
-  } catch (e) {
+  } catch {
     // console.warn('Failed to print debug info:', e);
   }
 };
@@ -135,7 +143,7 @@ export const clearDebugLogs = (): void => {
     localStorage.removeItem('attachmentDebugLogs');
     localStorage.removeItem('lastAttachmentError');
     // console.log('✅ Debug logs cleared');
-  } catch (e) {
+  } catch {
     // console.warn('Failed to clear debug logs:', e);
   }
 };
@@ -146,7 +154,7 @@ if (DEBUG_MODE && typeof window !== 'undefined') {
     logs: (): LogData[] => {
       try {
         return JSON.parse(localStorage.getItem('attachmentDebugLogs') || '[]');
-      } catch (e) {
+      } catch {
         // console.error('Failed to get logs:', e);
         return [];
       }
@@ -156,7 +164,7 @@ if (DEBUG_MODE && typeof window !== 'undefined') {
       try {
         const error = localStorage.getItem('lastAttachmentError');
         return error ? JSON.parse(error) : null;
-      } catch (e) {
+      } catch {
         // console.error('Failed to get last error:', e);
         return null;
       }

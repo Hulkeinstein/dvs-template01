@@ -1,19 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { createClient } from '@supabase/supabase-js';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
+import { supabase } from '@/app/lib/supabase/client';
 import twilio from 'twilio';
 import {
   generateOTP,
   getOTPExpiryTime,
   normalizePhoneNumber,
 } from '@/app/lib/utils/otp';
-
-// Supabase 클라이언트
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
 
 // Twilio 클라이언트 (환경변수가 설정된 경우에만 초기화)
 let twilioClient = null;

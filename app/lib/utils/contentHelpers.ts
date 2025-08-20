@@ -27,7 +27,9 @@ interface TopicWithLessons extends CourseTopic {
 }
 
 // Assignment 데이터 검증 - 서버/클라이언트 동일 규칙 단일 소스
-export function validateAssignmentData(data: AssignmentData | null | undefined): ValidationResult {
+export function validateAssignmentData(
+  data: AssignmentData | null | undefined
+): ValidationResult {
   if (!data) {
     return { success: false, error: '데이터가 없습니다' };
   }
@@ -55,7 +57,9 @@ export function validateAssignmentData(data: AssignmentData | null | undefined):
 }
 
 // Topics 데이터를 저장용으로 변환 - UI 순서를 truth로 삼아 sort_order 갱신
-export function transformTopicsForSave(topics: TopicWithLessons[]): TopicWithLessons[] {
+export function transformTopicsForSave(
+  topics: TopicWithLessons[]
+): TopicWithLessons[] {
   return topics.map((topic) => ({
     ...topic,
     lessons: (topic.lessons || []).map((lesson, idx) => ({
@@ -67,7 +71,10 @@ export function transformTopicsForSave(topics: TopicWithLessons[]): TopicWithLes
 
 export const contentHelpers = {
   // 타입별 필터링
-  filterByType: (contents: ContentItem[] | null | undefined, type: string): ContentItem[] => {
+  filterByType: (
+    contents: ContentItem[] | null | undefined,
+    type: string
+  ): ContentItem[] => {
     if (!contents || !Array.isArray(contents)) return [];
     return contents.filter(
       (c) => c && (c.type === type || c.content_type === type)
@@ -133,7 +140,9 @@ export const contentHelpers = {
   },
 
   // lessons와 quizzes 배열을 contents로 변환
-  combineContents: (topic: TopicWithLessons | null | undefined): ContentItem[] => {
+  combineContents: (
+    topic: TopicWithLessons | null | undefined
+  ): ContentItem[] => {
     // topic이 undefined이거나 null인 경우 빈 배열 반환
     if (!topic || typeof topic !== 'object') {
       return [];
@@ -195,7 +204,9 @@ export const contentHelpers = {
   },
 
   // contents를 타입별 배열로 분리
-  splitContents: (contents: ContentItem[] | null | undefined): {
+  splitContents: (
+    contents: ContentItem[] | null | undefined
+  ): {
     lessons: ContentItem[];
     quizzes: ContentItem[];
     assignments: ContentItem[];

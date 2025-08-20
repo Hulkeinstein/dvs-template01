@@ -1,6 +1,8 @@
 // Placeholder를 실제 iframe으로 변환하는 유틸리티 함수
 
-export const convertPlaceholdersToIframes = (htmlContent: string | null | undefined): string => {
+export const convertPlaceholdersToIframes = (
+  htmlContent: string | null | undefined
+): string => {
   if (!htmlContent) return htmlContent || '';
 
   let processedContent = htmlContent;
@@ -39,7 +41,9 @@ export const convertPlaceholdersToIframes = (htmlContent: string | null | undefi
 };
 
 // iframe을 다시 placeholder로 변환하는 유틸리티 함수 (편집 시 사용)
-export const convertIframesToPlaceholders = (htmlContent: string | null | undefined): string => {
+export const convertIframesToPlaceholders = (
+  htmlContent: string | null | undefined
+): string => {
   if (!htmlContent) return htmlContent || '';
 
   let processedContent = htmlContent;

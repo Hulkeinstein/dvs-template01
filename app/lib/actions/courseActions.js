@@ -2,7 +2,7 @@
 
 import { supabase } from '@/app/lib/supabase/client';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { revalidatePath } from 'next/cache';
 import { BADGE_CONFIG } from '@/app/lib/constants/badgeConfig';
 import {

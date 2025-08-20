@@ -5,37 +5,46 @@
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-type ConsoleMethod = 'log' | 'info' | 'warn' | 'debug' | 'table' | 'group' | 'groupEnd' | 'time' | 'timeEnd';
+type ConsoleMethod =
+  | 'log'
+  | 'info'
+  | 'warn'
+  | 'debug'
+  | 'table'
+  | 'group'
+  | 'groupEnd'
+  | 'time'
+  | 'timeEnd';
 
 export const logger = {
   // 일반 로그 - 개발 환경에서만
-  log: (...args: any[]): void => {
+  log: (): void => {
     if (isDevelopment) {
       // console.log(...args);
     }
   },
 
   // 정보 로그 - 개발 환경에서만
-  info: (...args: any[]): void => {
+  info: (): void => {
     if (isDevelopment) {
       // console.info(...args);
     }
   },
 
   // 경고 - 개발 환경에서만
-  warn: (...args: any[]): void => {
+  warn: (): void => {
     if (isDevelopment) {
       // console.warn(...args);
     }
   },
 
   // 에러 - 항상 출력 (Production에서도 에러는 추적해야 함)
-  error: (...args: any[]): void => {
+  error: (): void => {
     // console.error(...args);
   },
 
   // 디버그 - 개발 환경에서만, 더 상세한 정보
-  debug: (...args: any[]): void => {
+  debug: (): void => {
     if (isDevelopment && process.env.NEXT_PUBLIC_DEBUG === 'true') {
       // console.log('[DEBUG]', ...args);
     }
@@ -92,9 +101,17 @@ if (typeof window !== 'undefined' && !isDevelopment) {
 
   methodsToOverride.forEach((method) => {
     // Skip error method to keep error logging in production
-    if (method === 'log' || method === 'info' || method === 'warn' || 
-        method === 'debug' || method === 'table' || method === 'group' || 
-        method === 'groupEnd' || method === 'time' || method === 'timeEnd') {
+    if (
+      method === 'log' ||
+      method === 'info' ||
+      method === 'warn' ||
+      method === 'debug' ||
+      method === 'table' ||
+      method === 'group' ||
+      method === 'groupEnd' ||
+      method === 'time' ||
+      method === 'timeEnd'
+    ) {
       (window.console as any)[method] = () => {};
     }
   });

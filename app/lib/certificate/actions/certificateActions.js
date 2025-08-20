@@ -2,7 +2,6 @@
 
 import { supabase } from '@/app/lib/supabase/client';
 import CertificateValidator from "../core/validator";
-import CertificateGenerator from "../core/generator";
 import { isFeatureEnabled } from "../utils/featureFlags";
 import { getTemplateConfig } from "../utils/templateMapper";
 
@@ -98,7 +97,7 @@ export async function issueCertificate(userId, courseId) {
     }
 
     // Generate certificate number
-    const certificateNumber = CertificateGenerator.generateCertificateNumber(courseId, userId);
+    const certificateNumber = `CERT-${courseId.slice(-8)}-${userId.slice(-8)}-${Date.now()}`.toUpperCase();
     const verificationCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
     // Prepare certificate data

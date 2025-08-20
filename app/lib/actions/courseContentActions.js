@@ -3,7 +3,7 @@
 import { supabase } from '@/app/lib/supabase/client';
 import { revalidatePath } from 'next/cache';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { createTopic, updateTopic, deleteTopic } from './topicActions';
 import { createLesson, updateLesson, deleteLesson } from './lessonActions';
 import {
