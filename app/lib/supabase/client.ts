@@ -25,20 +25,42 @@ function getSupabaseClient(): SupabaseClient {
       // Server-side: create a minimal mock during build
       return {
         from: () => ({
-          select: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
-          insert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
-          update: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
-          delete: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+          select: () =>
+            Promise.resolve({
+              data: null,
+              error: new Error('Supabase not configured'),
+            }),
+          insert: () =>
+            Promise.resolve({
+              data: null,
+              error: new Error('Supabase not configured'),
+            }),
+          update: () =>
+            Promise.resolve({
+              data: null,
+              error: new Error('Supabase not configured'),
+            }),
+          delete: () =>
+            Promise.resolve({
+              data: null,
+              error: new Error('Supabase not configured'),
+            }),
         }),
         storage: {
           from: () => ({
-            upload: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+            upload: () =>
+              Promise.resolve({
+                data: null,
+                error: new Error('Supabase not configured'),
+              }),
             getPublicUrl: () => ({ data: { publicUrl: '' } }),
           }),
         },
       } as any;
     }
-    throw new Error('Supabase client is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+    throw new Error(
+      'Supabase client is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.'
+    );
   }
 
   supabaseInstance = createClient(supabaseUrl, supabaseKey);
@@ -55,5 +77,5 @@ export const supabase = new Proxy({} as SupabaseClient, {
   apply(target, thisArg, argArray) {
     const client = getSupabaseClient();
     return Reflect.apply(client as any, thisArg, argArray);
-  }
+  },
 });
