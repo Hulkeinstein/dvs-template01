@@ -12,6 +12,8 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/(.*)$': '<rootDir>/$1',
+    // Mock jose to avoid ESM issues
+    '^jose$': '<rootDir>/__mocks__/jose.ts',
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   transform: {
