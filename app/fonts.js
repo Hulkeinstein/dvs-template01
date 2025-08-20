@@ -2,7 +2,6 @@ import {
   Source_Serif_4,
   Nanum_Gothic,
   Nanum_Myeongjo,
-  Nanum_Pen_Script,
   Noto_Sans_KR,
   Gothic_A1,
   Jua,
@@ -31,13 +30,6 @@ export const nanumMyeongjo = Nanum_Myeongjo({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-nanum-myeongjo',
-});
-
-export const nanumPenScript = Nanum_Pen_Script({
-  weight: ['400'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-nanum-pen-script',
 });
 
 export const notoSansKR = Noto_Sans_KR({
@@ -69,4 +61,4 @@ export const doHyeon = Do_Hyeon({
 });
 
 // 모든 폰트 클래스를 결합
-export const fontClassNames = `${sourceSerif.variable} ${nanumGothic.variable} ${nanumMyeongjo.variable} ${nanumPenScript.variable} ${notoSansKR.variable} ${gothicA1.variable} ${jua.variable} ${doHyeon.variable}`;
+export const fontClassNames = `${sourceSerif.variable} ${nanumGothic.variable} ${nanumMyeongjo.variable} ${notoSansKR.variable} ${gothicA1.variable} ${jua.variable} ${doHyeon.variable}`;
