@@ -2,7 +2,7 @@
 
 import { supabase } from '@/app/lib/supabase/client';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { base64ToBlob } from '@/app/lib/utils/fileUpload';
 import { debugLog, trackError } from '@/app/lib/utils/debugHelper';
 
