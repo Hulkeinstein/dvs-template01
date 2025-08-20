@@ -5,8 +5,16 @@ export const jwtVerify = jest.fn(async (token: string) => ({
 
 export class SignJWT {
   constructor(_: any) {}
-  setProtectedHeader() { return this; }
-  setIssuedAt() { return this; }
-  setExpirationTime() { return this; }
-  sign() { return Promise.resolve('mocked.jwt.token'); }
+  setProtectedHeader() {
+    return this;
+  }
+  setIssuedAt() {
+    return this;
+  }
+  setExpirationTime() {
+    return this;
+  }
+  sign() {
+    return Promise.resolve('mocked.jwt.token');
+  }
 }
