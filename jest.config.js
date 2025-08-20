@@ -12,8 +12,11 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle module aliases (this will be automatically configured for you soon)
     '^@/(.*)$': '<rootDir>/$1',
-    // Mock jose to avoid ESM issues
+    // Mock ESM modules to avoid issues
     '^jose$': '<rootDir>/__mocks__/jose.ts',
+    '^@panva/hkdf$': '<rootDir>/__mocks__/@panva/hkdf.js',
+    '^next-auth$': '<rootDir>/__mocks__/next-auth/index.js',
+    '^next-auth/react$': '<rootDir>/__mocks__/next-auth/react.js',
   },
   testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
   transform: {
