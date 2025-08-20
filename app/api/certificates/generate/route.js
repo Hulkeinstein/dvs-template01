@@ -1,8 +1,6 @@
 import 'server-only';
 import { NextResponse } from 'next/server';
 import { supabase } from '@/app/lib/supabase/client';
-import path from 'node:path';
-import fs from 'node:fs';
 
 // IMPORTANT: Node.js runtime for PDF generation
 export const runtime = 'nodejs';
@@ -17,25 +15,9 @@ async function buildPdf(certificateId, userId) {
 
   try {
     // Dynamic import - build 시점에 번들링되지 않음
-    const { pdf, Document, Page, Text, View, StyleSheet, Font } = await import(
+    const { pdf, Document, Page, Text, View, StyleSheet } = await import(
       '@react-pdf/renderer'
     );
-
-    // Font 등록 - 파일 존재 여부 체크
-    const fontPath = path.join(
-      process.cwd(),
-      'public/fonts/NanumPenScript-Regular.ttf'
-    );
-    if (fs.existsSync(fontPath)) {
-      try {
-        Font.register({
-          family: 'Nanum Pen Script',
-          src: fontPath,
-        });
-      } catch (fontError) {
-        console.warn('Font registration failed, using fallback:', fontError);
-      }
-    }
 
     // Get certificate data
     const { data: certificate, error } = await supabase

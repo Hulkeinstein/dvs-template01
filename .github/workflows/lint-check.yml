@@ -48,9 +48,13 @@ jobs:
       - name: Guard - forbid font hardcoding
         run: |
           set -e
-          if grep -RIn "Nanum Pen Script" \
-            --include=*.scss --include=*.css --include=*.js --include=*.jsx --include=*.ts --include=*.tsx . \
-            | grep -v "app/api/certificates/generate/route" ; then
+          HITS=$(git grep -nI "Nanum Pen Script" -- \
+            ":(exclude)node_modules" \
+            ":(exclude).next" \
+            ":(exclude)app/api/**" \
+            -- "*.scss" "*.css" "*.js" "*.jsx" "*.ts" "*.tsx" || true)
+          if [ -n "$HITS" ]; then
+            echo "$HITS"
             echo "Do not hardcode font name. Use CSS var (--font-nanum-pen-script)." >&2
             exit 1
           fi
@@ -58,9 +62,11 @@ jobs:
       - name: Guard - react-pdf isolated to API route
         run: |
           set -e
-          HITS=$(grep -RIn "@react-pdf/renderer" \
-            --include=*.js --include=*.jsx --include=*.ts --include=*.tsx . \
-            | grep -v "app/api/certificates/generate/route" || true)
+          HITS=$(git grep -nI "@react-pdf/renderer" -- \
+            ":(exclude)node_modules" \
+            ":(exclude).next" \
+            ":(exclude)app/api/certificates/generate/**" \
+            -- "*.js" "*.jsx" "*.ts" "*.tsx" || true)
           if [ -n "$HITS" ]; then
             echo "$HITS"
             echo "react-pdf must be isolated to app/api/certificates/generate/route.*" >&2
