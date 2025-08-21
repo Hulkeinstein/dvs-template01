@@ -39,7 +39,7 @@ class MockBlob {
     this.size = 0;
     this.type = '';
   }
-  
+
   slice() {
     return new MockBlob();
   }
@@ -60,14 +60,14 @@ class MockFileReader {
     this.result = null;
     this.error = null;
     this.readyState = 0;
-    
+
     this.onload = null;
     this.onerror = null;
     this.onabort = null;
     this.onprogress = null;
     this.onloadstart = null;
     this.onloadend = null;
-    
+
     this.EMPTY = 0;
     this.LOADING = 1;
     this.DONE = 2;
