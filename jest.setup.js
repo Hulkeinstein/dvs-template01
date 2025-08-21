@@ -5,6 +5,9 @@ import './tests/polyfills';
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 
+// Test helpers
+import { resetAllMocks } from './tests/utils/test-helpers';
+
 // Set up test environment variables
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
@@ -75,9 +78,8 @@ afterEach(() => {
   jest.runOnlyPendingTimers();
   jest.useRealTimers();
   
-  // Clear all mocks
-  jest.clearAllMocks();
-  jest.restoreAllMocks();
+  // Clear all mocks using helper
+  resetAllMocks();
   
   // Clear DOM
   document.body.innerHTML = '';
