@@ -448,7 +448,9 @@ describe('Course Data Mapper', () => {
     });
 
     it('should ignore topics and thumbnailPreview fields', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const formData = {
         title: 'Test',
