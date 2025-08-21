@@ -12,12 +12,7 @@ if (typeof ReadableStream === 'undefined') {
 
 // File API
 class MockFile {
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-
-  constructor(bits: any[], name: string, options: any = {}) {
+  constructor(bits, name, options = {}) {
     this.name = name;
     this.size = bits.reduce((acc, bit) => acc + (bit.length || 0), 0);
     this.type = options.type || '';
@@ -40,8 +35,11 @@ class MockFile {
 
 // Blob API
 class MockBlob {
-  size = 0;
-  type = '';
+  constructor() {
+    this.size = 0;
+    this.type = '';
+  }
+  
   slice() {
     return new MockBlob();
   }
@@ -58,22 +56,24 @@ class MockBlob {
 
 // FileReader API
 class MockFileReader {
-  result: string | ArrayBuffer | null = null;
-  error: any = null;
-  readyState = 0;
+  constructor() {
+    this.result = null;
+    this.error = null;
+    this.readyState = 0;
+    
+    this.onload = null;
+    this.onerror = null;
+    this.onabort = null;
+    this.onprogress = null;
+    this.onloadstart = null;
+    this.onloadend = null;
+    
+    this.EMPTY = 0;
+    this.LOADING = 1;
+    this.DONE = 2;
+  }
 
-  onload: any = null;
-  onerror: any = null;
-  onabort: any = null;
-  onprogress: any = null;
-  onloadstart: any = null;
-  onloadend: any = null;
-
-  EMPTY = 0;
-  LOADING = 1;
-  DONE = 2;
-
-  readAsDataURL(file: any) {
+  readAsDataURL(file) {
     this.readyState = this.LOADING;
     setTimeout(() => {
       this.result = 'data:image/png;base64,mockdata';
@@ -87,7 +87,7 @@ class MockFileReader {
     }, 0);
   }
 
-  readAsText(file: any) {
+  readAsText(file) {
     this.readyState = this.LOADING;
     setTimeout(() => {
       this.result = 'mock file content';
@@ -101,7 +101,7 @@ class MockFileReader {
     }, 0);
   }
 
-  readAsArrayBuffer(file: any) {
+  readAsArrayBuffer(file) {
     this.readyState = this.LOADING;
     setTimeout(() => {
       this.result = new ArrayBuffer(8);
@@ -124,16 +124,16 @@ class MockFileReader {
 }
 
 // URL API
-const mockURLStore = new Map<string, any>();
+const mockURLStore = new Map();
 let mockURLCounter = 0;
 
 const MockURL = {
-  createObjectURL: (blob: any) => {
+  createObjectURL: (blob) => {
     const url = `blob://mock-${++mockURLCounter}`;
     mockURLStore.set(url, blob);
     return url;
   },
-  revokeObjectURL: (url: string) => {
+  revokeObjectURL: (url) => {
     mockURLStore.delete(url);
   },
 };
@@ -150,9 +150,11 @@ Object.defineProperty(global, 'URL', { value: MockURL, writable: true });
 // FormData polyfill (필요시)
 if (typeof FormData === 'undefined') {
   class MockFormData {
-    private data: Map<string, any> = new Map();
+    constructor() {
+      this.data = new Map();
+    }
 
-    append(key: string, value: any) {
+    append(key, value) {
       const existing = this.data.get(key);
       if (existing) {
         if (Array.isArray(existing)) {
@@ -165,19 +167,19 @@ if (typeof FormData === 'undefined') {
       }
     }
 
-    set(key: string, value: any) {
+    set(key, value) {
       this.data.set(key, value);
     }
 
-    get(key: string) {
+    get(key) {
       return this.data.get(key);
     }
 
-    has(key: string) {
+    has(key) {
       return this.data.has(key);
     }
 
-    delete(key: string) {
+    delete(key) {
       this.data.delete(key);
     }
 
@@ -200,4 +202,4 @@ if (typeof FormData === 'undefined') {
   });
 }
 
-export {};
+module.exports = {};
