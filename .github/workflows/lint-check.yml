@@ -28,13 +28,28 @@ jobs:
           node-version: '20.11.x'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Print Node/NPM versions and config
         run: |
-          npm config set maxsockets 5
-          npm config set fetch-retries 3
-          npm config set fetch-retry-mintimeout 20000
-          npm config set fetch-retry-maxtimeout 120000
-          npm ci --prefer-offline
+          node -v
+          npm -v
+          npm config list
+          npm config get engine-strict || true
+          npm config get legacy-peer-deps || true
+
+      - name: Clean install (CI)
+        run: |
+          rm -rf node_modules package-lock.json || true
+          git checkout -- package-lock.json || true
+          npm ci --no-audit --fund=false --progress=false --verbose
+        env:
+          CI: "true"
+      
+      - name: Upload npm logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-logs
+          path: ~/.npm/_logs
 
       - name: Run Type Check
         run: npm run type-check
