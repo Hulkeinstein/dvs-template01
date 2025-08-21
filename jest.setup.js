@@ -20,7 +20,7 @@ const BLOCKED_HOSTS = ['supabase.co', 'googleapis.com', 'stripe.com', 'github.co
 
 beforeAll(() => {
   // Create error with stack trace for better debugging
-  const block = (caller: string) => {
+  const block = (caller) => {
     const err = new Error(`[TEST FAIL] Network call blocked: ${caller}\nStack: ${new Error().stack}`);
     console.error(err);
     throw err;

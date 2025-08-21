@@ -25,17 +25,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20.11.1'
+          node-version: '20.11.x'
           cache: 'npm'
-          
-      - name: Verify Node version
-        run: |
-          node_version=$(node -v)
-          echo "Node version: $node_version"
-          if [[ ! "$node_version" =~ ^v20\.1[1-9] ]]; then
-            echo "Error: Node version must be 20.11.x or higher (got $node_version)"
-            exit 1
-          fi
 
       - name: Install dependencies
         run: |
