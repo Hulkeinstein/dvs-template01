@@ -10,7 +10,7 @@ node_modules
 scripts/
 
 # Ignore test polyfills temporarily
-tests/polyfills.ts
+tests/polyfills.js
 
 # Ignore type definitions
 types/

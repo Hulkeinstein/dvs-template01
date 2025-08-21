@@ -1,5 +1,5 @@
 // Polyfills must be imported first
-import './tests/polyfills';
+import './tests/polyfills.js';
 
 // Testing library setup
 import '@testing-library/jest-dom';
