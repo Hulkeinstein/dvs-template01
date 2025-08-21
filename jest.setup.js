@@ -1,9 +1,9 @@
-// Optional: configure or set up a testing framework before each test.
-// If you delete this file, remove `setupFilesAfterEnv` from `jest.config.js`
+// Polyfills must be imported first
+import './tests/polyfills';
 
-// Used for __tests__/testing-library.js
-// Learn more: https://github.com/testing-library/jest-dom
+// Testing library setup
 import '@testing-library/jest-dom';
+import { cleanup } from '@testing-library/react';
 
 // Set up test environment variables
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
@@ -11,6 +11,84 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
 process.env.NEXTAUTH_SECRET = 'test-secret';
 process.env.GOOGLE_CLIENT_ID = 'test-google-client-id';
 process.env.GOOGLE_CLIENT_SECRET = 'test-google-client-secret';
+
+// Network blocking setup
+const BLOCKED_HOSTS = ['supabase.co', 'googleapis.com', 'stripe.com', 'github.com'];
+
+beforeAll(() => {
+  // Create error with stack trace for better debugging
+  const block = (caller: string) => {
+    const err = new Error(`[TEST FAIL] Network call blocked: ${caller}\nStack: ${new Error().stack}`);
+    console.error(err);
+    throw err;
+  };
+  
+  // Block fetch
+  const originalFetch = global.fetch;
+  global.fetch = jest.fn((url) => {
+    const urlString = typeof url === 'string' ? url : url.toString();
+    if (BLOCKED_HOSTS.some(host => urlString.includes(host))) {
+      return block(`fetch(${urlString})`);
+    }
+    // Allow localhost for testing
+    if (urlString.includes('localhost') || urlString.includes('127.0.0.1')) {
+      return Promise.resolve(new Response());
+    }
+    return block(`fetch(${urlString})`);
+  });
+  
+  // Block axios if present
+  try {
+    const axios = require('axios');
+    axios.get = jest.fn(() => block('axios.get'));
+    axios.post = jest.fn(() => block('axios.post'));
+    axios.put = jest.fn(() => block('axios.put'));
+    axios.delete = jest.fn(() => block('axios.delete'));
+    axios.patch = jest.fn(() => block('axios.patch'));
+  } catch {
+    // axios not installed, skip
+  }
+  
+  // Block Node.js network modules
+  ['http', 'https'].forEach(module => {
+    try {
+      const mod = require(`node:${module}`);
+      jest.spyOn(mod, 'request').mockImplementation(() => block(`${module}.request`));
+      jest.spyOn(mod, 'get').mockImplementation(() => block(`${module}.get`));
+    } catch {
+      // Module not available, skip
+    }
+  });
+});
+
+// Timer and cleanup setup
+beforeEach(() => {
+  // Use modern fake timers for consistency
+  jest.useFakeTimers('modern');
+});
+
+afterEach(() => {
+  // Clean up React components
+  cleanup();
+  
+  // Run all pending timers and clean up
+  jest.runOnlyPendingTimers();
+  jest.useRealTimers();
+  
+  // Clear all mocks
+  jest.clearAllMocks();
+  jest.restoreAllMocks();
+  
+  // Clear DOM
+  document.body.innerHTML = '';
+  document.head.innerHTML = '';
+  
+  // Log flaky tests for monitoring
+  const testName = expect.getState().currentTestName;
+  if (testName && testName.includes('@flaky')) {
+    console.warn('[FLAKY TEST]', testName);
+  }
+});
 
 // Mock Supabase client module
 jest.mock('@/app/lib/supabase/client', () => {
@@ -71,18 +149,12 @@ jest.mock('@/app/lib/supabase/client', () => {
   const mockSupabase = {
     from: mockFrom,
     auth: {
-      getUser: jest
-        .fn()
-        .mockResolvedValue({ data: { user: null }, error: null }),
+      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
     },
     storage: {
       from: jest.fn().mockReturnValue({
-        upload: jest
-          .fn()
-          .mockResolvedValue({ data: { path: 'test-path' }, error: null }),
-        getPublicUrl: jest
-          .fn()
-          .mockReturnValue({ data: { publicUrl: 'test-url' } }),
+        upload: jest.fn().mockResolvedValue({ data: { path: 'test-path' }, error: null }),
+        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'test-url' } }),
       }),
     },
   };
