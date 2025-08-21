@@ -164,7 +164,7 @@ describe('CourseRepository', () => {
       const originalCreatedAt = course.created_at;
 
       // Add small delay to ensure different timestamps
-      await new Promise(resolve => setTimeout(resolve, 1));
+      await new Promise((resolve) => setTimeout(resolve, 1));
 
       // When: 코스 업데이트
       const updated = await mockRepository.update(course.id, {
