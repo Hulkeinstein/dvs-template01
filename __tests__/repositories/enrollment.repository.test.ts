@@ -204,10 +204,10 @@ describe('EnrollmentRepository', () => {
       
       // Then: 정확한 분류
       expect(completed).toHaveLength(2);
-      expect(completed.every(e => e.completed_at != null)).toBe(true);
+      expect(completed.every((e: any) => e.completed_at != null)).toBe(true);
       
       expect(inProgress).toHaveLength(2);
-      expect(inProgress.every(e => e.progress! > 0 && e.progress! < 100)).toBe(true);
+      expect(inProgress.every((e: any) => e.progress! > 0 && e.progress! < 100)).toBe(true);
     });
   });
   

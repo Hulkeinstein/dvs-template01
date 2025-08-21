@@ -100,7 +100,7 @@ export async function expectToThrow(
   
   try {
     await fn();
-  } catch {
+  } catch (e) {
     thrown = true;
     error = e;
   }
