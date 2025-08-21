@@ -1,10 +1,10 @@
-export const jwtVerify = jest.fn(async (token: string) => ({
+export const jwtVerify = jest.fn(async () => ({
   payload: { sub: 'test-user' },
   protectedHeader: { alg: 'HS256' },
 }));
 
 export class SignJWT {
-  constructor(_: any) {}
+  constructor() {}
   setProtectedHeader() {
     return this;
   }
