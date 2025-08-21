@@ -100,7 +100,7 @@ export class LessonRepository extends BaseRepository<Lesson> {
    * 레슨 순서 일괄 업데이트
    */
   async bulkReorder(updates: { id: string; order_index: number }[]): Promise<void> {
-    const promises = updates.map(({ id, order_index }) =>
+    const promises = updates.map(({ id, order_index }: any) =>
       supabase
         .from(this.tableName)
         .update({ order_index })
@@ -108,7 +108,7 @@ export class LessonRepository extends BaseRepository<Lesson> {
     );
     
     const results = await Promise.all(promises);
-    const errors = results.filter(r => r.error);
+    const errors = results.filter((r: any) => r.error);
     
     if (errors.length > 0) {
       console.error('Errors during bulk reorder:', errors);

@@ -3,7 +3,6 @@
  * 수강 등록 Repository 테스트
  */
 
-import { EnrollmentRepository } from '@/app/lib/repositories/enrollment.repository';
 import { MockEnrollmentRepository } from '@/tests/mocks/repositories/mock.repository';
 import { RepositoryFactory } from '@/app/lib/repositories';
 import type { Enrollment } from '@/app/lib/repositories/enrollment.repository';
@@ -158,7 +157,7 @@ describe('EnrollmentRepository', () => {
       
       // Then: 해당 사용자의 등록만 반환
       expect(userEnrollments).toHaveLength(3);
-      expect(userEnrollments.every(e => e.user_id === userId)).toBe(true);
+      expect(userEnrollments.every((e: any) => e.user_id === userId)).toBe(true);
     });
     
     it('should categorize enrollments by status', async () => {
@@ -249,11 +248,11 @@ describe('EnrollmentRepository', () => {
       
       // Then: 해당 코스의 등록만 반환
       expect(courseEnrollments).toHaveLength(3);
-      expect(courseEnrollments.every(e => e.course_id === courseId)).toBe(true);
+      expect(courseEnrollments.every((e: any) => e.course_id === courseId)).toBe(true);
       
       // 통계 계산
-      const completedCount = courseEnrollments.filter(e => e.completed_at).length;
-      const averageProgress = courseEnrollments.reduce((sum, e) => sum + (e.progress || 0), 0) / courseEnrollments.length;
+      const completedCount = courseEnrollments.filter((e: any) => e.completed_at).length;
+      const averageProgress = courseEnrollments.reduce((sum: any, e: any) => sum + (e.progress || 0), 0) / courseEnrollments.length;
       
       expect(completedCount).toBe(1);
       expect(averageProgress).toBeCloseTo(75, 0);

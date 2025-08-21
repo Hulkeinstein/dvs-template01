@@ -3,6 +3,11 @@
  * 모든 레포지토리의 중앙 export point
  */
 
+import { courseRepository } from './course.repository';
+import { lessonRepository } from './lesson.repository';
+import { userRepository } from './user.repository';
+import { enrollmentRepository } from './enrollment.repository';
+
 export { BaseRepository } from './base.repository';
 export type { IRepository } from './base.repository';
 

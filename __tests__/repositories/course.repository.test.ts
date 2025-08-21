@@ -3,22 +3,18 @@
  * Repository Pattern을 사용한 테스트 예시
  */
 
-import { CourseRepository } from '@/app/lib/repositories/course.repository';
+// CourseRepository는 타입 참조용으로만 사용
 import { MockCourseRepository } from '@/tests/mocks/repositories/mock.repository';
 import { RepositoryFactory } from '@/app/lib/repositories';
 import type { Course } from '@/app/lib/repositories/course.repository';
 
 describe('CourseRepository', () => {
   let mockRepository: MockCourseRepository<Course>;
-  let courseRepository: CourseRepository;
   
   beforeEach(() => {
     // Mock repository 생성 및 등록
     mockRepository = new MockCourseRepository<Course>();
     RepositoryFactory.register('course', mockRepository);
-    
-    // 실제 repository는 mock을 사용하도록 설정
-    courseRepository = RepositoryFactory.get<CourseRepository>('course');
   });
   
   afterEach(() => {
@@ -72,8 +68,8 @@ describe('CourseRepository', () => {
       
       // Then: 해당 강사의 코스만 반환
       expect(result).toHaveLength(2);
-      expect(result.every(c => c.instructor_id === instructorId)).toBe(true);
-      expect(result.map(c => c.title)).toEqual(['React Basics', 'Advanced React']);
+      expect(result.every((c: any) => c.instructor_id === instructorId)).toBe(true);
+      expect(result.map((c: any) => c.title)).toEqual(['React Basics', 'Advanced React']);
     });
     
     it('should return empty array when instructor has no courses', async () => {

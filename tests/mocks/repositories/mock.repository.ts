@@ -33,10 +33,10 @@ export class MockRepository<T extends { id: string }> implements IRepository<T> 
       id,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
-    } as T;
+    };
     
-    this.data.set(id, created);
-    return created;
+    this.data.set(id, (created as unknown) as T);
+    return (created as unknown) as T;
   }
   
   /**

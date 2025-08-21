@@ -65,7 +65,7 @@ export function assertNoNetworkCalls(): void {
       expect(axios.put).not.toHaveBeenCalled();
       expect(axios.delete).not.toHaveBeenCalled();
     }
-  } catch (e) {
+  } catch {
     // axios not installed, skip
   }
 }
@@ -100,7 +100,7 @@ export async function expectToThrow(
   
   try {
     await fn();
-  } catch (e) {
+  } catch {
     thrown = true;
     error = e;
   }
@@ -262,9 +262,9 @@ export function testIf(
   fn: () => void | Promise<void>
 ): void {
   if (condition) {
-    test(name, fn);
+    test(name, fn as any);
   } else {
-    test.skip(name, fn);
+    test.skip(name, fn as any);
   }
 }
 
