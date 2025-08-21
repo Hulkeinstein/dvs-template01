@@ -23,7 +23,9 @@
     "automation:test": "tsx scripts/automation/test-automation.ts",
     "pr:create": "tsx scripts/automation/gh-pr-helper.ts create",
     "pr:merge": "tsx scripts/automation/gh-pr-helper.ts merge",
-    "pr:help": "tsx scripts/automation/gh-pr-helper.ts"
+    "pr:help": "tsx scripts/automation/gh-pr-helper.ts",
+    "quality:check": "tsx scripts/guards/check-test-quality.ts",
+    "quality:pre-push": "tsx scripts/guards/pre-push.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
