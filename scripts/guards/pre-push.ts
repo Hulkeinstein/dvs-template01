@@ -15,7 +15,7 @@ const RESET = '\x1b[0m';
 
 async function main() {
   console.log(`${BLUE}🛡️  Running pre-push quality checks...${RESET}\n`);
-  
+
   // 1. Run tests
   console.log('📝 Running tests...');
   try {
@@ -25,23 +25,25 @@ async function main() {
     console.error(`${RED}❌ Tests failed. Push aborted.${RESET}`);
     process.exit(1);
   }
-  
+
   // 2. Run quality checks
   const checker = new TestQualityChecker();
   const qualityPassed = await checker.runAllChecks();
-  
+
   if (!qualityPassed) {
     console.error(`\n${RED}❌ Quality checks failed. Push aborted.${RESET}`);
     console.log(`${YELLOW}💡 Fix the issues above and try again.${RESET}`);
     process.exit(1);
   }
-  
+
   // 3. Check for uncommitted changes
   console.log('\n📝 Checking for uncommitted changes...');
   try {
     const status = execSync('git status --porcelain', { encoding: 'utf8' });
     if (status.trim()) {
-      console.warn(`${YELLOW}⚠️  Warning: You have uncommitted changes:${RESET}`);
+      console.warn(
+        `${YELLOW}⚠️  Warning: You have uncommitted changes:${RESET}`
+      );
       console.log(status);
       console.log(`${YELLOW}Consider committing or stashing them.${RESET}`);
     } else {
@@ -50,13 +52,13 @@ async function main() {
   } catch (error) {
     console.error('Error checking git status');
   }
-  
+
   console.log(`\n${GREEN}✅ All pre-push checks passed!${RESET}`);
   console.log(`${BLUE}🚀 Ready to push${RESET}`);
 }
 
 // Run
-main().catch(error => {
+main().catch((error) => {
   console.error(`${RED}Unexpected error:${RESET}`, error);
   process.exit(1);
 });

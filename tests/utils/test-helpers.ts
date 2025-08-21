@@ -12,18 +12,18 @@ import { act } from '@testing-library/react';
 export async function flushAll(ms = 0): Promise<void> {
   await act(async () => {
     // 1. 모든 pending promises 처리
-    await new Promise(resolve => setImmediate(resolve));
-    
+    await new Promise((resolve) => setImmediate(resolve));
+
     // 2. 모든 timers 실행
     if (jest.isMockFunction(setTimeout)) {
       jest.runAllTimers();
     }
-    
+
     // 3. 추가 대기 시간
     if (ms > 0) {
-      await new Promise(resolve => setTimeout(resolve, ms));
+      await new Promise((resolve) => setTimeout(resolve, ms));
     }
-    
+
     // 4. microtask queue 비우기
     await Promise.resolve();
   });
@@ -55,7 +55,7 @@ export function assertNoNetworkCalls(): void {
   if (jest.isMockFunction(global.fetch)) {
     expect(global.fetch).not.toHaveBeenCalled();
   }
-  
+
   // axios 검증 (설치된 경우)
   try {
     const axios = require('axios');
@@ -84,7 +84,7 @@ export function resetAllMocks(): void {
  * @param ms - 대기 시간
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -97,16 +97,16 @@ export async function expectToThrow(
 ): Promise<void> {
   let thrown = false;
   let error: any;
-  
+
   try {
     await fn();
   } catch (e) {
     thrown = true;
     error = e;
   }
-  
+
   expect(thrown).toBe(true);
-  
+
   if (expectedError) {
     if (typeof expectedError === 'string') {
       expect(error.message).toContain(expectedError);
@@ -123,11 +123,11 @@ export async function expectToThrow(
  */
 export class TestEnvironment {
   private originalEnv: NodeJS.ProcessEnv;
-  
+
   constructor() {
     this.originalEnv = { ...process.env };
   }
-  
+
   /**
    * 환경 변수 설정
    */
@@ -136,14 +136,14 @@ export class TestEnvironment {
       process.env[key] = value;
     });
   }
-  
+
   /**
    * 환경 변수 초기화
    */
   resetEnv(): void {
     process.env = { ...this.originalEnv };
   }
-  
+
   /**
    * cleanup 실행
    */
@@ -171,7 +171,7 @@ export class MockDataBuilder {
       ...overrides,
     };
   }
-  
+
   /**
    * 코스 mock 데이터 생성
    */
@@ -189,7 +189,7 @@ export class MockDataBuilder {
       ...overrides,
     };
   }
-  
+
   /**
    * 레슨 mock 데이터 생성
    */
@@ -213,18 +213,18 @@ export class MockDataBuilder {
  */
 export class TestPerformance {
   private startTime: number;
-  
+
   constructor() {
     this.startTime = performance.now();
   }
-  
+
   /**
    * 경과 시간 측정
    */
   elapsed(): number {
     return performance.now() - this.startTime;
   }
-  
+
   /**
    * 경과 시간이 threshold 이하인지 검증
    */

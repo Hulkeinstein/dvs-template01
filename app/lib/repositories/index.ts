@@ -24,7 +24,10 @@ export { UserRepository, userRepository } from './user.repository';
 export type { User } from './user.repository';
 
 // Enrollment
-export { EnrollmentRepository, enrollmentRepository } from './enrollment.repository';
+export {
+  EnrollmentRepository,
+  enrollmentRepository,
+} from './enrollment.repository';
 export type { Enrollment } from './enrollment.repository';
 
 /**
@@ -33,14 +36,14 @@ export type { Enrollment } from './enrollment.repository';
  */
 export class RepositoryFactory {
   private static repositories = new Map<string, any>();
-  
+
   /**
    * Repository 등록
    */
   static register(name: string, repository: any): void {
     this.repositories.set(name, repository);
   }
-  
+
   /**
    * Repository 가져오기
    */
@@ -50,14 +53,14 @@ export class RepositoryFactory {
     }
     return this.repositories.get(name) as T;
   }
-  
+
   /**
    * 모든 Repository 초기화
    */
   static reset(): void {
     this.repositories.clear();
   }
-  
+
   /**
    * 기본 Repository 등록
    */

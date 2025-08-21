@@ -39,11 +39,5 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "out",
-    "dist",
-    "data/demo-*/**/*"
-  ]
+  "exclude": ["node_modules", ".next", "out", "dist", "data/demo-*/**/*"]
 }

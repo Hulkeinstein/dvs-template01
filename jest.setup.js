@@ -16,21 +16,28 @@ process.env.GOOGLE_CLIENT_ID = 'test-google-client-id';
 process.env.GOOGLE_CLIENT_SECRET = 'test-google-client-secret';
 
 // Network blocking setup
-const BLOCKED_HOSTS = ['supabase.co', 'googleapis.com', 'stripe.com', 'github.com'];
+const BLOCKED_HOSTS = [
+  'supabase.co',
+  'googleapis.com',
+  'stripe.com',
+  'github.com',
+];
 
 beforeAll(() => {
   // Create error with stack trace for better debugging
   const block = (caller) => {
-    const err = new Error(`[TEST FAIL] Network call blocked: ${caller}\nStack: ${new Error().stack}`);
+    const err = new Error(
+      `[TEST FAIL] Network call blocked: ${caller}\nStack: ${new Error().stack}`
+    );
     console.error(err);
     throw err;
   };
-  
+
   // Block fetch
   const originalFetch = global.fetch;
   global.fetch = jest.fn((url) => {
     const urlString = typeof url === 'string' ? url : url.toString();
-    if (BLOCKED_HOSTS.some(host => urlString.includes(host))) {
+    if (BLOCKED_HOSTS.some((host) => urlString.includes(host))) {
       return block(`fetch(${urlString})`);
     }
     // Allow localhost for testing
@@ -39,7 +46,7 @@ beforeAll(() => {
     }
     return block(`fetch(${urlString})`);
   });
-  
+
   // Block axios if present
   try {
     const axios = require('axios');
@@ -51,12 +58,14 @@ beforeAll(() => {
   } catch {
     // axios not installed, skip
   }
-  
+
   // Block Node.js network modules
-  ['http', 'https'].forEach(module => {
+  ['http', 'https'].forEach((module) => {
     try {
       const mod = require(`node:${module}`);
-      jest.spyOn(mod, 'request').mockImplementation(() => block(`${module}.request`));
+      jest
+        .spyOn(mod, 'request')
+        .mockImplementation(() => block(`${module}.request`));
       jest.spyOn(mod, 'get').mockImplementation(() => block(`${module}.get`));
     } catch {
       // Module not available, skip
@@ -73,18 +82,18 @@ beforeEach(() => {
 afterEach(() => {
   // Clean up React components
   cleanup();
-  
+
   // Run all pending timers and clean up
   jest.runOnlyPendingTimers();
   jest.useRealTimers();
-  
+
   // Clear all mocks using helper
   resetAllMocks();
-  
+
   // Clear DOM
   document.body.innerHTML = '';
   document.head.innerHTML = '';
-  
+
   // Log flaky tests for monitoring
   const testName = expect.getState().currentTestName;
   if (testName && testName.includes('@flaky')) {
@@ -151,12 +160,18 @@ jest.mock('@/app/lib/supabase/client', () => {
   const mockSupabase = {
     from: mockFrom,
     auth: {
-      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+      getUser: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
     },
     storage: {
       from: jest.fn().mockReturnValue({
-        upload: jest.fn().mockResolvedValue({ data: { path: 'test-path' }, error: null }),
-        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'test-url' } }),
+        upload: jest
+          .fn()
+          .mockResolvedValue({ data: { path: 'test-path' }, error: null }),
+        getPublicUrl: jest
+          .fn()
+          .mockReturnValue({ data: { publicUrl: 'test-url' } }),
       }),
     },
   };

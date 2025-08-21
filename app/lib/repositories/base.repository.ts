@@ -21,7 +21,7 @@ export interface IRepository<T> {
  */
 export abstract class BaseRepository<T> implements IRepository<T> {
   protected abstract tableName: string;
-  
+
   /**
    * ID로 단일 레코드 조회
    */
@@ -31,31 +31,29 @@ export abstract class BaseRepository<T> implements IRepository<T> {
       .select('*')
       .eq('id', id)
       .single();
-    
+
     if (error) {
       console.error(`Error fetching ${this.tableName} by id:`, error);
       return null;
     }
-    
+
     return data as T;
   }
-  
+
   /**
    * 모든 레코드 조회
    */
   async findAll(): Promise<T[]> {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .select('*');
-    
+    const { data, error } = await supabase.from(this.tableName).select('*');
+
     if (error) {
       console.error(`Error fetching all ${this.tableName}:`, error);
       return [];
     }
-    
+
     return (data || []) as T[];
   }
-  
+
   /**
    * 새 레코드 생성
    */
@@ -65,15 +63,15 @@ export abstract class BaseRepository<T> implements IRepository<T> {
       .insert(data)
       .select()
       .single();
-    
+
     if (error) {
       console.error(`Error creating ${this.tableName}:`, error);
       throw error;
     }
-    
+
     return created as T;
   }
-  
+
   /**
    * 레코드 업데이트
    */
@@ -84,32 +82,29 @@ export abstract class BaseRepository<T> implements IRepository<T> {
       .eq('id', id)
       .select()
       .single();
-    
+
     if (error) {
       console.error(`Error updating ${this.tableName}:`, error);
       throw error;
     }
-    
+
     return updated as T;
   }
-  
+
   /**
    * 레코드 삭제
    */
   async delete(id: string): Promise<boolean> {
-    const { error } = await supabase
-      .from(this.tableName)
-      .delete()
-      .eq('id', id);
-    
+    const { error } = await supabase.from(this.tableName).delete().eq('id', id);
+
     if (error) {
       console.error(`Error deleting ${this.tableName}:`, error);
       return false;
     }
-    
+
     return true;
   }
-  
+
   /**
    * 조건부 조회 헬퍼
    */
@@ -118,15 +113,15 @@ export abstract class BaseRepository<T> implements IRepository<T> {
       .from(this.tableName)
       .select('*')
       .eq(field, value);
-    
+
     if (error) {
       console.error(`Error fetching ${this.tableName} by ${field}:`, error);
       return [];
     }
-    
+
     return (data || []) as T[];
   }
-  
+
   /**
    * 단일 레코드 조건부 조회
    */
@@ -136,14 +131,15 @@ export abstract class BaseRepository<T> implements IRepository<T> {
       .select('*')
       .eq(field, value)
       .single();
-    
+
     if (error) {
-      if (error.code !== 'PGRST116') { // Not found is not an error
+      if (error.code !== 'PGRST116') {
+        // Not found is not an error
         console.error(`Error fetching ${this.tableName} by ${field}:`, error);
       }
       return null;
     }
-    
+
     return data as T;
   }
 }
