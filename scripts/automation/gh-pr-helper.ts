@@ -142,7 +142,7 @@ async function mergePR() {
   try {
     const prList = runGH('pr list');
     console.log(prList);
-  } catch (error) {
+  } catch {
     console.error('❌ PR 목록을 가져올 수 없습니다.');
     process.exit(1);
   }

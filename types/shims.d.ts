@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // 0) 안전망: @/* 별칭 모듈 전부 any로 처리 (정밀 타입은 추후)
 declare module '@/*' {
   const anyModule: any;

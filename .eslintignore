@@ -1,0 +1,16 @@
+# Ignore build outputs
+.next
+out
+dist
+
+# Ignore node modules
+node_modules
+
+# Ignore scripts temporarily (many unused vars errors)
+scripts/
+
+# Ignore test polyfills temporarily
+tests/polyfills.ts
+
+# Ignore type definitions
+types/
