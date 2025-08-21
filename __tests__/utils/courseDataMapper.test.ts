@@ -4,6 +4,8 @@
  * DB 스키마와 UI 폼 데이터 간의 변환을 테스트합니다.
  */
 
+import { jest } from '@jest/globals';
+
 import {
   mapFormDataToDB,
   mapDBToFormData,
@@ -446,7 +448,9 @@ describe('Course Data Mapper', () => {
     });
 
     it('should ignore topics and thumbnailPreview fields', () => {
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = jest
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const formData = {
         title: 'Test',

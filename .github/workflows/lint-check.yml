@@ -25,16 +25,31 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '20.11.x'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Print Node/NPM versions and config
         run: |
-          npm config set maxsockets 5
-          npm config set fetch-retries 3
-          npm config set fetch-retry-mintimeout 20000
-          npm config set fetch-retry-maxtimeout 120000
-          npm ci --prefer-offline
+          node -v
+          npm -v
+          npm config list
+          npm config get engine-strict || true
+          npm config get legacy-peer-deps || true
+
+      - name: Clean install (CI)
+        run: |
+          rm -rf node_modules package-lock.json || true
+          git checkout -- package-lock.json || true
+          npm ci --no-audit --fund=false --progress=false --verbose
+        env:
+          CI: 'true'
+
+      - name: Upload npm logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-logs
+          path: ~/.npm/_logs
 
       - name: Run Type Check
         run: npm run type-check
@@ -76,19 +91,80 @@ jobs:
       - name: Run Build Test
         run: npm run build
 
-      - name: Run Tests (only if tests exist)
-        if: ${{ hashFiles('**/*.test.ts', '**/*.test.tsx', '**/*.test.js', '**/*.test.jsx', '**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx') != '' }}
+      - name: Run Tests with Coverage
         env:
           NODE_OPTIONS: --experimental-vm-modules
+          CI: true
         run: |
           mkdir -p artifacts/test-reports
-          npm test -- --passWithNoTests --json --outputFile=artifacts/test-reports/results.json
+          mkdir -p artifacts/coverage
+          npm run test:ci
+
+      - name: Check Coverage Thresholds
+        run: |
+          echo "Checking coverage thresholds..."
+          # Jest will fail if coverage thresholds are not met
+          # This is configured in jest.config.js
+
+      - name: Guard - No test.skip allowed
+        run: |
+          set -e
+          HITS=$(git grep -nI "test\.skip\|describe\.skip\|it\.skip\|xit\|xdescribe" -- \
+            ":(exclude)node_modules" \
+            ":(exclude).next" \
+            -- "*.test.js" "*.test.ts" "*.spec.js" "*.spec.ts" || true)
+          if [ -n "$HITS" ]; then
+            echo "❌ Found skipped tests:"
+            echo "$HITS"
+            echo ""
+            echo "Skipped tests are not allowed in CI. Please fix or remove them."
+            exit 1
+          fi
+          echo "✅ No skipped tests found"
 
       - name: Upload test artifacts
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: unit-artifacts
-          path: artifacts/test-reports
+          name: test-artifacts
+          path: |
+            artifacts/test-reports
+            coverage/
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Comment Coverage Report (PR only)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            try {
+              const coveragePath = path.join(process.cwd(), 'coverage', 'coverage-summary.json');
+              if (fs.existsSync(coveragePath)) {
+                const coverage = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+                const total = coverage.total;
+                
+                const comment = `## 📊 Coverage Report
+                
+                | Type | Coverage | Threshold |
+                |------|----------|-----------|
+                | Lines | ${total.lines.pct.toFixed(2)}% | 65% |
+                | Statements | ${total.statements.pct.toFixed(2)}% | 65% |
+                | Functions | ${total.functions.pct.toFixed(2)}% | 60% |
+                | Branches | ${total.branches.pct.toFixed(2)}% | 50% |
+                
+                ${total.lines.pct >= 65 ? '✅' : '❌'} Coverage requirements ${total.lines.pct >= 65 ? 'met' : 'not met'}`;
+                
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: comment
+                });
+              }
+            } catch (error) {
+              console.log('Could not post coverage comment:', error);
+            }

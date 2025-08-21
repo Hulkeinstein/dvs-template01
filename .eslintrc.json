@@ -22,6 +22,45 @@
       "rules": {
         "no-unused-vars": "off"
       }
+    },
+    {
+      "files": ["**/*.test.js", "**/*.test.ts", "**/*.spec.js", "**/*.spec.ts"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.object.name='test'][callee.property.name='skip']",
+            "message": "test.skip is not allowed. Fix or remove the test."
+          },
+          {
+            "selector": "CallExpression[callee.object.name='describe'][callee.property.name='skip']",
+            "message": "describe.skip is not allowed. Fix or remove the test suite."
+          },
+          {
+            "selector": "CallExpression[callee.object.name='it'][callee.property.name='skip']",
+            "message": "it.skip is not allowed. Fix or remove the test."
+          },
+          {
+            "selector": "CallExpression[callee.name='xit']",
+            "message": "xit is not allowed. Use test() or it() instead."
+          },
+          {
+            "selector": "CallExpression[callee.name='xdescribe']",
+            "message": "xdescribe is not allowed. Use describe() instead."
+          }
+        ],
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/lib/supabase/client"],
+                "message": "Use repository pattern instead of direct Supabase imports in tests"
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }
