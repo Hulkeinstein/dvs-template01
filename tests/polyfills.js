@@ -6,8 +6,19 @@
 // ReadableStream 폴백
 // @ts-ignore
 if (typeof ReadableStream === 'undefined') {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  global.ReadableStream = require('web-streams-polyfill').ReadableStream;
+  // Simple ReadableStream polyfill
+  global.ReadableStream = class ReadableStream {
+    constructor() {}
+    cancel() {
+      return Promise.resolve();
+    }
+    getReader() {
+      return {
+        read: () => Promise.resolve({ done: true, value: undefined }),
+        cancel: () => Promise.resolve(),
+      };
+    }
+  };
 }
 
 // File API
