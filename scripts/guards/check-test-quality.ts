@@ -212,7 +212,7 @@ class TestQualityChecker {
 
     const [, major, minor] = match.map(Number);
 
-    if (major !== 20 || minor < 11) {
+    if (major < 20 || (major === 20 && minor < 11)) {
       this.errors.push(
         `Node version must be 20.11.x or higher (current: ${nodeVersion})`
       );
@@ -223,6 +223,7 @@ class TestQualityChecker {
     }
 
     if (major > 20) {
+      // Node 22+ is acceptable, just a warning
       this.warnings.push(
         `Node version ${nodeVersion} is higher than tested version (20.x)`
       );
