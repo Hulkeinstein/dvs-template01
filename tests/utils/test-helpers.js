@@ -34,10 +34,7 @@ export async function flushAll(ms = 0) {
  * @param fn - 실행할 함수
  * @param timeout - 타임아웃 시간 (기본값: 5000ms)
  */
-export async function withTimeout(
-  fn,
-  timeout = 5000
-) {
+export async function withTimeout(fn, timeout = 5000) {
   return Promise.race([
     fn(),
     new Promise((_, reject) =>
@@ -91,10 +88,7 @@ export function delay(ms) {
  * 에러를 던지는 함수를 안전하게 테스트
  * @param fn - 테스트할 함수
  */
-export async function expectToThrow(
-  fn,
-  expectedError
-) {
+export async function expectToThrow(fn, expectedError) {
   let thrown = false;
   let error;
 
@@ -241,10 +235,7 @@ export class TestPerformance {
  * @param times - 반복 횟수
  * @param fn - 테스트 함수
  */
-export async function repeatTest(
-  times,
-  fn
-) {
+export async function repeatTest(times, fn) {
   for (let i = 0; i < times; i++) {
     await fn(i);
   }
@@ -256,11 +247,7 @@ export async function repeatTest(
  * @param name - 테스트 이름
  * @param fn - 테스트 함수
  */
-export function testIf(
-  condition,
-  name,
-  fn
-) {
+export function testIf(condition, name, fn) {
   if (condition) {
     test(name, fn);
   } else {
