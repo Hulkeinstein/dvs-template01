@@ -9,7 +9,7 @@ import { act } from '@testing-library/react';
  * 모든 pending promises, timers, microtasks를 flush
  * @param ms - 대기 시간 (기본값: 0)
  */
-export async function flushAll(ms = 0): Promise<void> {
+export async function flushAll(ms = 0) {
   await act(async () => {
     // 1. 모든 pending promises 처리
     await new Promise((resolve) => setImmediate(resolve));
@@ -34,13 +34,13 @@ export async function flushAll(ms = 0): Promise<void> {
  * @param fn - 실행할 함수
  * @param timeout - 타임아웃 시간 (기본값: 5000ms)
  */
-export async function withTimeout<T>(
-  fn: () => Promise<T>,
+export async function withTimeout(
+  fn,
   timeout = 5000
-): Promise<T> {
+) {
   return Promise.race([
     fn(),
-    new Promise<T>((_, reject) =>
+    new Promise((_, reject) =>
       setTimeout(() => reject(new Error(`Timeout after ${timeout}ms`)), timeout)
     ),
   ]);
@@ -50,7 +50,7 @@ export async function withTimeout<T>(
  * 네트워크 호출이 없었는지 검증
  * fetch, axios 등이 호출되지 않았는지 확인
  */
-export function assertNoNetworkCalls(): void {
+export function assertNoNetworkCalls() {
   // fetch 검증
   if (jest.isMockFunction(global.fetch)) {
     expect(global.fetch).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ export function assertNoNetworkCalls(): void {
 /**
  * 모든 모킹된 함수 초기화
  */
-export function resetAllMocks(): void {
+export function resetAllMocks() {
   jest.clearAllMocks();
   jest.resetAllMocks();
   jest.restoreAllMocks();
@@ -83,7 +83,7 @@ export function resetAllMocks(): void {
  * 테스트용 delay 함수
  * @param ms - 대기 시간
  */
-export function delay(ms: number): Promise<void> {
+export function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -92,11 +92,11 @@ export function delay(ms: number): Promise<void> {
  * @param fn - 테스트할 함수
  */
 export async function expectToThrow(
-  fn: () => any | Promise<any>,
-  expectedError?: string | RegExp | Error
-): Promise<void> {
+  fn,
+  expectedError
+) {
   let thrown = false;
-  let error: any;
+  let error;
 
   try {
     await fn();
@@ -122,7 +122,7 @@ export async function expectToThrow(
  * 테스트 환경 setup/teardown 헬퍼
  */
 export class TestEnvironment {
-  private originalEnv: NodeJS.ProcessEnv;
+  originalEnv;
 
   constructor() {
     this.originalEnv = { ...process.env };
@@ -131,7 +131,7 @@ export class TestEnvironment {
   /**
    * 환경 변수 설정
    */
-  setEnv(vars: Record<string, string>): void {
+  setEnv(vars) {
     Object.entries(vars).forEach(([key, value]) => {
       process.env[key] = value;
     });
@@ -140,14 +140,14 @@ export class TestEnvironment {
   /**
    * 환경 변수 초기화
    */
-  resetEnv(): void {
+  resetEnv() {
     process.env = { ...this.originalEnv };
   }
 
   /**
    * cleanup 실행
    */
-  cleanup(): void {
+  cleanup() {
     this.resetEnv();
     resetAllMocks();
   }
@@ -160,7 +160,7 @@ export class MockDataBuilder {
   /**
    * 사용자 mock 데이터 생성
    */
-  static createUser(overrides: any = {}) {
+  static createUser(overrides = {}) {
     return {
       id: 'test-user-id',
       email: 'test@example.com',
@@ -175,7 +175,7 @@ export class MockDataBuilder {
   /**
    * 코스 mock 데이터 생성
    */
-  static createCourse(overrides: any = {}) {
+  static createCourse(overrides = {}) {
     return {
       id: 'test-course-id',
       title: 'Test Course',
@@ -193,7 +193,7 @@ export class MockDataBuilder {
   /**
    * 레슨 mock 데이터 생성
    */
-  static createLesson(overrides: any = {}) {
+  static createLesson(overrides = {}) {
     return {
       id: 'test-lesson-id',
       course_id: 'test-course-id',
@@ -212,7 +212,7 @@ export class MockDataBuilder {
  * 테스트 실행 성능 측정
  */
 export class TestPerformance {
-  private startTime: number;
+  startTime;
 
   constructor() {
     this.startTime = performance.now();
@@ -221,14 +221,14 @@ export class TestPerformance {
   /**
    * 경과 시간 측정
    */
-  elapsed(): number {
+  elapsed() {
     return performance.now() - this.startTime;
   }
 
   /**
    * 경과 시간이 threshold 이하인지 검증
    */
-  assertUnder(threshold: number): void {
+  assertUnder(threshold) {
     const elapsed = this.elapsed();
     if (elapsed > threshold) {
       throw new Error(`Performance test failed: ${elapsed}ms > ${threshold}ms`);
@@ -242,9 +242,9 @@ export class TestPerformance {
  * @param fn - 테스트 함수
  */
 export async function repeatTest(
-  times: number,
-  fn: (iteration: number) => Promise<void>
-): Promise<void> {
+  times,
+  fn
+) {
   for (let i = 0; i < times; i++) {
     await fn(i);
   }
@@ -257,22 +257,22 @@ export async function repeatTest(
  * @param fn - 테스트 함수
  */
 export function testIf(
-  condition: boolean,
-  name: string,
-  fn: () => void | Promise<void>
-): void {
+  condition,
+  name,
+  fn
+) {
   if (condition) {
-    test(name, fn as any);
+    test(name, fn);
   } else {
-    test.skip(name, fn as any);
+    test.skip(name, fn);
   }
 }
 
 /**
  * 환경별 테스트 실행
  */
-export const testInCI = (name: string, fn: () => void | Promise<void>) =>
+export const testInCI = (name, fn) =>
   testIf(process.env.CI === 'true', `[CI] ${name}`, fn);
 
-export const testInLocal = (name: string, fn: () => void | Promise<void>) =>
+export const testInLocal = (name, fn) =>
   testIf(process.env.CI !== 'true', `[Local] ${name}`, fn);

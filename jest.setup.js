@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 
 // Test helpers
-import { resetAllMocks } from './tests/utils/test-helpers';
+import { resetAllMocks } from './tests/utils/test-helpers.js';
 
 // Set up test environment variables
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';

@@ -9,8 +9,9 @@ node_modules
 # Ignore scripts temporarily (many unused vars errors)
 scripts/
 
-# Ignore test polyfills temporarily
+# Ignore test files temporarily
 tests/polyfills.js
+tests/utils/test-helpers.js
 
 # Ignore type definitions
 types/
