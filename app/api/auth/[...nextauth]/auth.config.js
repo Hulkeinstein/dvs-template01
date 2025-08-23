@@ -1,20 +1,14 @@
 import GoogleProvider from 'next-auth/providers/google';
-import { createClient } from '@supabase/supabase-js';
+import { getServerClient } from '@/app/lib/supabase/server';
 
-// Supabase 클라이언트 생성 함수
+// Use server-side Supabase client
 const getSupabaseClient = () => {
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.SUPABASE_SERVICE_ROLE_KEY
-  ) {
+  try {
+    return getServerClient();
+  } catch (error) {
     console.warn('Supabase 환경 변수가 설정되지 않았습니다.');
     return null;
   }
-
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
 };
 
 export const authOptions = {

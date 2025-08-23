@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 import { verifyOTP, normalizePhoneNumber } from '@/app/lib/utils/otp';
 
 export async function POST(request) {

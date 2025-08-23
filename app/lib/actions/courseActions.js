@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { revalidatePath } from 'next/cache';
@@ -681,22 +681,45 @@ export async function updateCourseStatus(courseId, status) {
 // Get instructor's courses
 export async function getInstructorCourses() {
   try {
+    console.log('=== getInstructorCourses 시작 ===');
+
     const session = await getServerSession(authOptions);
+    console.log('세션 정보:', {
+      exists: !!session,
+      userEmail: session?.user?.email,
+      userId: session?.user?.id,
+      userRole: session?.user?.role,
+    });
 
     if (!session?.user?.email) {
+      console.log('세션이 없거나 이메일이 없음');
       return { error: 'You must be logged in to view your courses' };
     }
 
-    const { data: userData } = await supabase
+    console.log('Supabase 클라이언트 초기화 시도...');
+    const { data: userData, error: userError } = await supabase
       .from('user')
       .select('id')
       .eq('email', session.user.email)
       .single();
 
+    console.log('사용자 조회 결과:', {
+      userData,
+      userError: userError
+        ? {
+            message: userError.message,
+            code: userError.code,
+            details: userError.details,
+          }
+        : null,
+    });
+
     if (!userData) {
+      console.log('사용자를 찾을 수 없음 - 이메일:', session.user.email);
       return { error: 'User not found' };
     }
 
+    console.log('사용자 ID로 코스 조회 시도:', userData.id);
     const { data: courses, error } = await supabase
       .from('courses')
       .select(
@@ -710,6 +733,17 @@ export async function getInstructorCourses() {
       )
       .eq('instructor_id', userData.id)
       .order('created_at', { ascending: false });
+
+    console.log('코스 조회 결과:', {
+      coursesCount: courses?.length || 0,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+            details: error.details,
+          }
+        : null,
+    });
 
     // Debug log to check the structure of returned data
     if (courses && courses.length > 0) {
@@ -758,6 +792,7 @@ export async function getInstructorCourses() {
         return course;
       }) || [];
 
+    console.log('=== getInstructorCourses 완료 ===');
     return { courses: coursesWithBadges };
   } catch (error) {
     console.error('Unexpected error:', error);

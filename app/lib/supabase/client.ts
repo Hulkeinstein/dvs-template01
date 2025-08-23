@@ -1,13 +1,10 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// Note: In production, ensure SERVICE_ROLE_KEY is only used server-side
-// For client-side operations, use ANON_KEY instead
-
 let supabaseInstance: SupabaseClient | null = null;
 
 /**
- * Get Supabase client instance with lazy initialization
- * This prevents build-time errors when environment variables are not available
+ * Client-safe Supabase instance with ANON_KEY
+ * Safe to use in both server and client components
  */
 function getSupabaseClient(): SupabaseClient {
   if (supabaseInstance) {
@@ -15,7 +12,7 @@ function getSupabaseClient(): SupabaseClient {
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     console.warn('Missing Supabase environment variables');
@@ -56,10 +53,10 @@ function getSupabaseClient(): SupabaseClient {
             getPublicUrl: () => ({ data: { publicUrl: '' } }),
           }),
         },
-      } as any;
+      } as SupabaseClient;
     }
     throw new Error(
-      'Supabase client is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.'
+      'Supabase client is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.'
     );
   }
 
@@ -73,9 +70,5 @@ export const supabase = new Proxy({} as SupabaseClient, {
   get(target, prop) {
     const client = getSupabaseClient();
     return client[prop as keyof SupabaseClient];
-  },
-  apply(target, thisArg, argArray) {
-    const client = getSupabaseClient();
-    return Reflect.apply(client as any, thisArg, argArray);
   },
 });

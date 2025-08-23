@@ -35,6 +35,7 @@
     "components/**/*",
     "__tests__/**/*",
     "jest.setup.js",
+    "types/**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
