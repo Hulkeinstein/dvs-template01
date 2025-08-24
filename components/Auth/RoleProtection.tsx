@@ -29,8 +29,8 @@ const RoleProtection = ({ allowedRoles, children }: RoleProtectionProps) => {
     }
 
     // Type-safe access with augmented session
-    const userRole = session.user.role;
-    if (!allowedRoles.includes(userRole)) {
+    const userRole = session.user?.role;
+    if (!userRole || !allowedRoles.includes(userRole)) {
       router.push('/dashboard');
     }
   }, [isMounted, status, session, router, allowedRoles]);
@@ -43,7 +43,7 @@ const RoleProtection = ({ allowedRoles, children }: RoleProtectionProps) => {
     return <div>Loading...</div>;
   }
 
-  if (allowedRoles.includes(session.user.role)) {
+  if (session.user?.role && allowedRoles.includes(session.user.role)) {
     return <>{children}</>;
   }
 

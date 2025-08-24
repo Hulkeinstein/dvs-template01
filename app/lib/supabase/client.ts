@@ -53,7 +53,7 @@ function getSupabaseClient(): SupabaseClient {
             getPublicUrl: () => ({ data: { publicUrl: '' } }),
           }),
         },
-      } as SupabaseClient;
+      } as unknown as SupabaseClient;
     }
     throw new Error(
       'Supabase client is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY environment variables.'
