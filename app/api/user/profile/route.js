@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 
 // 현재 데이터베이스에 존재하는 필드만 업데이트하는 헬퍼 함수
 async function getExistingColumns() {

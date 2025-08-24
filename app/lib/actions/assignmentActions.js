@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { logger } from '@/app/lib/utils/logger';

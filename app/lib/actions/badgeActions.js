@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 import { BADGE_CONFIG } from '@/app/lib/constants/badgeConfig';
 
 /**

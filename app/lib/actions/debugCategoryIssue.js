@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 
 export async function debugCategoryIssue() {
   try {

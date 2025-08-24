@@ -5,8 +5,8 @@ import {
   Noto_Sans_KR,
   Gothic_A1,
   Jua,
-  Do_Hyeon,
 } from 'next/font/google';
+import localFont from 'next/font/local';
 
 // Source Serif Pro 폰트 설정
 export const sourceSerif = Source_Serif_4({
@@ -53,10 +53,12 @@ export const jua = Jua({
   variable: '--font-jua',
 });
 
-export const doHyeon = Do_Hyeon({
-  weight: ['400'],
-  subsets: ['latin'],
+export const doHyeon = localFont({
+  src: '../public/fonts/DoHyeon-Regular.ttf',
+  weight: '400',
+  style: 'normal',
   display: 'swap',
+  preload: true,
   variable: '--font-do-hyeon',
 });
 

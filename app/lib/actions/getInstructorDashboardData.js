@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/app/lib/supabase/client';
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 
 /**
  * 교사 대시보드에 필요한 통계 데이터를 조회하는 서버 액션
