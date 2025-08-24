@@ -3,7 +3,7 @@
  * 모든 데이터 접근을 추상화하는 기본 레포지토리
  */
 
-import { supabase } from '@/app/lib/supabase/client';
+import { getServerClient } from '@/app/lib/supabase/server';
 
 /**
  * Repository 기본 인터페이스
@@ -22,11 +22,17 @@ export interface IRepository<T> {
 export abstract class BaseRepository<T> implements IRepository<T> {
   protected abstract tableName: string;
 
+  // Lazy initialization for CI build compatibility
+  private _supabase: any | null = null;
+  protected get supabase() {
+    return (this._supabase ??= getServerClient());
+  }
+
   /**
    * ID로 단일 레코드 조회
    */
   async findById(id: string): Promise<T | null> {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabase
       .from(this.tableName)
       .select('*')
       .eq('id', id)
@@ -44,7 +50,9 @@ export abstract class BaseRepository<T> implements IRepository<T> {
    * 모든 레코드 조회
    */
   async findAll(): Promise<T[]> {
-    const { data, error } = await supabase.from(this.tableName).select('*');
+    const { data, error } = await this.supabase
+      .from(this.tableName)
+      .select('*');
 
     if (error) {
       console.error(`Error fetching all ${this.tableName}:`, error);
@@ -58,7 +66,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
    * 새 레코드 생성
    */
   async create(data: Partial<T>): Promise<T> {
-    const { data: created, error } = await supabase
+    const { data: created, error } = await this.supabase
       .from(this.tableName)
       .insert(data)
       .select()
@@ -76,7 +84,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
    * 레코드 업데이트
    */
   async update(id: string, data: Partial<T>): Promise<T> {
-    const { data: updated, error } = await supabase
+    const { data: updated, error } = await this.supabase
       .from(this.tableName)
       .update(data)
       .eq('id', id)
@@ -95,7 +103,10 @@ export abstract class BaseRepository<T> implements IRepository<T> {
    * 레코드 삭제
    */
   async delete(id: string): Promise<boolean> {
-    const { error } = await supabase.from(this.tableName).delete().eq('id', id);
+    const { error } = await this.supabase
+      .from(this.tableName)
+      .delete()
+      .eq('id', id);
 
     if (error) {
       console.error(`Error deleting ${this.tableName}:`, error);
@@ -109,7 +120,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
    * 조건부 조회 헬퍼
    */
   protected async findByField(field: string, value: any): Promise<T[]> {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabase
       .from(this.tableName)
       .select('*')
       .eq(field, value);
@@ -126,7 +137,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
    * 단일 레코드 조건부 조회
    */
   protected async findOneByField(field: string, value: any): Promise<T | null> {
-    const { data, error } = await supabase
+    const { data, error } = await this.supabase
       .from(this.tableName)
       .select('*')
       .eq(field, value)

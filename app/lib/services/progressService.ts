@@ -11,7 +11,12 @@ const LessonProgressDTO = z.object({
 });
 
 export class ProgressService {
-  private supabase = getServerClient();
+  // Dependency injection for testability and lazy initialization
+  constructor(private readonly getClient: () => any = getServerClient) {}
+  private _supabase: any | null = null;
+  private get supabase() {
+    return (this._supabase ??= this.getClient());
+  }
 
   async initializeForEnrollment(enrollmentId: string) {
     const { data: enrollment } = await this.supabase
@@ -36,7 +41,7 @@ export class ProgressService {
     //   await this.processBatch(batch, enrollment);
     // }
 
-    const progressRecords = lessons.map((lesson) => ({
+    const progressRecords = lessons.map((lesson: any) => ({
       user_id: enrollment.user_id,
       lesson_id: lesson.id,
       course_id: enrollment.course_id,
