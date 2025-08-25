@@ -3,7 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { updateCourseStatus } from '@/app/lib/actions/courseActions';
+import {
+  updateCourseStatus,
+  deleteCourse,
+} from '@/app/lib/actions/courseActions';
 import CourseBadges from '@/components/Common/CourseBadges';
 
 const CourseWidget = ({
@@ -16,6 +19,7 @@ const CourseWidget = ({
   isEdit,
   userRole = 'student', // 기본값은 student
   onStatusChange, // 상태 변경 핸들러
+  onDeleteCourse, // 코스 삭제 핸들러
 }) => {
   const [discountPercentage, setDiscountPercentage] = useState('');
   const [totalReviews, setTotalReviews] = useState('');
@@ -48,6 +52,19 @@ const CourseWidget = ({
   });
 
   const handleStatusChange = async (newStatus) => {
+    if (newStatus === 'delete') {
+      if (
+        confirm(
+          '정말 이 코스를 삭제하시겠습니까?\n모든 레슨과 퀴즈가 함께 삭제됩니다.'
+        )
+      ) {
+        if (onDeleteCourse) {
+          await onDeleteCourse(data.id);
+        }
+      }
+      return;
+    }
+
     const result = await updateCourseStatus(data.id, newStatus);
     if (result.success && onStatusChange) {
       onStatusChange();
@@ -80,21 +97,6 @@ const CourseWidget = ({
         case 'published':
           return [
             {
-              action: 'unpublished',
-              icon: 'feather-eye-off',
-              text: 'Unpublish Course',
-              className: 'text-danger',
-            },
-          ];
-        case 'unpublished':
-          return [
-            {
-              action: 'published',
-              icon: 'feather-eye',
-              text: 'Publish Course',
-              className: 'text-success',
-            },
-            {
               action: 'archived',
               icon: 'feather-archive',
               text: 'Archive Course',
@@ -117,35 +119,55 @@ const CourseWidget = ({
 
     const actions = getStatusActions();
 
+    // Draft 상태일 때만 Delete 추가
+    if (status === 'draft') {
+      if (actions.length > 0) {
+        actions.push({ divider: true }); // 구분선
+      }
+      actions.push({
+        action: 'delete',
+        icon: 'feather-trash-2',
+        text: 'Delete Course',
+        className: 'text-danger',
+      });
+    }
+
     if (actions.length === 0) return null;
 
     return (
-      <div className="dropdown">
+      <div className="dropdown flex-shrink-0">
         <button
-          className="btn btn-link p-0 text-muted text-decoration-none rbt-btn-link-hover"
+          className="btn btn-link p-0 text-muted"
           type="button"
           data-bs-toggle="dropdown"
           aria-expanded="false"
           title="Course actions"
+          aria-label="More options"
         >
-          <i className="feather-more-vertical fs-1"></i>
+          <span className="fs-1">⋮</span>
         </button>
         <ul className="dropdown-menu dropdown-menu-end">
-          {actions.map((action, index) => (
-            <li key={index}>
-              <a
-                className={`dropdown-item ${action.className} fs-3`}
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleStatusChange(action.action);
-                }}
-              >
-                <i className={`${action.icon} me-2 fs-3`}></i>
-                {action.text}
-              </a>
-            </li>
-          ))}
+          {actions.map((action, index) =>
+            action.divider ? (
+              <li key={index}>
+                <hr className="dropdown-divider" />
+              </li>
+            ) : (
+              <li key={index}>
+                <a
+                  className={`dropdown-item ${action.className} fs-5`}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleStatusChange(action.action);
+                  }}
+                >
+                  <i className={`${action.icon} me-2 fs-5`}></i>
+                  {action.text}
+                </a>
+              </li>
+            )
+          )}
         </ul>
       </div>
     );
@@ -172,13 +194,7 @@ const CourseWidget = ({
                 showTooltip={true}
               />
             )}
-            {data.status === 'unpublished' && (
-              <div className="rbt-badge-3 bg-dark">
-                <span>Unpublished</span>
-              </div>
-            )}
-            {data.status !== 'unpublished' &&
-              discountPercentage > 0 &&
+            {discountPercentage > 0 &&
               !data.badges?.some((b) => b.type === 'sale') && (
                 <div className="rbt-badge-3 bg-white">
                   <span>{`-${discountPercentage}%`}</span>
@@ -347,7 +363,7 @@ const CourseWidget = ({
                 <span className="off-price">${data.coursePrice}</span>
               </div>
 
-              {isEdit || data.status === 'unpublished' ? (
+              {isEdit ? (
                 <div className="d-flex gap-2 align-items-center">
                   <Link
                     className="rbt-btn-link left-icon fs-4"

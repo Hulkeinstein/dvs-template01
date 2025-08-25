@@ -22,6 +22,11 @@
     @media #{$sm-layout} {
         padding: 15px;
     }
+    
+    // Fix for course cards with dropdown menus
+    &.variation-05 {
+        overflow: visible;
+    }
 
     .rbt-card-img {
         position: relative;

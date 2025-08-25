@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import CourseWidget from './Dashboard-Section/widgets/CourseWidget';
-import { getInstructorCourses } from '@/app/lib/actions/courseActions';
+import {
+  getInstructorCourses,
+  deleteCourse,
+} from '@/app/lib/actions/courseActions';
 
 const MyCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -31,6 +34,21 @@ const MyCourses = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  const handleDeleteCourse = async (courseId) => {
+    try {
+      const result = await deleteCourse(courseId);
+      if (result.success) {
+        alert(result.message || '코스가 삭제되었습니다.');
+        fetchCourses(); // 목록 새로고침
+      } else {
+        alert(result.error || '삭제 중 오류가 발생했습니다.');
+      }
+    } catch (error) {
+      console.error('Error deleting course:', error);
+      alert('삭제 중 오류가 발생했습니다.');
+    }
+  };
 
   const publishedCourses = courses.filter(
     (course) => course.status === 'published' || course.status === 'unpublished'
@@ -206,6 +224,7 @@ const MyCourses = () => {
                         showAuthor={false}
                         userRole="instructor"
                         onStatusChange={() => fetchCourses()}
+                        onDeleteCourse={handleDeleteCourse}
                       />
                     </div>
                   ))
@@ -246,6 +265,7 @@ const MyCourses = () => {
                         showAuthor={false}
                         userRole="instructor"
                         onStatusChange={() => fetchCourses()}
+                        onDeleteCourse={handleDeleteCourse}
                       />
                     </div>
                   ))
@@ -285,6 +305,7 @@ const MyCourses = () => {
                         showAuthor={false}
                         userRole="instructor"
                         onStatusChange={() => fetchCourses()}
+                        onDeleteCourse={handleDeleteCourse}
                       />
                     </div>
                   ))
