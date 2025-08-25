@@ -106,6 +106,50 @@ gh issue list --milestone "Phase 1: Core Platform"
 - **Done**: 완료된 Issues
 - GitHub Projects로 전체 진행 상황 시각화
 
+## Hotfix 프로세스
+
+긴급 수정이 필요한 경우:
+
+### 1. Hotfix 브랜치 생성
+```bash
+git checkout main
+git pull origin main
+git checkout -b hotfix/<issue>-<description>
+```
+
+### 2. 수정 및 테스트
+- 긴급 수정 구현
+- 로컬 테스트 필수
+- 커밋 메시지: `hotfix: <설명> - Fixes #<issue>`
+
+### 3. PR 생성 및 머지
+- **PR 생성 → CI 통과 → 신속 머지** (리뷰 생략 가능, PR은 필수)
+- 머지 즉시 배포(Promote) 및 모니터링
+- GitHub Flow에서는 **backport 대상 브랜치가 없음** (그냥 끝)
+
+## 릴리스/태깅 (선택)
+
+- 릴리스 노트 자동화 사용 시 Release Drafter 또는 Changesets/standard-version 중 택1
+- 태그 형식: `v1.2.3` 혹은 `app@<git-sha>` (Sentry 등 연동 시 편리)
+
+## 롤백
+
+### 코드 롤백
+- PR 화면의 **Revert** 버튼 사용
+- 또는 `git revert <merge-commit-sha>`
+
+### 배포 롤백
+- Vercel/플랫폼에서 이전 빌드 **Promote/rollback**
+
+### DB 롤백
+- 다운 마이그레이션 또는 후속 마이그레이션으로 복구
+
+## 브랜치 생명주기
+
+- 작업 브랜치는 **작게, 짧게**. 1~3일 내 머지 목표
+- 2주 이상 정체 브랜치는 정리 또는 분할 권고
+- 장기 브랜치 사용 금지 (GitHub Flow의 핵심 원칙)
+
 ## 간단한 작업의 브랜치 전략
 
 ### 브랜치 생성이 필요 없는 경우
@@ -152,6 +196,41 @@ git branch -r --merged origin/main
 git push origin --delete branch-name
 ```
 
+## 브랜치 보호 규칙 (GitHub 설정)
+
+### 필수 설정
+- **Require pull request before merging**: ON
+- **Required status checks**: 
+  - ci (type-check, lint, build, test)
+  - semantic-pr (또는 commitlint)
+- **Require conversation resolution**: ON
+- **Allow merge type**: Squash only
+- **Force-push**: 금지
+- **머지 후 브랜치 자동 삭제**: ON
+
+이 설정만 지켜도 main 브랜치가 더럽혀지는 일은 없습니다.
+
+## CI/CD 워크플로우
+
+### CI 트리거
+```yaml
+# .github/workflows/ci.yml
+name: CI Checks
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]  # main 머지 시 배포 워크플로우 트리거
+```
+
+### 필수 체크 항목
+1. `npm run type-check` - TypeScript 타입 검사
+2. `npm run lint` - ESLint 검사
+3. `npm run build` - 빌드 성공 확인
+4. `npm test` (있으면) - 테스트 통과
+
+프리뷰/프로덕션 배포는 Vercel 연동이면 PR/머지 이벤트만으로 충분합니다.
+
 ## 트러블슈팅
 
 ### PR이 CI에서 막힐 때
@@ -162,5 +241,15 @@ git push origin --delete branch-name
 ### 브랜치 충돌 해결
 main과 merge 후 충돌 해결하고 커밋
 
+## 주의사항
+
+### GitHub Flow 핵심 원칙
+- **develop 브랜치 없음** - main에서 직접 분기
+- **장기 브랜치 금지** - 모든 브랜치는 단기간 내 머지
+- **항상 PR 필수** - hotfix도 PR을 통해 머지
+- **main은 항상 배포 가능** - 불안정한 코드 머지 금지
+
 ## 관련 문서
 - 코드 품질 자동화: `modules/task-automation.md`
+- PR 템플릿: `.github/pull_request_template.md`
+- CI 설정: `.github/workflows/lint-check.yml`
