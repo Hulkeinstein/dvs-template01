@@ -199,7 +199,7 @@ const MyCourses = () => {
                       <CourseWidget
                         data={formatCourseData(course)}
                         courseStyle="two"
-                        isEdit={false}
+                        isEdit={true}
                         isCompleted={false}
                         isProgress={false}
                         showDescription={false}
@@ -239,7 +239,7 @@ const MyCourses = () => {
                       <CourseWidget
                         data={formatCourseData(course)}
                         courseStyle="two"
-                        isEdit={false}
+                        isEdit={true}
                         isCompleted={false}
                         isProgress={false}
                         showDescription={false}
