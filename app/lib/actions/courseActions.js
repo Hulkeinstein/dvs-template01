@@ -942,9 +942,7 @@ export async function getCourseById(courseId) {
  */
 export async function deleteCourse(courseId) {
   try {
-    // supabaseServer 사용 (이미 상단에 import됨)
-    const supabase = supabaseServer;
-    
+    // 이미 상단에 import된 supabase 직접 사용
     // 1. 권한 확인 - 현재 사용자 가져오기
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     
