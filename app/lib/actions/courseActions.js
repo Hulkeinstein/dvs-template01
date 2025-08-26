@@ -933,3 +933,88 @@ export async function getCourseById(courseId) {
     return { error: 'An unexpected error occurred' };
   }
 }
+
+/**
+ * Soft delete a course (enterprise-grade pattern)
+ * Only draft courses can be deleted
+ * @param {string} courseId - The ID of the course to delete
+ * @returns {Promise<{success: boolean, message?: string, error?: string}>}
+ */
+export async function deleteCourse(courseId) {
+  try {
+    const supabase = await createClient();
+    
+    // 1. 권한 확인 - 현재 사용자 가져오기
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return { 
+        success: false, 
+        error: 'Authentication required' 
+      };
+    }
+
+    // 2. 코스 존재 여부 및 소유권 확인
+    const { data: course, error: fetchError } = await supabase
+      .from('courses')
+      .select('id, status, instructor_id, title')
+      .eq('id', courseId)
+      .single();
+
+    if (fetchError || !course) {
+      console.error('Course not found:', fetchError);
+      return { 
+        success: false, 
+        error: 'Course not found' 
+      };
+    }
+
+    // 3. 소유권 검증
+    if (course.instructor_id !== user.id) {
+      return { 
+        success: false, 
+        error: 'You do not have permission to delete this course' 
+      };
+    }
+
+    // 4. 상태 확인 - draft만 삭제 가능
+    if (course.status !== 'draft') {
+      return { 
+        success: false, 
+        error: `Cannot delete course in ${course.status} status. Only draft courses can be deleted.` 
+      };
+    }
+
+    // 5. Soft delete 수행
+    const { error: updateError } = await supabase
+      .from('courses')
+      .update({ 
+        status: 'deleted',
+        deleted_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', courseId);
+
+    if (updateError) {
+      console.error('Error deleting course:', updateError);
+      return { 
+        success: false, 
+        error: 'Failed to delete course' 
+      };
+    }
+
+    console.log(`Course ${courseId} soft deleted successfully`);
+    
+    return { 
+      success: true, 
+      message: 'Course deleted successfully' 
+    };
+    
+  } catch (error) {
+    console.error('Unexpected error in deleteCourse:', error);
+    return { 
+      success: false, 
+      error: 'An unexpected error occurred while deleting the course' 
+    };
+  }
+}
