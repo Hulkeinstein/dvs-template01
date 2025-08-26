@@ -31,16 +31,52 @@ const CourseWidget = ({
   };
 
   const getTotalReviews = () => {
-    let reviews =
-      data.reviews.oneStar +
-      data.reviews.twoStar +
-      data.reviews.threeStar +
-      data.reviews.fourStar +
-      data.reviews.fiveStar;
-    setTotalReviews(reviews);
+    if (!data?.reviews) {
+      setTotalReviews(0);
+      return;
+    }
+
+    // Handle different review data formats
+    if (typeof data.reviews === 'number') {
+      setTotalReviews(data.reviews);
+      return;
+    }
+
+    if (Array.isArray(data.reviews)) {
+      setTotalReviews(data.reviews.length);
+      return;
+    }
+
+    if (data.reviews?.total !== undefined) {
+      setTotalReviews(data.reviews.total);
+      return;
+    }
+
+    if (data.reviews?.count !== undefined) {
+      setTotalReviews(data.reviews.count);
+      return;
+    }
+
+    // Legacy format with star ratings
+    if (data.reviews?.oneStar !== undefined) {
+      let reviews =
+        (data.reviews.oneStar || 0) +
+        (data.reviews.twoStar || 0) +
+        (data.reviews.threeStar || 0) +
+        (data.reviews.fourStar || 0) +
+        (data.reviews.fiveStar || 0);
+      setTotalReviews(reviews);
+      return;
+    }
+
+    setTotalReviews(0);
   };
 
   const getTotalRating = () => {
+    if (!data?.rating?.average) {
+      setRating(0);
+      return;
+    }
     let ratingStar = data.rating.average;
     setRating(ratingStar.toFixed(0));
   };

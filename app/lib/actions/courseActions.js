@@ -1,6 +1,7 @@
 'use server';
 
 import { supabaseServer as supabase } from '@/app/lib/supabase/server';
+import { supabaseAdmin } from '@/app/lib/supabase/admin';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { revalidatePath } from 'next/cache';
@@ -942,19 +943,33 @@ export async function getCourseById(courseId) {
  */
 export async function deleteCourse(courseId) {
   try {
-    // 이미 상단에 import된 supabase 직접 사용
-    // 1. 권한 확인 - 현재 사용자 가져오기
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
-      return { 
-        success: false, 
-        error: 'Authentication required' 
+    // 1. NextAuth로 세션 확인
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return {
+        success: false,
+        error: 'Authentication required',
       };
     }
 
-    // 2. 코스 존재 여부 및 소유권 확인
-    const { data: course, error: fetchError } = await supabase
+    // 2. Supabase에서 사용자 정보 가져오기 (email로 조회)
+    const { data: userData, error: userError } = await supabaseAdmin
+      .from('user')
+      .select('id, role')
+      .eq('email', session.user.email)
+      .single();
+
+    if (userError || !userData) {
+      console.error('User not found in database:', userError);
+      return {
+        success: false,
+        error: 'User not found',
+      };
+    }
+
+    // 3. 코스 존재 여부 및 소유권 확인 (admin client 사용)
+    const { data: course, error: fetchError } = await supabaseAdmin
       .from('courses')
       .select('id, status, instructor_id, title')
       .eq('id', courseId)
@@ -962,62 +977,61 @@ export async function deleteCourse(courseId) {
 
     if (fetchError || !course) {
       console.error('Course not found:', fetchError);
-      return { 
-        success: false, 
-        error: 'Course not found' 
+      return {
+        success: false,
+        error: 'Course not found',
       };
     }
 
-    // 3. 소유권 검증
-    if (course.instructor_id !== user.id) {
-      return { 
-        success: false, 
-        error: 'You do not have permission to delete this course' 
+    // 4. 소유권 검증
+    if (course.instructor_id !== userData.id) {
+      return {
+        success: false,
+        error: 'You do not have permission to delete this course',
       };
     }
 
-    // 4. 상태 확인 - draft만 삭제 가능
+    // 5. 상태 확인 - draft만 삭제 가능
     if (course.status !== 'draft') {
-      return { 
-        success: false, 
-        error: `Cannot delete course in ${course.status} status. Only draft courses can be deleted.` 
+      return {
+        success: false,
+        error: `Cannot delete course in ${course.status} status. Only draft courses can be deleted.`,
       };
     }
 
-    // 5. Soft delete 수행
-    const updateData = { 
+    // 6. Soft delete 수행 (admin client로 RLS 우회)
+    const updateData = {
       status: 'deleted',
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
     };
-    
-    // deleted_at 컬럼이 있다면 추가 (옵션)
+
+    // deleted_at 컬럼이 있다면 추가 (migration 적용 후)
     // updateData.deleted_at = new Date().toISOString();
-    
-    const { error: updateError } = await supabase
+
+    const { error: updateError } = await supabaseAdmin
       .from('courses')
       .update(updateData)
       .eq('id', courseId);
 
     if (updateError) {
       console.error('Error deleting course:', updateError);
-      return { 
-        success: false, 
-        error: 'Failed to delete course' 
+      return {
+        success: false,
+        error: 'Failed to delete course',
       };
     }
 
     console.log(`Course ${courseId} soft deleted successfully`);
-    
-    return { 
-      success: true, 
-      message: 'Course deleted successfully' 
+
+    return {
+      success: true,
+      message: 'Course deleted successfully',
     };
-    
   } catch (error) {
     console.error('Unexpected error in deleteCourse:', error);
-    return { 
-      success: false, 
-      error: 'An unexpected error occurred while deleting the course' 
+    return {
+      success: false,
+      error: 'An unexpected error occurred while deleting the course',
     };
   }
 }

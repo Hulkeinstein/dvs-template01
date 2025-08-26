@@ -81,13 +81,7 @@ const MyCourses = () => {
     courseLevel: course.difficulty_level || 'All Levels',
     status: course.status,
     rating: { average: 0 },
-    reviews: {
-      oneStar: 0,
-      twoStar: 0,
-      threeStar: 0,
-      fourStar: 0,
-      fiveStar: 0,
-    },
+    reviews: course.reviews || undefined,
   });
 
   if (loading) {
