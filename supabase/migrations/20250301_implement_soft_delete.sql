@@ -96,13 +96,13 @@ CREATE TABLE IF NOT EXISTS audit_log (
     changes JSONB, -- Stores the before/after values
     ip_address INET,
     user_agent TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    
-    -- Indexes
-    INDEX idx_audit_log_table_record (table_name, record_id),
-    INDEX idx_audit_log_user (user_id),
-    INDEX idx_audit_log_created (created_at)
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Create indexes for audit_log table
+CREATE INDEX IF NOT EXISTS idx_audit_log_table_record ON audit_log(table_name, record_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_user ON audit_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_created ON audit_log(created_at);
 
 COMMENT ON TABLE audit_log IS 'Audit trail for all data modifications - required for compliance';
 
@@ -118,12 +118,12 @@ CREATE TABLE IF NOT EXISTS course_snapshots (
     deleted_at TIMESTAMPTZ DEFAULT NOW(),
     reason TEXT,
     can_restore BOOLEAN DEFAULT true,
-    restored_at TIMESTAMPTZ,
-    
-    -- Indexes
-    INDEX idx_snapshots_course (course_id),
-    INDEX idx_snapshots_deleted_at (deleted_at)
+    restored_at TIMESTAMPTZ
 );
+
+-- Create indexes for course_snapshots table
+CREATE INDEX IF NOT EXISTS idx_snapshots_course ON course_snapshots(course_id);
+CREATE INDEX IF NOT EXISTS idx_snapshots_deleted_at ON course_snapshots(deleted_at);
 
 COMMENT ON TABLE course_snapshots IS 'Preserves complete course data when soft deleted for recovery and compliance';
 
@@ -345,11 +345,19 @@ GRANT EXECUTE ON FUNCTION restore_course(UUID) TO authenticated;
 -- Migration completed successfully
 -- =============================================
 
--- Add migration metadata
-INSERT INTO migrations_metadata (name, version, executed_at, description)
-VALUES (
-    '20250301_implement_soft_delete',
-    '1.0.0',
-    NOW(),
-    'Implements enterprise-grade soft delete with audit logging and data recovery'
-) ON CONFLICT DO NOTHING;
+-- Add migration metadata (only if table exists)
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM information_schema.tables 
+        WHERE table_name = 'migrations_metadata'
+    ) THEN
+        INSERT INTO migrations_metadata (name, version, executed_at, description)
+        VALUES (
+            '20250301_implement_soft_delete',
+            '1.0.0',
+            NOW(),
+            'Implements enterprise-grade soft delete with audit logging and data recovery'
+        ) ON CONFLICT DO NOTHING;
+    END IF;
+END $$;
