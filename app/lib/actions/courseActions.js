@@ -942,7 +942,8 @@ export async function getCourseById(courseId) {
  */
 export async function deleteCourse(courseId) {
   try {
-    const supabase = await createClient();
+    // supabaseServer 사용 (이미 상단에 import됨)
+    const supabase = supabaseServer;
     
     // 1. 권한 확인 - 현재 사용자 가져오기
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -986,13 +987,17 @@ export async function deleteCourse(courseId) {
     }
 
     // 5. Soft delete 수행
+    const updateData = { 
+      status: 'deleted',
+      updated_at: new Date().toISOString()
+    };
+    
+    // deleted_at 컬럼이 있다면 추가 (옵션)
+    // updateData.deleted_at = new Date().toISOString();
+    
     const { error: updateError } = await supabase
       .from('courses')
-      .update({ 
-        status: 'deleted',
-        deleted_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
+      .update(updateData)
       .eq('id', courseId);
 
     if (updateError) {
