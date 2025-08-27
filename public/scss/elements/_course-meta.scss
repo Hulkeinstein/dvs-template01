@@ -154,4 +154,97 @@
     }
 }
 
+// Review count layout stability
+.rating-count {
+  display: inline-block;
+  min-width: 80px;
+  
+  &.invisible {
+    visibility: hidden;
+  }
+}
+
+// 하단 레이아웃 안정화 - 반응형 개선
+.rbt-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  
+  // 태블릿 (768px-991px)
+  @media (min-width: 768px) and (max-width: 991px) {
+    gap: 0.25rem;
+    
+    .rbt-btn-link {
+      font-size: 0.875rem;
+    }
+  }
+  
+  // 모바일 (768px 미만)
+  @media (max-width: 767px) {
+    flex-wrap: wrap;
+    
+    .rbt-price {
+      flex: 1 1 100%;
+      margin-bottom: 10px;
+      
+      .off-price {
+        display: none; // 작은 화면에서 원가 숨김
+      }
+    }
+    
+    .card-actions {
+      flex: 1 1 100%;
+      justify-content: flex-end;
+      
+      .rbt-btn-link {
+        font-size: 14px;
+        
+        i {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+  
+  // 극소 화면 (420px 미만)
+  @media (max-width: 419px) {
+    .card-actions {
+      .rbt-btn-link {
+        font-size: 12px;
+      }
+    }
+  }
+  
+  .rbt-price {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  
+  .card-actions {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+}
+
+// Edit 텍스트 반응형 숨김
+@media (max-width: 767px) {
+  .edit-text {
+    display: none;
+  }
+}
+
+// reviews-slot 스타일 (상단 메타용)
+.reviews-slot {
+  display: inline-block;
+  min-width: 12ch;
+  height: 1.25rem;
+  text-align: right;
+  
+  &[aria-hidden="true"] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
 

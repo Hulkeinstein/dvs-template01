@@ -77,6 +77,12 @@ const TestimonialFour = ({ isGradient, leftContent }) => {
                             width={494}
                             height={494}
                             alt="Clint Images"
+                            style={{ 
+                              width: 'auto',
+                              height: 'auto',
+                              maxWidth: '100%',
+                              maxHeight: '100%'
+                            }}
                           />
                         </div>
                         <div className="client-info">
