@@ -249,7 +249,11 @@ const CourseWidget = ({
                       <i className="fas fa-star" key={i} />
                     ))}
                   </div>
-                  <span className="rating-count">({totalReviews} Reviews)</span>
+                  <span
+                    className={`rating-count ${totalReviews === 0 ? 'invisible' : ''}`}
+                  >
+                    ({totalReviews} Reviews)
+                  </span>
                 </div>
 
                 {/* 오른쪽 버튼 영역 */}
@@ -262,20 +266,6 @@ const CourseWidget = ({
                       <Link className="rbt-round-btn" title="Bookmark" href="#">
                         <i className="feather-bookmark" />
                       </Link>
-                    </div>
-                  )}
-
-                  {/* Hot 배지 - 모든 사용자에게 표시 (북마크와 동일한 스타일) */}
-                  {/* TODO: data.isHot은 나중에 데이터베이스에서 가져오도록 수정 */}
-                  {data.isHot !== false && (
-                    <div className="rbt-bookmark-btn">
-                      <span
-                        className="rbt-round-btn"
-                        title="Hot Course"
-                        style={{ cursor: 'default' }}
-                      >
-                        🔥
-                      </span>
                     </div>
                   )}
                 </div>
@@ -400,17 +390,18 @@ const CourseWidget = ({
               </div>
 
               {isEdit ? (
-                <div className="d-flex gap-2 align-items-center">
+                <div className="card-actions d-flex gap-2 align-items-center">
                   <Link
-                    className="rbt-btn-link left-icon fs-4"
+                    className="rbt-btn-link left-icon"
                     href={`/create-course?edit=${data.id}`}
                   >
-                    <i className="feather-edit fs-4"></i> Edit
+                    <i className="feather-edit"></i>
+                    <span className="edit-text"> Edit</span>
                   </Link>
                   {userRole === 'instructor' && renderStatusDropdown()}
                 </div>
               ) : userRole === 'instructor' ? (
-                renderStatusDropdown()
+                <div className="card-actions">{renderStatusDropdown()}</div>
               ) : (
                 <Link
                   className="rbt-btn-link"
