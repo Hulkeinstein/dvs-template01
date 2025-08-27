@@ -12,7 +12,7 @@ import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
 
-const QuizAttemptsPage = () => {
+const QuizAttemptsPage = ({ quizAttempts, error }) => {
   return (
     <>
       <Provider store={Store}>
@@ -36,7 +36,7 @@ const QuizAttemptsPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <QuizAttempts />
+                      <QuizAttempts quizAttempts={quizAttempts} error={error} />
                     </div>
                   </div>
                 </div>
