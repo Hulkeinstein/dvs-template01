@@ -15,11 +15,12 @@ export async function getInstructorDashboardData(instructorId) {
   try {
     // --- 실제 데이터베이스 쿼리 구현 ---
 
-    // 1. 현재 강사가 운영하는 모든 강의의 ID를 먼저 가져옵니다.
+    // 1. 현재 강사가 운영하는 모든 강의의 ID를 먼저 가져옵니다 (삭제된 코스 제외).
     const { data: coursesData, error: coursesError } = await supabase
       .from('courses')
       .select('id')
-      .eq('instructor_id', instructorId);
+      .eq('instructor_id', instructorId)
+      .is('deleted_at', null);
 
     if (coursesError) throw coursesError;
 
@@ -51,18 +52,20 @@ export async function getInstructorDashboardData(instructorId) {
         .in('course_id', courseIds),
       // 총 수익: 내 강의와 관련된 모든 주문의 금액 합계
       supabase.from('orders').select('amount').in('course_id', courseIds),
-      // 활성 강의 수: 내 강의 중 상태가 'published'인 것의 개수
+      // 활성 강의 수: 내 강의 중 상태가 'published'인 것의 개수 (삭제된 코스 제외)
       supabase
         .from('courses')
         .select('id', { count: 'exact', head: true })
         .eq('instructor_id', instructorId)
-        .eq('status', 'published'),
-      // 보관된 강의 수: 내 강의 중 상태가 'archived'인 것의 개수
+        .eq('status', 'published')
+        .is('deleted_at', null),
+      // 보관된 강의 수: 내 강의 중 상태가 'archived'인 것의 개수 (삭제된 코스 제외)
       supabase
         .from('courses')
         .select('id', { count: 'exact', head: true })
         .eq('instructor_id', instructorId)
-        .eq('status', 'archived'),
+        .eq('status', 'archived')
+        .is('deleted_at', null),
     ]);
 
     // 3. 각 조회 결과를 계산합니다.

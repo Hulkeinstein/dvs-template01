@@ -1003,10 +1003,8 @@ export async function deleteCourse(courseId) {
     const updateData = {
       status: 'deleted',
       updated_at: new Date().toISOString(),
+      deleted_at: new Date().toISOString(), // Soft delete timestamp
     };
-
-    // deleted_at 컬럼이 있다면 추가 (migration 적용 후)
-    // updateData.deleted_at = new Date().toISOString();
 
     const { error: updateError } = await supabaseAdmin
       .from('courses')
