@@ -16,7 +16,7 @@ export interface QuizAttemptWithRelations {
   total_points: number;
   passed: boolean;
   answers?: any; // Complex JSON structure - use any initially, refine later
-  
+
   // Nested relations from Supabase joins
   user?: {
     name: string;

@@ -13,22 +13,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'A',
-      '2': 'B',
-      '3': ['option1', 'option2'],
-      '4': true
+      1: 'A',
+      2: 'B',
+      3: ['option1', 'option2'],
+      4: true,
     },
     user: {
       name: 'John Smith',
-      email: 'john.smith@example.com'
+      email: 'john.smith@example.com',
     },
     lessons: {
-      title: 'React Hooks Fundamentals Quiz'
+      title: 'React Hooks Fundamentals Quiz',
     },
     courses: {
       title: 'Advanced React Development',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-2',
@@ -41,22 +41,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: false,
     answers: {
-      '1': 'B',
-      '2': 'A',
-      '3': ['option1'],
-      '4': false
+      1: 'B',
+      2: 'A',
+      3: ['option1'],
+      4: false,
     },
     user: {
       name: 'Emily Johnson',
-      email: 'emily.j@example.com'
+      email: 'emily.j@example.com',
     },
     lessons: {
-      title: 'State Management Quiz'
+      title: 'State Management Quiz',
     },
     courses: {
       title: 'Advanced React Development',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-3',
@@ -69,22 +69,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'Correct answer',
-      '2': ['A', 'B', 'C'],
-      '3': true,
-      '4': 'Essay answer text here'
+      1: 'Correct answer',
+      2: ['A', 'B', 'C'],
+      3: true,
+      4: 'Essay answer text here',
     },
     user: {
       name: 'Michael Chen',
-      email: 'michael.chen@example.com'
+      email: 'michael.chen@example.com',
     },
     lessons: {
-      title: 'JavaScript ES6+ Features'
+      title: 'JavaScript ES6+ Features',
     },
     courses: {
       title: 'Modern JavaScript Mastery',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-4',
@@ -97,22 +97,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'A',
-      '2': 'B',
-      '3': ['option1', 'option3'],
-      '4': true
+      1: 'A',
+      2: 'B',
+      3: ['option1', 'option3'],
+      4: true,
     },
     user: {
       name: 'Sarah Williams',
-      email: 'sarah.w@example.com'
+      email: 'sarah.w@example.com',
     },
     lessons: {
-      title: 'React Hooks Fundamentals Quiz'
+      title: 'React Hooks Fundamentals Quiz',
     },
     courses: {
       title: 'Advanced React Development',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-5',
@@ -125,22 +125,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: false,
     answers: {
-      '1': 'Wrong answer',
-      '2': ['B'],
-      '3': false,
-      '4': 'Incomplete answer'
+      1: 'Wrong answer',
+      2: ['B'],
+      3: false,
+      4: 'Incomplete answer',
     },
     user: {
       name: 'David Martinez',
-      email: 'david.m@example.com'
+      email: 'david.m@example.com',
     },
     lessons: {
-      title: 'Async/Await Patterns'
+      title: 'Async/Await Patterns',
     },
     courses: {
       title: 'Modern JavaScript Mastery',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-6',
@@ -153,22 +153,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'A',
-      '2': 'B',
-      '3': ['option1', 'option2'],
-      '4': true
+      1: 'A',
+      2: 'B',
+      3: ['option1', 'option2'],
+      4: true,
     },
     user: {
       name: 'John Smith',
-      email: 'john.smith@example.com'
+      email: 'john.smith@example.com',
     },
     lessons: {
-      title: 'State Management Quiz'
+      title: 'State Management Quiz',
     },
     courses: {
       title: 'Advanced React Development',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-7',
@@ -181,22 +181,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'SELECT * FROM users',
-      '2': 'JOIN',
-      '3': ['CREATE', 'INSERT', 'UPDATE'],
-      '4': true
+      1: 'SELECT * FROM users',
+      2: 'JOIN',
+      3: ['CREATE', 'INSERT', 'UPDATE'],
+      4: true,
     },
     user: {
       name: 'Lisa Anderson',
-      email: 'lisa.a@example.com'
+      email: 'lisa.a@example.com',
     },
     lessons: {
-      title: 'SQL Fundamentals Quiz'
+      title: 'SQL Fundamentals Quiz',
     },
     courses: {
       title: 'Database Design & SQL',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-8',
@@ -209,22 +209,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: false,
     answers: {
-      '1': 'Wrong SQL',
-      '2': 'WHERE',
-      '3': ['DELETE'],
-      '4': false
+      1: 'Wrong SQL',
+      2: 'WHERE',
+      3: ['DELETE'],
+      4: false,
     },
     user: {
       name: 'Robert Taylor',
-      email: 'robert.t@example.com'
+      email: 'robert.t@example.com',
     },
     lessons: {
-      title: 'SQL Fundamentals Quiz'
+      title: 'SQL Fundamentals Quiz',
     },
     courses: {
       title: 'Database Design & SQL',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-9',
@@ -237,22 +237,22 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'let and const',
-      '2': ['A', 'C'],
-      '3': true,
-      '4': 'Arrow functions maintain lexical this binding'
+      1: 'let and const',
+      2: ['A', 'C'],
+      3: true,
+      4: 'Arrow functions maintain lexical this binding',
     },
     user: {
       name: 'Emily Johnson',
-      email: 'emily.j@example.com'
+      email: 'emily.j@example.com',
     },
     lessons: {
-      title: 'JavaScript ES6+ Features'
+      title: 'JavaScript ES6+ Features',
     },
     courses: {
       title: 'Modern JavaScript Mastery',
-      instructor_id: 'instructor-1'
-    }
+      instructor_id: 'instructor-1',
+    },
   },
   {
     id: 'attempt-10',
@@ -265,40 +265,40 @@ export const sampleQuizAttemptsData = [
     total_points: 10,
     passed: true,
     answers: {
-      '1': 'Component lifecycle',
-      '2': ['useState', 'useEffect', 'useContext'],
-      '3': true,
-      '4': 'Custom hooks allow reusable stateful logic'
+      1: 'Component lifecycle',
+      2: ['useState', 'useEffect', 'useContext'],
+      3: true,
+      4: 'Custom hooks allow reusable stateful logic',
     },
     user: {
       name: 'Jennifer Kim',
-      email: 'jennifer.k@example.com'
+      email: 'jennifer.k@example.com',
     },
     lessons: {
-      title: 'React Advanced Patterns'
+      title: 'React Advanced Patterns',
     },
     courses: {
       title: 'React Performance Optimization',
-      instructor_id: 'instructor-1'
-    }
-  }
+      instructor_id: 'instructor-1',
+    },
+  },
 ];
 
 // 다양한 시나리오를 위한 추가 헬퍼 함수
-export const getPassedAttempts = () => 
-  sampleQuizAttemptsData.filter(attempt => attempt.passed);
+export const getPassedAttempts = () =>
+  sampleQuizAttemptsData.filter((attempt) => attempt.passed);
 
-export const getFailedAttempts = () => 
-  sampleQuizAttemptsData.filter(attempt => !attempt.passed);
+export const getFailedAttempts = () =>
+  sampleQuizAttemptsData.filter((attempt) => !attempt.passed);
 
-export const getAttemptsByCourse = (courseId) => 
-  sampleQuizAttemptsData.filter(attempt => attempt.course_id === courseId);
+export const getAttemptsByCourse = (courseId) =>
+  sampleQuizAttemptsData.filter((attempt) => attempt.course_id === courseId);
 
 export const getRecentAttempts = (days = 7) => {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - days);
-  return sampleQuizAttemptsData.filter(attempt => 
-    new Date(attempt.completed_at) >= cutoffDate
+  return sampleQuizAttemptsData.filter(
+    (attempt) => new Date(attempt.completed_at) >= cutoffDate
   );
 };
 
@@ -308,14 +308,15 @@ export const generateStatistics = () => ({
   passedCount: getPassedAttempts().length,
   failedCount: getFailedAttempts().length,
   averageScore: Math.round(
-    sampleQuizAttemptsData.reduce((sum, a) => sum + a.score, 0) / 
-    sampleQuizAttemptsData.length
+    sampleQuizAttemptsData.reduce((sum, a) => sum + a.score, 0) /
+      sampleQuizAttemptsData.length
   ),
   averagePercentage: Math.round(
-    sampleQuizAttemptsData.reduce((sum, a) => 
-      sum + (a.score / a.total_points) * 100, 0
+    sampleQuizAttemptsData.reduce(
+      (sum, a) => sum + (a.score / a.total_points) * 100,
+      0
     ) / sampleQuizAttemptsData.length
   ),
-  uniqueStudents: new Set(sampleQuizAttemptsData.map(a => a.user_id)).size,
-  uniqueCourses: new Set(sampleQuizAttemptsData.map(a => a.course_id)).size
+  uniqueStudents: new Set(sampleQuizAttemptsData.map((a) => a.user_id)).size,
+  uniqueCourses: new Set(sampleQuizAttemptsData.map((a) => a.course_id)).size,
 });

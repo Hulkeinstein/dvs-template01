@@ -3,26 +3,27 @@
 import React, { useState, useMemo } from 'react';
 import Select, { SingleValue } from 'react-select';
 import { sampleQuizAttemptsData } from '@/constants/sampleQuizAttemptsData';
-import { 
-  QuizAttemptWithRelations, 
-  QuizAttemptsProps, 
-  SelectOption, 
-  FilterStatus, 
-  SortBy 
+import {
+  QuizAttemptWithRelations,
+  QuizAttemptsProps,
+  SelectOption,
+  FilterStatus,
+  SortBy,
 } from '@/types/quiz';
 
-const QuizAttempts: React.FC<QuizAttemptsProps> = ({ 
-  quizAttempts = [], 
-  error, 
-  useDevData = false 
+const QuizAttempts: React.FC<QuizAttemptsProps> = ({
+  quizAttempts = [],
+  error,
+  useDevData = false,
 }) => {
   // 개발 모드에서 샘플 데이터 사용 옵션
-  const data: QuizAttemptWithRelations[] = useDevData && process.env.NODE_ENV === 'development' 
-    ? sampleQuizAttemptsData as QuizAttemptWithRelations[]
-    : quizAttempts;
-    
+  const data: QuizAttemptWithRelations[] =
+    useDevData && process.env.NODE_ENV === 'development'
+      ? (sampleQuizAttemptsData as QuizAttemptWithRelations[])
+      : quizAttempts;
+
   const actualQuizAttempts = data;
-  
+
   // State with proper typing
   const [selectedCourse, setSelectedCourse] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortBy>('date_desc');
@@ -152,7 +153,8 @@ const QuizAttempts: React.FC<QuizAttemptsProps> = ({
             {process.env.NODE_ENV === 'development' && !useDevData && (
               <p className="text-muted mt-3">
                 <small>
-                  💡 Tip: Pass <code>useDevData=true</code> prop to see sample data in development mode.
+                  💡 Tip: Pass <code>useDevData=true</code> prop to see sample
+                  data in development mode.
                 </small>
               </p>
             )}
@@ -254,15 +256,18 @@ const QuizAttempts: React.FC<QuizAttemptsProps> = ({
                     attempt?.courses?.title || 'Unknown Course';
                   const studentName = attempt?.user?.name || 'Unknown';
                   const studentEmail = attempt?.user?.email || '';
-                  
+
                   // Handle answers count - could be array or object
                   let questionsCount = 0;
                   if (Array.isArray(attempt?.answers)) {
                     questionsCount = attempt.answers.length;
-                  } else if (typeof attempt?.answers === 'object' && attempt?.answers !== null) {
+                  } else if (
+                    typeof attempt?.answers === 'object' &&
+                    attempt?.answers !== null
+                  ) {
                     questionsCount = Object.keys(attempt.answers).length;
                   }
-                  
+
                   const score = attempt?.score || 0;
                   const totalPoints = attempt?.total_points || 0;
                   const percentage =
