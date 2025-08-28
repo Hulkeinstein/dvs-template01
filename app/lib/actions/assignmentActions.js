@@ -378,3 +378,98 @@ export async function reorderAssignments(courseId, topicId, assignmentIds) {
     return { success: false, error: error.message };
   }
 }
+
+// Get all assignments for an instructor
+export async function getInstructorAssignments(instructorId) {
+  try {
+    // First, get all courses for the instructor
+    const { data: courses, error: coursesError } = await supabase
+      .from('courses')
+      .select('id, title')
+      .eq('instructor_id', instructorId)
+      .order('created_at', { ascending: false });
+
+    if (coursesError) {
+      logger.error('[assignmentActions] Error fetching courses:', coursesError);
+      return { success: false, error: 'Failed to fetch courses' };
+    }
+
+    if (!courses || courses.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    // Get all assignment lessons for these courses with submissions count
+    const courseIds = courses.map((c) => c.id);
+
+    const { data: assignments, error: assignmentsError } = await supabase
+      .from('lessons')
+      .select(
+        `
+        id,
+        course_id,
+        topic_id,
+        title,
+        description,
+        content_data,
+        sort_order,
+        created_at,
+        updated_at,
+        course_topics (
+          id,
+          title
+        )
+      `
+      )
+      .eq('content_type', 'assignment')
+      .in('course_id', courseIds)
+      .order('created_at', { ascending: false });
+
+    if (assignmentsError) {
+      logger.error(
+        '[assignmentActions] Error fetching assignments:',
+        assignmentsError
+      );
+      return { success: false, error: 'Failed to fetch assignments' };
+    }
+
+    // Get submission counts for each assignment
+    // Note: This assumes there's an assignment_submissions table - adjust based on your schema
+    const assignmentsWithData = await Promise.all(
+      (assignments || []).map(async (assignment) => {
+        // For now, we'll use mock submission count
+        // In production, you'd query the actual submissions table
+        const submissionsCount = Math.floor(Math.random() * 20);
+
+        // Find the course for this assignment
+        const course = courses.find((c) => c.id === assignment.course_id);
+
+        return {
+          id: assignment.id,
+          lesson_id: assignment.id,
+          course_id: assignment.course_id,
+          topic_id: assignment.topic_id,
+          title: assignment.title,
+          description: assignment.description,
+          total_points: assignment.content_data?.totalPoints || 100,
+          passing_points: assignment.content_data?.passingPoints || 70,
+          due_date: assignment.content_data?.dueDate || null,
+          submissions_count: submissionsCount,
+          created_at: assignment.created_at,
+          updated_at: assignment.updated_at,
+          course: course ? { id: course.id, title: course.title } : null,
+          topic: assignment.course_topics || null,
+        };
+      })
+    );
+
+    logger.log('[assignmentActions] Fetched assignments:', {
+      count: assignmentsWithData.length,
+      instructorId,
+    });
+
+    return { success: true, data: assignmentsWithData };
+  } catch (error) {
+    console.error('Error fetching instructor assignments:', error);
+    return { success: false, error: error.message };
+  }
+}

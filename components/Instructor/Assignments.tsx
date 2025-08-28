@@ -2,23 +2,47 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import Select, { components } from 'react-select';
+import Select, {
+  components as SelectComponents,
+  MultiValue as SelectMultiValue,
+} from 'react-select';
 import { sampleAssignmentsData } from '@/constants/sampleAssignmentsData';
+import type { Assignment } from '@/types/assignment';
 
-const Assignments = ({
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+interface AssignmentsProps {
+  assignments?: Assignment[];
+  error?: string | null;
+  useDevData?: boolean;
+}
+
+const Assignments: React.FC<AssignmentsProps> = ({
   assignments = [],
   error = null,
   useDevData = false,
 }) => {
+  // Show error message if there's an error
+  if (error) {
+    console.error('Error loading assignments:', error);
+  }
   const components = { ValueContainer, MultiValue };
-  const [course, setCourses] = useState({ value: '', label: '' });
-  const [sortBy, setSortBy] = useState({ value: 'Default', label: 'Default' });
-  const [sortByOffer, setSortByOffer] = useState({
+  const [course, setCourses] = useState<
+    SelectMultiValue<SelectOption> | SelectOption
+  >({ value: '', label: '' });
+  const [sortBy, setSortBy] = useState<SelectOption>({
+    value: 'Default',
+    label: 'Default',
+  });
+  const [sortByOffer, setSortByOffer] = useState<SelectOption>({
     value: 'Free',
     label: 'Free',
   });
 
-  const courses = [
+  const courses: SelectOption[] = [
     { value: 'Web Design HTML', label: 'Web Design HTML' },
     { value: 'Graphic Photoshop', label: 'Graphic Photoshop' },
     { value: 'English Career', label: 'English Career' },
@@ -29,7 +53,7 @@ const Assignments = ({
     { value: 'Php Development Experts', label: 'Php Development Experts' },
   ];
 
-  const sortByOptions = [
+  const sortByOptions: SelectOption[] = [
     { value: 'Default', label: 'Default' },
     { value: 'Latest', label: 'Latest' },
     { value: 'Popularity', label: 'Popularity' },
@@ -38,14 +62,14 @@ const Assignments = ({
     { value: 'Price: high to low', label: 'Price: high to low' },
   ];
 
-  const sortByOffers = [
+  const sortByOffers: SelectOption[] = [
     { value: 'Free', label: 'Free' },
     { value: 'Paid', label: 'Paid' },
     { value: 'Premium', label: 'Premium' },
   ];
 
   // Use sample data in development mode or if explicitly requested
-  const [displayData, setDisplayData] = useState([]);
+  const [displayData, setDisplayData] = useState<Assignment[]>([]);
 
   useEffect(() => {
     if (
@@ -60,11 +84,13 @@ const Assignments = ({
   }, [assignments, useDevData]);
 
   // Format date for display
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | null): string => {
     if (!dateString) return 'No due date';
     const date = new Date(dateString);
     const now = new Date();
-    const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+    const diffDays = Math.ceil(
+      (date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+    );
 
     if (diffDays < 0) {
       return `Past due (${Math.abs(diffDays)} days ago)`;
@@ -83,14 +109,19 @@ const Assignments = ({
     }
   };
 
-  // Get unique courses from displayData
-  const uniqueCourses = [
-    ...new Set(displayData.map((a) => a.course?.title)),
-  ].filter(Boolean);
-  const dynamicCourses = uniqueCourses.map((title) => ({
-    value: title,
-    label: title,
-  }));
+  // Get unique courses from displayData - can be used for dynamic course filtering
+  // const uniqueCourses = [...new Set(displayData.map(a => a.course?.title))].filter(Boolean);
+  // const dynamicCourses: SelectOption[] = uniqueCourses.map(title => ({
+  //   value: title as string,
+  //   label: title as string
+  // }));
+
+  const handleDeleteAssignment = (assignmentId: string) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Delete assignment:', assignmentId);
+    }
+    // TODO: Implement actual deletion logic
+  };
 
   return (
     <>
@@ -110,7 +141,11 @@ const Assignments = ({
                     className="react-select"
                     classNamePrefix="react-select"
                     defaultValue={course}
-                    onChange={setCourses}
+                    onChange={(value) =>
+                      setCourses(
+                        value as SelectMultiValue<SelectOption> | SelectOption
+                      )
+                    }
                     options={courses}
                     closeMenuOnSelect={true}
                     isMulti
@@ -126,7 +161,7 @@ const Assignments = ({
                     className="react-select"
                     classNamePrefix="react-select"
                     defaultValue={sortBy}
-                    onChange={setSortBy}
+                    onChange={(value) => setSortBy(value as SelectOption)}
                     options={sortByOptions}
                   />
                 </div>
@@ -139,7 +174,7 @@ const Assignments = ({
                     className="react-select"
                     classNamePrefix="react-select"
                     defaultValue={sortByOffer}
-                    onChange={setSortByOffer}
+                    onChange={(value) => setSortByOffer(value as SelectOption)}
                     options={sortByOffers}
                   />
                 </div>
@@ -163,7 +198,7 @@ const Assignments = ({
               <tbody>
                 {displayData.length === 0 ? (
                   <tr>
-                    <td colSpan="5" className="text-center">
+                    <td colSpan={5} className="text-center">
                       <p className="b3">No assignments found</p>
                     </td>
                   </tr>
@@ -214,14 +249,9 @@ const Assignments = ({
                           <button
                             className="rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger"
                             title="Delete"
-                            onClick={() => {
-                              if (process.env.NODE_ENV === 'development') {
-                                console.log(
-                                  'Delete assignment:',
-                                  assignment.id
-                                );
-                              }
-                            }}
+                            onClick={() =>
+                              handleDeleteAssignment(assignment.id)
+                            }
                           >
                             <i className="feather-trash-2 pl--0"></i>
                           </button>
@@ -241,23 +271,26 @@ const Assignments = ({
 
 export default Assignments;
 
-const ValueContainer = ({ children, ...props }) => {
+// Custom components for react-select
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ValueContainer = ({ children, ...props }: any) => {
   const { getValue, hasValue } = props;
   const nbValues = getValue().length;
   if (!hasValue) {
     return (
-      <components.ValueContainer {...props}>
+      <SelectComponents.ValueContainer {...props}>
         {children}
-      </components.ValueContainer>
+      </SelectComponents.ValueContainer>
     );
   }
   return (
-    <components.ValueContainer {...props}>
+    <SelectComponents.ValueContainer {...props}>
       {`${nbValues} items selected`}
-    </components.ValueContainer>
+    </SelectComponents.ValueContainer>
   );
 };
 
-const MultiValue = (props) => {
-  return '3 Selected';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+const MultiValue = (props: any) => {
+  return null; // Don't render individual value chips
 };
