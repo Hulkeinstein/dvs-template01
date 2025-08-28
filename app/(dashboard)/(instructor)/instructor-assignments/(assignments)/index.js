@@ -5,14 +5,14 @@ import FooterOne from '@/components/Footer/Footer-One';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
 import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
-import Assignments from '@/components/Instructor/Assignments';
+import Assignments from '@/components/Instructor/Assignments.tsx';
 import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
 
-const AssignmentsPage = () => {
+const AssignmentsPage = ({ assignments, error }) => {
   return (
     <>
       <Provider store={Store}>
@@ -36,7 +36,11 @@ const AssignmentsPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <Assignments />
+                      <Assignments
+                        assignments={assignments}
+                        error={error}
+                        useDevData={true} // Enable sample data in development
+                      />
                     </div>
                   </div>
                 </div>
