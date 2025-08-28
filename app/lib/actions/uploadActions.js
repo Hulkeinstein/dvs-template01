@@ -71,12 +71,14 @@ export async function uploadCourseThumbnail(base64Data, fileName) {
     const filePath = `course-thumbnails/${uniqueFileName}`;
 
     // List available buckets for debugging
-    console.log('Uploading file:', {
-      fileName: uniqueFileName,
-      filePath: filePath,
-      blobSize: blob.size,
-      fileType: fileType,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Uploading file:', {
+        fileName: uniqueFileName,
+        filePath: filePath,
+        blobSize: blob.size,
+        fileType: fileType,
+      });
+    }
 
     // Upload to Supabase Storage - try 'courses' bucket first
     let bucketName = 'courses';
@@ -92,7 +94,9 @@ export async function uploadCourseThumbnail(base64Data, fileName) {
 
     // If failed, try 'course-images' bucket
     if (uploadError && uploadError.message?.includes('bucket')) {
-      console.log('Trying alternative bucket: course-images');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Trying alternative bucket: course-images');
+      }
       bucketName = 'course-images';
       ({ data: uploadData, error: uploadError } = await supabase.storage
         .from(bucketName)

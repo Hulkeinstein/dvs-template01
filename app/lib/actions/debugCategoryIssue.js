@@ -4,10 +4,14 @@ import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 
 export async function debugCategoryIssue() {
   try {
-    console.log('=== Starting Category Column Debug ===');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== Starting Category Column Debug ===');
+    }
 
     // Test 1: Simple select without category
-    console.log('Test 1: Selecting courses without category column...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Test 1: Selecting courses without category column...');
+    }
     const { data: test1, error: error1 } = await supabase
       .from('courses')
       .select('id, title, instructor_id')
@@ -15,12 +19,14 @@ export async function debugCategoryIssue() {
 
     if (error1) {
       console.error('Test 1 Error:', error1);
-    } else {
+    } else if (process.env.NODE_ENV === 'development') {
       console.log('Test 1 Success:', test1);
     }
 
     // Test 2: Select with category column
-    console.log('\nTest 2: Selecting courses WITH category column...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('\nTest 2: Selecting courses WITH category column...');
+    }
     const { data: test2, error: error2 } = await supabase
       .from('courses')
       .select('id, title, category')
@@ -33,12 +39,14 @@ export async function debugCategoryIssue() {
         hint: error2.hint,
         code: error2.code,
       });
-    } else {
+    } else if (process.env.NODE_ENV === 'development') {
       console.log('Test 2 Success - Category column exists:', test2);
     }
 
     // Test 3: Select all columns
-    console.log('\nTest 3: Selecting all columns with *...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('\nTest 3: Selecting all columns with *...');
+    }
     const { data: test3, error: error3 } = await supabase
       .from('courses')
       .select('*')
@@ -46,7 +54,7 @@ export async function debugCategoryIssue() {
 
     if (error3) {
       console.error('Test 3 Error:', error3);
-    } else {
+    } else if (process.env.NODE_ENV === 'development') {
       console.log(
         'Test 3 Success - Available columns:',
         test3 ? Object.keys(test3[0] || {}) : []
@@ -54,11 +62,12 @@ export async function debugCategoryIssue() {
     }
 
     // Test 4: RLS check - testing if it's a permissions issue
-    console.log('\nTest 4: Testing with service role (bypasses RLS)...');
-    // Note: This would require service role key, which we don't have in client-side code
-    // This is just to document that RLS might be the issue
-
-    console.log('\n=== Debug Complete ===');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('\nTest 4: Testing with service role (bypasses RLS)...');
+      // Note: This would require service role key, which we don't have in client-side code
+      // This is just to document that RLS might be the issue
+      console.log('\n=== Debug Complete ===');
+    }
 
     return {
       test1: { success: !error1, error: error1 },

@@ -55,10 +55,12 @@ export async function PUT(request) {
     let userId = session.user.id;
 
     if (!userId && session.user.email) {
-      console.log(
-        'User ID not in session, fetching by email:',
-        session.user.email
-      );
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          'User ID not in session, fetching by email:',
+          session.user.email
+        );
+      }
       const { data: userData, error: userError } = await supabase
         .from('user')
         .select('id')
@@ -66,12 +68,16 @@ export async function PUT(request) {
         .single();
 
       if (userError || !userData) {
-        console.error('Failed to fetch user by email:', userError);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Failed to fetch user by email:', userError);
+        }
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
 
       userId = userData.id;
-      console.log('Found user ID:', userId);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Found user ID:', userId);
+      }
     }
 
     if (!userId) {
@@ -82,7 +88,9 @@ export async function PUT(request) {
 
     // 현재 존재하는 컬럼 확인
     const existingColumns = await getExistingColumns();
-    console.log('Existing columns:', existingColumns);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Existing columns:', existingColumns);
+    }
 
     // 업데이트할 필드 준비
     const updateData = {};
@@ -162,7 +170,9 @@ export async function PUT(request) {
 
     // 업데이트할 필드가 없으면 성공으로 처리 (Skip 기능을 위해)
     if (Object.keys(updateData).length === 0) {
-      console.log('No fields to update, returning current user data');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('No fields to update, returning current user data');
+      }
 
       // 현재 사용자 정보 반환
       const { data: currentUser, error: fetchError } = await supabase
@@ -185,8 +195,10 @@ export async function PUT(request) {
       });
     }
 
-    console.log('Updating with data:', updateData);
-    console.log('User ID for update:', userId);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Updating with data:', updateData);
+      console.log('User ID for update:', userId);
+    }
 
     // 사용자 정보 업데이트
     const { data: updatedUser, error } = await supabase
@@ -207,7 +219,9 @@ export async function PUT(request) {
       );
     }
 
-    console.log('Update successful:', updatedUser);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Update successful:', updatedUser);
+    }
 
     return NextResponse.json({
       success: true,

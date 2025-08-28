@@ -36,7 +36,6 @@ import UpdateModal from './QuizModals/UpdateModal';
 import Lesson from './lesson/Lesson';
 
 const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
-  // console.log('CreateCourse component rendered:', { editMode, courseId });
   const { data: session } = useSession();
   const router = useRouter();
   const fileInputRef = useRef(null);
@@ -89,10 +88,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   const loadCourseData = useCallback(async () => {
     try {
-      console.log('Loading course with ID:', courseId);
       setLoading(true);
       const result = await getCourseById(courseId);
-      console.log('getCourseById result:', result);
+
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Loading course with ID:', courseId);
+        console.log('getCourseById result:', result);
+      }
 
       if (result.error) {
         console.error('Error from getCourseById:', result.error);
@@ -103,13 +105,15 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
       if (result.course) {
         const course = result.course;
-        console.log('Course data loaded:', {
-          id: course.id,
-          title: course.title,
-          thumbnail_url: course.thumbnail_url,
-          hasThumbnail: !!course.thumbnail_url,
-        });
-        console.log('Full thumbnail URL:', course.thumbnail_url);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Course data loaded:', {
+            id: course.id,
+            title: course.title,
+            thumbnail_url: course.thumbnail_url,
+            hasThumbnail: !!course.thumbnail_url,
+          });
+          console.log('Full thumbnail URL:', course.thumbnail_url);
+        }
 
         // Map database fields to form fields using centralized mapper
         const mappedData = mapDBToFormData(course);
@@ -201,10 +205,12 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           );
 
           if (lessonsWithoutTopic.length > 0) {
-            console.log(
-              'Found lessons without topics:',
-              lessonsWithoutTopic.length
-            );
+            if (process.env.NODE_ENV === 'development') {
+              console.log(
+                'Found lessons without topics:',
+                lessonsWithoutTopic.length
+              );
+            }
             // Create a "General" topic for lessons without topic_id
             const generalTopic = {
               id: 'general-topic',
@@ -278,7 +284,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   // Load course data in edit mode
   useEffect(() => {
-    console.log('useEffect triggered:', { editMode, courseId });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('useEffect triggered:', { editMode, courseId });
+    }
     if (editMode && courseId) {
       loadCourseData();
     }
@@ -336,36 +344,49 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       // Case 1: Keep existing thumbnail (edit mode, no new file selected)
       if (!thumbnailFile && formData.thumbnailPreview) {
         thumbnailUrl = formData.thumbnailPreview;
-        console.log('Keeping existing thumbnail:', thumbnailUrl);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Keeping existing thumbnail:', thumbnailUrl);
+        }
       }
       // Case 2: Upload new thumbnail
       else if (thumbnailBase64 && thumbnailFile) {
-        console.log('Uploading new thumbnail:', {
-          hasBase64: !!thumbnailBase64,
-          fileName: thumbnailFile.name,
-          base64Length: thumbnailBase64?.length,
-        });
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Uploading new thumbnail:', {
+            hasBase64: !!thumbnailBase64,
+            fileName: thumbnailFile.name,
+            base64Length: thumbnailBase64?.length,
+          });
+        }
 
         const uploadResult = await uploadCourseThumbnail(
           thumbnailBase64,
           thumbnailFile.name
         );
-        console.log('Thumbnail upload result:', uploadResult);
+
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Thumbnail upload result:', uploadResult);
+        }
 
         if (uploadResult.success) {
           thumbnailUrl = uploadResult.url;
-          console.log('New thumbnail uploaded successfully:', thumbnailUrl);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('New thumbnail uploaded successfully:', thumbnailUrl);
+          }
         } else {
           console.error('Failed to upload thumbnail:', uploadResult.error);
           // If we have an existing thumbnail, keep it
           if (formData.thumbnailPreview) {
             thumbnailUrl = formData.thumbnailPreview;
-            console.log('Upload failed, keeping existing thumbnail');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Upload failed, keeping existing thumbnail');
+            }
           }
         }
       }
 
-      console.log('Final thumbnail URL:', thumbnailUrl);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Final thumbnail URL:', thumbnailUrl);
+      }
 
       // Include thumbnail URL and status in formData
       const courseData = {
@@ -407,17 +428,21 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   };
 
   const handleThumbnailChange = (data) => {
-    console.log('handleThumbnailChange called:', {
-      hasData: !!data,
-      hasFile: !!data?.file,
-      hasBase64: !!data?.base64,
-      fileName: data?.file?.name,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('handleThumbnailChange called:', {
+        hasData: !!data,
+        hasFile: !!data?.file,
+        hasBase64: !!data?.base64,
+        fileName: data?.file?.name,
+      });
+    }
 
     if (data && data.file && data.base64) {
       setThumbnailFile(data.file);
       setThumbnailBase64(data.base64);
-      console.log('Thumbnail state updated');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Thumbnail state updated');
+      }
     }
   };
 
@@ -538,7 +563,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   // 통합 lessons 배열에서 모든 content_type(video, quiz, assignment) 삭제 처리
   const handleDeleteContent = (topicId, contentId) => {
-    console.log('콘텐츠 삭제:', topicId, contentId);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('콘텐츠 삭제:', topicId, contentId);
+    }
     setFormData({
       ...formData,
       topics: formData.topics.map((topic) =>
@@ -558,12 +585,16 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   const handleDeleteLesson = handleDeleteContent;
 
   const handleEditLesson = (topicId, lesson) => {
-    console.log('레슨 편집:', topicId, lesson);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('레슨 편집:', topicId, lesson);
+    }
     // 편집 모달 열기 로직 추가 필요
   };
 
   const handleUploadLesson = (topicId, lessonId) => {
-    console.log('레슨 업로드:', topicId, lessonId);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('레슨 업로드:', topicId, lessonId);
+    }
     // 업로드 기능 구현 필요
   };
   return (
