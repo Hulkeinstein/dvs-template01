@@ -1,5 +1,4 @@
 import { PropsWithChildren } from 'react';
-import HeaderDashboard from '@/components/Header/HeaderDashboard';
 import AdminDashboardSidebar from '@/components/Admin/AdminDashboardSidebar';
 import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
@@ -15,8 +14,6 @@ const AdminLayout: React.FC<PropsWithChildren> = ({ children }) => {
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              <HeaderDashboard />
-
               <div className="row g-5">
                 <div className="col-lg-3">
                   <AdminDashboardSidebar />

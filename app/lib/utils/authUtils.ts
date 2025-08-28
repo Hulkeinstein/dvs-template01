@@ -33,7 +33,7 @@ export async function assertAdmin(userId: string): Promise<void> {
 export async function logAdminAccess(
   userId: string,
   action: AdminAction,
-  details: Record<string, any> | null = null
+  details: Record<string, unknown> | null = null
 ): Promise<void> {
   try {
     // admin_audit_logs 테이블이 없는 경우 에러 무시
@@ -45,7 +45,10 @@ export async function logAdminAccess(
     });
   } catch (error) {
     // 로그 실패는 무시 (테이블이 아직 없을 수 있음)
-    console.log('Audit log skipped:', error instanceof Error ? error.message : 'Unknown error');
+    console.log(
+      'Audit log skipped:',
+      error instanceof Error ? error.message : 'Unknown error'
+    );
   }
 }
 
@@ -65,24 +68,4 @@ export async function getUserRole(userId: string): Promise<string | null> {
 
   if (error || !user) return null;
   return user.role;
-}
-
-/**
- * Instructor 권한이 있는지 확인합니다 (Admin 포함).
- * @param role - 사용자 역할
- * @returns Instructor 또는 Admin이면 true
- */
-export function hasInstructorPrivileges(role: string): boolean {
-  return role === 'instructor' || role === 'admin';
-}
-
-/**
- * Instructor 또는 Admin 권한을 검증합니다.
- * @param role - 사용자 역할
- * @throws {Error} Instructor/Admin 권한이 없는 경우 에러 발생
- */
-export function assertInstructorOrAdmin(role: string): void {
-  if (!hasInstructorPrivileges(role)) {
-    throw new Error('Instructor or Admin privileges required');
-  }
 }
