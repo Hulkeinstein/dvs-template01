@@ -36,7 +36,11 @@ const QuizAttemptsPage = ({ quizAttempts, error }) => {
                     </div>
 
                     <div className="col-lg-9">
-                      <QuizAttempts quizAttempts={quizAttempts} error={error} />
+                      <QuizAttempts 
+                        quizAttempts={quizAttempts} 
+                        error={error} 
+                        useDevData={true}  // 개발 모드에서 샘플 데이터 사용
+                      />
                     </div>
                   </div>
                 </div>

@@ -1,17 +1,37 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import Select from 'react-select';
+import React, { useState, useMemo } from 'react';
+import Select, { SingleValue } from 'react-select';
+import { sampleQuizAttemptsData } from '@/constants/sampleQuizAttemptsData';
+import { 
+  QuizAttemptWithRelations, 
+  QuizAttemptsProps, 
+  SelectOption, 
+  FilterStatus, 
+  SortBy 
+} from '@/types/quiz';
 
-const QuizAttempts = ({ quizAttempts = [], error }) => {
-  const [selectedCourse, setSelectedCourse] = useState('all');
-  const [sortBy, setSortBy] = useState('date_desc');
-  const [filterStatus, setFilterStatus] = useState('all'); // all, pass, fail
+const QuizAttempts: React.FC<QuizAttemptsProps> = ({ 
+  quizAttempts = [], 
+  error, 
+  useDevData = false 
+}) => {
+  // 개발 모드에서 샘플 데이터 사용 옵션
+  const data: QuizAttemptWithRelations[] = useDevData && process.env.NODE_ENV === 'development' 
+    ? sampleQuizAttemptsData as QuizAttemptWithRelations[]
+    : quizAttempts;
+    
+  const actualQuizAttempts = data;
+  
+  // State with proper typing
+  const [selectedCourse, setSelectedCourse] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<SortBy>('date_desc');
+  const [filterStatus, setFilterStatus] = useState<FilterStatus>('all');
 
   // 코스 옵션 추출
-  const courseOptions = useMemo(() => {
-    const uniqueCourses = new Map();
-    quizAttempts.forEach((attempt) => {
+  const courseOptions = useMemo<SelectOption[]>(() => {
+    const uniqueCourses = new Map<string, string>();
+    actualQuizAttempts.forEach((attempt) => {
       const courseId = attempt?.course_id || attempt?.courses?.id;
       const courseTitle = attempt?.courses?.title || 'Unknown Course';
       if (courseId && !uniqueCourses.has(courseId)) {
@@ -19,16 +39,16 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
       }
     });
 
-    const options = [{ value: 'all', label: 'All Courses' }];
+    const options: SelectOption[] = [{ value: 'all', label: 'All Courses' }];
     uniqueCourses.forEach((title, id) => {
       options.push({ value: id, label: title });
     });
     return options;
-  }, [quizAttempts]);
+  }, [actualQuizAttempts]);
 
   // 필터링 및 정렬된 데이터
-  const filteredData = useMemo(() => {
-    let filtered = [...quizAttempts];
+  const filteredData = useMemo<QuizAttemptWithRelations[]>(() => {
+    let filtered = [...actualQuizAttempts];
 
     // 코스 필터
     if (selectedCourse !== 'all') {
@@ -49,13 +69,13 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
       switch (sortBy) {
         case 'date_desc':
           return (
-            new Date(b.completed_at || b.created_at) -
-            new Date(a.completed_at || a.created_at)
+            new Date(b.completed_at || b.created_at || 0).getTime() -
+            new Date(a.completed_at || a.created_at || 0).getTime()
           );
         case 'date_asc':
           return (
-            new Date(a.completed_at || a.created_at) -
-            new Date(b.completed_at || b.created_at)
+            new Date(a.completed_at || a.created_at || 0).getTime() -
+            new Date(b.completed_at || b.created_at || 0).getTime()
           );
         case 'score_desc':
           return (b.score || 0) - (a.score || 0);
@@ -67,20 +87,39 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
     });
 
     return filtered;
-  }, [quizAttempts, selectedCourse, sortBy, filterStatus]);
+  }, [actualQuizAttempts, selectedCourse, sortBy, filterStatus]);
 
-  const sortOptions = [
+  const sortOptions: SelectOption[] = [
     { value: 'date_desc', label: 'Latest First' },
     { value: 'date_asc', label: 'Oldest First' },
     { value: 'score_desc', label: 'Highest Score' },
     { value: 'score_asc', label: 'Lowest Score' },
   ];
 
-  const statusOptions = [
+  const statusOptions: SelectOption[] = [
     { value: 'all', label: 'All Results' },
     { value: 'pass', label: 'Pass Only' },
     { value: 'fail', label: 'Fail Only' },
   ];
+
+  // Event handlers with proper typing
+  const handleCourseChange = (option: SingleValue<SelectOption>) => {
+    if (option) {
+      setSelectedCourse(option.value);
+    }
+  };
+
+  const handleSortChange = (option: SingleValue<SelectOption>) => {
+    if (option) {
+      setSortBy(option.value as SortBy);
+    }
+  };
+
+  const handleFilterStatusChange = (option: SingleValue<SelectOption>) => {
+    if (option) {
+      setFilterStatus(option.value as FilterStatus);
+    }
+  };
 
   // 에러 처리
   if (error) {
@@ -98,8 +137,8 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
     );
   }
 
-  // 빈 상태 처리
-  if (!quizAttempts.length) {
+  // 빈 상태 처리 (개발 모드에서 샘플 데이터 사용 안내 추가)
+  if (!actualQuizAttempts.length) {
     return (
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
@@ -110,6 +149,13 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
             <p className="text-muted">
               No quiz attempts found for your courses.
             </p>
+            {process.env.NODE_ENV === 'development' && !useDevData && (
+              <p className="text-muted mt-3">
+                <small>
+                  💡 Tip: Pass <code>useDevData=true</code> prop to see sample data in development mode.
+                </small>
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -138,7 +184,7 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
                   value={courseOptions.find(
                     (opt) => opt.value === selectedCourse
                   )}
-                  onChange={(opt) => setSelectedCourse(opt.value)}
+                  onChange={handleCourseChange}
                   options={courseOptions}
                 />
               </div>
@@ -151,7 +197,7 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
                   className="react-select"
                   classNamePrefix="react-select"
                   value={sortOptions.find((opt) => opt.value === sortBy)}
-                  onChange={(opt) => setSortBy(opt.value)}
+                  onChange={handleSortChange}
                   options={sortOptions}
                 />
               </div>
@@ -166,7 +212,7 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
                   value={statusOptions.find(
                     (opt) => opt.value === filterStatus
                   )}
-                  onChange={(opt) => setFilterStatus(opt.value)}
+                  onChange={handleFilterStatusChange}
                   options={statusOptions}
                 />
               </div>
@@ -193,14 +239,14 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
             <tbody>
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="text-center">
+                  <td colSpan={7} className="text-center">
                     No quiz attempts match the selected filters.
                   </td>
                 </tr>
               ) : (
                 filteredData.map((attempt) => {
                   const date = new Date(
-                    attempt.completed_at || attempt.created_at
+                    attempt.completed_at || attempt.created_at || ''
                   );
                   const formattedDate = date.toLocaleDateString();
                   const quizTitle = attempt?.lessons?.title || 'Untitled Quiz';
@@ -208,7 +254,15 @@ const QuizAttempts = ({ quizAttempts = [], error }) => {
                     attempt?.courses?.title || 'Unknown Course';
                   const studentName = attempt?.user?.name || 'Unknown';
                   const studentEmail = attempt?.user?.email || '';
-                  const questionsCount = attempt?.answers?.length || 0;
+                  
+                  // Handle answers count - could be array or object
+                  let questionsCount = 0;
+                  if (Array.isArray(attempt?.answers)) {
+                    questionsCount = attempt.answers.length;
+                  } else if (typeof attempt?.answers === 'object' && attempt?.answers !== null) {
+                    questionsCount = Object.keys(attempt.answers).length;
+                  }
+                  
                   const score = attempt?.score || 0;
                   const totalPoints = attempt?.total_points || 0;
                   const percentage =

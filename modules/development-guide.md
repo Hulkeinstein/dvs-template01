@@ -197,6 +197,111 @@ NEXT_PUBLIC_CERTIFICATE_ENABLED=false
 - `updateQuizLesson()` - 퀴즈 수정
 - `getQuizByLessonId()` - 퀴즈 조회
 
+## TypeScript 마이그레이션 가이드
+
+### 🎯 핵심 전략: "Touch It, Type It"
+**작업하는 파일만 TS로 전환** - 전체 마이그레이션 대신 기능 개발과 병행
+
+### 즉시 적용 규칙
+1. **새 기능** → 무조건 TypeScript (.tsx/.ts)
+2. **기존 파일 수정 중** → TS로 전환 (대규모 변경시)
+3. **간단한 버그 수정** → JS 유지 (굳이 전환 X)
+4. **리팩토링** → TS 전환 최적 시기
+
+### 실용적 타입 적용 순서
+```typescript
+// 1단계: 최소 타입 (any 허용)
+const processData = (data: any): any => { }
+
+// 2단계: 구체적 타입 (점진적 개선)
+const processData = (data: QuizData): QuizResult => { }
+
+// 3단계: 완전한 타입 (나중에)
+const processData = (data: Readonly<QuizData>): Promise<QuizResult> => { }
+```
+
+### 타입 파일 구조
+```
+types/
+├── quiz.ts        # Quiz 작업시 생성
+├── course.ts      # Course 작업시 생성
+└── common.ts      # User, API Response 등 공통 타입
+```
+**미리 만들지 말고 필요할 때 추가**
+
+### Quick Fixes (빠른 해결책)
+```typescript
+// 타입 없는 라이브러리
+declare module 'react-select'  // types/shims.d.ts에 추가
+
+// Props 빠른 정의
+interface Props {
+  children: React.ReactNode
+  data?: any  // 일단 any, 나중에 개선
+}
+
+// 이벤트 핸들러
+onChange={(e: React.ChangeEvent<HTMLInputElement>) => {}}
+onClick={(e: React.MouseEvent) => {}}
+```
+
+### Supabase 클라이언트 사용
+- Server Components: `app/lib/supabase/server.ts` import
+- Client Components: `app/lib/supabase/client.ts` import
+- 절대 서버 모듈을 클라이언트에서 import 금지
+
+### ⚠️ 안전한 마이그레이션 프로세스 (필수)
+
+**절대 JS 파일을 즉시 삭제하지 마세요!**
+
+#### 올바른 마이그레이션 순서:
+1. **TS/TSX 파일 새로 생성** (JS 파일과 공존)
+2. 테스트 기간 동안 **두 파일 모두 유지**
+3. import를 새 TS 파일로 업데이트
+4. 충분한 테스트 수행
+   - 빌드 성공 확인
+   - 모든 기능 정상 작동 확인
+   - 타입 체크 통과 확인
+5. **사용자 승인 받기**
+6. 승인 후에만 JS 파일 삭제
+
+#### 예시:
+```bash
+# ✅ 올바른 순서
+1. cp Component.js Component.tsx     # JS 파일 복사
+2. # Component.tsx 수정 (타입 추가)
+3. # import 경로를 .tsx로 수정
+4. npm run dev                       # 테스트
+5. # 사용자에게 승인 요청
+6. rm Component.js                   # 마지막에만 삭제
+
+# ❌ 잘못된 방법
+1. mv Component.js Component.tsx     # JS 파일 즉시 변경/삭제
+```
+
+#### 디렉토리 구조 예시:
+```
+components/
+├── QuizAttempts.js     # ✅ 유지 (fallback용)
+└── QuizAttempts.tsx    # ✅ 신규 (테스트용)
+```
+
+### 체크리스트
+- [ ] JS 파일 복사하여 TS/TSX 생성
+- [ ] 작업 파일만 `.ts/.tsx` 전환
+- [ ] 함수 시그니처 타입 추가
+- [ ] import 경로 업데이트
+- [ ] `npm run dev` 정상 동작 확인
+- [ ] `npm run type-check` 통과 (optional)
+- [ ] 사용자 승인 받기
+- [ ] 승인 후 JS 파일 삭제
+
+### 전환하지 말아야 할 때
+- 긴급 핫픽스
+- 곧 삭제될 파일
+- 테스트 없는 복잡한 레거시 코드
+- 잘 동작하는 서드파티 통합 파일
+
 ## 개발 주의사항
 
 ### 필수 규칙
