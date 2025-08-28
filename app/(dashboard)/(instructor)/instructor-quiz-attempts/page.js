@@ -21,9 +21,9 @@ const QuizAttemptsLayout = async () => {
     redirect('/login');
   }
 
-  // instructor가 아닌 경우 리다이렉트
+  // Admin과 instructor만 접근 가능
   const userProfile = await getUserProfile(session.user.id);
-  if (userProfile?.role !== 'instructor') {
+  if (userProfile?.role !== 'instructor' && userProfile?.role !== 'admin') {
     redirect('/student-dashboard');
   }
 

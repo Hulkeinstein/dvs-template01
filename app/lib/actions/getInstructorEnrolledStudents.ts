@@ -34,7 +34,7 @@ export async function getInstructorEnrolledStudents(): Promise<GetEnrolledStuden
       return { error: 'User not found', message: 'Could not find user in database' };
     }
 
-    if (userData.role !== 'instructor') {
+    if (userData.role !== 'instructor' && userData.role !== 'admin') {
       return { error: 'Unauthorized', message: 'Only instructors can view enrolled students' };
     }
 
@@ -212,7 +212,7 @@ export async function getEnrolledStudentsByCourse(courseId: string): Promise<Get
       return { error: 'User not found', message: 'Could not find user in database' };
     }
 
-    if (userData.role !== 'instructor') {
+    if (userData.role !== 'instructor' && userData.role !== 'admin') {
       return { error: 'Unauthorized', message: 'Only instructors can view enrolled students' };
     }
 

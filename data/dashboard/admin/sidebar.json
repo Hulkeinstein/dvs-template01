@@ -1,0 +1,114 @@
+{
+  "sections": [
+    {
+      "title": "",
+      "items": [
+        {
+          "text": "Dashboard",
+          "link": "/dashboard",
+          "icon": "feather-home"
+        },
+        {
+          "text": "Analytics",
+          "link": "/admin-analytics",
+          "icon": "feather-bar-chart-2"
+        }
+      ]
+    },
+    {
+      "title": "User Management",
+      "items": [
+        {
+          "text": "All Users",
+          "link": "/admin-users",
+          "icon": "feather-users"
+        },
+        {
+          "text": "Instructors",
+          "link": "/admin-instructors",
+          "icon": "feather-award"
+        },
+        {
+          "text": "Students",
+          "link": "/admin-students",
+          "icon": "feather-book-open"
+        },
+        {
+          "text": "Roles & Permissions",
+          "link": "/admin-roles",
+          "icon": "feather-shield"
+        }
+      ]
+    },
+    {
+      "title": "Course Management",
+      "items": [
+        {
+          "text": "All Courses",
+          "link": "/admin-courses",
+          "icon": "feather-grid"
+        },
+        {
+          "text": "Pending Approval",
+          "link": "/admin-pending",
+          "icon": "feather-clock"
+        },
+        {
+          "text": "Categories",
+          "link": "/admin-categories",
+          "icon": "feather-folder"
+        },
+        {
+          "text": "Reviews",
+          "link": "/admin-reviews",
+          "icon": "feather-star"
+        }
+      ]
+    },
+    {
+      "title": "Financial",
+      "items": [
+        {
+          "text": "Revenue",
+          "link": "/admin-revenue",
+          "icon": "feather-dollar-sign"
+        },
+        {
+          "text": "Transactions",
+          "link": "/admin-transactions",
+          "icon": "feather-credit-card"
+        },
+        {
+          "text": "Payouts",
+          "link": "/admin-payouts",
+          "icon": "feather-briefcase"
+        }
+      ]
+    },
+    {
+      "title": "System",
+      "items": [
+        {
+          "text": "Settings",
+          "link": "/admin-settings",
+          "icon": "feather-settings"
+        },
+        {
+          "text": "Logs",
+          "link": "/admin-logs",
+          "icon": "feather-file-text"
+        },
+        {
+          "text": "Backup",
+          "link": "/admin-backup",
+          "icon": "feather-database"
+        },
+        {
+          "text": "Updates",
+          "link": "/admin-updates",
+          "icon": "feather-download-cloud"
+        }
+      ]
+    }
+  ]
+}
