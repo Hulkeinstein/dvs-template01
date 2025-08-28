@@ -272,34 +272,25 @@ const Assignments: React.FC<AssignmentsProps> = ({
 export default Assignments;
 
 // Custom components for react-select
-interface ValueContainerProps {
-  children: React.ReactNode;
-  getValue: () => readonly SelectOption[];
-  hasValue: boolean;
-  [key: string]: unknown; // For other props from react-select
-}
-
-const ValueContainer: React.FC<ValueContainerProps> = ({ 
-  children, 
-  getValue, 
-  hasValue, 
-  ...props 
-}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const ValueContainer = ({ children, ...props }: any) => {
+  const { getValue, hasValue } = props;
   const nbValues = getValue().length;
   if (!hasValue) {
     return (
-      <SelectComponents.ValueContainer {...props} getValue={getValue} hasValue={hasValue}>
+      <SelectComponents.ValueContainer {...props}>
         {children}
       </SelectComponents.ValueContainer>
     );
   }
   return (
-    <SelectComponents.ValueContainer {...props} getValue={getValue} hasValue={hasValue}>
+    <SelectComponents.ValueContainer {...props}>
       {`${nbValues} items selected`}
     </SelectComponents.ValueContainer>
   );
 };
 
-const MultiValue: React.FC = () => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+const MultiValue = (props: any) => {
   return null; // Don't render individual value chips
 };
