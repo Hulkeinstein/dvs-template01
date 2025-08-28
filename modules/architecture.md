@@ -95,3 +95,4 @@ SUPABASE_SERVICE_ROLE_KEY=
 - **역할 기반 라우팅**: 사용자 역할에 따른 보호된 경로 리디렉트
 - **성능**: 데이터 가져오기에 Server Components, Client Components 최소화
 - **파일 업로드**: Server Actions에 Base64 변환 사용, 그 후 Supabase Storage에 업로드
+- **테이블 정렬**: 현업 표준 UX를 위한 데이터 타입별 최적화된 헤더 정렬 시스템 (`table-header-align` 클래스)

@@ -39,6 +39,19 @@ npm run format:check  # 포맷팅 체크만
   - 교사: `instructor@test.com`
   - 학생: `student@test.com`
 
+### 🏢 테이블 정렬 시스템
+- **SCSS 위치**: `/public/scss/template/_instructor-dashboard.scss`
+- **핵심 클래스**: `.rbt-table.table-header-align`
+- **사용법**: 테이블에 `table-header-align` 클래스 추가 후 각 `<th>`에 정렬 클래스 적용
+- **기존 스타일 보존**: 모든 기존 `.rbt-table` 스타일과 100% 호환
+- **확장성**: 다른 대시보드 테이블(QuizAttempts, Announcements 등)도 동일한 방식 적용 가능
+- **호환성**: RTL, 다크모드, 반응형 디자인 모두 지원
+
+**정렬 클래스:**
+- `text-start`: 텍스트 데이터 (좌측)
+- `text-end`: 숫자/점수 데이터 (우측)  
+- `text-center`: 카운트/액션 데이터 (가운데)
+
 ## 🛡️ DISCOVER 프로세스 (코드 작성 전 필수)
 
 새 기능을 구현하기 전에 반드시 거쳐야 할 체계적인 탐색 프로세스입니다.

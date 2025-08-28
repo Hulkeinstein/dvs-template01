@@ -185,14 +185,14 @@ const Assignments: React.FC<AssignmentsProps> = ({
           <hr className="mt--30" />
 
           <div className="rbt-dashboard-table table-responsive mobile-table-750 mt--30">
-            <table className="rbt-table table table-borderless">
+            <table className="rbt-table table table-borderless table-header-align">
               <thead>
                 <tr>
-                  <th>Assignment Name</th>
-                  <th>Total Marks</th>
-                  <th>Total Submit</th>
-                  <th>Due Date</th>
-                  <th></th>
+                  <th className="text-start">Assignment Name</th>
+                  <th className="text-end">Total Marks</th>
+                  <th className="text-center">Total Submit</th>
+                  <th className="text-start">Due Date</th>
+                  <th className="text-center"></th>
                 </tr>
               </thead>
               <tbody>
@@ -223,9 +223,9 @@ const Assignments: React.FC<AssignmentsProps> = ({
                       </th>
                       <td>
                         <p className="b3">{assignment.total_points}</p>
-                        <small className="text-muted">
+                        <p className="b3 text-muted">
                           Pass: {assignment.passing_points}
-                        </small>
+                        </p>
                       </td>
                       <td>
                         <p className="b3">{assignment.submissions_count}</p>
@@ -244,17 +244,19 @@ const Assignments: React.FC<AssignmentsProps> = ({
                             href={`/instructor/courses/${assignment.course_id}/edit/assignment/${assignment.lesson_id}`}
                             title="Edit"
                           >
-                            <i className="feather-edit pl--0"></i> Edit
+                            <i className="feather-edit"></i> Edit
                           </Link>
-                          <button
+                          <a
                             className="rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger"
+                            href="#"
                             title="Delete"
-                            onClick={() =>
-                              handleDeleteAssignment(assignment.id)
-                            }
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDeleteAssignment(assignment.id);
+                            }}
                           >
-                            <i className="feather-trash-2 pl--0"></i>
-                          </button>
+                            <i className="feather-trash-2"></i> Delete
+                          </a>
                         </div>
                       </td>
                     </tr>

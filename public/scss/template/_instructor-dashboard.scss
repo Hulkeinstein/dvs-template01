@@ -106,3 +106,24 @@
         }
     }
 }
+
+/*----------------------------
+    Professional Table Header Alignment
+    - 현업 표준에 맞는 데이터 타입별 정렬
+    - 기존 스타일과 완전 호환
+------------------------------*/
+.rbt-table.table-header-align {
+    thead th {
+        &.text-start { 
+            text-align: left; 
+        }
+        
+        &.text-end { 
+            text-align: right; 
+        }
+        
+        &.text-center { 
+            text-align: center; 
+        }
+    }
+}

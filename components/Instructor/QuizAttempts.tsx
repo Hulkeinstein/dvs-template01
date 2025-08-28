@@ -151,11 +151,9 @@ const QuizAttempts: React.FC<QuizAttemptsProps> = ({
               No quiz attempts found for your courses.
             </p>
             {process.env.NODE_ENV === 'development' && !useDevData && (
-              <p className="text-muted mt-3">
-                <small>
-                  💡 Tip: Pass <code>useDevData=true</code> prop to see sample
-                  data in development mode.
-                </small>
+              <p className="b4 text-muted mt-3">
+                💡 Tip: Pass <code>useDevData=true</code> prop to see sample
+                data in development mode.
               </p>
             )}
           </div>
@@ -285,7 +283,7 @@ const QuizAttempts: React.FC<QuizAttemptsProps> = ({
                       </th>
                       <td>
                         <p className="b3">{studentName}</p>
-                        <small className="text-muted">{studentEmail}</small>
+                        <p className="b3 text-muted">{studentEmail}</p>
                       </td>
                       <td>
                         <p className="b3">{questionsCount}</p>
@@ -295,7 +293,7 @@ const QuizAttempts: React.FC<QuizAttemptsProps> = ({
                       </td>
                       <td>
                         <p className="b3">{totalPoints}</p>
-                        <small className="text-muted">({percentage}%)</small>
+                        <p className="b4 text-muted">({percentage}%)</p>
                       </td>
                       <td>
                         <span

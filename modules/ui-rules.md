@@ -12,6 +12,42 @@
 - 기술 용어나 코드 관련 용어는 영어를 그대로 사용해도 됩니다
 - 설명과 응답은 한국어로 작성하세요
 
+## 🏢 현업 표준 테이블 정렬 가이드
+
+### 테이블 헤더 정렬 원칙 (UX 모범사례)
+현업에서 널리 사용되는 데이터 타입별 최적화된 정렬:
+
+- **텍스트 데이터**: `text-start` (좌측 정렬)
+  - 예: Assignment Name, Course Name, Student Name, Due Date
+- **숫자/점수 데이터**: `text-end` (우측 정렬) 
+  - 예: Total Marks, Score, Price - 숫자 비교가 용이함
+- **카운트/상태 데이터**: `text-center` (가운데 정렬)
+  - 예: Total Submit, Status Badge, Progress
+- **액션 버튼**: `text-center` (가운데 정렬)
+  - 예: Edit, Delete, View 버튼
+
+### 구현 방법
+```tsx
+// 1. 테이블에 정렬 시스템 활성화
+<table className="rbt-table table table-borderless table-header-align">
+
+// 2. 각 헤더에 적절한 정렬 클래스 적용
+<thead>
+  <tr>
+    <th className="text-start">Assignment Name</th>    {/* 텍스트 */}
+    <th className="text-end">Total Marks</th>         {/* 숫자 */}
+    <th className="text-center">Total Submit</th>     {/* 카운트 */}
+    <th className="text-start">Due Date</th>          {/* 날짜 */}
+    <th className="text-center"></th>                 {/* 액션 */}
+  </tr>
+</thead>
+```
+
+### 참고 사례
+- **Google Admin Console**: 숫자는 우측, 텍스트는 좌측, 액션은 가운데
+- **AWS Management Console**: 동일한 패턴 사용
+- **Stripe Dashboard**: 금액은 우측, 상태는 가운데 정렬
+
 ## 중요 사항
 - 개발 서버가 이미 3000번 포트에서 실행 중입니다. 새 개발 서버를 시작하지 마세요.
 - 서버를 재시작해야 하는 경우, 먼저 사용자에게 물어보세요.
