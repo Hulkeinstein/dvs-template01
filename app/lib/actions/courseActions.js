@@ -21,26 +21,7 @@ export async function createCourse(formData) {
       return { error: 'You must be logged in to create a course' };
     }
 
-    // 테이블 스키마 디버깅
-    try {
-      // 빈 쿼리로 테이블 구조 확인
-      const { data: sampleData, error: sampleError } = await supabase
-        .from('courses')
-        .select('*')
-        .limit(1);
-
-      if (sampleData && sampleData.length >= 0) {
-        const columns = sampleData.length > 0 ? Object.keys(sampleData[0]) : [];
-        console.log('Courses table actual columns:', columns);
-      }
-
-      // 에러 정보에서도 힌트를 얻을 수 있음
-      if (sampleError) {
-        console.log('Sample query error:', sampleError);
-      }
-    } catch (debugError) {
-      console.log('Debug error:', debugError);
-    }
+    // Remove debug table schema check
 
     // Get user ID from Supabase
     const { data: userData, error: userError } = await supabase
@@ -81,12 +62,14 @@ export async function createCourse(formData) {
       ...mappedData,
     };
 
-    console.log('Course data to insert:', {
-      ...courseData,
-      thumbnail_url: courseData.thumbnail_url
-        ? `[URL: ${courseData.thumbnail_url.substring(0, 50)}...]`
-        : 'none',
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Course data to insert:', {
+        ...courseData,
+        thumbnail_url: courseData.thumbnail_url
+          ? `[URL: ${courseData.thumbnail_url.substring(0, 50)}...]`
+          : 'none',
+      });
+    }
 
     const { data: course, error: courseError } = await supabase
       .from('courses')
@@ -185,7 +168,9 @@ export async function createCourse(formData) {
 
     return { success: true, courseId: course.id };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -381,9 +366,11 @@ export async function updateCourse(courseId, formData) {
                 .single();
 
               if (lessonError) {
-                console.error('Lesson creation error:', lessonError);
-                console.error('Failed lesson data:', lessonData);
-              } else {
+                if (process.env.NODE_ENV === 'development') {
+                  console.error('Lesson creation error:', lessonError);
+                  console.error('Failed lesson data:', lessonData);
+                }
+              } else if (process.env.NODE_ENV === 'development') {
                 console.log('Lesson created successfully:', lessonResult.id);
               }
             }
@@ -404,11 +391,15 @@ export async function updateCourse(courseId, formData) {
           .single();
 
         if (topicError) {
-          console.error('Topic creation error:', topicError);
+          if (process.env.NODE_ENV === 'development') {
+            console.error('Topic creation error:', topicError);
+          }
           continue;
         }
 
-        console.log('Topic created:', topicData.id);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Topic created:', topicData.id);
+        }
 
         // Create lessons for this topic
         if (topic.lessons && topic.lessons.length > 0) {
@@ -418,10 +409,12 @@ export async function updateCourse(courseId, formData) {
             lessonIndex++
           ) {
             const lesson = topic.lessons[lessonIndex];
-            console.log(
-              `Creating lesson ${lessonIndex + 1} for topic:`,
-              lesson.title
-            );
+            if (process.env.NODE_ENV === 'development') {
+              console.log(
+                `Creating lesson ${lessonIndex + 1} for topic:`,
+                lesson.title
+              );
+            }
 
             const lessonData = {
               course_id: courseId,
@@ -492,7 +485,9 @@ export async function updateCourse(courseId, formData) {
 
     return { success: true };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -572,7 +567,9 @@ export async function addLesson(courseId, lessonData) {
 
     return { success: true, lessonId: lesson.id };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -622,7 +619,9 @@ export async function deleteLesson(lessonId) {
 
     return { success: true };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -674,7 +673,9 @@ export async function updateCourseStatus(courseId, status) {
 
     return { success: true };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -682,45 +683,59 @@ export async function updateCourseStatus(courseId, status) {
 // Get instructor's courses
 export async function getInstructorCourses() {
   try {
-    console.log('=== getInstructorCourses 시작 ===');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== getInstructorCourses 시작 ===');
+    }
 
     const session = await getServerSession(authOptions);
-    console.log('세션 정보:', {
-      exists: !!session,
-      userEmail: session?.user?.email,
-      userId: session?.user?.id,
-      userRole: session?.user?.role,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('세션 정보:', {
+        exists: !!session,
+        userEmail: session?.user?.email,
+        userId: session?.user?.id,
+        userRole: session?.user?.role,
+      });
+    }
 
     if (!session?.user?.email) {
-      console.log('세션이 없거나 이메일이 없음');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('세션이 없거나 이메일이 없음');
+      }
       return { error: 'You must be logged in to view your courses' };
     }
 
-    console.log('Supabase 클라이언트 초기화 시도...');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Supabase 클라이언트 초기화 시도...');
+    }
     const { data: userData, error: userError } = await supabase
       .from('user')
       .select('id')
       .eq('email', session.user.email)
       .single();
 
-    console.log('사용자 조회 결과:', {
-      userData,
-      userError: userError
-        ? {
-            message: userError.message,
-            code: userError.code,
-            details: userError.details,
-          }
-        : null,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('사용자 조회 결과:', {
+        userData,
+        userError: userError
+          ? {
+              message: userError.message,
+              code: userError.code,
+              details: userError.details,
+            }
+          : null,
+      });
+    }
 
     if (!userData) {
-      console.log('사용자를 찾을 수 없음 - 이메일:', session.user.email);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('사용자를 찾을 수 없음 - 이메일:', session.user.email);
+      }
       return { error: 'User not found' };
     }
 
-    console.log('사용자 ID로 코스 조회 시도:', userData.id);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('사용자 ID로 코스 조회 시도:', userData.id);
+    }
     const { data: courses, error } = await supabase
       .from('courses')
       .select(
@@ -735,27 +750,31 @@ export async function getInstructorCourses() {
       .eq('instructor_id', userData.id)
       .order('created_at', { ascending: false });
 
-    console.log('코스 조회 결과:', {
-      coursesCount: courses?.length || 0,
-      error: error
-        ? {
-            message: error.message,
-            code: error.code,
-            details: error.details,
-          }
-        : null,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('코스 조회 결과:', {
+        coursesCount: courses?.length || 0,
+        error: error
+          ? {
+              message: error.message,
+              code: error.code,
+              details: error.details,
+            }
+          : null,
+      });
+    }
 
     // Debug log to check the structure of returned data
     if (courses && courses.length > 0) {
-      console.log('Sample course data structure:', {
-        id: courses[0].id,
-        title: courses[0].title,
-        lessons: courses[0].lessons,
-        enrollments: courses[0].enrollments,
-        lessonsType: typeof courses[0].lessons,
-        enrollmentsType: typeof courses[0].enrollments,
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Sample course data structure:', {
+          id: courses[0].id,
+          title: courses[0].title,
+          lessons: courses[0].lessons,
+          enrollments: courses[0].enrollments,
+          lessonsType: typeof courses[0].lessons,
+          enrollmentsType: typeof courses[0].enrollments,
+        });
+      }
     }
 
     if (error) {
@@ -793,10 +812,14 @@ export async function getInstructorCourses() {
         return course;
       }) || [];
 
-    console.log('=== getInstructorCourses 완료 ===');
+    if (process.env.NODE_ENV === 'development') {
+      console.log('=== getInstructorCourses 완료 ===');
+    }
     return { courses: coursesWithBadges };
   } catch (error) {
-    console.error('Unexpected error:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -916,21 +939,27 @@ export async function getCourseById(courseId) {
       const orphanLessons =
         allLessons?.filter((lesson) => !lesson.topic_id) || [];
       if (orphanLessons.length > 0) {
-        console.log('Found lessons without topics:', orphanLessons.length);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Found lessons without topics:', orphanLessons.length);
+        }
       }
     }
 
-    console.log(
-      'Course loaded successfully with',
-      course.topics?.length || 0,
-      'topics and',
-      course.lessons?.length || 0,
-      'lessons'
-    );
+    if (process.env.NODE_ENV === 'development') {
+      console.log(
+        'Course loaded successfully with',
+        course.topics?.length || 0,
+        'topics and',
+        course.lessons?.length || 0,
+        'lessons'
+      );
+    }
 
     return { course };
   } catch (error) {
-    console.error('Unexpected error in getCourseById:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error in getCourseById:', error);
+    }
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -961,7 +990,9 @@ export async function deleteCourse(courseId) {
       .single();
 
     if (userError || !userData) {
-      console.error('User not found in database:', userError);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('User not found in database:', userError);
+      }
       return {
         success: false,
         error: 'User not found',
@@ -976,7 +1007,9 @@ export async function deleteCourse(courseId) {
       .single();
 
     if (fetchError || !course) {
-      console.error('Course not found:', fetchError);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Course not found:', fetchError);
+      }
       return {
         success: false,
         error: 'Course not found',
@@ -1012,21 +1045,27 @@ export async function deleteCourse(courseId) {
       .eq('id', courseId);
 
     if (updateError) {
-      console.error('Error deleting course:', updateError);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error deleting course:', updateError);
+      }
       return {
         success: false,
         error: 'Failed to delete course',
       };
     }
 
-    console.log(`Course ${courseId} soft deleted successfully`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Course ${courseId} soft deleted successfully`);
+    }
 
     return {
       success: true,
       message: 'Course deleted successfully',
     };
   } catch (error) {
-    console.error('Unexpected error in deleteCourse:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Unexpected error in deleteCourse:', error);
+    }
     return {
       success: false,
       error: 'An unexpected error occurred while deleting the course',

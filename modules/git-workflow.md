@@ -16,6 +16,7 @@
 - **IMPORTANT**: main 브랜치에서 새로운 작업을 시작하기 전에 항상 새 브랜치 생성 여부를 확인
 - main 브랜치에서는 직접 작업하지 않음
 - 브랜치 머지 후 main으로 돌아왔을 때, 다음 작업 시작 전 반드시 새 브랜치 생성 프롬프트 표시
+- **커밋 및 PR 규칙**: 모든 테스트 완료 후 사용자의 명시적 승인을 받은 후에만 커밋 및 PR 생성 진행
 
 ## 커밋 메시지 컨벤션
 
@@ -27,6 +28,36 @@
 - `refactor:` 코드 리팩토링
 - `test:` 테스트 추가/수정
 - `chore:` 빌드, 패키지 등 기타 작업
+
+### TypeScript 마이그레이션 커밋 규칙
+**중요: JS 삭제와 TS 추가를 절대 한 커밋에서 하지 마세요!**
+
+#### 올바른 커밋 순서:
+```bash
+# 1단계: TS 버전 추가 (JS 파일 유지)
+git add Component.tsx
+git commit -m "refactor(ts): add TypeScript version of Component"
+
+# 2단계: Import 업데이트
+git add parentComponent.js
+git commit -m "refactor(ts): update imports to use TypeScript Component"
+
+# 3단계: 테스트 및 검증 (커밋 없음, 테스트만)
+npm run dev
+npm run type-check
+
+# 4단계: 사용자 승인 후 JS 삭제
+git rm Component.js
+git commit -m "refactor(ts): remove JS version after verification"
+```
+
+#### ❌ 잘못된 예시:
+```bash
+# 한 커밋에서 JS 삭제와 TS 추가를 동시에
+git rm Component.js
+git add Component.tsx
+git commit -m "refactor: migrate Component to TypeScript"  # 위험!
+```
 
 ### GitHub Issue 연동
 - `Closes #123` - PR 머지 시 Issue 자동 닫기

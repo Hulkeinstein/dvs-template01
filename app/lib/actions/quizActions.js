@@ -180,14 +180,16 @@ export async function createQuizLesson(courseId, topicId, quizData) {
       throw error;
     }
 
-    console.log('Quiz created successfully:', {
-      id: data.id,
-      title: data.title,
-      content_type: data.content_type,
-      course_id: data.course_id,
-      topic_id: data.topic_id,
-      order_index: data.order_index,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Quiz created successfully:', {
+        id: data.id,
+        title: data.title,
+        content_type: data.content_type,
+        course_id: data.course_id,
+        topic_id: data.topic_id,
+        order_index: data.order_index,
+      });
+    }
 
     // revalidatePath를 제거하여 페이지 새로고침 방지
     // revalidatePath(`/instructor/courses/${courseId}/edit`);

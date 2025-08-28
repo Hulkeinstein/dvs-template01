@@ -12,7 +12,7 @@ import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
 
-const QuizAttemptsPage = () => {
+const QuizAttemptsPage = ({ quizAttempts, error }) => {
   return (
     <>
       <Provider store={Store}>
@@ -36,7 +36,11 @@ const QuizAttemptsPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <QuizAttempts />
+                      <QuizAttempts
+                        quizAttempts={quizAttempts}
+                        error={error}
+                        useDevData={true} // 개발 모드에서 샘플 데이터 사용
+                      />
                     </div>
                   </div>
                 </div>
