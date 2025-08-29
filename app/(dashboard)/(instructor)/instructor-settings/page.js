@@ -19,8 +19,8 @@ const SettingLayout = async () => {
     redirect('/login');
   }
 
-  // 학생이 instructor-settings에 접근하는 경우 student-settings로 리다이렉트
-  if (session.user?.role !== 'instructor') {
+  // Admin과 instructor만 접근 가능
+  if (session.user?.role !== 'instructor' && session.user?.role !== 'admin') {
     redirect('/student-settings');
   }
 

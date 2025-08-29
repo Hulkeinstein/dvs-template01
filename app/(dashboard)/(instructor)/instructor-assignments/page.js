@@ -24,8 +24,8 @@ const AssignmentsLayout = async () => {
   // Get user profile to verify instructor role
   const userProfile = await getUserProfile(session.user.id);
 
-  // Redirect non-instructors to student dashboard
-  if (userProfile?.role !== 'instructor') {
+  // Admin과 instructor만 접근 가능
+  if (userProfile?.role !== 'instructor' && userProfile?.role !== 'admin') {
     redirect('/student-dashboard');
   }
 

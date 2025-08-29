@@ -35,7 +35,8 @@ const CreateCoursePage = ({ searchParams }) => {
         const response = await fetch('/api/user/profile');
         const data = await response.json();
 
-        if (data.role !== 'instructor') {
+        // Admin도 코스 생성 가능
+        if (data.role !== 'instructor' && data.role !== 'admin') {
           router.push('/student-dashboard');
           return;
         }

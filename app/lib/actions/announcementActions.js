@@ -28,10 +28,11 @@ export async function createAnnouncement(data) {
       return { success: false, error: 'User not found' };
     }
 
-    if (userData.role !== 'instructor') {
+    // Admin도 공지사항 생성 가능
+    if (userData.role !== 'instructor' && userData.role !== 'admin') {
       return {
         success: false,
-        error: 'Only instructors can create announcements',
+        error: 'Only instructors and admins can create announcements',
       };
     }
 
@@ -107,7 +108,10 @@ export async function updateAnnouncement(announcementId, data) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || userData.role !== 'instructor') {
+    if (
+      !userData ||
+      (userData.role !== 'instructor' && userData.role !== 'admin')
+    ) {
       return {
         success: false,
         error: 'Only instructors can update announcements',
@@ -176,7 +180,10 @@ export async function deleteAnnouncement(announcementId) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || userData.role !== 'instructor') {
+    if (
+      !userData ||
+      (userData.role !== 'instructor' && userData.role !== 'admin')
+    ) {
       return {
         success: false,
         error: 'Only instructors can delete announcements',
@@ -234,7 +241,10 @@ export async function getInstructorAnnouncements() {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || userData.role !== 'instructor') {
+    if (
+      !userData ||
+      (userData.role !== 'instructor' && userData.role !== 'admin')
+    ) {
       return { success: false, error: 'Only instructors can access this' };
     }
 

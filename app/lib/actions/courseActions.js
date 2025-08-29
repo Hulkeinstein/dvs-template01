@@ -34,8 +34,9 @@ export async function createCourse(formData) {
       return { error: 'User not found' };
     }
 
-    if (userData.role !== 'instructor') {
-      return { error: 'Only instructors can create courses' };
+    // Admin도 코스 생성 가능
+    if (userData.role !== 'instructor' && userData.role !== 'admin') {
+      return { error: 'Only instructors and admins can create courses' };
     }
 
     // slug 생성 (title에서 자동 생성)

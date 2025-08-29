@@ -1,0 +1,33 @@
+{
+  "autoPush": true,
+  "requirePR": true,
+  "squashMerge": true,
+  "deleteAfterMerge": true,
+  "protectedBranches": ["main", "master", "develop"],
+  "commitTypes": [
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "test",
+    "chore",
+    "perf",
+    "build",
+    "ci"
+  ],
+  "maxCommitLength": 72,
+  "requireIssueNumber": false,
+  "securityScan": true,
+  "qualityChecks": {
+    "eslint": true,
+    "typescript": true,
+    "prettier": true,
+    "tests": false
+  },
+  "autoPushRules": {
+    "skipDocOnly": true,
+    "skipTests": false,
+    "allowedBranches": ["feature/*", "fix/*", "chore/*", "docs/*", "refactor/*"]
+  }
+}

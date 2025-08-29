@@ -34,3 +34,6 @@ export const supabaseServer = new Proxy({} as SupabaseClient, {
     return client[prop as keyof SupabaseClient];
   },
 });
+
+// Alias for backward compatibility
+export const supabase = supabaseServer;

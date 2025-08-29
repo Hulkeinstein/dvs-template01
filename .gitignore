@@ -49,6 +49,7 @@ coverage/
 .cache/
 .tmp/
 .eslintcache
+.eslintcache
 
 # CI/CD artifacts
 artifacts/

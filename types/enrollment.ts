@@ -52,10 +52,10 @@ export interface EnrolledStudent {
 // Summary statistics for dashboard
 export interface EnrollmentSummary {
   total: number;
-  enrolled: number;  // status = active, progress = 0
-  active: number;    // status = active, progress > 0 && < 100
+  enrolled: number; // status = active, progress = 0
+  active: number; // status = active, progress > 0 && < 100
   completed: number; // status = completed or progress = 100
-  dropped: number;   // status = dropped
+  dropped: number; // status = dropped
 }
 
 // Filter status for UI tabs

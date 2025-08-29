@@ -5,7 +5,9 @@ import { redirect } from 'next/navigation';
 // 컴포넌트 import
 import StudentDashboard from '../(student)/student-dashboard/(dashboard)';
 import InstructorDashboard from '../(instructor)/instructor-dashboard/(dashboard)';
+import AdminDashboard from '../(admin)/admin-dashboard/(dashboard)';
 import { getInstructorDashboardData } from '@/app/lib/actions/getInstructorDashboardData';
+import { getAdminDashboardData } from '@/app/lib/actions/getAdminDashboardData';
 import BackToTop from '@/app/backToTop';
 
 // 메타데이터 설정
@@ -30,7 +32,17 @@ const DashboardPage = async () => {
   // 3. 온보딩 제거 - 이제 모든 사용자가 대시보드에 접근 가능
 
   // 4. 역할에 따라 적절한 대시보드를 렌더링
-  if (userRole === 'instructor') {
+  if (userRole === 'admin') {
+    // 관리자용 대시보드 데이터 조회
+    const stats = await getAdminDashboardData(userId);
+
+    return (
+      <>
+        <AdminDashboard stats={stats} />
+        <BackToTop />
+      </>
+    );
+  } else if (userRole === 'instructor') {
     // 교사용 대시보드 데이터 조회
     const stats = await getInstructorDashboardData(userId);
 
