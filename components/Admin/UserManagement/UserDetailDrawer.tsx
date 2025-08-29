@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { User } from './types';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDistanceToNow } from 'date-fns';
 
 interface UserDetailDrawerProps {
   user: User | null;

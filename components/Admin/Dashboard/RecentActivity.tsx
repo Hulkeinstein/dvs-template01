@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDistanceToNow } from 'date-fns';
 import { ActivityItem } from '@/types/dashboard';
 
 interface Props {

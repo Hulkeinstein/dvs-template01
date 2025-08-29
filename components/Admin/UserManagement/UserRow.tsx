@@ -3,7 +3,7 @@
 import React from 'react';
 import { User } from './types';
 import UserActions from './UserActions';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { formatDistanceToNow } from 'date-fns';
 
 interface UserRowProps {
   user: User;
