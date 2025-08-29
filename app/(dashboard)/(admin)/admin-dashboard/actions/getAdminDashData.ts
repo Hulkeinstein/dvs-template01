@@ -277,10 +277,7 @@ function generateSparkline(items: any[], days: number): number[] {
   return sparkline;
 }
 
-function generateTimeSeriesData(
-  items: any[],
-  days: number
-): LinePoint[] {
+function generateTimeSeriesData(items: any[], days: number): LinePoint[] {
   const data: LinePoint[] = [];
   const today = new Date();
   let cumulative = 0;

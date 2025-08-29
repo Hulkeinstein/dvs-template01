@@ -88,9 +88,9 @@ const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
               Development Status
             </h5>
             <p className="mb-0">
-              This page is currently under development. We&apos;re working hard to
-              bring you these features soon. Check back regularly for updates or
-              contact support if you need immediate assistance.
+              This page is currently under development. We&apos;re working hard
+              to bring you these features soon. Check back regularly for updates
+              or contact support if you need immediate assistance.
             </p>
           </div>
         </div>
