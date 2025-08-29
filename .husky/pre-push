@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Pre-push quality checks (optional - can be skipped with --no-verify)
-npm run quality:check
+# Node.js 스크립트로 위임 (플랫폼 독립적)
+node scripts/automation/pre-push-guard.js
+
+# 보안 스캔 (옵션)
+if [ "$SKIP_SECURITY_SCAN" != "1" ]; then
+  node scripts/automation/security-scan.js
+fi

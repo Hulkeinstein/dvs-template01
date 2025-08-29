@@ -280,7 +280,88 @@ main과 merge 후 충돌 해결하고 커밋
 - **항상 PR 필수** - hotfix도 PR을 통해 머지
 - **main은 항상 배포 가능** - 불안정한 코드 머지 금지
 
+## 🔒 자동화 시스템
+
+### 보호 기능
+- **Main 브랜치 보호**: 직접 푸시 차단 (pre-push hook)
+- **품질 게이트**: ESLint, TypeScript, 테스트 통과 필수
+- **보안 스캔**: 시크릿 감지 시 푸시 차단
+
+### 자동화 옵션
+
+#### 자동 푸시 활성화
+```bash
+# 방법 1: npm 스크립트
+npm run git:enable-auto-push
+
+# 방법 2: 환경변수
+export AUTO_PUSH=1
+
+# 방법 3: 설정 파일 직접 수정 (.git-workflow.json)
+{ "autoPush": true }
+```
+
+#### 자동 푸시 비활성화
+```bash
+npm run git:disable-auto-push
+```
+
+### 훅 우회 (긴급 시에만)
+```bash
+# 품질 검사 건너뛰기 (권장하지 않음)
+git push --no-verify
+
+# 보안 스캔만 건너뛰기
+SKIP_SECURITY_SCAN=1 git push
+```
+
+### 보안 모범 사례
+
+#### 절대 커밋하지 말아야 할 것:
+- API 키, 토큰, 비밀번호
+- `.env` 파일 (템플릿인 `.env.example`은 OK)
+- 개인정보 (PII)
+- 내부 URL, 서버 주소
+- Private SSH keys
+- Database credentials
+
+#### 보안 도구:
+- **내장 스캐너**: 자동으로 민감 패턴 감지
+- **gitleaks**: 고급 시크릿 스캔 (선택적)
+- **npm audit**: 의존성 취약점 검사
+- **GitHub Secret Scanning**: 자동 감지 (GitHub 설정)
+
+### Git Workflow 설정 (.git-workflow.json)
+```json
+{
+  "autoPush": false,           // 자동 푸시 활성화
+  "requirePR": true,           // PR 필수
+  "squashMerge": true,         // Squash 머지
+  "deleteAfterMerge": true,    // 머지 후 브랜치 삭제
+  "securityScan": true         // 보안 스캔 활성화
+}
+```
+
+### 유용한 명령어
+```bash
+# Git 훅 설정
+npm run git:setup
+
+# 품질 검사 실행
+npm run quality:check
+
+# 보안 스캔 실행
+npm run security:scan
+
+# PR 생성
+npm run pr:create
+
+# PR 머지
+npm run pr:merge
+```
+
 ## 관련 문서
 - 코드 품질 자동화: `modules/task-automation.md`
 - PR 템플릿: `.github/pull_request_template.md`
 - CI 설정: `.github/workflows/lint-check.yml`
+- Git 설정: `.git-workflow.json`

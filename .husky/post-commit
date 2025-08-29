@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Node.js 스크립트로 위임 (조건부 자동 푸시)
+node scripts/automation/auto-push.js
