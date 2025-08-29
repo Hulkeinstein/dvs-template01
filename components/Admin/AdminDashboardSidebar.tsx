@@ -57,7 +57,9 @@ const AdminDashboardSidebar: React.FC = () => {
                                   <span className="rbt-badge-5 ml--10">3</span>
                                 )}
                                 {item.link === '/admin-updates' && (
-                                  <span className="rbt-badge-5 bg-primary-opacity ml--10">New</span>
+                                  <span className="rbt-badge-5 bg-primary-opacity ml--10">
+                                    New
+                                  </span>
                                 )}
                               </Link>
                             </li>
@@ -98,7 +100,10 @@ const AdminDashboardSidebar: React.FC = () => {
 
               {/* Logout Button */}
               <div className="section-title mt--40">
-                <Link href="/api/auth/signout" className="rbt-btn btn-gradient btn-sm w-100">
+                <Link
+                  href="/api/auth/signout"
+                  className="rbt-btn btn-gradient btn-sm w-100"
+                >
                   <i className="feather-log-out" /> Logout
                 </Link>
               </div>

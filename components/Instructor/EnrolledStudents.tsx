@@ -3,7 +3,11 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { EnrolledStudent, EnrollmentSummary, FilterStatus } from '@/types/enrollment';
+import type {
+  EnrolledStudent,
+  EnrollmentSummary,
+  FilterStatus,
+} from '@/types/enrollment';
 
 interface EnrolledStudentsProps {
   data: EnrolledStudent[];
@@ -21,13 +25,23 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
     // Filter by tab status
     switch (activeTab) {
       case 'enrolled':
-        filtered = data.filter(s => s.enrollment.progress === 0 && s.enrollment.status === 'active');
+        filtered = data.filter(
+          (s) => s.enrollment.progress === 0 && s.enrollment.status === 'active'
+        );
         break;
       case 'active':
-        filtered = data.filter(s => s.enrollment.progress > 0 && s.enrollment.progress < 100 && s.enrollment.status === 'active');
+        filtered = data.filter(
+          (s) =>
+            s.enrollment.progress > 0 &&
+            s.enrollment.progress < 100 &&
+            s.enrollment.status === 'active'
+        );
         break;
       case 'completed':
-        filtered = data.filter(s => s.enrollment.status === 'completed' || s.enrollment.progress === 100);
+        filtered = data.filter(
+          (s) =>
+            s.enrollment.status === 'completed' || s.enrollment.progress === 100
+        );
         break;
       // 'all' shows everything
     }
@@ -35,17 +49,20 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
     // Filter by search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(student => {
-        const studentName = student.student.name || 
-                           `${student.student.first_name || ''} ${student.student.last_name || ''}`.trim() || 
-                           student.student.username || 
-                           'Unknown';
+      filtered = filtered.filter((student) => {
+        const studentName =
+          student.student.name ||
+          `${student.student.first_name || ''} ${student.student.last_name || ''}`.trim() ||
+          student.student.username ||
+          'Unknown';
         const email = student.student.email.toLowerCase();
         const courseName = student.course.title.toLowerCase();
-        
-        return studentName.toLowerCase().includes(query) || 
-               email.includes(query) || 
-               courseName.includes(query);
+
+        return (
+          studentName.toLowerCase().includes(query) ||
+          email.includes(query) ||
+          courseName.includes(query)
+        );
       });
     }
 
@@ -53,7 +70,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
   }, [data, activeTab, searchQuery]);
 
   // Get display name for student
-  const getStudentDisplayName = (student: EnrolledStudent['student']): string => {
+  const getStudentDisplayName = (
+    student: EnrolledStudent['student']
+  ): string => {
     if (student.name) return student.name;
     if (student.first_name || student.last_name) {
       return `${student.first_name || ''} ${student.last_name || ''}`.trim();
@@ -63,17 +82,23 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
   };
 
   // Get status badge class
-  const getStatusBadgeClass = (enrollment: EnrolledStudent['enrollment']): string => {
+  const getStatusBadgeClass = (
+    enrollment: EnrolledStudent['enrollment']
+  ): string => {
     if (enrollment.status === 'dropped') return 'badge bg-danger';
-    if (enrollment.status === 'completed' || enrollment.progress === 100) return 'badge bg-success';
+    if (enrollment.status === 'completed' || enrollment.progress === 100)
+      return 'badge bg-success';
     if (enrollment.progress > 0) return 'badge bg-primary';
     return 'badge bg-secondary';
   };
 
   // Get status label
-  const getStatusLabel = (enrollment: EnrolledStudent['enrollment']): string => {
+  const getStatusLabel = (
+    enrollment: EnrolledStudent['enrollment']
+  ): string => {
     if (enrollment.status === 'dropped') return 'Dropped';
-    if (enrollment.status === 'completed' || enrollment.progress === 100) return 'Completed';
+    if (enrollment.status === 'completed' || enrollment.progress === 100)
+      return 'Completed';
     if (enrollment.progress > 0) return 'In Progress';
     return 'Enrolled';
   };
@@ -82,10 +107,10 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
   const formatDate = (dateString: string | null | undefined): string => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
@@ -104,14 +129,16 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
         <div className="content">
           <div className="section-title mb-4">
             <h4 className="rbt-title-style-3">Enrolled Students</h4>
-            
+
             {/* Summary Statistics */}
             <div className="row mt-4 mb-4">
               <div className="col-md-3 col-6 mb-3">
                 <div className="rbt-counterup variation-01 rbt-hover-03 rbt-border-dashed bg-color-white">
                   <div className="inner">
                     <div className="content">
-                      <h3 className="counter"><span className="odometer">{summary.total}</span></h3>
+                      <h3 className="counter">
+                        <span className="odometer">{summary.total}</span>
+                      </h3>
                       <span className="subtitle">Total Students</span>
                     </div>
                   </div>
@@ -121,7 +148,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                 <div className="rbt-counterup variation-01 rbt-hover-03 rbt-border-dashed bg-color-white">
                   <div className="inner">
                     <div className="content">
-                      <h3 className="counter"><span className="odometer">{summary.enrolled}</span></h3>
+                      <h3 className="counter">
+                        <span className="odometer">{summary.enrolled}</span>
+                      </h3>
                       <span className="subtitle">Just Enrolled</span>
                     </div>
                   </div>
@@ -131,7 +160,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                 <div className="rbt-counterup variation-01 rbt-hover-03 rbt-border-dashed bg-color-white">
                   <div className="inner">
                     <div className="content">
-                      <h3 className="counter"><span className="odometer">{summary.active}</span></h3>
+                      <h3 className="counter">
+                        <span className="odometer">{summary.active}</span>
+                      </h3>
                       <span className="subtitle">Active</span>
                     </div>
                   </div>
@@ -141,7 +172,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                 <div className="rbt-counterup variation-01 rbt-hover-03 rbt-border-dashed bg-color-white">
                   <div className="inner">
                     <div className="content">
-                      <h3 className="counter"><span className="odometer">{summary.completed}</span></h3>
+                      <h3 className="counter">
+                        <span className="odometer">{summary.completed}</span>
+                      </h3>
                       <span className="subtitle">Completed</span>
                     </div>
                   </div>
@@ -154,9 +187,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
           <div className="row mb-4">
             <div className="col-lg-6">
               <div className="rbt-form-group">
-                <input 
-                  type="text" 
-                  className="form-control" 
+                <input
+                  type="text"
+                  className="form-control"
                   placeholder="Search by student name, email, or course..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -187,7 +220,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                   onClick={() => setActiveTab('enrolled')}
                   type="button"
                 >
-                  <span className="title">Just Enrolled ({summary.enrolled})</span>
+                  <span className="title">
+                    Just Enrolled ({summary.enrolled})
+                  </span>
                 </button>
               </li>
               <li role="presentation">
@@ -196,7 +231,9 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                   onClick={() => setActiveTab('active')}
                   type="button"
                 >
-                  <span className="title">Active Students ({summary.active})</span>
+                  <span className="title">
+                    Active Students ({summary.active})
+                  </span>
                 </button>
               </li>
               <li role="presentation">
@@ -215,9 +252,12 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
           <div className="tab-content">
             {filteredStudents.length === 0 ? (
               <div className="text-center py-5">
-                <i className="feather-users" style={{ fontSize: '48px', color: '#ccc' }}></i>
+                <i
+                  className="feather-users"
+                  style={{ fontSize: '48px', color: '#ccc' }}
+                ></i>
                 <p className="mt-3 text-muted">
-                  {searchQuery 
+                  {searchQuery
                     ? `No students found matching "${searchQuery}"`
                     : `No ${activeTab === 'all' ? '' : activeTab} students found`}
                 </p>
@@ -225,7 +265,10 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
             ) : (
               <div className="row g-5">
                 {filteredStudents.map((student) => (
-                  <div className="col-lg-6 col-md-12" key={student.enrollment.id}>
+                  <div
+                    className="col-lg-6 col-md-12"
+                    key={student.enrollment.id}
+                  >
                     <div className="rbt-card variation-02 rbt-hover">
                       <div className="rbt-card-body">
                         <div className="d-flex align-items-start">
@@ -240,18 +283,20 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                                 className="rounded-circle"
                               />
                             ) : (
-                              <div 
+                              <div
                                 className="rounded-circle d-flex align-items-center justify-content-center"
-                                style={{ 
-                                  width: '60px', 
-                                  height: '60px', 
+                                style={{
+                                  width: '60px',
+                                  height: '60px',
                                   backgroundColor: '#f0f0f0',
                                   fontSize: '24px',
                                   fontWeight: 'bold',
-                                  color: '#666'
+                                  color: '#666',
                                 }}
                               >
-                                {getStudentDisplayName(student.student).charAt(0).toUpperCase()}
+                                {getStudentDisplayName(student.student)
+                                  .charAt(0)
+                                  .toUpperCase()}
                               </div>
                             )}
                           </div>
@@ -260,16 +305,18 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                           <div className="flex-grow-1">
                             <h5 className="title mb-2">
                               {getStudentDisplayName(student.student)}
-                              <span className={`ms-2 ${getStatusBadgeClass(student.enrollment)}`}>
+                              <span
+                                className={`ms-2 ${getStatusBadgeClass(student.enrollment)}`}
+                              >
                                 {getStatusLabel(student.enrollment)}
                               </span>
                             </h5>
-                            
+
                             <p className="mb-1 text-muted">
                               <i className="feather-mail me-1"></i>
                               {student.student.email}
                             </p>
-                            
+
                             {student.student.phone && (
                               <p className="mb-1 text-muted">
                                 <i className="feather-phone me-1"></i>
@@ -283,7 +330,7 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                                 <i className="feather-book me-1"></i>
                                 {student.course.title}
                               </h6>
-                              
+
                               {/* Progress Bar */}
                               <div className="rbt-progress-style-1 mt-2">
                                 <div className="single-progress">
@@ -292,12 +339,18 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                                     <div
                                       className="progress-bar wow fadeInLeft bar-color-success"
                                       role="progressbar"
-                                      style={{ width: `${student.enrollment.progress}%` }}
-                                      aria-valuenow={student.enrollment.progress}
+                                      style={{
+                                        width: `${student.enrollment.progress}%`,
+                                      }}
+                                      aria-valuenow={
+                                        student.enrollment.progress
+                                      }
                                       aria-valuemin={0}
                                       aria-valuemax={100}
                                     />
-                                    <span className="progress-label">{student.enrollment.progress}%</span>
+                                    <span className="progress-label">
+                                      {student.enrollment.progress}%
+                                    </span>
                                   </div>
                                 </div>
                               </div>
@@ -305,19 +358,33 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
                               {/* Enrollment Details */}
                               <div className="row mt-3">
                                 <div className="col-6">
-                                  <small className="text-muted">Enrolled:</small>
-                                  <p className="mb-0 small">{formatDate(student.enrollment.enrolled_at)}</p>
+                                  <small className="text-muted">
+                                    Enrolled:
+                                  </small>
+                                  <p className="mb-0 small">
+                                    {formatDate(student.enrollment.enrolled_at)}
+                                  </p>
                                 </div>
                                 <div className="col-6">
-                                  <small className="text-muted">Last Active:</small>
-                                  <p className="mb-0 small">{formatDate(student.enrollment.last_accessed_at)}</p>
+                                  <small className="text-muted">
+                                    Last Active:
+                                  </small>
+                                  <p className="mb-0 small">
+                                    {formatDate(
+                                      student.enrollment.last_accessed_at
+                                    )}
+                                  </p>
                                 </div>
                               </div>
 
                               {/* Additional Stats */}
                               <div className="mt-2">
                                 <small className="text-muted">
-                                  Enrolled {daysSinceEnrollment(student.enrollment.enrolled_at)} days ago
+                                  Enrolled{' '}
+                                  {daysSinceEnrollment(
+                                    student.enrollment.enrolled_at
+                                  )}{' '}
+                                  days ago
                                 </small>
                               </div>
 
@@ -334,18 +401,21 @@ const EnrolledStudents = ({ data, summary }: EnrolledStudentsProps) => {
 
                             {/* Action Buttons */}
                             <div className="mt-3">
-                              <Link 
+                              <Link
                                 href={`/instructor/student-progress/${student.enrollment.id}`}
                                 className="btn btn-sm btn-outline-primary me-2"
                               >
                                 <i className="feather-eye me-1"></i>
                                 View Progress
                               </Link>
-                              <button 
+                              <button
                                 className="btn btn-sm btn-outline-secondary"
                                 onClick={() => {
                                   // TODO: Implement messaging functionality
-                                  console.log('Message student:', student.student.id);
+                                  console.log(
+                                    'Message student:',
+                                    student.student.id
+                                  );
                                 }}
                               >
                                 <i className="feather-message-circle me-1"></i>

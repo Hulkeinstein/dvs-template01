@@ -108,7 +108,10 @@ export async function updateAnnouncement(announcementId, data) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || (userData.role !== 'instructor' && userData.role !== 'admin')) {
+    if (
+      !userData ||
+      (userData.role !== 'instructor' && userData.role !== 'admin')
+    ) {
       return {
         success: false,
         error: 'Only instructors can update announcements',
@@ -177,7 +180,10 @@ export async function deleteAnnouncement(announcementId) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || (userData.role !== 'instructor' && userData.role !== 'admin')) {
+    if (
+      !userData ||
+      (userData.role !== 'instructor' && userData.role !== 'admin')
+    ) {
       return {
         success: false,
         error: 'Only instructors can delete announcements',
@@ -235,7 +241,10 @@ export async function getInstructorAnnouncements() {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || (userData.role !== 'instructor' && userData.role !== 'admin')) {
+    if (
+      !userData ||
+      (userData.role !== 'instructor' && userData.role !== 'admin')
+    ) {
       return { success: false, error: 'Only instructors can access this' };
     }
 

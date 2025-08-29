@@ -1,242 +1,207 @@
 'use client';
 
-import React from 'react';
-import CounterWidget from '@/components/Instructor/Dashboard-Section/widgets/CounterWidget';
-import type { AdminDashboardStats } from '@/types/admin';
+import React, { useEffect, useState } from 'react';
+import { AdminDashboardData } from '@/types/dashboard';
+import { getAdminDashboardData } from '../actions/getAdminDashData';
+import KPICard from '@/components/Admin/Dashboard/KPICard';
+import UserGrowthChart from '@/components/Admin/Dashboard/UserGrowthChart';
+import RevenueChart from '@/components/Admin/Dashboard/RevenueChart';
+import CourseDistribution from '@/components/Admin/Dashboard/CourseDistribution';
+import CourseBarChart from '@/components/Admin/Dashboard/CourseBarChart';
+import RecentActivity from '@/components/Admin/Dashboard/RecentActivity';
+import TopCoursesTable from '@/components/Admin/Dashboard/TopCoursesTable';
+import SystemMetrics from '@/components/Admin/Dashboard/SystemMetrics';
 
-interface Props {
-  stats: AdminDashboardStats;
-}
+const AdminDashboard: React.FC = () => {
+  const [data, setData] = useState<AdminDashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const AdminDashboard: React.FC<Props> = ({ stats }) => {
-  // stats가 없는 경우를 대비한 기본값 설정
-  const displayStats: AdminDashboardStats = stats || {
-    totalUsers: 0,
-    totalInstructors: 0,
-    totalStudents: 0,
-    totalCourses: 0,
-    activeCourses: 0,
-    totalEnrollments: 0,
-    newUsersToday: 0,
-    activeUsersWeek: 0,
-    totalRevenue: 0,
-    monthlyRevenue: 0,
-    platformHealth: 'good',
-    lastUpdate: new Date().toISOString(),
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const dashboardData = await getAdminDashboardData();
+        setData(dashboardData);
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+    // Refresh data every 5 minutes
+    const interval = setInterval(fetchData, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
+        <div className="content">
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-3">Loading dashboard data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
+        <div className="content">
+          <div className="alert alert-danger" role="alert">
+            <h4 className="alert-heading">Error Loading Dashboard</h4>
+            <p>{error || 'Unable to load dashboard data'}</p>
+            <hr />
+            <button
+              className="rbt-btn btn-sm btn-primary"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      {/* Admin Dashboard Main Content */}
+      {/* Admin Dashboard Header */}
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box mb--60">
         <div className="content">
           <div className="section-title">
             <h4 className="rbt-title-style-3">Admin Dashboard</h4>
-            <p className="b3 text-muted">Platform Overview and Statistics</p>
+            <p className="b3 text-muted">
+              Platform Overview • Last updated:{' '}
+              {new Date(data.lastUpdated).toLocaleTimeString()}
+            </p>
           </div>
 
-          {/* User Statistics Row */}
-          <div className="row g-5 mb--30">
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-primary-opacity"
-                iconClass="bg-primary-opacity"
-                numberClass="color-primary"
-                icon="feather-users"
-                title="Total Users"
-                subtitle=""
-                value={displayStats.totalUsers}
-              />
-            </div>
-
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-success-opacity"
-                iconClass="bg-success-opacity"
-                numberClass="color-success"
-                icon="feather-award"
-                title="Total Instructors"
-                subtitle=""
-                value={displayStats.totalInstructors}
-              />
-            </div>
-
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-violet-opacity"
-                iconClass="bg-violet-opacity"
-                numberClass="color-violet"
-                icon="feather-book-open"
-                title="Total Students"
-                subtitle=""
-                value={displayStats.totalStudents}
-              />
-            </div>
-          </div>
-
-          {/* Course Statistics Row */}
-          <div className="row g-5 mb--30">
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-secondary-opacity"
-                iconClass="bg-secondary-opacity"
-                numberClass="color-secondary"
-                icon="feather-grid"
-                title="Total Courses"
-                subtitle=""
-                value={displayStats.totalCourses}
-              />
-            </div>
-
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-coral-opacity"
-                iconClass="bg-coral-opacity"
-                numberClass="color-coral"
-                icon="feather-monitor"
-                title="Active Courses"
-                subtitle=""
-                value={displayStats.activeCourses}
-              />
-            </div>
-
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-pink-opacity"
-                iconClass="bg-pink-opacity"
-                numberClass="color-pink"
-                icon="feather-check-square"
-                title="Total Enrollments"
-                subtitle=""
-                value={displayStats.totalEnrollments}
-              />
-            </div>
-          </div>
-
-          {/* Activity Statistics Row */}
+          {/* KPI Cards */}
           <div className="row g-5">
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-info-opacity"
-                iconClass="bg-info-opacity"
-                numberClass="color-info"
-                icon="feather-user-plus"
-                title="New Users Today"
-                subtitle=""
-                value={displayStats.newUsersToday}
-              />
-            </div>
-
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-warning-opacity"
-                iconClass="bg-warning-opacity"
-                numberClass="color-warning"
-                icon="feather-activity"
-                title="Active This Week"
-                subtitle=""
-                value={displayStats.activeUsersWeek}
-              />
-            </div>
-
-            <div className="col-lg-4 col-md-4 col-sm-6 col-12">
-              <CounterWidget
-                counterStyle="two"
-                styleClass="bg-success-opacity"
-                iconClass="bg-success-opacity"
-                numberClass="color-success"
-                icon="feather-dollar-sign"
-                title="Total Revenue"
-                subtitle=""
-                value={`$${displayStats.totalRevenue.toLocaleString()}`}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Platform Health Status */}
-      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box mb--60">
-        <div className="content">
-          <div className="section-title mb--30">
-            <h4 className="rbt-title-style-3">System Status</h4>
-          </div>
-          
-          <div className="row g-5">
-            <div className="col-12">
-              <div className={`alert ${
-                displayStats.platformHealth === 'good' ? 'alert-success' : 
-                displayStats.platformHealth === 'warning' ? 'alert-warning' : 
-                'alert-danger'
-              }`} role="alert">
-                <h5 className="alert-heading">
-                  <i className={`feather ${
-                    displayStats.platformHealth === 'good' ? 'feather-check-circle' : 
-                    displayStats.platformHealth === 'warning' ? 'feather-alert-triangle' : 
-                    'feather-alert-circle'
-                  }`} /> Platform Health: {displayStats.platformHealth?.toUpperCase()}
-                </h5>
-                <p className="mb-0">
-                  All systems are operational. Last checked: {new Date(displayStats.lastUpdate).toLocaleString()}
-                </p>
+            {data.kpis.map((kpi, index) => (
+              <div key={index} className="col-lg-3 col-md-6 col-sm-6 col-12">
+                <KPICard data={kpi} />
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Charts Row 1 */}
+      <div className="row g-5 mb--60">
+        <div className="col-lg-8">
+          <UserGrowthChart data={data.userGrowthData} />
+        </div>
+        <div className="col-lg-4">
+          <CourseDistribution data={data.courseDistribution} />
+        </div>
+      </div>
+
+      {/* Charts Row 2 */}
+      <div className="row g-5 mb--60">
+        <div className="col-lg-7">
+          <RevenueChart data={data.revenueData} />
+        </div>
+        <div className="col-lg-5">
+          <CourseBarChart data={data.courseBarData} />
+        </div>
+      </div>
+
+      {/* Tables and Activity */}
+      <div className="row g-5 mb--60">
+        <div className="col-lg-8">
+          <TopCoursesTable courses={data.topCourses} />
+        </div>
+        <div className="col-lg-4">
+          <RecentActivity activities={data.recentActivity} />
+        </div>
+      </div>
+
+      {/* System Metrics */}
+      <SystemMetrics />
 
       {/* Quick Actions */}
-      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
+      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box mt--60">
         <div className="content">
           <div className="section-title mb--30">
             <h4 className="rbt-title-style-3">Quick Actions</h4>
           </div>
-          
+
           <div className="row g-5">
             <div className="col-lg-3 col-md-6">
-              <a href="/admin-users" className="rbt-btn btn-gradient hover-icon-reverse w-100">
+              <a
+                href="/admin-users"
+                className="rbt-btn btn-gradient hover-icon-reverse w-100"
+              >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">Manage Users</span>
-                  <span className="btn-icon"><i className="feather-users" /></span>
-                  <span className="btn-icon"><i className="feather-users" /></span>
+                  <span className="btn-icon">
+                    <i className="feather-users" />
+                  </span>
+                  <span className="btn-icon">
+                    <i className="feather-users" />
+                  </span>
                 </span>
               </a>
             </div>
-            
+
             <div className="col-lg-3 col-md-6">
-              <a href="/admin-courses" className="rbt-btn btn-gradient hover-icon-reverse w-100">
+              <a
+                href="/admin-courses"
+                className="rbt-btn btn-gradient hover-icon-reverse w-100"
+              >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">Manage Courses</span>
-                  <span className="btn-icon"><i className="feather-grid" /></span>
-                  <span className="btn-icon"><i className="feather-grid" /></span>
+                  <span className="btn-icon">
+                    <i className="feather-grid" />
+                  </span>
+                  <span className="btn-icon">
+                    <i className="feather-grid" />
+                  </span>
                 </span>
               </a>
             </div>
-            
+
             <div className="col-lg-3 col-md-6">
-              <a href="/admin-analytics" className="rbt-btn btn-gradient hover-icon-reverse w-100">
+              <a
+                href="/admin-analytics"
+                className="rbt-btn btn-gradient hover-icon-reverse w-100"
+              >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">View Analytics</span>
-                  <span className="btn-icon"><i className="feather-bar-chart-2" /></span>
-                  <span className="btn-icon"><i className="feather-bar-chart-2" /></span>
+                  <span className="btn-icon">
+                    <i className="feather-bar-chart-2" />
+                  </span>
+                  <span className="btn-icon">
+                    <i className="feather-bar-chart-2" />
+                  </span>
                 </span>
               </a>
             </div>
-            
+
             <div className="col-lg-3 col-md-6">
-              <a href="/admin-settings" className="rbt-btn btn-gradient hover-icon-reverse w-100">
+              <a
+                href="/admin-settings"
+                className="rbt-btn btn-gradient hover-icon-reverse w-100"
+              >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">System Settings</span>
-                  <span className="btn-icon"><i className="feather-settings" /></span>
-                  <span className="btn-icon"><i className="feather-settings" /></span>
+                  <span className="btn-icon">
+                    <i className="feather-settings" />
+                  </span>
+                  <span className="btn-icon">
+                    <i className="feather-settings" />
+                  </span>
                 </span>
               </a>
             </div>

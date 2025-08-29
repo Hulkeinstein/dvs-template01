@@ -5,22 +5,22 @@ export interface AdminDashboardStats {
   totalUsers: number;
   totalInstructors: number;
   totalStudents: number;
-  
+
   // Course Statistics
   totalCourses: number;
   activeCourses: number;
-  
+
   // Enrollment Statistics
   totalEnrollments: number;
-  
+
   // Recent Activity
   newUsersToday: number;
   activeUsersWeek: number;
-  
+
   // Revenue
   totalRevenue: number;
   monthlyRevenue: number;
-  
+
   // Platform Status
   platformHealth: 'good' | 'warning' | 'critical';
   lastUpdate: string;
@@ -37,7 +37,7 @@ export interface AdminAuditLog {
   created_at: string;
 }
 
-export type AdminAction = 
+export type AdminAction =
   | 'dashboard_view'
   | 'user_list'
   | 'user_edit'
@@ -60,5 +60,11 @@ export interface AdminSidebarItem {
   link: string;
   icon: string;
   badge?: string | number;
-  badgeType?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
+  badgeType?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'danger'
+    | 'warning'
+    | 'info';
 }

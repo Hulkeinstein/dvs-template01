@@ -18,7 +18,10 @@ interface EnrolledStudentsClientProps {
   error: string | null;
 }
 
-const EnrolledStudentsClient = ({ initialData, error }: EnrolledStudentsClientProps) => {
+const EnrolledStudentsClient = ({
+  initialData,
+  error,
+}: EnrolledStudentsClientProps) => {
   return (
     <>
       <Provider store={Store}>
@@ -46,26 +49,38 @@ const EnrolledStudentsClient = ({ initialData, error }: EnrolledStudentsClientPr
                         <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
                           <div className="content">
                             <div className="alert alert-danger" role="alert">
-                              <h4 className="alert-heading">Error Loading Students</h4>
+                              <h4 className="alert-heading">
+                                Error Loading Students
+                              </h4>
                               <p>{error}</p>
                               <hr />
-                              <p className="mb-0">Please try refreshing the page or contact support if the problem persists.</p>
+                              <p className="mb-0">
+                                Please try refreshing the page or contact
+                                support if the problem persists.
+                              </p>
                             </div>
                           </div>
                         </div>
                       ) : initialData ? (
-                        <EnrolledStudents 
-                          data={initialData.students} 
-                          summary={initialData.summary} 
+                        <EnrolledStudents
+                          data={initialData.students}
+                          summary={initialData.summary}
                         />
                       ) : (
                         <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
                           <div className="content">
                             <div className="text-center">
-                              <div className="spinner-border text-primary" role="status">
-                                <span className="visually-hidden">Loading...</span>
+                              <div
+                                className="spinner-border text-primary"
+                                role="status"
+                              >
+                                <span className="visually-hidden">
+                                  Loading...
+                                </span>
                               </div>
-                              <p className="mt-3">Loading enrolled students...</p>
+                              <p className="mt-3">
+                                Loading enrolled students...
+                              </p>
                             </div>
                           </div>
                         </div>
@@ -78,7 +93,7 @@ const EnrolledStudentsClient = ({ initialData, error }: EnrolledStudentsClientPr
           </div>
 
           <Separator />
-          <FooterOne 
+          <FooterOne
             isBox={false}
             bgColor=""
             newsletterBorder=""
