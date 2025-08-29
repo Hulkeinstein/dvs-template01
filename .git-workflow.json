@@ -1,5 +1,5 @@
 {
-  "autoPush": false,
+  "autoPush": true,
   "requirePR": true,
   "squashMerge": true,
   "deleteAfterMerge": true,
