@@ -81,13 +81,33 @@ SUPABASE_SERVICE_ROLE_KEY=
 ```
 
 ## 핵심 개발 규칙
-- **CSS 파일을 직접 수정하지 마세요**. 이 프로젝트는 SCSS만 사용합니다.
-- 스타일링에는 **항상 SCSS 파일을 사용하세요**. CSS 파일은 SCSS로부터 자동 생성됩니다.
-- 스타일 변경 시:
-  1. `/public/scss/`에서 적절한 SCSS 파일을 찾거나 생성
-  2. `/public/scss/styles.scss`에 새 SCSS 파일 import
-  3. 컴포넌트 파일에서 CSS import 제거
-- `app/layout.js`나 컴포넌트 파일에 CSS 파일을 import하지 마세요
+
+### 스타일링 가이드라인 (2025년 업데이트)
+- **CSS 파일을 직접 수정하지 마세요**. CSS는 SCSS 또는 Tailwind에서 자동 생성됩니다.
+  - **예외**: `app/globals.css`는 Tailwind 엔트리 포인트 소스 파일이므로 수정 가능
+
+- **기존 템플릿 영역 (Instructor/Student Dashboard)**:
+  1. SCSS 파일 사용 (`/public/scss/`)
+  2. Bootstrap 5 클래스와 호환
+  3. CSS 파일은 SCSS에서 자동 생성
+
+- **새로운 Admin 영역 (Admin Dashboard)**:
+  1. Tailwind CSS 클래스 우선 사용
+  2. shadcn/ui 컴포넌트 활용
+  3. Admin 전용 SCSS (`/public/scss/admin/`)로 Bootstrap 토큰 재정의
+  4. ❌ 인라인 스타일 사용 금지 (디버깅 외)
+  5. ❌ CSS-in-JS 사용 금지
+
+### 스타일 충돌 해결 방법 (우선순위)
+1. Admin 루트 토큰 스코프로 기본값 통일
+2. SCSS에서 구체적 선택자 사용
+3. !important는 최후 수단 (가급적 사용 안 함)
+
+### 파일 구조
+- `/public/scss/` - 모든 커스텀 스타일 (SCSS)
+- `/public/scss/admin/` - Admin 전용 토큰 및 스타일
+- `/app/globals.css` - Tailwind 지시문 및 CSS 변수 (수정 가능한 소스 파일)
+- `/public/css/` - SCSS 컴파일 결과물 (직접 수정 금지)
 
 ## 개발 노트
 - **Hydration 오류 방지**: 클라이언트 전용 기능에 `useState`와 `useEffect` 사용

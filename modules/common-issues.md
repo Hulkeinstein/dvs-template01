@@ -79,8 +79,9 @@
 ## 스타일링 문제
 
 ### CSS 변경사항이 적용되지 않음
-- **CSS 파일을 직접 수정하지 마세요**
-- 항상 `/public/scss/`의 SCSS 파일을 편집하세요
+- **CSS 파일을 직접 수정하지 마세요** (/public/css/ 폴더의 컴파일된 파일)
+- **예외: app/globals.css는 수정 가능** (Tailwind 엔트리 포인트 소스 파일)
+- 대부분의 스타일은 `/public/scss/`의 SCSS 파일을 편집하세요
 - `styles.scss`에 새 SCSS를 import
 - SCSS를 CSS로 컴파일하기 위해 build 실행
 

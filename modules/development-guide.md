@@ -4,10 +4,18 @@
 
 ### 기본 명령어
 ```bash
-npm run dev        # 개발 서버 시작 (포트 3000)
+npm run dev        # 개발 서버 시작 (포트 3000만 사용!)
 npm run build      # 프로덕션 빌드
 npm run start      # 프로덕션 서버 시작
 ```
+
+### ⚠️ 중요: 포트 및 서버 규칙
+- **개발 서버는 항상 포트 3000에서만 실행**
+- **다른 포트(3001, 3002, 3003 등) 사용 금지**
+- 포트 충돌 시 기존 프로세스를 종료하고 3000 포트 사용
+- **서버 재시작 금지**: Claude Code는 절대 서버를 재시작하지 않음
+- **서버 관리는 사용자가 수동으로 처리**
+- **npm run dev 명령어 실행 금지**
 
 ### 코드 품질 (커밋 전 필수)
 ```bash
@@ -29,7 +37,8 @@ npm run format:check  # 포맷팅 체크만
 
 ### 자주 수정하는 경로
 - **서버 액션**: `/app/lib/actions/`
-- **SCSS 파일**: `/public/scss/` (CSS 직접 수정 금지!)
+- **SCSS 파일**: `/public/scss/` (컴파일된 CSS 직접 수정 금지!)
+- **글로벌 스타일**: `/app/globals.css` (Tailwind 엔트리, 수정 가능)
 - **컴포넌트**: `/components/`
 - **대시보드**: `/app/(dashboard)/`
 
@@ -142,7 +151,8 @@ grep -r "관련키워드" --include="*.js" | head -20
 ### 1. 코드 수정 단계
 - Claude Code가 요청된 기능 구현
 - 필요한 파일 수정/생성
-- SCSS만 수정 (CSS 직접 수정 금지)
+- SCSS만 수정 (컴파일된 CSS 직접 수정 금지)
+- app/globals.css는 수정 가능 (Tailwind 소스 파일)
 
 ### 2. 사용자 테스트 단계 ⭐ 필수
 - Claude Code가 테스트 안내: "개발 서버에서 다음을 확인해주세요:"
@@ -322,9 +332,10 @@ components/
    - 새 서버 시작 전 확인 필요
    - 재시작 필요 시 사용자에게 먼저 확인
 
-2. **CSS 수정 금지**: 항상 SCSS 파일만 수정
-   - CSS 파일은 자동 생성됨
-   - 수정 위치: `/public/scss/`
+2. **스타일 수정 규칙**:
+   - 컴파일된 CSS 수정 금지 (`/public/css/`)
+   - SCSS 소스 파일 수정: `/public/scss/`
+   - **예외**: `app/globals.css`는 수정 가능 (Tailwind 엔트리)
 
 3. **Server Actions 사용**: API 대신 `/app/lib/actions/` 사용
    - 모든 DB 작업은 Server Actions로

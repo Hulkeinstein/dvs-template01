@@ -12,6 +12,31 @@
 - 기술 용어나 코드 관련 용어는 영어를 그대로 사용해도 됩니다
 - 설명과 응답은 한국어로 작성하세요
 
+## 🎨 스타일 파일 수정 가이드라인
+
+### ✅ 수정 가능한 파일
+- **app/globals.css** - 전역 스타일 엔트리 포인트 (소스 파일)
+  - Tailwind 지시문 (@tailwind base/components/utilities)
+  - CSS 변수 정의 (:root, .dark)
+  - 커스텀 유틸리티 클래스
+  - 런타임 테마는 CSS 변수로 관리 (Tailwind와 호환)
+
+### ❌ 수정 금지 파일
+- **/public/css/\*\*.css** - SCSS 컴파일 결과물 (자동 생성)
+- **산출물 CSS** - SCSS에서 생성된 모든 CSS 파일
+
+### 스타일 관리 원칙
+1. **globals.css 수정 OK** - app/layout.tsx에서 import하는 소스 파일
+2. **CSS 변수 우선** - 런타임 테마는 CSS 변수로 관리 (Tailwind와 호환)
+3. **SCSS 소스 수정** - /public/scss/ 폴더의 SCSS 파일만 수정
+4. **컴파일된 CSS 수정 금지** - 빌드 시 자동 생성되므로 직접 수정 금지
+
+### 수정 체크리스트
+- [ ] app/layout.tsx에서 `import "./globals.css"` 확인
+- [ ] 파일 내 `@tailwind base; components; utilities;` 존재 확인
+- [ ] :root/.dark 변수 토큰 정의 (배경, 전경, 보더, 카드 등)
+- [ ] (선택) globals.scss로 전환 시 import 경로 수정
+
 ## 🏢 현업 표준 테이블 정렬 가이드
 
 ### 테이블 헤더 정렬 원칙 (UX 모범사례)

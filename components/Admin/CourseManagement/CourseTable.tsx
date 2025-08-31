@@ -1,14 +1,20 @@
 'use client';
 
-import React, { useState, useTransition } from 'react';
-import { formatDistanceToNow } from 'date-fns';
-import type { AdminCourse, CourseStatus } from '@/types/admin-course';
-import {
-  updateCourseStatus,
-  updateCoursePrice,
-  updateCourseCategory,
-  toggleCourseFeatured,
-} from '@/app/(dashboard)/(admin)/admin-courses/actions';
+import React from 'react';
+import { DataTable } from './data-table';
+import { columns } from './columns';
+import type { AdminCourse } from '@/types/admin-course';
+import { formatNumber, formatCurrency } from './utils';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { 
+  TrendingUp, 
+  BookOpen, 
+  Users, 
+  DollarSign,
+  ArrowUpRight,
+  ArrowDownRight
+} from 'lucide-react';
 
 interface CourseTableProps {
   initialCourses: AdminCourse[];
@@ -25,429 +31,137 @@ export default function CourseTable({
   limit,
   totalPages,
 }: CourseTableProps) {
-  const [courses, setCourses] = useState(initialCourses);
-  const [isPending, startTransition] = useTransition();
-  const [selectedCourses, setSelectedCourses] = useState<Set<string>>(
-    new Set()
-  );
-
-  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setSelectedCourses(new Set(courses.map((c) => c.id)));
-    } else {
-      setSelectedCourses(new Set());
-    }
-  };
-
-  const handleSelectCourse = (courseId: string) => {
-    const newSelected = new Set(selectedCourses);
-    if (newSelected.has(courseId)) {
-      newSelected.delete(courseId);
-    } else {
-      newSelected.add(courseId);
-    }
-    setSelectedCourses(newSelected);
-  };
-
-  const handleStatusChange = async (
-    course: AdminCourse,
-    newStatus: CourseStatus
-  ) => {
-    if (
-      !confirm(
-        `Are you sure you want to change the status of "${course.title}" to ${newStatus}?`
-      )
-    ) {
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await updateCourseStatus(course.id, newStatus);
-      if (result.success) {
-        setCourses((prev) =>
-          prev.map((c) =>
-            c.id === course.id ? { ...c, status: newStatus } : c
-          )
-        );
-      } else {
-        alert(`Failed to update status: ${result.error}`);
-      }
-    });
-  };
-
-  const handlePriceChange = async (course: AdminCourse) => {
-    const newPriceStr = prompt(
-      'Enter new price:',
-      course.price?.toString() || '0'
-    );
-    if (!newPriceStr) return;
-
-    const newPrice = parseFloat(newPriceStr);
-    if (isNaN(newPrice) || newPrice < 0) {
-      alert('Please enter a valid price');
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await updateCoursePrice(course.id, newPrice);
-      if (result.success) {
-        setCourses((prev) =>
-          prev.map((c) => (c.id === course.id ? { ...c, price: newPrice } : c))
-        );
-      } else {
-        alert(`Failed to update price: ${result.error}`);
-      }
-    });
-  };
-
-  const handleCategoryChange = async (course: AdminCourse) => {
-    const newCategory = prompt('Enter new category:', course.category || '');
-    if (!newCategory) return;
-
-    startTransition(async () => {
-      const result = await updateCourseCategory(course.id, newCategory);
-      if (result.success) {
-        setCourses((prev) =>
-          prev.map((c) =>
-            c.id === course.id ? { ...c, category: newCategory } : c
-          )
-        );
-      } else {
-        alert(`Failed to update category: ${result.error}`);
-      }
-    });
-  };
-
-  const handleToggleFeatured = async (course: AdminCourse) => {
-    startTransition(async () => {
-      const result = await toggleCourseFeatured(course.id);
-      if (result.success) {
-        setCourses((prev) =>
-          prev.map((c) =>
-            c.id === course.id ? { ...c, is_featured: !c.is_featured } : c
-          )
-        );
-      } else {
-        alert(`Failed to toggle featured status: ${result.error}`);
-      }
-    });
-  };
-
-  const getStatusBadgeClass = (status: CourseStatus) => {
-    switch (status) {
-      case 'published':
-        return 'bg-success';
-      case 'draft':
-        return 'bg-warning';
-      case 'archived':
-        return 'bg-secondary';
-      default:
-        return 'bg-light text-dark';
-    }
-  };
+  // Calculate statistics
+  const publishedCount = initialCourses.filter(c => c.status === 'published').length;
+  const totalStudents = initialCourses.reduce((acc, c) => acc + (c.actual_enrollment_count || 0), 0);
+  const totalRevenue = initialCourses.reduce((acc, c) => acc + (c.estimated_revenue || 0), 0);
+  
+  const stats = [
+    {
+      label: 'Total Courses',
+      value: formatNumber(total),
+      icon: BookOpen,
+      trend: '+12%',
+      trendUp: true,
+      iconColor: 'text-blue-400',
+      bgColor: 'bg-blue-400/5',
+    },
+    {
+      label: 'Published',
+      value: formatNumber(publishedCount),
+      icon: TrendingUp,
+      trend: '+8%',
+      trendUp: true,
+      iconColor: 'text-emerald-400',
+      bgColor: 'bg-emerald-400/5',
+    },
+    {
+      label: 'Total Students',
+      value: formatNumber(totalStudents),
+      icon: Users,
+      trend: '+25%',
+      trendUp: true,
+      iconColor: 'text-purple-400',
+      bgColor: 'bg-purple-400/5',
+    },
+    {
+      label: 'Total Revenue',
+      value: formatCurrency(totalRevenue),
+      icon: DollarSign,
+      trend: '-5%',
+      trendUp: false,
+      iconColor: 'text-amber-400',
+      bgColor: 'bg-amber-400/5',
+    },
+  ];
 
   return (
-    <div className="rbt-dashboard-table table-responsive">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <div className="text-muted">
-          Showing {(currentPage - 1) * limit + 1}-
-          {Math.min(currentPage * limit, total)} of {total} courses
-        </div>
-        {selectedCourses.size > 0 && (
-          <div className="text-primary">
-            {selectedCourses.size} course(s) selected
-          </div>
-        )}
+    <div className="space-y-8">
+      {/* Statistics Cards - Tweakcn Minimal Design */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat) => {
+          const Icon = stat.icon;
+          const TrendIcon = stat.trendUp ? ArrowUpRight : ArrowDownRight;
+          return (
+            <div
+              key={stat.label}
+              className="group relative overflow-hidden rounded-md border border-border bg-card p-6 transition-all hover:border-border/80"
+            >
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  {/* Icon */}
+                  <div className={`inline-flex rounded-md p-2 ${stat.bgColor}`}>
+                    <Icon className={`h-5 w-5 ${stat.iconColor}`} />
+                  </div>
+                  
+                  {/* Label */}
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {stat.label}
+                  </p>
+                  
+                  {/* Value */}
+                  <h3 className="text-2xl font-bold text-foreground">
+                    {stat.value}
+                  </h3>
+                </div>
+                
+                {/* Trend */}
+                <div className={`flex items-center gap-0.5 text-xs font-medium ${
+                  stat.trendUp ? 'text-emerald-400' : 'text-red-400'
+                }`}>
+                  <TrendIcon className="h-3 w-3" />
+                  <span>{stat.trend}</span>
+                </div>
+              </div>
+              
+              {/* Subtle hover effect */}
+              <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+            </div>
+          );
+        })}
       </div>
 
-      <table className="rbt-table table table-borderless table-header-align">
-        <thead>
-          <tr>
-            <th className="text-center">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                checked={
-                  selectedCourses.size === courses.length && courses.length > 0
-                }
-                onChange={handleSelectAll}
-              />
-            </th>
-            <th className="text-start">Course</th>
-            <th className="text-start">Instructor</th>
-            <th className="text-center">Category</th>
-            <th className="text-end">Price</th>
-            <th className="text-center">Status</th>
-            <th className="text-center">Featured</th>
-            <th className="text-center">Enrollments</th>
-            <th className="text-end">Revenue</th>
-            <th className="text-start">Created</th>
-            <th className="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {courses.map((course) => (
-            <tr key={course.id}>
-              <td className="text-center">
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  checked={selectedCourses.has(course.id)}
-                  onChange={() => handleSelectCourse(course.id)}
-                />
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  {course.thumbnail_url ? (
-                    <img
-                      src={course.thumbnail_url}
-                      alt={course.title}
-                      className="rounded me-3"
-                      style={{
-                        width: 60,
-                        height: 40,
-                        objectFit: 'cover',
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="bg-light rounded me-3 d-flex align-items-center justify-content-center"
-                      style={{ width: 60, height: 40 }}
-                    >
-                      <i className="feather-image text-muted"></i>
-                    </div>
-                  )}
-                  <div>
-                    <div className="fw-medium">{course.title}</div>
-                    <small className="text-muted">
-                      {course.difficulty_level || 'All Levels'}
-                    </small>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div className="d-flex align-items-center">
-                  <img
-                    src={
-                      course.instructor_info?.avatar_url ||
-                      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                        course.instructor_info?.name || 'Unknown'
-                      )}&background=2f57ef&color=fff`
-                    }
-                    alt={course.instructor_info?.name}
-                    className="rounded-circle me-2"
-                    style={{ width: 32, height: 32, objectFit: 'cover' }}
-                  />
-                  <div>
-                    <div className="small fw-medium">
-                      {course.instructor_info?.name || 'Unknown'}
-                    </div>
-                    <div className="text-muted" style={{ fontSize: '0.75rem' }}>
-                      {course.instructor_info?.email}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td className="text-center">
-                <span
-                  className="badge bg-light text-dark"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleCategoryChange(course)}
-                >
-                  {course.category || 'Uncategorized'}
-                  <i
-                    className="feather-edit-2 ms-1"
-                    style={{ fontSize: '10px' }}
-                  ></i>
-                </span>
-              </td>
-              <td className="text-end">
-                <span
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handlePriceChange(course)}
-                  className="text-primary"
-                >
-                  ${course.price || 0}
-                  <i
-                    className="feather-edit-2 ms-1"
-                    style={{ fontSize: '10px' }}
-                  ></i>
-                </span>
-              </td>
-              <td className="text-center">
-                <span className={`badge ${getStatusBadgeClass(course.status)}`}>
-                  {course.status}
-                </span>
-              </td>
-              <td className="text-center">
-                <button
-                  className="btn btn-sm"
-                  onClick={() => handleToggleFeatured(course)}
-                  disabled={isPending}
-                  style={{ padding: '2px 8px' }}
-                >
-                  {course.is_featured ? (
-                    <i className="feather-star text-warning"></i>
-                  ) : (
-                    <i className="feather-star"></i>
-                  )}
-                </button>
-              </td>
-              <td className="text-center">
-                <span className="badge bg-info">
-                  {course.actual_enrollment_count || 0}
-                </span>
-              </td>
-              <td className="text-end">${course.estimated_revenue || 0}</td>
-              <td>
-                <small className="text-muted">
-                  {formatDistanceToNow(new Date(course.created_at), {
-                    addSuffix: true,
-                  })}
-                </small>
-              </td>
-              <td className="text-center">
-                <div className="dropdown">
-                  <button
-                    className="btn btn-sm btn-outline-secondary"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    disabled={isPending}
-                  >
-                    <i className="feather-more-vertical"></i>
-                  </button>
-                  <ul className="dropdown-menu">
-                    <li>
-                      <a
-                        className="dropdown-item"
-                        href={`/courses/${course.id}`}
-                        target="_blank"
-                      >
-                        <i className="feather-eye me-2"></i>
-                        View
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        className="dropdown-item"
-                        href={`/instructor/courses/${course.id}/edit`}
-                      >
-                        <i className="feather-edit me-2"></i>
-                        Edit
-                      </a>
-                    </li>
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    {course.status === 'draft' && (
-                      <li>
-                        <button
-                          className="dropdown-item text-success"
-                          onClick={() =>
-                            handleStatusChange(course, 'published')
-                          }
-                        >
-                          <i className="feather-check-circle me-2"></i>
-                          Publish
-                        </button>
-                      </li>
-                    )}
-                    {course.status === 'published' && (
-                      <li>
-                        <button
-                          className="dropdown-item text-warning"
-                          onClick={() => handleStatusChange(course, 'draft')}
-                        >
-                          <i className="feather-eye-off me-2"></i>
-                          Unpublish
-                        </button>
-                      </li>
-                    )}
-                    {course.status !== 'archived' && (
-                      <li>
-                        <button
-                          className="dropdown-item text-danger"
-                          onClick={() => handleStatusChange(course, 'archived')}
-                        >
-                          <i className="feather-archive me-2"></i>
-                          Archive
-                        </button>
-                      </li>
-                    )}
-                    {course.status === 'archived' && (
-                      <li>
-                        <button
-                          className="dropdown-item"
-                          onClick={() => handleStatusChange(course, 'draft')}
-                        >
-                          <i className="feather-refresh-cw me-2"></i>
-                          Restore
-                        </button>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {courses.length === 0 && (
-        <div className="text-center py-5">
-          <i className="feather-inbox mb-3" style={{ fontSize: '3rem' }}></i>
-          <p className="text-muted">No courses found</p>
-        </div>
-      )}
-
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="d-flex justify-content-between align-items-center mt-4">
-          <div className="text-muted">
-            Page {currentPage} of {totalPages}
+      {/* Data Table with Tweakcn design */}
+      <div className="space-y-4">
+        {/* Table Header Bar */}
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold text-foreground">All Courses</h2>
+            <p className="text-sm text-muted-foreground">
+              Manage and review all courses on the platform
+            </p>
           </div>
-          <nav>
-            <ul className="pagination mb-0">
-              <li
-                className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}
-              >
-                <a
-                  className="page-link"
-                  href={`?page=${currentPage - 1}`}
-                  aria-label="Previous"
-                >
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
-              {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                const pageNum = i + 1;
-                return (
-                  <li
-                    key={pageNum}
-                    className={`page-item ${currentPage === pageNum ? 'active' : ''}`}
-                  >
-                    <a className="page-link" href={`?page=${pageNum}`}>
-                      {pageNum}
-                    </a>
-                  </li>
-                );
-              })}
-              <li
-                className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}
-              >
-                <a
-                  className="page-link"
-                  href={`?page=${currentPage + 1}`}
-                  aria-label="Next"
-                >
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="h-8 border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              <svg className="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              </svg>
+              Filters
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="h-8 border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
+            >
+              <svg className="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+              Export
+            </Button>
+          </div>
         </div>
-      )}
+        
+        {/* Data Table */}
+        <DataTable
+          columns={columns}
+          data={initialCourses}
+          pageSize={limit}
+        />
+      </div>
     </div>
   );
 }
