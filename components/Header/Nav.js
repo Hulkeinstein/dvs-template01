@@ -8,6 +8,7 @@ import MenuData from '../../data/MegaMenu.json';
 import CourseLayout from './NavProps/CourseLayout';
 import PageLayout from './NavProps/PageLayout';
 import ElementsLayout from './NavProps/ElementsLayout';
+import DashboardNav from './DashboardNav';
 import addImage from '../../public/images/service/mobile-cat.jpg';
 
 const Nav = () => {
@@ -204,14 +205,7 @@ const Nav = () => {
             </div>
           </div>
         </li>
-        <li>
-          <Link
-            className={isActive('/dashboard') ? 'active' : ''}
-            href="/dashboard"
-          >
-            Dashboard
-          </Link>
-        </li>
+        <DashboardNav />
         <li className="with-megamenu has-menu-child-item position-static">
           <Link
             href="#"

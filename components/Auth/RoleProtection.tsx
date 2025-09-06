@@ -3,13 +3,20 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, ReactNode } from 'react';
+import { UserRole } from '@/types/auth';
+import { hasAnyRole } from '@/app/lib/utils/permissions';
 
 interface RoleProtectionProps {
-  allowedRoles: Array<'student' | 'instructor' | 'admin'>;
+  allowedRoles: UserRole[];
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
-const RoleProtection = ({ allowedRoles, children }: RoleProtectionProps) => {
+const RoleProtection = ({
+  allowedRoles,
+  children,
+  fallback = null,
+}: RoleProtectionProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
@@ -28,9 +35,9 @@ const RoleProtection = ({ allowedRoles, children }: RoleProtectionProps) => {
       return;
     }
 
-    // Type-safe access with augmented session
-    const userRole = session.user?.role;
-    if (!userRole || !allowedRoles.includes(userRole)) {
+    // 권한 계층 구조를 적용한 체크
+    const userRole = session.user?.role as UserRole;
+    if (!userRole || !hasAnyRole(userRole, allowedRoles)) {
       router.push('/dashboard');
     }
   }, [isMounted, status, session, router, allowedRoles]);
@@ -43,11 +50,14 @@ const RoleProtection = ({ allowedRoles, children }: RoleProtectionProps) => {
     return <div>Loading...</div>;
   }
 
-  if (session.user?.role && allowedRoles.includes(session.user.role)) {
+  // 권한 계층 구조를 적용한 체크 (admin은 모든 권한 자동 포함)
+  const userRole = session.user?.role as UserRole;
+  if (userRole && hasAnyRole(userRole, allowedRoles)) {
     return <>{children}</>;
   }
 
-  return <div>Loading...</div>;
+  // fallback이 제공되면 사용, 아니면 Loading 표시
+  return <>{fallback || <div>Loading...</div>}</>;
 };
 
 export default RoleProtection;
