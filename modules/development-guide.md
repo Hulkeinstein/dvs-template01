@@ -252,6 +252,72 @@ types/
 ```
 **미리 만들지 말고 필요할 때 추가**
 
+### Any 타입 처리 가이드
+
+`any`는 **마이그레이션을 막지 않기 위한 임시 수단**입니다. 가능한 한 `unknown`·제네릭·유틸리티 타입·스키마 추론으로 대체하세요. 새 코드에는 `any`를 금지합니다.
+
+#### 우선순위 매트릭스
+| 상황 | any 사용 | 조치 시기 |
+|------|---------|----------|
+| **새 코드 작성** | ❌ | 즉시 구체 타입 명시 |
+| **버그 관련 코드** | ⚠️ | 버그 수정과 함께 제거 |
+| **기존 파일 부분 수정** | ✅ | 수정 범위 내 우선 개선 |
+| **복잡한 레거시** | ✅ | Phase 3(리팩토링)에서 제거 |
+
+#### 대체 패턴 (any 이전에 고려)
+- `unknown` + **타입 가드**/협약된 검사 함수
+- **제네릭**(`<T>`) + 제약(`extends`)으로 입력/출력 연결
+- **유틸리티 타입**: `Partial`, `Pick`, `Required`, `ReturnType`, `Awaited`
+- **스키마 기반 추론**: Zod 등으로 runtime 검증 + TS 타입 추론
+
+#### ESLint 경고 대응 원칙
+- **새 파일**: 경고 0개 목표 (`no-explicit-any`: error에 준하는 기준)
+- **기존 파일**: 수정 구간만 우선 제거, 나머지는 TODO로 명시
+- **임시 억제**: 반드시 사유를 주석으로 남김
+  ```typescript
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- third-party lib without types
+  const payload: any = ext.compute(); // TODO(ANY-TODO): define Payload in Phase 3
+  ```
+
+#### 코드 예시
+
+```typescript
+// 1) unknown + 좁히기
+function toUserId(v: unknown): string {
+  if (typeof v === 'string' && v.startsWith('user_')) return v;
+  throw new Error('Invalid user id');
+}
+
+// 2) 제네릭으로 데이터 흐름 보존
+function pickKey<T extends object, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// 3) 임시 any (마이그레이션 중에만)
+const legacyData: any = parseLegacy(); // TODO(ANY-TODO #123): replace with LegacyData type
+
+// 4) 스키마 기반 타입 추론 (Zod 예시)
+const UserSchema = z.object({
+  id: z.string(),
+  role: z.enum(['admin', 'instructor', 'student'])
+});
+type User = z.infer<typeof UserSchema>; // 자동 타입 생성
+```
+
+#### 운영 규칙
+
+- `noImplicitAny = true` 유지
+- `@typescript-eslint/no-explicit-any`: **warn →(안정화 후) error** 단계 상향
+- `@ts-ignore` 대신 `@ts-expect-error -- 이유` 사용 권장
+- **ANY-TODO** 태그로 검색 가능하게 관리: `// TODO(ANY-TODO #123): replace with FooType`
+
+#### 기대 효과
+
+1. `any` 사용 기준 명확화
+2. ESLint 경고 대응 일관성 확보
+3. 기술 부채(ANY) 위치가 추적 가능
+4. AI 에이전트(Claude Code)와 개발자 간 규칙 정합
+
 ### Quick Fixes (빠른 해결책)
 ```typescript
 // 타입 없는 라이브러리
