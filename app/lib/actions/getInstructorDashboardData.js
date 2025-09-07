@@ -8,21 +8,51 @@ import { supabaseServer as supabase } from '@/app/lib/supabase/server';
  * @returns {Promise<object>} 교사 대시보드 통계 데이터
  */
 export async function getInstructorDashboardData(instructorId) {
+  console.log(
+    '[getInstructorDashboardData] Called with instructorId:',
+    instructorId
+  );
+
   if (!instructorId) {
-    // ... (기존 코드와 동일)
+    console.log(
+      '[getInstructorDashboardData] No instructorId provided, returning empty stats'
+    );
+    return {
+      totalStudents: 0,
+      totalCourses: 0,
+      totalEarnings: 0,
+      activeCourses: 0,
+      enrolledCourses: 0,
+      completedCourses: 0,
+    };
   }
 
   try {
     // --- 실제 데이터베이스 쿼리 구현 ---
 
     // 1. 현재 강사가 운영하는 모든 강의의 ID를 먼저 가져옵니다 (삭제된 코스 제외).
+    console.log(
+      '[getInstructorDashboardData] Fetching courses for instructor:',
+      instructorId
+    );
     const { data: coursesData, error: coursesError } = await supabase
       .from('courses')
       .select('id')
       .eq('instructor_id', instructorId)
       .is('deleted_at', null);
 
-    if (coursesError) throw coursesError;
+    if (coursesError) {
+      console.error(
+        '[getInstructorDashboardData] Error fetching courses:',
+        coursesError
+      );
+      throw coursesError;
+    }
+
+    console.log(
+      '[getInstructorDashboardData] Courses found:',
+      coursesData?.length || 0
+    );
 
     const courseIds = coursesData.map((course) => course.id);
 
@@ -85,7 +115,7 @@ export async function getInstructorDashboardData(instructorId) {
       .in('course_id', courseIds);
 
     // 4. 최종 통계 객체를 반환합니다.
-    return {
+    const finalStats = {
       totalStudents,
       totalCourses,
       totalEarnings,
@@ -93,8 +123,19 @@ export async function getInstructorDashboardData(instructorId) {
       enrolledCourses: enrolledCourses || 0,
       completedCourses,
     };
+
+    console.log('[getInstructorDashboardData] Returning stats:', finalStats);
+    return finalStats;
   } catch (error) {
-    console.error('교사 대시보드 데이터 조회 중 오류 발생:', error);
-    // ... (기존 에러 처리 코드와 동일)
+    console.error('[getInstructorDashboardData] Error occurred:', error);
+    // 에러 발생시에도 빈 통계 반환 (무한 로딩 방지)
+    return {
+      totalStudents: 0,
+      totalCourses: 0,
+      totalEarnings: 0,
+      activeCourses: 0,
+      enrolledCourses: 0,
+      completedCourses: 0,
+    };
   }
 }

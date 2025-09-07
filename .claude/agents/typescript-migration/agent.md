@@ -30,6 +30,65 @@ function processQuiz(data: QuizData): QuizResult  // Then refine
 function processQuiz(data: Readonly<QuizData>): Promise<QuizResult>  // Eventually
 ```
 
+### 2.5 Any Type Strategy
+
+Use `any` only as a **temporary escape hatch** during JS→TS migration. Prefer `unknown`, generics, and proper typing. When you must use `any`, annotate intent and a plan to remove it.
+
+#### When to Use `any` (Temporary Only)
+- **Migration Phase**: Fast JS→TS conversion where precise types would block delivery.
+- **Complex Legacy**: Types require significant refactor to model correctly.
+- **Third-party Gaps**: No available types for an external lib or dynamic runtime data.
+
+#### When to Remove `any` (Priority)
+- **New/Greenfield Code**: `any` is **not allowed**.
+- **Bug Source**: If `any` masked type errors, replace immediately.
+- **High-traffic/Shared Modules**: Eliminate `any` early to prevent type leaks.
+
+#### Prefer These Before `any`
+- `unknown` + **narrowing** (type predicates/guards)
+- **Generics** with constraints (`<T extends Record<string, unknown>>`)
+- **Utility types** (`Partial`, `Pick`, `ReturnType`, `Awaited`)
+- **Schema-first** inference (e.g., Zod/Valibot) where applicable
+
+#### ESLint/TS Settings (Reference)
+- `@typescript-eslint/no-explicit-any`: **warn** (migration) → **error** (steady-state)
+- `noImplicitAny`: **true**
+- Avoid `// @ts-ignore`. If necessary, prefer `// @ts-expect-error -- reason`.
+
+#### Code Examples
+
+```typescript
+// 1) Temporary any with a clear TODO (allowed only during migration)
+const legacyData: any = parseLegacy(); // TODO(ANY-TODO): replace with LegacyData in Phase 3
+
+// 2) Prefer unknown + narrowing
+function handle(input: unknown) {
+  if (typeof input === 'string') {
+    return input.trim();
+  }
+  if (Array.isArray(input)) {
+    return input.length;
+  }
+  throw new Error('Unsupported input');
+}
+
+// 3) Generic instead of any
+function first<T>(arr: T[]): T | undefined {
+  return arr[0];
+}
+
+// 4) Suppress with reason (third-party gap)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- third-party lib returns dynamic shape
+const external: any = thirdPartyLib.compute();
+```
+
+#### PR Checklist (Any Usage)
+
+- [ ] Why is `any` required here (1 line)?
+- [ ] Removal plan (phase/ticket/id)?
+- [ ] Considered `unknown`/generics/utility types?
+- [ ] Lint suppression includes a **reason**?
+
 ### 3. Type File Organization
 ```
 types/

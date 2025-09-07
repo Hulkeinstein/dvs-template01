@@ -16,14 +16,34 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+      // 네트워크 타임아웃 증가 (기본 3.5초 → 10초)
+      httpOptions: {
+        timeout: 10000,
+      },
+      // Google OpenID configuration URL 직접 지정 (캐싱 효과)
+      wellKnown: 'https://accounts.google.com/.well-known/openid-configuration',
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/login',
+    error: '/auth/error', // 에러 페이지 경로 추가
   },
+  debug: process.env.NODE_ENV === 'development', // 개발 환경에서 디버깅 활성화
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account, profile }) {
+      console.log('=== SignIn Callback 시작 ===');
+      console.log('User:', user);
+      console.log('Account:', account);
+      console.log('Profile:', profile);
+
       const supabase = getSupabaseClient();
       if (!supabase) {
         console.error('Supabase 클라이언트가 초기화되지 않았습니다.');
@@ -50,11 +70,12 @@ export const authOptions = {
             .insert([
               {
                 email: user.email,
-                full_name: user.name,
+                name: user.name, // full_name이 아니라 name 컬럼 사용
                 avatar_url: user.image,
                 role: 'student', // 기본 역할을 학생으로 설정
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
+                joined_at: new Date().toISOString(), // 가입 시점 추가
               },
             ])
             .select()
@@ -64,11 +85,16 @@ export const authOptions = {
             console.error('사용자 생성 오류:', insertError);
             return false;
           }
+
+          console.log('새 사용자 생성 성공:', newUser);
+        } else {
+          console.log('기존 사용자 로그인:', existingUser);
         }
 
         return true;
       } catch (error) {
         console.error('로그인 처리 오류:', error);
+        console.error('Error Stack:', error.stack);
         return false;
       }
     },

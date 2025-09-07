@@ -1,0 +1,37 @@
+// Admin Dashboard Token Adapters
+// All colors reference CSS variables from globals.css
+// No SCSS color variables - only CSS custom properties
+// Updated: 2025-08-31 17:15 KST
+
+// Token adapter mixins for consistent usage
+@mixin bg-token($name) {
+  background-color: hsl(var(--#{$name}));
+}
+
+@mixin text-token($name) {
+  color: hsl(var(--#{$name}));
+}
+
+@mixin border-token($name: border) {
+  border-color: hsl(var(--#{$name}));
+}
+
+// Layout helpers (no colors)
+@mixin admin-radius {
+  border-radius: var(--radius);
+}
+
+@mixin admin-transition {
+  transition: all 0.2s ease;
+}
+
+// Admin scope - reference CSS variables only
+.admin-v2 {
+  // All colors come from CSS variables defined in globals.css
+  // No SCSS color variables or hardcoded colors
+  
+  // Use CSS variables directly for any color needs
+  // Example: background: hsl(var(--background));
+  // Example: color: hsl(var(--foreground));
+  // Example: border-color: hsl(var(--border));
+}

@@ -1,0 +1,97 @@
+// Admin Dashboard Layout and Animations
+// No color definitions - all colors from CSS variables
+// Updated: 2025-08-31 17:16 KST
+
+@use 'tokens' as *;
+
+// Admin layout structure (no colors)
+.admin-v2 {
+  min-height: 100vh;
+  
+  // Layout helpers
+  .admin-container {
+    @include admin-transition;
+  }
+  
+  // Animation utilities
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  .slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  // Grid layouts
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+  
+  // Hover effects (no colors, just transforms)
+  .hover-lift {
+    @include admin-transition;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  // Scrollbar styling (using CSS variables)
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+    
+    &:hover {
+      background: hsl(var(--muted-foreground));
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// Responsive utilities
+@media (max-width: 768px) {
+  .admin-v2 {
+    .stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .admin-v2 {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}

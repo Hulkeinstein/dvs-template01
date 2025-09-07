@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+import { Provider } from 'react-redux';
 import Separator from '@/components/Common/Separator';
 import FooterOne from '@/components/Footer/Footer-One';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
@@ -10,13 +12,21 @@ import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboa
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
-import React from 'react';
-import { Provider } from 'react-redux';
 import RoleProtection from '@/components/Auth/RoleProtection';
+import { InstructorStats } from '@/types/dashboard';
+import { UserRole } from '@/types/auth';
+
+// Props 타입 정의
+interface InstructorDashboardProps {
+  stats: InstructorStats;
+}
 
 // --- 핵심 수정 사항 ---
-// 이 컴포넌트는 이제 부모(page.js)로부터 stats prop을 전달받습니다.
-const InstructorDashboard = ({ stats }) => {
+// 이 컴포넌트는 이제 부모(page.tsx)로부터 stats prop을 전달받습니다.
+const InstructorDashboard: React.FC<InstructorDashboardProps> = ({ stats }) => {
+  // allowedRoles를 UserRole 타입으로 명시
+  const allowedRoles: UserRole[] = ['instructor', 'admin'];
+
   return (
     <>
       <Provider store={Store}>
@@ -32,7 +42,7 @@ const InstructorDashboard = ({ stats }) => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={['instructor']}>
+                  <RoleProtection allowedRoles={allowedRoles}>
                     <InstructorDashboardHeader />
 
                     <div className="row g-5">

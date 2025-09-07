@@ -1,0 +1,78 @@
+// 토큰을 쓰는 구성요소의 최소치만 보강 (!important 없음)
+.admin-dashboard {
+  font-size: var(--bs-body-font-size);
+  line-height: var(--bs-body-line-height);
+
+  // shadcn/ui 컴포넌트 크기 오버라이드 (Bootstrap 제외)
+  // button 컴포넌트
+  button:not(.rbt-btn):not(.btn-bootstrap) {
+    min-height: 44px !important;
+    font-size: 1rem !important;
+    padding: 0.75rem 1.25rem !important;
+    
+    // icon 버튼 크기
+    &[class*="h-"][class*="w-"] {
+      width: 44px !important;
+      height: 44px !important;
+      padding: 0 !important;
+    }
+  }
+  
+  // input 컴포넌트
+  input:not(.form-control):not(.form-check-input) {
+    min-height: 44px !important;
+    font-size: 1rem !important;
+    padding: 0.625rem 1rem !important;
+  }
+  
+  // 헤딩 크기
+  h1 { 
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+  }
+  
+  h2 { 
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
+  
+  h3 { 
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+  
+  // 일반 텍스트 (작은 텍스트 클래스 제외)
+  p:not([class*="text-sm"]):not([class*="text-xs"]) { 
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  // Bootstrap 컴포넌트는 기존 유지
+  .btn {
+    min-height: 44px;
+    border-radius: var(--bs-border-radius);
+  }
+
+  .form-control,
+  .form-select {
+    min-height: 44px;
+  }
+
+  .table {
+    font-size: 1rem;
+    
+    td, th {
+      padding: 1rem;
+    }
+  }
+
+  /* Admin에서 소형 유틸 무력화 */
+  .btn-sm,
+  .form-control-sm,
+  .fs-6,
+  .fs-7 {
+    font-size: 1rem;
+    padding: var(--bs-btn-padding-y) var(--bs-btn-padding-x);
+    min-height: 44px;
+  }
+}

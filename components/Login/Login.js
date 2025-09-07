@@ -9,10 +9,14 @@ const Login = () => {
       {/* 왼쪽: 로그인 영역 */}
       <div className="col-lg-6">
         <div className="rbt-contact-form contact-form-style-1 max-width-auto">
-          <h3 className="title">Login</h3>
+          <h3 className="title">시작하기</h3>
           <p className="description mb--20 text-muted">
-            <span className="text-secondary">Google 계정으로 로그인</span>해
-            주세요.
+            <span className="text-secondary">Google 계정으로 시작</span>하세요.
+            <br />
+            <strong>
+              처음 방문하시는 분도 자동으로 회원가입이 진행됩니다.
+            </strong>
+            <br />
             <br />
             정회원이 되시면{' '}
             <strong className="text-secondary">
@@ -28,7 +32,7 @@ const Login = () => {
               onClick={() => signIn('google', { callbackUrl: '/' })}
             >
               <span className="icon-reverse-wrapper">
-                <span className="btn-text">Google 계정으로 로그인</span>
+                <span className="btn-text">Google로 시작하기</span>
                 <span className="btn-icon">
                   <i className="feather-arrow-right"></i>
                 </span>
