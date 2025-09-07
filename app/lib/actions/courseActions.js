@@ -196,10 +196,10 @@ export async function updateCourse(courseId, formData) {
       return { error: 'User not found' };
     }
 
-    // Verify the user owns this course
+    // Verify the user owns this course and get current status
     const { data: courseCheck, error: checkError } = await supabase
       .from('courses')
-      .select('instructor_id')
+      .select('instructor_id, status')
       .eq('id', courseId)
       .single();
 
@@ -213,6 +213,14 @@ export async function updateCourse(courseId, formData) {
 
     // Update course - mapper를 사용하여 데이터 변환
     const courseData = mapFormDataToDB(formData);
+
+    // If the course is published and being edited, move it to pending status
+    // unless explicitly keeping it published (e.g., minor changes)
+    if (courseCheck.status === 'published' && !formData.keepPublished) {
+      courseData.status = 'pending';
+      courseData.review_notes = 'Content updated - needs review';
+      courseData.last_modified_at = new Date().toISOString();
+    }
 
     // 디버깅: 매핑되지 않은 필드 확인
     if (process.env.NODE_ENV === 'development') {

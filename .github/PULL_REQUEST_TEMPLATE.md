@@ -11,6 +11,13 @@
 - 1) …
 - 2) …
 
+## ✅ TypeScript Migration (필수)
+- [ ] 새 파일은 모두 `.ts`/`.tsx` 사용 (JS 생성 금지)
+- [ ] 타입 정의/인터페이스 포함
+- [ ] `any` 사용 시 `TODO(ANY-TODO #이슈번호)` 추가
+- [ ] Touch it, Type it 원칙 준수 (수정한 JS는 TS 전환 검토)
+- [ ] ESLint `@typescript-eslint/no-explicit-any` 경고 최소화
+
 ## Screenshots (UI 변경 시)
 - Before:
 - After:

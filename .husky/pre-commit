@@ -4,6 +4,13 @@
 # Pre-commit 시작 알림
 echo "🔍 Pre-commit 검사 시작..."
 
+# TypeScript 마이그레이션 가드 실행
+echo "📝 TypeScript 마이그레이션 정책 검사 중..."
+node scripts/guards/check-new-js-files.js
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
 # lint-staged 실행 (자동으로 .lintstagedrc.json 설정 사용)
 npx lint-staged
 

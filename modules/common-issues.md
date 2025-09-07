@@ -143,6 +143,19 @@
 - 개발 서버 재시작
 - 구문 오류 확인
 
+## 폰트 로딩 문제
+
+### "Refused to load the font" 에러
+- **원인**: CSP(Content Security Policy)가 Base64 인코딩된 폰트를 차단
+- **영향 파일**: `public/css/plugins/swiper.css` (swiper-icons 폰트)
+- **해결책**: 
+  1. `next.config.mjs`에서 CSP 수정:
+     ```javascript
+     "font-src 'self' data: https:",  // data: 추가
+     ```
+  2. 장기적으로는 폰트를 `/public/fonts/`에 파일로 호스팅 권장
+  3. Next.js Font Optimization (`next/font`) 사용 검토
+
 ## 빠른 수정 체크리스트
 
 1. **모든 캐시 삭제**
