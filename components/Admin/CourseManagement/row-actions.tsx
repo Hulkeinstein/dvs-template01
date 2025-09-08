@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,7 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Edit, Eye, Archive, Trash2, CheckCircle, XCircle, Star } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Edit,
+  Eye,
+  Archive,
+  CheckCircle,
+  XCircle,
+  Star,
+} from 'lucide-react';
 import type { AdminCourse } from '@/types/admin-course';
 import {
   updateCourseStatus,
@@ -25,7 +33,9 @@ export function CourseRowActions({ course }: CourseRowActionsProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleStatusChange = (newStatus: AdminCourse['status']) => {
-    if (!confirm(`Are you sure you want to change the status to ${newStatus}?`)) {
+    if (
+      !confirm(`Are you sure you want to change the status to ${newStatus}?`)
+    ) {
       return;
     }
 
@@ -56,18 +66,16 @@ export function CourseRowActions({ course }: CourseRowActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-8 w-8 p-0"
-          disabled={isPending}
-        >
+        <Button variant="ghost" className="h-8 w-8 p-0" disabled={isPending}>
           <span className="sr-only">Open menu</span>
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48 bg-card border-border">
-        <DropdownMenuLabel className="text-muted-foreground">Actions</DropdownMenuLabel>
-        
+        <DropdownMenuLabel className="text-muted-foreground">
+          Actions
+        </DropdownMenuLabel>
+
         <DropdownMenuItem asChild>
           <a
             href={`/courses/${course.id}`}
@@ -78,7 +86,7 @@ export function CourseRowActions({ course }: CourseRowActionsProps) {
             View Course
           </a>
         </DropdownMenuItem>
-        
+
         <DropdownMenuItem asChild>
           <a
             href={`/instructor/courses/${course.id}/edit`}
@@ -95,7 +103,9 @@ export function CourseRowActions({ course }: CourseRowActionsProps) {
           onClick={handleToggleFeatured}
           className="flex items-center text-foreground hover:text-foreground"
         >
-          <Star className={`mr-2 h-4 w-4 ${course.is_featured ? 'fill-current text-yellow-400' : ''}`} />
+          <Star
+            className={`mr-2 h-4 w-4 ${course.is_featured ? 'fill-current text-yellow-400' : ''}`}
+          />
           {course.is_featured ? 'Remove from Featured' : 'Mark as Featured'}
         </DropdownMenuItem>
 
