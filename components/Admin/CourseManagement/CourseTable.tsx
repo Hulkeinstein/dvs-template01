@@ -5,15 +5,15 @@ import { DataTable } from './data-table';
 import { columns } from './columns';
 import type { AdminCourse } from '@/types/admin-course';
 import { formatNumber, formatCurrency } from './utils';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';  // Commented out unused import
 import { Button } from '@/components/ui/button';
-import { 
-  TrendingUp, 
-  BookOpen, 
-  Users, 
+import {
+  TrendingUp,
+  BookOpen,
+  Users,
   DollarSign,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
 } from 'lucide-react';
 
 interface CourseTableProps {
@@ -27,15 +27,23 @@ interface CourseTableProps {
 export default function CourseTable({
   initialCourses,
   total,
-  currentPage,
+  // currentPage,  // Commented out unused props
   limit,
-  totalPages,
+  // totalPages,  // Commented out unused props
 }: CourseTableProps) {
   // Calculate statistics
-  const publishedCount = initialCourses.filter(c => c.status === 'published').length;
-  const totalStudents = initialCourses.reduce((acc, c) => acc + (c.actual_enrollment_count || 0), 0);
-  const totalRevenue = initialCourses.reduce((acc, c) => acc + (c.estimated_revenue || 0), 0);
-  
+  const publishedCount = initialCourses.filter(
+    (c) => c.status === 'published'
+  ).length;
+  const totalStudents = initialCourses.reduce(
+    (acc, c) => acc + (c.actual_enrollment_count || 0),
+    0
+  );
+  const totalRevenue = initialCourses.reduce(
+    (acc, c) => acc + (c.estimated_revenue || 0),
+    0
+  );
+
   const stats = [
     {
       label: 'Total Courses',
@@ -93,27 +101,29 @@ export default function CourseTable({
                   <div className={`inline-flex rounded-md p-2 ${stat.bgColor}`}>
                     <Icon className={`h-5 w-5 ${stat.iconColor}`} />
                   </div>
-                  
+
                   {/* Label */}
                   <p className="text-xs font-medium text-muted-foreground">
                     {stat.label}
                   </p>
-                  
+
                   {/* Value */}
                   <h3 className="text-2xl font-bold text-foreground">
                     {stat.value}
                   </h3>
                 </div>
-                
+
                 {/* Trend */}
-                <div className={`flex items-center gap-0.5 text-xs font-medium ${
-                  stat.trendUp ? 'text-emerald-400' : 'text-red-400'
-                }`}>
+                <div
+                  className={`flex items-center gap-0.5 text-xs font-medium ${
+                    stat.trendUp ? 'text-emerald-400' : 'text-red-400'
+                  }`}
+                >
                   <TrendIcon className="h-3 w-3" />
                   <span>{stat.trend}</span>
                 </div>
               </div>
-              
+
               {/* Subtle hover effect */}
               <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
             </div>
@@ -126,41 +136,59 @@ export default function CourseTable({
         {/* Table Header Bar */}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <h2 className="text-lg font-semibold text-foreground">All Courses</h2>
+            <h2 className="text-lg font-semibold text-foreground">
+              All Courses
+            </h2>
             <p className="text-sm text-muted-foreground">
               Manage and review all courses on the platform
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               className="h-8 border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
             >
-              <svg className="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+              <svg
+                className="mr-1.5 h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                />
               </svg>
               Filters
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               className="h-8 border-border bg-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
             >
-              <svg className="mr-1.5 h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              <svg
+                className="mr-1.5 h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                />
               </svg>
               Export
             </Button>
           </div>
         </div>
-        
+
         {/* Data Table */}
-        <DataTable
-          columns={columns}
-          data={initialCourses}
-          pageSize={limit}
-        />
+        <DataTable columns={columns} data={initialCourses} pageSize={limit} />
       </div>
     </div>
   );

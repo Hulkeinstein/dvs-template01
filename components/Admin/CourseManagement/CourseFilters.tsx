@@ -1,27 +1,28 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
-  Filter, 
-  X, 
+import {
+  Search,
+  Filter,
+  X,
   RefreshCw,
   SlidersHorizontal,
-  Check
+  Check,
 } from 'lucide-react';
 import { useDebouncedCallback } from 'use-debounce';
 import type {
   CourseFilters as CourseFiltersType,
   CourseStatus,
 } from '@/types/admin-course';
-import {
-  getCourseCategories,
-  getInstructors,
-} from '@/app/(dashboard)/(admin)/admin-courses/actions';
+// Commented out unused imports
+// import {
+//   getCourseCategories,
+//   getInstructors,
+// } from '@/app/(dashboard)/(admin)/admin-courses/actions';
 
 interface CourseFiltersProps {
   initialFilters: CourseFiltersType;
@@ -34,49 +35,56 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
   const [selectedStatus, setSelectedStatus] = useState<CourseStatus | 'all'>(
     initialFilters.status || 'all'
   );
-  const [categories, setCategories] = useState<string[]>([]);
-  const [instructors, setInstructors] = useState<
-    Array<{ id: string; name: string; email: string }>
-  >([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Commented out unused state variables to fix ESLint errors
+  // These can be uncommented when filter implementation is complete
+  // const [categories, setCategories] = useState<string[]>([]);
+  // const [instructors, setInstructors] = useState<
+  //   Array<{ id: string; name: string; email: string }>
+  // >([]);
+  // const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Load filter options
-    const loadFilterOptions = async () => {
-      setIsLoading(true);
-      try {
-        const [categoriesData, instructorsData] = await Promise.all([
-          getCourseCategories(),
-          getInstructors(),
-        ]);
-        setCategories(categoriesData);
-        setInstructors(instructorsData);
-      } catch (error) {
-        console.error('Failed to load filter options:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Commented out useEffect that uses the unused state variables
+  // This can be uncommented when filter implementation is complete
+  // useEffect(() => {
+  //   // Load filter options
+  //   const loadFilterOptions = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const [categoriesData, instructorsData] = await Promise.all([
+  //         getCourseCategories(),
+  //         getInstructors(),
+  //       ]);
+  //       setCategories(categoriesData);
+  //       setInstructors(instructorsData);
+  //     } catch (error) {
+  //       console.error('Failed to load filter options:', error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //
+  //   loadFilterOptions();
+  // }, []);
 
-    loadFilterOptions();
-  }, []);
+  const updateSearchParams = useCallback(
+    (updates: Record<string, string | undefined>) => {
+      const params = new URLSearchParams(searchParams.toString());
 
-  const updateSearchParams = useCallback((updates: Record<string, string | undefined>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-    
-    // Reset to page 1 when filters change
-    params.set('page', '1');
-    
-    router.push(`?${params.toString()}`);
-  }, [router, searchParams]);
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value) {
+          params.set(key, value);
+        } else {
+          params.delete(key);
+        }
+      });
+
+      // Reset to page 1 when filters change
+      params.set('page', '1');
+
+      router.push(`?${params.toString()}`);
+    },
+    [router, searchParams]
+  );
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     updateSearchParams({ q: value || undefined });
@@ -98,36 +106,36 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
     router.push('/admin-courses');
   };
 
-  const statusOptions: Array<{ 
-    value: CourseStatus | 'all'; 
-    label: string; 
+  const statusOptions: Array<{
+    value: CourseStatus | 'all';
+    label: string;
     count?: number;
     color: string;
     bgColor: string;
   }> = [
-    { 
-      value: 'all', 
+    {
+      value: 'all',
       label: 'All Courses',
       color: 'text-gray-700',
-      bgColor: 'bg-gray-100 hover:bg-gray-200'
+      bgColor: 'bg-gray-100 hover:bg-gray-200',
     },
-    { 
-      value: 'draft', 
+    {
+      value: 'draft',
       label: 'Draft',
       color: 'text-amber-700',
-      bgColor: 'bg-amber-50 hover:bg-amber-100'
+      bgColor: 'bg-amber-50 hover:bg-amber-100',
     },
-    { 
-      value: 'published', 
+    {
+      value: 'published',
       label: 'Published',
       color: 'text-emerald-700',
-      bgColor: 'bg-emerald-50 hover:bg-emerald-100'
+      bgColor: 'bg-emerald-50 hover:bg-emerald-100',
     },
-    { 
-      value: 'archived', 
+    {
+      value: 'archived',
       label: 'Archived',
       color: 'text-red-700',
-      bgColor: 'bg-red-50 hover:bg-red-100'
+      bgColor: 'bg-red-50 hover:bg-red-100',
     },
   ];
 
@@ -168,7 +176,7 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
               <X className="mr-1.5 h-3.5 w-3.5" />
               Clear
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -192,31 +200,33 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
 
         {/* Status Filter Pills - Tweakcn Minimal */}
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-muted-foreground">Status:</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            Status:
+          </span>
           <div className="flex flex-wrap gap-1">
             {statusOptions.map((option) => {
               const isSelected = selectedStatus === option.value;
               const getDarkThemeColors = () => {
-                switch(option.value) {
+                switch (option.value) {
                   case 'draft':
-                    return isSelected 
-                      ? 'bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20' 
+                    return isSelected
+                      ? 'bg-amber-400/10 text-amber-400 ring-1 ring-amber-400/20'
                       : 'bg-transparent text-muted-foreground hover:bg-accent';
                   case 'published':
-                    return isSelected 
-                      ? 'bg-emerald-400/10 text-emerald-400 ring-1 ring-emerald-400/20' 
+                    return isSelected
+                      ? 'bg-emerald-400/10 text-emerald-400 ring-1 ring-emerald-400/20'
                       : 'bg-transparent text-muted-foreground hover:bg-accent';
                   case 'archived':
-                    return isSelected 
-                      ? 'bg-red-400/10 text-red-400 ring-1 ring-red-400/20' 
+                    return isSelected
+                      ? 'bg-red-400/10 text-red-400 ring-1 ring-red-400/20'
                       : 'bg-transparent text-muted-foreground hover:bg-accent';
                   default:
-                    return isSelected 
-                      ? 'bg-blue-400/10 text-blue-400 ring-1 ring-blue-400/20' 
+                    return isSelected
+                      ? 'bg-blue-400/10 text-blue-400 ring-1 ring-blue-400/20'
                       : 'bg-transparent text-muted-foreground hover:bg-accent';
                 }
               };
-              
+
               return (
                 <button
                   key={option.value}
@@ -227,15 +237,15 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
                   `}
                 >
                   <div className="flex items-center gap-2">
-                    {isSelected && (
-                      <Check className="h-3 w-3" />
-                    )}
+                    {isSelected && <Check className="h-3 w-3" />}
                     <span>{option.label}</span>
                     {option.count !== undefined && (
-                      <span className={`
+                      <span
+                        className={`
                         ml-1 rounded px-1.5 py-0.5 text-xs
                         ${isSelected ? 'bg-black/10' : 'bg-muted/50'}
-                      `}>
+                      `}
+                      >
                         {option.count}
                       </span>
                     )}
@@ -252,10 +262,12 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
         <div className="rounded-md border border-border bg-accent/50 p-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-muted-foreground">Active:</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                Active:
+              </span>
               <div className="flex flex-wrap gap-1">
                 {searchValue && (
-                  <Badge 
+                  <Badge
                     className="cursor-pointer border-transparent bg-muted px-2 py-1 text-xs text-foreground hover:bg-muted/80"
                     onClick={() => handleSearchChange('')}
                   >
@@ -265,7 +277,7 @@ export default function CourseFilters({ initialFilters }: CourseFiltersProps) {
                   </Badge>
                 )}
                 {selectedStatus !== 'all' && (
-                  <Badge 
+                  <Badge
                     className="cursor-pointer border-transparent bg-muted px-2 py-1 text-xs text-foreground hover:bg-muted/80"
                     onClick={() => handleStatusChange('all')}
                   >

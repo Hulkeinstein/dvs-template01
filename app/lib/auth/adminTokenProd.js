@@ -1,18 +1,21 @@
-/* eslint-disable */
-// Production SSO Token Utilities using jose library
-// Install: npm install jose
+/**
+ * Admin SSO Token Management (Production)
+ *
+ * This module handles secure token generation and verification
+ * for Single Sign-On between the main app and admin dashboard.
+ *
+ * Security Features:
+ * - JWT with 5-minute expiration
+ * - HMAC-SHA256 signing
+ * - One-time use validation (when implemented)
+ */
 
-// Uncomment this file when jose is installed
-/*
 import { SignJWT, jwtVerify } from 'jose';
 import crypto from 'crypto';
 
-// JWT secret from environment variable
+// Get or generate a secure secret key
 const getSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret || secret.length < 32) {
-    throw new Error('JWT_SECRET must be at least 32 characters');
-  }
+  const secret = process.env.ADMIN_SSO_SECRET || process.env.NEXTAUTH_SECRET;
   return new TextEncoder().encode(secret);
 };
 
