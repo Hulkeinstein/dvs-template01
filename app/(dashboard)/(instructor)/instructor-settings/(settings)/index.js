@@ -7,7 +7,7 @@ import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
 import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
-import Setting from '@/components/Instructor/Settings';
+import Setting from '@/components/Instructor/Settings.tsx';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';

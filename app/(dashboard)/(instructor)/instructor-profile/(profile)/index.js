@@ -8,7 +8,7 @@ import Cart from '@/components/Header/Offcanvas/Cart';
 
 import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
-import Profile from '@/components/Instructor/Profile';
+import Profile from '@/components/Instructor/Profile.tsx';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import React from 'react';

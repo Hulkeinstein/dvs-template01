@@ -217,6 +217,19 @@
   border-right: none !important;
 }
 
+// d-flex 컨테이너와의 호환성
+.d-flex {
+  .phone-input-container {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  // Verify 버튼과의 간격
+  .btn {
+    flex-shrink: 0;
+  }
+}
+
 // Verify button styles
 .send-code-btn {
   position: absolute;

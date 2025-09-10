@@ -1,19 +1,42 @@
 import Link from 'next/link';
+import React from 'react';
 
-const Profile = ({ userProfile }) => {
-  // 사용자 데이터가 없을 때 기본값 설정
-  const userData = userProfile || {
-    name: 'N/A',
-    email: 'N/A',
-    created_at: null,
-    phone: null,
-    skill_occupation: null,
-    bio: null,
-    role: 'N/A',
-  };
+// Database User type - matches Supabase schema exactly
+interface UserProfile {
+  id: string;
+  email: string;
+  name: string | null;
+  created_at: string | null;
+  phone: string | null;
+  skill_occupation: string | null;
+  bio: string | null;
+  role: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  username?: string | null;
+  avatar_url?: string | null;
+  photo_url?: string | null;
+  facebook_url?: string | null;
+  twitter_url?: string | null;
+  instagram_url?: string | null;
+  linkedin_url?: string | null;
+  website_url?: string | null;
+  github_url?: string | null;
+}
 
-  // created_at 날짜 포맷팅
-  const formatDate = (dateString) => {
+interface ProfileProps {
+  userProfile: UserProfile | null;
+}
+
+interface SocialLink {
+  name: string;
+  url: string | null | undefined;
+  icon: string;
+}
+
+const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
+  // Format date utility function
+  const formatDate = (dateString: string | null): string => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
@@ -26,47 +49,92 @@ const Profile = ({ userProfile }) => {
     });
   };
 
-  // First/Last Name - DB 필드 우선, 없으면 name 필드에서 분리
-  const nameParts = userData.name ? userData.name.split(' ') : ['', ''];
-  const firstName = userData.first_name || nameParts[0] || 'N/A';
-  const lastName = userData.last_name || nameParts.slice(1).join(' ') || 'N/A';
+  // Extract display name with priority: first/last → username → name → email
+  const getDisplayName = (): { firstName: string; lastName: string } => {
+    if (!userProfile) {
+      return { firstName: 'N/A', lastName: 'N/A' };
+    }
 
-  // SNS 링크 데이터
-  const socialLinks = [
-    { name: 'Facebook', url: userData.facebook_url, icon: 'feather-facebook' },
-    { name: 'Twitter', url: userData.twitter_url, icon: 'feather-twitter' },
-    { name: 'LinkedIn', url: userData.linkedin_url, icon: 'feather-linkedin' },
-    { name: 'Website', url: userData.website_url, icon: 'feather-globe' },
-    { name: 'GitHub', url: userData.github_url, icon: 'feather-github' },
-  ].filter((link) => link.url); // URL이 있는 것만 표시
+    // Priority 1: Use explicit first_name and last_name if available
+    if (userProfile.first_name || userProfile.last_name) {
+      return {
+        firstName: userProfile.first_name || 'N/A',
+        lastName: userProfile.last_name || 'N/A',
+      };
+    }
 
-  // 프로필 이미지 URL (avatar_url 또는 photo_url 사용)
-  const profileImage = userData.avatar_url || userData.photo_url;
+    // Priority 2: Parse from name field
+    if (userProfile.name) {
+      const nameParts = userProfile.name.split(' ');
+      return {
+        firstName: nameParts[0] || 'N/A',
+        lastName: nameParts.slice(1).join(' ') || 'N/A',
+      };
+    }
+
+    // Priority 3: Use username as first name
+    if (userProfile.username) {
+      return {
+        firstName: userProfile.username,
+        lastName: 'N/A',
+      };
+    }
+
+    // Priority 4: Use email as last resort
+    const emailName = userProfile.email.split('@')[0];
+    return {
+      firstName: emailName,
+      lastName: 'N/A',
+    };
+  };
+
+  // Prepare social links data
+  const getSocialLinks = (): SocialLink[] => {
+    if (!userProfile) return [];
+
+    const links: SocialLink[] = [
+      {
+        name: 'Facebook',
+        url: userProfile.facebook_url,
+        icon: 'feather-facebook',
+      },
+      { name: 'X', url: userProfile.twitter_url, icon: 'fab fa-x-twitter' },
+      {
+        name: 'Instagram',
+        url: userProfile.instagram_url,
+        icon: 'feather-instagram',
+      },
+      {
+        name: 'LinkedIn',
+        url: userProfile.linkedin_url,
+        icon: 'feather-linkedin',
+      },
+      { name: 'Website', url: userProfile.website_url, icon: 'feather-globe' },
+      { name: 'GitHub', url: userProfile.github_url, icon: 'feather-github' },
+    ];
+
+    return links.filter((link) => link.url);
+  };
+
+  // Use default values if no user profile
+  const userData: UserProfile = userProfile || {
+    id: '',
+    name: 'N/A',
+    email: 'N/A',
+    created_at: null,
+    phone: null,
+    skill_occupation: null,
+    bio: null,
+    role: 'N/A',
+  };
+
+  const { firstName, lastName } = getDisplayName();
+  const socialLinks = getSocialLinks();
 
   return (
     <>
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
-          {/* 프로필 사진 섹션 */}
-          {profileImage && (
-            <div className="text-center mb-5">
-              <div className="rbt-avatars-wrapper">
-                <div className="rbt-avatar rbt-avatar-xxl">
-                  <img
-                    src={profileImage}
-                    alt={userData.name || 'Profile'}
-                    style={{
-                      width: '150px',
-                      height: '150px',
-                      objectFit: 'cover',
-                      borderRadius: '50%',
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="section-title d-flex justify-content-between align-items-center">
             <h4 className="rbt-title-style-3 mb-0">My Profile</h4>
             <Link
@@ -84,6 +152,8 @@ const Profile = ({ userProfile }) => {
               </span>
             </Link>
           </div>
+
+          {/* Registration Date */}
           <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Registration Date</div>
@@ -94,6 +164,8 @@ const Profile = ({ userProfile }) => {
               </div>
             </div>
           </div>
+
+          {/* First Name */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">First Name</div>
@@ -102,6 +174,8 @@ const Profile = ({ userProfile }) => {
               <div className="rbt-profile-content b2">{firstName}</div>
             </div>
           </div>
+
+          {/* Last Name */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Last Name</div>
@@ -110,6 +184,8 @@ const Profile = ({ userProfile }) => {
               <div className="rbt-profile-content b2">{lastName}</div>
             </div>
           </div>
+
+          {/* Username */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Username</div>
@@ -120,6 +196,8 @@ const Profile = ({ userProfile }) => {
               </div>
             </div>
           </div>
+
+          {/* Role */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Role</div>
@@ -130,6 +208,8 @@ const Profile = ({ userProfile }) => {
               </div>
             </div>
           </div>
+
+          {/* Email */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Email</div>
@@ -138,6 +218,8 @@ const Profile = ({ userProfile }) => {
               <div className="rbt-profile-content b2">{userData.email}</div>
             </div>
           </div>
+
+          {/* Phone Number */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Phone Number</div>
@@ -148,6 +230,8 @@ const Profile = ({ userProfile }) => {
               </div>
             </div>
           </div>
+
+          {/* Skill/Occupation */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Skill/Occupation</div>
@@ -158,6 +242,8 @@ const Profile = ({ userProfile }) => {
               </div>
             </div>
           </div>
+
+          {/* Biography */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Biography</div>
@@ -169,34 +255,36 @@ const Profile = ({ userProfile }) => {
             </div>
           </div>
 
-          {/* SNS Links Section */}
+          {/* Social Links Section */}
           {socialLinks.length > 0 && (
-            <>
-              <div className="rbt-profile-row row row--15 mt--15">
-                <div className="col-lg-4 col-md-4">
-                  <div className="rbt-profile-content b2">Social Links</div>
-                </div>
-                <div className="col-lg-8 col-md-8">
-                  <div className="rbt-profile-content b2">
-                    <div className="social-icon-wrapper">
-                      {socialLinks.map((link, index) => (
-                        <a
-                          key={index}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="rbt-btn-link me-3"
-                          title={link.name}
-                        >
+            <div className="rbt-profile-row row row--15 mt--15">
+              <div className="col-lg-4 col-md-4">
+                <div className="rbt-profile-content b2">Social Links</div>
+              </div>
+              <div className="col-lg-8 col-md-8">
+                <div className="rbt-profile-content b2">
+                  <div className="social-icon-wrapper">
+                    {socialLinks.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.url!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rbt-btn-link me-3"
+                        title={link.name}
+                      >
+                        {link.icon.startsWith('fab') ? (
                           <i className={`${link.icon} me-1`}></i>
-                          <span>{link.name}</span>
-                        </a>
-                      ))}
-                    </div>
+                        ) : (
+                          <i className={`${link.icon} me-1`}></i>
+                        )}
+                        <span>{link.name}</span>
+                      </a>
+                    ))}
                   </div>
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
