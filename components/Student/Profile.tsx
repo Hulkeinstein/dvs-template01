@@ -1,6 +1,8 @@
-import Link from 'next/link';
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
+import Link from 'next/link';
 
 // Database User type - matches Supabase schema exactly
 interface UserProfile {
@@ -16,27 +18,31 @@ interface UserProfile {
   first_name?: string | null;
   last_name?: string | null;
   username?: string | null;
-  avatar_url?: string | null;
   photo_url?: string | null;
-  facebook_url?: string | null;
-  twitter_url?: string | null;
-  instagram_url?: string | null;
-  linkedin_url?: string | null;
-  website_url?: string | null;
-  github_url?: string | null;
 }
 
-interface ProfileProps {
-  userProfile: UserProfile | null;
-}
+const Profile: React.FC = () => {
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-interface SocialLink {
-  name: string;
-  url: string | null | undefined;
-  icon: string;
-}
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile(data);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
+    fetchUserProfile();
+  }, []);
+
   // Format date utility function
   const formatDate = (dateString: string | null): string => {
     if (!dateString) return 'N/A';
@@ -90,33 +96,19 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
     };
   };
 
-  // Prepare social links data
-  const getSocialLinks = (): SocialLink[] => {
-    if (!userProfile) return [];
-
-    const links: SocialLink[] = [
-      {
-        name: 'Facebook',
-        url: userProfile.facebook_url,
-        icon: 'feather-facebook',
-      },
-      { name: 'X', url: userProfile.twitter_url, icon: 'fab fa-x-twitter' },
-      {
-        name: 'Instagram',
-        url: userProfile.instagram_url,
-        icon: 'feather-instagram',
-      },
-      {
-        name: 'LinkedIn',
-        url: userProfile.linkedin_url,
-        icon: 'feather-linkedin',
-      },
-      { name: 'Website', url: userProfile.website_url, icon: 'feather-globe' },
-      { name: 'GitHub', url: userProfile.github_url, icon: 'feather-github' },
-    ];
-
-    return links.filter((link) => link.url);
-  };
+  if (loading) {
+    return (
+      <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
+        <div className="content">
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Use default values if no user profile
   const userData: UserProfile = userProfile || {
@@ -127,11 +119,10 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
     phone: null,
     skill_occupation: null,
     bio: null,
-    role: 'N/A',
+    role: 'student',
   };
 
   const { firstName, lastName } = getDisplayName();
-  const socialLinks = getSocialLinks();
 
   return (
     <>
@@ -147,7 +138,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           <div className="section-title d-flex justify-content-between align-items-center">
             <h4 className="rbt-title-style-3 mb-0">My Profile</h4>
             <Link
-              href="/instructor-settings"
+              href="/student-settings"
               className="rbt-btn btn-sm btn-gradient hover-icon-reverse"
             >
               <span className="icon-reverse-wrapper">
@@ -206,18 +197,6 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
             </div>
           </div>
 
-          {/* Role */}
-          <div className="rbt-profile-row row row--15 mt--15">
-            <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Role</div>
-            </div>
-            <div className="col-lg-8 col-md-8">
-              <div className="rbt-profile-content b2">
-                {userData.role || 'N/A'}
-              </div>
-            </div>
-          </div>
-
           {/* Email */}
           <div className="rbt-profile-row row row--15 mt--15">
             <div className="col-lg-4 col-md-4">
@@ -263,38 +242,6 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
               </div>
             </div>
           </div>
-
-          {/* Social Links Section */}
-          {socialLinks.length > 0 && (
-            <div className="rbt-profile-row row row--15 mt--15">
-              <div className="col-lg-4 col-md-4">
-                <div className="rbt-profile-content b2">Social Links</div>
-              </div>
-              <div className="col-lg-8 col-md-8">
-                <div className="rbt-profile-content b2">
-                  <div className="social-icon-wrapper">
-                    {socialLinks.map((link, index) => (
-                      <a
-                        key={index}
-                        href={link.url!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rbt-btn-link me-3"
-                        title={link.name}
-                      >
-                        {link.icon.startsWith('fab') ? (
-                          <i className={`${link.icon} me-1`}></i>
-                        ) : (
-                          <i className={`${link.icon} me-1`}></i>
-                        )}
-                        <span>{link.name}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </>

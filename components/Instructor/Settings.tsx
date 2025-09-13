@@ -1,17 +1,25 @@
 'use client';
 
-import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  ChangeEvent,
+  FormEvent,
+} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
 import {
   uploadProfilePhoto,
   uploadCoverPhoto,
   updateUserProfile,
 } from '@/app/lib/actions/profileActions';
+import { setPassword, changePassword } from '@/app/lib/actions/passwordActions';
 
 // Types
 interface UserProfile {
@@ -33,6 +41,8 @@ interface UserProfile {
   photo_url?: string | null;
   cover_photo_url?: string | null;
   is_phone_verified?: boolean;
+  auth_provider?: string | null;
+  password_hash?: string | null;
 }
 
 interface SettingProps {
@@ -71,6 +81,8 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
   const [otpLoading, setOtpLoading] = useState(false);
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(null);
   const [currentCoverUrl, setCurrentCoverUrl] = useState<string | null>(null);
+  const [showPasswordSetup, setShowPasswordSetup] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   // File input refs
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -442,19 +454,124 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
     }
   };
 
+  // Password management functions
+  const handlePasswordSetup = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setPasswordLoading(true);
+      setMessage({ type: '', text: '' });
+
+      try {
+        const formData = new FormData(e.currentTarget);
+        const newPassword = String(formData.get('newpassword') ?? '');
+        const confirmPassword = String(formData.get('confirmpassword') ?? '');
+
+        if (newPassword !== confirmPassword) {
+          setMessage({ type: 'error', text: '비밀번호가 일치하지 않습니다.' });
+          return;
+        }
+        if (newPassword.length < 8) {
+          setMessage({
+            type: 'error',
+            text: '비밀번호는 최소 8자 이상이어야 합니다.',
+          });
+          return;
+        }
+
+        const result = await setPassword({
+          newPassword,
+          confirmPassword,
+        });
+
+        if (result.success) {
+          setMessage({
+            type: 'success',
+            text: result.message || '비밀번호가 설정되었습니다!',
+          });
+          setShowPasswordSetup(false);
+          e.currentTarget.reset();
+          // Update the local state to reflect that password is now set
+          if (userProfile) {
+            userProfile.password_hash = 'set';
+          }
+        } else {
+          setMessage({
+            type: 'error',
+            text: result.error || '비밀번호 설정에 실패했습니다.',
+          });
+        }
+      } catch {
+        setMessage({
+          type: 'error',
+          text: '비밀번호 설정 중 오류가 발생했습니다.',
+        });
+      } finally {
+        setPasswordLoading(false);
+      }
+    },
+    [setMessage, userProfile]
+  );
+
+  const handlePasswordChange = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setPasswordLoading(true);
+      setMessage({ type: '', text: '' });
+
+      try {
+        const formData = new FormData(e.currentTarget);
+        const currentPassword = String(formData.get('currentpassword') ?? '');
+        const newPassword = String(formData.get('newpassword') ?? '');
+        const confirmPassword = String(formData.get('retypenewpassword') ?? '');
+
+        if (!currentPassword) {
+          setMessage({ type: 'error', text: '현재 비밀번호를 입력해주세요.' });
+          return;
+        }
+        if (newPassword !== confirmPassword) {
+          setMessage({ type: 'error', text: '비밀번호가 일치하지 않습니다.' });
+          return;
+        }
+        if (newPassword.length < 8) {
+          setMessage({
+            type: 'error',
+            text: '비밀번호는 최소 8자 이상이어야 합니다.',
+          });
+          return;
+        }
+
+        const result = await changePassword({
+          currentPassword,
+          newPassword,
+          confirmPassword,
+        });
+
+        if (result.success) {
+          setMessage({
+            type: 'success',
+            text: result.message || '비밀번호가 변경되었습니다!',
+          });
+          e.currentTarget.reset();
+        } else {
+          setMessage({
+            type: 'error',
+            text: result.error || '비밀번호 변경에 실패했습니다.',
+          });
+        }
+      } catch {
+        setMessage({
+          type: 'error',
+          text: '비밀번호 변경 중 오류가 발생했습니다.',
+        });
+      } finally {
+        setPasswordLoading(false);
+      }
+    },
+    [setMessage]
+  );
+
   return (
     <>
-      {/* Profile Completion Checklist */}
-      {userProfile && (
-        <ProfileCompletionChecklist
-          userProfile={{
-            ...userProfile,
-            phone: formData.phone,
-            is_phone_verified: phoneVerified,
-          }}
-        />
-      )}
-
       {/* Hidden file inputs */}
       <input
         ref={photoInputRef}
@@ -470,6 +587,21 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
         onChange={handleCoverUpload}
         style={{ display: 'none' }}
       />
+
+      {/* Profile Completion Checklist */}
+      {userProfile && (
+        <div className="mb-4">
+          <ProfileCompletionChecklist
+            userProfile={{
+              ...userProfile,
+              phone: formData.phone,
+              is_phone_verified: userProfile.is_phone_verified || false,
+              skill_occupation: formData.skill_occupation,
+              bio: formData.bio,
+            }}
+          />
+        </div>
+      )}
 
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
         <div className="content">
@@ -838,50 +970,189 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
               role="tabpanel"
               aria-labelledby="password-tab"
             >
-              <form
-                action="#"
-                className="rbt-profile-row rbt-default-form row row--15"
-              >
-                <div className="col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="currentpassword">Current Password</label>
-                    <input
-                      id="currentpassword"
-                      type="password"
-                      placeholder="Current Password"
-                    />
+              {userProfile?.auth_provider === 'google' &&
+              !userProfile?.password_hash ? (
+                // Google OAuth 사용자이며 비밀번호가 설정되지 않은 경우
+                <div className="rbt-profile-row">
+                  <div className="col-12">
+                    <div className="alert alert-info d-flex align-items-start">
+                      <i className="feather-info me-3 mt-1"></i>
+                      <div>
+                        <h5 className="mb-2">Google 계정으로 로그인 중</h5>
+                        <p className="mb-3">
+                          현재 Google 계정으로 안전하게 로그인하고 있습니다.
+                          비밀번호를 추가로 설정하면 더 많은 방법으로 로그인할
+                          수 있습니다.
+                        </p>
+                        <div className="small text-muted mb-3">
+                          <div className="mb-1">
+                            <i className="feather-check-circle me-2 text-success"></i>
+                            모바일 앱이나 디바이스에서 편리하게 로그인
+                          </div>
+                          <div className="mb-1">
+                            <i className="feather-check-circle me-2 text-success"></i>
+                            Google 서비스 장애 시 백업 로그인 방법
+                          </div>
+                          <div className="mb-1">
+                            <i className="feather-check-circle me-2 text-success"></i>
+                            회사나 공용 PC에서 OAuth가 차단된 경우 대안
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
+                      <button
+                        type="button"
+                        className="rbt-btn btn-gradient"
+                        onClick={() => setShowPasswordSetup(true)}
+                      >
+                        <i className="feather-lock me-2"></i>
+                        비밀번호 추가 설정 (선택사항)
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Password setup form */}
+                  {showPasswordSetup && (
+                    <div id="password-setup-section">
+                      <form
+                        className="rbt-profile-row rbt-default-form row row--15 mt-4"
+                        onSubmit={handlePasswordSetup}
+                      >
+                        <div className="col-12">
+                          <h5 className="mb-3">새 비밀번호 설정</h5>
+                        </div>
+                        <div className="col-12">
+                          <div className="rbt-form-group">
+                            <label htmlFor="newpassword">New Password</label>
+                            <input
+                              id="newpassword"
+                              name="newpassword"
+                              type="password"
+                              placeholder="Enter new password (min 8 characters)"
+                              minLength={8}
+                              required
+                            />
+                            <small className="text-muted">
+                              최소 8자, 대소문자와 숫자를 포함해주세요
+                            </small>
+                          </div>
+                        </div>
+                        <div className="col-12">
+                          <div className="rbt-form-group">
+                            <label htmlFor="confirmpassword">
+                              Confirm Password
+                            </label>
+                            <input
+                              id="confirmpassword"
+                              name="confirmpassword"
+                              type="password"
+                              placeholder="Re-enter new password"
+                              minLength={8}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-12 mt--10">
+                          <div className="rbt-form-group d-flex gap-3">
+                            <button
+                              className="rbt-btn btn-gradient"
+                              type="submit"
+                              disabled={passwordLoading}
+                            >
+                              {passwordLoading ? '처리 중...' : '비밀번호 설정'}
+                            </button>
+                            <button
+                              className="rbt-btn btn-border"
+                              type="button"
+                              onClick={() => setShowPasswordSetup(false)}
+                              disabled={passwordLoading}
+                            >
+                              취소
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  )}
                 </div>
-                <div className="col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="newpassword">New Password</label>
-                    <input
-                      id="newpassword"
-                      type="password"
-                      placeholder="New Password"
-                    />
+              ) : (
+                // 기존 비밀번호 변경 폼 (이메일 로그인 사용자 또는 비밀번호가 이미 설정된 경우)
+                <form
+                  className="rbt-profile-row rbt-default-form row row--15"
+                  onSubmit={handlePasswordChange}
+                >
+                  {userProfile?.auth_provider === 'both' && (
+                    <div className="col-12 mb-3">
+                      <div className="alert alert-success">
+                        <i className="feather-check-circle me-2"></i>
+                        Google 계정과 비밀번호 모두 사용 가능합니다
+                      </div>
+                    </div>
+                  )}
+                  <div className="col-12">
+                    <div className="rbt-form-group">
+                      <label htmlFor="currentpassword">
+                        Current Password
+                        <Link
+                          href="/auth/forgot-password"
+                          className="text-primary ms-2"
+                          style={{ fontSize: '14px' }}
+                        >
+                          Forgot password?
+                        </Link>
+                      </label>
+                      <input
+                        id="currentpassword"
+                        name="currentpassword"
+                        type="password"
+                        placeholder="Enter current password"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="retypenewpassword">
-                      Re-type New Password
-                    </label>
-                    <input
-                      id="retypenewpassword"
-                      type="password"
-                      placeholder="Re-type New Password"
-                    />
+                  <div className="col-12">
+                    <div className="rbt-form-group">
+                      <label htmlFor="newpassword">New Password</label>
+                      <input
+                        id="newpassword"
+                        name="newpassword"
+                        type="password"
+                        placeholder="Enter new password (min 8 characters)"
+                        minLength={8}
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="col-12 mt--10">
-                  <div className="rbt-form-group">
-                    <button className="rbt-btn btn-gradient" type="submit">
-                      Update Password
-                    </button>
+                  <div className="col-12">
+                    <div className="rbt-form-group">
+                      <label htmlFor="retypenewpassword">
+                        Confirm New Password
+                      </label>
+                      <input
+                        id="retypenewpassword"
+                        name="retypenewpassword"
+                        type="password"
+                        placeholder="Re-enter new password"
+                        minLength={8}
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-              </form>
+                  <div className="col-12 mt--10">
+                    <div className="rbt-form-group">
+                      <button
+                        className="rbt-btn btn-gradient"
+                        type="submit"
+                        disabled={passwordLoading}
+                      >
+                        {passwordLoading ? '처리 중...' : 'Update Password'}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
 
             <div
