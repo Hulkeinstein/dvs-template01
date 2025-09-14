@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "permissions": {
+    "deny": [
+      "Bash:rm -rf /",
+      "Bash:rm -rf /*",
+      "Bash:format",
+      "Write:.env*",
+      "Write:*.key",
+      "Write:*.pem",
+      "Delete:node_modules",
+      "Delete:.git"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-exec.js",
+            "timeout": 30,
+            "blockOnFailure": true
+          },
+          {
+            "type": "command",
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/git-safety.js",
+            "timeout": 20,
+            "blockOnFailure": true
+          },
+          {
+            "type": "command",
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/db-safety.js",
+            "timeout": 20,
+            "blockOnFailure": true
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|Delete",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/file-safety.js",
+            "timeout": 20,
+            "blockOnFailure": true
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit|Delete|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node $CLAUDE_PROJECT_DIR/.claude/backup/auto-backup.js",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "safety": {
+    "mode": "strict",
+    "maxFilesPerOperation": 5,
+    "maxDeletePerMinute": 10,
+    "maxDeletePerHour": 50,
+    "requireConfirmation": [
+      "rm -rf",
+      "git reset --hard",
+      "git clean",
+      "npm uninstall",
+      "DELETE FROM",
+      "UPDATE .* SET"
+    ],
+    "protectedPaths": [
+      ".git/**",
+      ".env*",
+      "**/*.key",
+      "**/*.pem",
+      "**/*.cert",
+      "**/node_modules/**",
+      ".claude/**"
+    ],
+    "packageLockMode": "warn",
+    "blockedPatterns": [":(){ :|:& };:", "> /dev/", "dd if=", "mkfs", "fdisk"]
+  }
+}

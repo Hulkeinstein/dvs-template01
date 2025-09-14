@@ -1002,6 +1002,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
                         type="button"
                         className="rbt-btn btn-gradient"
                         onClick={() => setShowPasswordSetup(true)}
+                        aria-label="비밀번호 추가 설정 열기"
                       >
                         <i className="feather-lock me-2"></i>
                         비밀번호 추가 설정 (선택사항)
