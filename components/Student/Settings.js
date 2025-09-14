@@ -34,6 +34,12 @@ const Setting = ({ userProfile }) => {
     phone: '',
     skill_occupation: '',
     bio: '',
+    facebook_url: '',
+    twitter_url: '',
+    linkedin_url: '',
+    website_url: '',
+    github_url: '',
+    instagram_url: '',
   });
 
   // Initialize form with user data
@@ -48,6 +54,12 @@ const Setting = ({ userProfile }) => {
         phone: userProfile.phone || '',
         skill_occupation: userProfile.skill_occupation || '',
         bio: userProfile.bio || '',
+        facebook_url: userProfile.facebook_url || '',
+        twitter_url: userProfile.twitter_url || '',
+        linkedin_url: userProfile.linkedin_url || '',
+        website_url: userProfile.website_url || '',
+        github_url: userProfile.github_url || '',
+        instagram_url: userProfile.instagram_url || '',
       });
       setPhoneVerified(userProfile.is_phone_verified || false);
     }
@@ -203,6 +215,50 @@ const Setting = ({ userProfile }) => {
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        // Update session if needed
+        if (session) {
+          await fetch('/api/auth/session?update');
+        }
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || 'Failed to update profile',
+        });
+      }
+    } catch (error) {
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Form submit handler for profile updates
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Import the update action
+      const { updateUserProfile } = await import(
+        '@/app/lib/actions/profileActions'
+      );
+
+      // Include phone verification status in the update
+      const profileData = {
+        ...formData,
+        is_phone_verified: phoneVerified,
+      };
+
+      const result = await updateUserProfile(profileData);
+
+      if (result.success) {
+        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        // Maintain phone verification status after update
+        setPhoneVerified(phoneVerified);
         // Update session if needed
         if (session) {
           await fetch('/api/auth/session?update');
@@ -732,14 +788,17 @@ const Setting = ({ userProfile }) => {
                       비밀번호를 설정하면 Google 계정 외에도 이메일과 비밀번호로
                       로그인할 수 있습니다.
                     </p>
-                    <button
-                      className="btn btn-primary mb-4"
-                      onClick={() => setShowPasswordSetup(!showPasswordSetup)}
-                      type="button"
-                    >
-                      <i className="feather-lock me-2"></i>
-                      비밀번호 추가 설정 (선택사항)
-                    </button>
+                    <div className="text-center">
+                      <button
+                        className="rbt-btn btn-gradient mb-4"
+                        onClick={() => setShowPasswordSetup(!showPasswordSetup)}
+                        type="button"
+                        aria-label="비밀번호 추가 설정 열기"
+                      >
+                        <i className="feather-lock me-2"></i>
+                        비밀번호 추가 설정 (선택사항)
+                      </button>
+                    </div>
                   </div>
 
                   {/* Password setup form */}
@@ -879,74 +938,108 @@ const Setting = ({ userProfile }) => {
               aria-labelledby="social-tab"
             >
               <form
-                action="#"
+                onSubmit={handleSubmit}
                 className="rbt-profile-row rbt-default-form row row--15"
               >
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="facebook">
+                    <label htmlFor="facebook_url">
                       <i className="feather-facebook"></i> Facebook
                     </label>
                     <input
-                      id="facebook"
+                      id="facebook_url"
+                      name="facebook_url"
                       type="text"
-                      placeholder="https://facebook.com/"
+                      value={formData.facebook_url}
+                      onChange={handleInputChange}
+                      placeholder="https://facebook.com/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="twitter">
-                      <i className="feather-twitter"></i> Twitter
+                    <label htmlFor="twitter_url">
+                      <i className="fab fa-x-twitter"></i> X
                     </label>
                     <input
-                      id="twitter"
+                      id="twitter_url"
+                      name="twitter_url"
                       type="text"
-                      placeholder="https://twitter.com/"
+                      value={formData.twitter_url}
+                      onChange={handleInputChange}
+                      placeholder="https://x.com/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="linkedin">
-                      <i className="feather-linkedin"></i> Linkedin
+                    <label htmlFor="instagram_url">
+                      <i className="feather-instagram"></i> Instagram
                     </label>
                     <input
-                      id="linkedin"
+                      id="instagram_url"
+                      name="instagram_url"
                       type="text"
-                      placeholder="https://linkedin.com/"
+                      value={formData.instagram_url}
+                      onChange={handleInputChange}
+                      placeholder="https://instagram.com/yourprofile"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="website">
+                    <label htmlFor="linkedin_url">
+                      <i className="feather-linkedin"></i> LinkedIn
+                    </label>
+                    <input
+                      id="linkedin_url"
+                      name="linkedin_url"
+                      type="text"
+                      value={formData.linkedin_url}
+                      onChange={handleInputChange}
+                      placeholder="https://linkedin.com/in/yourprofile"
+                    />
+                  </div>
+                </div>
+                <div className="col-12">
+                  <div className="rbt-form-group">
+                    <label htmlFor="website_url">
                       <i className="feather-globe"></i> Website
                     </label>
                     <input
-                      id="website"
+                      id="website_url"
+                      name="website_url"
                       type="text"
-                      placeholder="https://website.com/"
+                      value={formData.website_url}
+                      onChange={handleInputChange}
+                      placeholder="https://yourwebsite.com"
                     />
                   </div>
                 </div>
                 <div className="col-12">
                   <div className="rbt-form-group">
-                    <label htmlFor="github">
-                      <i className="feather-github"></i> Github
+                    <label htmlFor="github_url">
+                      <i className="feather-github"></i> GitHub
                     </label>
                     <input
-                      id="github"
+                      id="github_url"
+                      name="github_url"
                       type="text"
-                      placeholder="https://github.com/"
+                      value={formData.github_url}
+                      onChange={handleInputChange}
+                      placeholder="https://github.com/yourusername"
                     />
                   </div>
                 </div>
                 <div className="col-12 mt--10">
                   <div className="rbt-form-group">
-                    <Link className="rbt-btn btn-gradient" href="#">
-                      Update Profile
-                    </Link>
+                    <button
+                      className="rbt-btn btn-gradient"
+                      type="submit"
+                      disabled={loading}
+                    >
+                      {loading ? 'Updating...' : 'Update Social Links'}
+                    </button>
                   </div>
                 </div>
               </form>
