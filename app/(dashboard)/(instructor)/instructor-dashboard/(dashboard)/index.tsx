@@ -29,7 +29,7 @@ const InstructorDashboard: React.FC<InstructorDashboardProps> = ({ stats }) => {
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -39,7 +39,7 @@ const InstructorDashboard: React.FC<InstructorDashboardProps> = ({ stats }) => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={INSTRUCTOR_REALM_ROLES}>
+                  <RoleProtection allowedRoles={[...INSTRUCTOR_REALM_ROLES]}>
                     <InstructorDashboardHeader />
 
                     <div className="row g-5">
@@ -58,7 +58,12 @@ const InstructorDashboard: React.FC<InstructorDashboardProps> = ({ stats }) => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox={false}
+            bgColor="transparent"
+            newsletterBorder={false}
+            islamic={false}
+          />
         </Context>
       </Provider>
     </>

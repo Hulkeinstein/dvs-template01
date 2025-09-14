@@ -973,7 +973,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
             >
               {/* Password Guidance Component */}
               <PasswordGuidance
-                authProvider={userProfile?.auth_provider}
+                authProvider={userProfile?.auth_provider ?? undefined}
                 hasPasswordHash={!!userProfile?.password_hash}
               />
 

@@ -88,7 +88,7 @@ export async function getStudentDashboardStats(
       .eq('status', 'active');
 
     const totalProgress =
-      progressData?.length > 0
+      progressData && progressData.length > 0
         ? Math.round(
             progressData.reduce((acc, curr) => acc + (curr.progress || 0), 0) /
               progressData.length
@@ -155,10 +155,11 @@ export async function getEnrolledCourses(
     const enrichedCourses = await Promise.all(
       enrollments.map(async (enrollment) => {
         // Get instructor details
+        const courseData = enrollment.courses as any;
         const { data: instructor } = await supabase
           .from('user')
           .select('id, name, avatar_url')
-          .eq('id', enrollment.courses.instructor_id)
+          .eq('id', courseData?.instructor_id ?? '')
           .single();
 
         // Get total lessons count
@@ -178,15 +179,15 @@ export async function getEnrolledCourses(
         return {
           ...enrollment,
           course: {
-            ...enrollment.courses,
+            ...courseData,
             instructor: instructor || {
-              id: enrollment.courses.instructor_id,
+              id: courseData?.instructor_id ?? '',
               name: 'Unknown',
               avatar_url: null,
             },
-            total_lessons: totalLessons || 0,
+            total_lessons: totalLessons ?? 0,
           },
-          completed_lessons: completedLessons || 0,
+          completed_lessons: completedLessons ?? 0,
         };
       })
     );
@@ -232,15 +233,21 @@ export async function getBookmarkedCourses(
     }
 
     return (
-      bookmarks?.map((bookmark) => ({
-        id: bookmark.id,
-        course_id: bookmark.course_id,
-        bookmarked_at: bookmark.created_at,
-        course: {
-          ...bookmark.courses,
-          instructor: bookmark.courses.user,
-        },
-      })) || []
+      bookmarks?.map((bookmark) => {
+        const courseData = bookmark.courses as any;
+        return {
+          id: bookmark.id,
+          course_id: bookmark.course_id,
+          bookmarked_at: bookmark.created_at,
+          course: {
+            ...courseData,
+            instructor: courseData?.user ?? {
+              id: '',
+              name: 'Unknown',
+            },
+          },
+        };
+      }) || []
     );
   } catch (error) {
     console.error('Error in getBookmarkedCourses:', error);
@@ -300,9 +307,10 @@ export async function getNextLessonRecommendation(userId: string) {
     );
 
     if (nextLesson) {
+      const courseData = recentEnrollment.courses as any;
       return {
         lesson: nextLesson,
-        course: recentEnrollment.courses,
+        course: courseData,
       };
     }
 

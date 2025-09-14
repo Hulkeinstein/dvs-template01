@@ -10,6 +10,7 @@ interface UpdateProfileData {
   first_name?: string | null;
   last_name?: string | null;
   phone?: string | null;
+  is_phone_verified?: boolean;
   skill_occupation?: string | null;
   bio?: string | null;
   facebook_url?: string | null;

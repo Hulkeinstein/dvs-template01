@@ -24,7 +24,7 @@ const StudentDashboard = () => {
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -58,7 +58,12 @@ const StudentDashboard = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox={false}
+            bgColor="transparent"
+            newsletterBorder={false}
+            islamic={false}
+          />
         </Context>
       </Provider>
     </>

@@ -84,7 +84,22 @@ export async function getUserBookmarks(userId: string) {
 
     if (error) throw error;
 
-    return data || [];
+    // Transform the data to ensure user is an object
+    const transformedData =
+      data?.map((bookmark) => {
+        const courseData = bookmark.courses as any;
+        return {
+          ...bookmark,
+          courses: {
+            ...courseData,
+            user: Array.isArray(courseData?.user)
+              ? courseData.user[0]
+              : courseData?.user,
+          },
+        };
+      }) || [];
+
+    return transformedData;
   } catch (error) {
     console.error('Error fetching bookmarks:', error);
     return [];
