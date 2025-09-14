@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
+import PasswordGuidance from '@/components/shared/PasswordGuidance';
 import {
   uploadProfilePhoto,
   uploadCoverPhoto,
@@ -970,34 +971,29 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
               role="tabpanel"
               aria-labelledby="password-tab"
             >
+              {/* Password Guidance Component */}
+              <PasswordGuidance
+                authProvider={userProfile?.auth_provider}
+                hasPasswordHash={!!userProfile?.password_hash}
+              />
+
               {userProfile?.auth_provider === 'google' &&
               !userProfile?.password_hash ? (
                 // Google OAuth 사용자이며 비밀번호가 설정되지 않은 경우
                 <div className="rbt-profile-row">
                   <div className="col-12">
-                    <div className="alert alert-info d-flex align-items-start">
-                      <i className="feather-info me-3 mt-1"></i>
-                      <div>
-                        <h5 className="mb-2">Google 계정으로 로그인 중</h5>
-                        <p className="mb-3">
-                          현재 Google 계정으로 안전하게 로그인하고 있습니다.
-                          비밀번호를 추가로 설정하면 더 많은 방법으로 로그인할
-                          수 있습니다.
-                        </p>
-                        <div className="small text-muted mb-3">
-                          <div className="mb-1">
-                            <i className="feather-check-circle me-2 text-success"></i>
-                            모바일 앱이나 디바이스에서 편리하게 로그인
-                          </div>
-                          <div className="mb-1">
-                            <i className="feather-check-circle me-2 text-success"></i>
-                            Google 서비스 장애 시 백업 로그인 방법
-                          </div>
-                          <div className="mb-1">
-                            <i className="feather-check-circle me-2 text-success"></i>
-                            회사나 공용 PC에서 OAuth가 차단된 경우 대안
-                          </div>
-                        </div>
+                    <div className="small text-muted mb-3">
+                      <div className="mb-1">
+                        <i className="feather-check-circle me-2 text-success"></i>
+                        모바일 앱이나 디바이스에서 편리하게 로그인
+                      </div>
+                      <div className="mb-1">
+                        <i className="feather-check-circle me-2 text-success"></i>
+                        Google 서비스 장애 시 백업 로그인 방법
+                      </div>
+                      <div className="mb-1">
+                        <i className="feather-check-circle me-2 text-success"></i>
+                        회사나 공용 PC에서 OAuth가 차단된 경우 대안
                       </div>
                     </div>
 
@@ -1021,7 +1017,12 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
                         onSubmit={handlePasswordSetup}
                       >
                         <div className="col-12">
-                          <h5 className="mb-3">새 비밀번호 설정</h5>
+                          <h5 className="mb-3">
+                            새 비밀번호 설정
+                            <small className="text-muted ms-2">
+                              (최초 비밀번호 설정시 현재 비밀번호 입력이 불필요)
+                            </small>
+                          </h5>
                         </div>
                         <div className="col-12">
                           <div className="rbt-form-group">
@@ -1083,14 +1084,6 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
                   className="rbt-profile-row rbt-default-form row row--15"
                   onSubmit={handlePasswordChange}
                 >
-                  {userProfile?.auth_provider === 'both' && (
-                    <div className="col-12 mb-3">
-                      <div className="alert alert-success">
-                        <i className="feather-check-circle me-2"></i>
-                        Google 계정과 비밀번호 모두 사용 가능합니다
-                      </div>
-                    </div>
-                  )}
                   <div className="col-12">
                     <div className="rbt-form-group">
                       <label htmlFor="currentpassword">

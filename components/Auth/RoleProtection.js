@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { getDashboardUrl } from '@/app/lib/utils/roleRoutes';
 
 const RoleProtection = ({ allowedRoles, children }) => {
   const { data: session, status } = useSession();
@@ -18,9 +19,9 @@ const RoleProtection = ({ allowedRoles, children }) => {
   // 이 훅은 렌더링이 완료된 후에만 실행되므로 안전합니다.
   useEffect(() => {
     // 1. 컴포넌트가 마운트되지 않았거나, 세션 정보를 아직 로딩 중이면 아무것도 하지 않습니다.
-    if (!isMounted || status === 'loading') {
-      return;
-    }
+    if (!isMounted) return;
+    if (status === 'loading') return;
+    if (status !== 'authenticated') return;
 
     // 2. 로그인하지 않은 사용자라면 로그인 페이지로 보냅니다.
     if (!session) {
@@ -30,9 +31,11 @@ const RoleProtection = ({ allowedRoles, children }) => {
 
     // 3. 로그인이 완료되었다면, 역할을 확인하고 리디렉션합니다.
     const userRole = session.user?.role;
+    if (!userRole) return; // role 미확정시 대기
+
     if (!allowedRoles.includes(userRole)) {
-      // 통합 대시보드로 리다이렉트
-      router.push('/dashboard');
+      // 역할별 대시보드로 리다이렉트
+      router.push(getDashboardUrl(userRole));
     }
   }, [isMounted, status, session, router, allowedRoles]);
 

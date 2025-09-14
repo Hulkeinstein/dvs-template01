@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState, ReactNode } from 'react';
 import { UserRole } from '@/types/auth';
 import { hasAnyRole } from '@/app/lib/utils/permissions';
+import { getDashboardUrl } from '@/app/lib/utils/roleRoutes';
 
 interface RoleProtectionProps {
   allowedRoles: UserRole[];
@@ -26,9 +27,9 @@ const RoleProtection = ({
   }, []);
 
   useEffect(() => {
-    if (!isMounted || status === 'loading') {
-      return;
-    }
+    if (!isMounted) return;
+    if (status === 'loading') return;
+    if (status !== 'authenticated') return;
 
     if (!session) {
       router.push('/login');
@@ -36,9 +37,11 @@ const RoleProtection = ({
     }
 
     // 권한 계층 구조를 적용한 체크
-    const userRole = session.user?.role as UserRole;
-    if (!userRole || !hasAnyRole(userRole, allowedRoles)) {
-      router.push('/dashboard');
+    const userRole = session.user?.role as UserRole | undefined;
+    if (!userRole) return; // role 미확정시 대기
+
+    if (!hasAnyRole(userRole, allowedRoles)) {
+      router.push(getDashboardUrl(userRole));
     }
   }, [isMounted, status, session, router, allowedRoles]);
 

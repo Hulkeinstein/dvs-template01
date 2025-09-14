@@ -14,7 +14,7 @@ import Context from '@/context/Context';
 import Store from '@/redux/store';
 import RoleProtection from '@/components/Auth/RoleProtection';
 import { InstructorStats } from '@/types/dashboard';
-import { UserRole } from '@/types/auth';
+import { INSTRUCTOR_REALM_ROLES } from '@/app/lib/auth/realmRoles';
 
 // Props 타입 정의
 interface InstructorDashboardProps {
@@ -24,9 +24,6 @@ interface InstructorDashboardProps {
 // --- 핵심 수정 사항 ---
 // 이 컴포넌트는 이제 부모(page.tsx)로부터 stats prop을 전달받습니다.
 const InstructorDashboard: React.FC<InstructorDashboardProps> = ({ stats }) => {
-  // allowedRoles를 UserRole 타입으로 명시
-  const allowedRoles: UserRole[] = ['instructor', 'admin'];
-
   return (
     <>
       <Provider store={Store}>
@@ -42,7 +39,7 @@ const InstructorDashboard: React.FC<InstructorDashboardProps> = ({ stats }) => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={allowedRoles}>
+                  <RoleProtection allowedRoles={INSTRUCTOR_REALM_ROLES}>
                     <InstructorDashboardHeader />
 
                     <div className="row g-5">

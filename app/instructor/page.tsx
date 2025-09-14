@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { redirect } from 'next/navigation';
+import { getDashboardUrl } from '@/app/lib/utils/roleRoutes';
 import { Metadata } from 'next';
 import InstructorDashboard from '@/app/(dashboard)/(instructor)/instructor-dashboard/(dashboard)/index';
 import { getInstructorDashboardData } from '@/app/lib/actions/getInstructorDashboardData';
@@ -32,7 +33,7 @@ const InstructorPage = async (): Promise<React.ReactElement> => {
 
   // Admin 역할만 접근 가능
   if (userRole !== 'admin') {
-    redirect('/dashboard');
+    redirect(getDashboardUrl(userRole));
   }
 
   // 교사용 대시보드 데이터 조회

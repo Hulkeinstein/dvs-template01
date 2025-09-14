@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import React from 'react';
 import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
+import EditProfileLink from '@/components/shared/EditProfileLink';
 
 // Database User type - matches Supabase schema exactly
 interface UserProfile {
@@ -146,20 +146,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
         <div className="content">
           <div className="section-title d-flex justify-content-between align-items-center">
             <h4 className="rbt-title-style-3 mb-0">My Profile</h4>
-            <Link
-              href="/instructor-settings"
-              className="rbt-btn btn-sm btn-gradient hover-icon-reverse"
-            >
-              <span className="icon-reverse-wrapper">
-                <span className="btn-text">Edit Profile</span>
-                <span className="btn-icon">
-                  <i className="feather-edit"></i>
-                </span>
-                <span className="btn-icon">
-                  <i className="feather-edit"></i>
-                </span>
-              </span>
-            </Link>
+            <EditProfileLink role={userProfile?.role} />
           </div>
 
           {/* Registration Date */}

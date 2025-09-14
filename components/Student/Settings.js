@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import PhoneVerificationModal from '@/components/Common/PhoneVerificationModal';
 import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
+import PasswordGuidance from '@/components/shared/PasswordGuidance';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
@@ -18,6 +18,14 @@ const Setting = ({ userProfile }) => {
   const [otpValue, setOtpValue] = useState('');
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
+
+  // Password form states
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState({
+    type: '',
+    text: '',
+  });
+  const [showPasswordSetup, setShowPasswordSetup] = useState(false);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -214,6 +222,131 @@ const Setting = ({ userProfile }) => {
       setLoading(false);
     }
   };
+
+  // Password setup handler for Google OAuth users
+  const handlePasswordSetup = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setPasswordLoading(true);
+      setPasswordMessage({ type: '', text: '' });
+
+      const formData = new FormData(e.currentTarget);
+      const newPassword = formData.get('newpassword');
+      const confirmPassword = formData.get('confirmpassword');
+
+      // Validation
+      if (newPassword !== confirmPassword) {
+        setPasswordMessage({ type: 'error', text: 'Passwords do not match' });
+        setPasswordLoading(false);
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        setPasswordMessage({
+          type: 'error',
+          text: 'Password must be at least 8 characters',
+        });
+        setPasswordLoading(false);
+        return;
+      }
+
+      try {
+        const { setPassword } = await import(
+          '@/app/lib/actions/passwordActions'
+        );
+        const result = await setPassword({
+          userId: session?.user?.id,
+          newPassword,
+        });
+
+        if (result.success) {
+          setPasswordMessage({
+            type: 'success',
+            text: 'Password set successfully!',
+          });
+          setShowPasswordSetup(false);
+          // Refresh the page to update auth_provider status
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          setPasswordMessage({
+            type: 'error',
+            text: result.message || 'Failed to set password',
+          });
+        }
+      } catch (error) {
+        setPasswordMessage({
+          type: 'error',
+          text: 'An error occurred. Please try again.',
+        });
+      } finally {
+        setPasswordLoading(false);
+      }
+    },
+    [session]
+  );
+
+  // Password change handler for users with existing passwords
+  const handlePasswordChange = useCallback(
+    async (e) => {
+      e.preventDefault();
+      setPasswordLoading(true);
+      setPasswordMessage({ type: '', text: '' });
+
+      const formData = new FormData(e.currentTarget);
+      const currentPassword = formData.get('currentpassword');
+      const newPassword = formData.get('newpassword');
+      const confirmPassword = formData.get('confirmpassword');
+
+      // Validation
+      if (newPassword !== confirmPassword) {
+        setPasswordMessage({ type: 'error', text: 'Passwords do not match' });
+        setPasswordLoading(false);
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        setPasswordMessage({
+          type: 'error',
+          text: 'Password must be at least 8 characters',
+        });
+        setPasswordLoading(false);
+        return;
+      }
+
+      try {
+        const { changePassword } = await import(
+          '@/app/lib/actions/passwordActions'
+        );
+        const result = await changePassword({
+          userId: session?.user?.id,
+          currentPassword,
+          newPassword,
+        });
+
+        if (result.success) {
+          setPasswordMessage({
+            type: 'success',
+            text: 'Password changed successfully!',
+          });
+          // Clear form
+          e.target.reset();
+        } else {
+          setPasswordMessage({
+            type: 'error',
+            text: result.message || 'Failed to change password',
+          });
+        }
+      } catch (error) {
+        setPasswordMessage({
+          type: 'error',
+          text: 'An error occurred. Please try again.',
+        });
+      } finally {
+        setPasswordLoading(false);
+      }
+    },
+    [session]
+  );
 
   return (
     <>
@@ -574,50 +707,169 @@ const Setting = ({ userProfile }) => {
               role="tabpanel"
               aria-labelledby="password-tab"
             >
-              <form
-                action="#"
-                className="rbt-profile-row rbt-default-form row row--15"
-              >
-                <div className="col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="currentpassword">Current Password</label>
-                    <input
-                      id="currentpassword"
-                      type="password"
-                      placeholder="Current Password"
-                    />
-                  </div>
+              {/* Password Guidance Component */}
+              <PasswordGuidance
+                authProvider={userProfile?.auth_provider}
+                hasPasswordHash={!!userProfile?.password_hash}
+              />
+
+              {/* Password Messages */}
+              {passwordMessage.text && (
+                <div
+                  className={`alert alert-${passwordMessage.type === 'error' ? 'danger' : passwordMessage.type} mb-3`}
+                >
+                  {passwordMessage.text}
                 </div>
-                <div className="col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="newpassword">New Password</label>
-                    <input
-                      id="newpassword"
-                      type="password"
-                      placeholder="New Password"
-                    />
+              )}
+
+              {/* Conditional rendering based on auth_provider and password_hash */}
+              {userProfile?.auth_provider === 'google' &&
+              !userProfile?.password_hash ? (
+                // Google OAuth user without password
+                <div className="rbt-profile-row">
+                  <div className="col-12">
+                    <p className="mb-3">
+                      비밀번호를 설정하면 Google 계정 외에도 이메일과 비밀번호로
+                      로그인할 수 있습니다.
+                    </p>
+                    <button
+                      className="btn btn-primary mb-4"
+                      onClick={() => setShowPasswordSetup(!showPasswordSetup)}
+                      type="button"
+                    >
+                      <i className="feather-lock me-2"></i>
+                      비밀번호 추가 설정 (선택사항)
+                    </button>
                   </div>
+
+                  {/* Password setup form */}
+                  {showPasswordSetup && (
+                    <div id="password-setup-section">
+                      <form
+                        className="rbt-profile-row rbt-default-form row row--15 mt-4"
+                        onSubmit={handlePasswordSetup}
+                      >
+                        <div className="col-12">
+                          <h5 className="mb-3">
+                            새 비밀번호 설정
+                            <small className="text-muted ms-2">
+                              (최초 비밀번호 설정시 현재 비밀번호 입력이 불필요)
+                            </small>
+                          </h5>
+                        </div>
+                        <div className="col-12">
+                          <div className="rbt-form-group">
+                            <label htmlFor="newpassword">New Password</label>
+                            <input
+                              id="newpassword"
+                              name="newpassword"
+                              type="password"
+                              placeholder="Enter new password (min 8 characters)"
+                              required
+                              minLength="8"
+                            />
+                          </div>
+                        </div>
+                        <div className="col-12">
+                          <div className="rbt-form-group">
+                            <label htmlFor="confirmpassword">
+                              Confirm Password
+                            </label>
+                            <input
+                              id="confirmpassword"
+                              name="confirmpassword"
+                              type="password"
+                              placeholder="Re-enter new password"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-12 mt--10">
+                          <div className="rbt-form-group">
+                            <button
+                              className="rbt-btn btn-gradient"
+                              type="submit"
+                              disabled={passwordLoading}
+                            >
+                              {passwordLoading
+                                ? 'Setting Password...'
+                                : 'Set Password'}
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  )}
                 </div>
-                <div className="col-12">
-                  <div className="rbt-form-group">
-                    <label htmlFor="retypenewpassword">
-                      Re-type New Password
-                    </label>
-                    <input
-                      id="retypenewpassword"
-                      type="password"
-                      placeholder="Re-type New Password"
-                    />
+              ) : (
+                // Users with password already set (email or both)
+                <form
+                  className="rbt-profile-row rbt-default-form row row--15"
+                  onSubmit={handlePasswordChange}
+                >
+                  <div className="col-12">
+                    <div className="rbt-form-group">
+                      <label htmlFor="currentpassword">
+                        Current Password
+                        <Link
+                          href="/auth/forgot-password"
+                          className="text-primary ms-2"
+                          style={{ fontSize: '14px' }}
+                        >
+                          Forgot password?
+                        </Link>
+                      </label>
+                      <input
+                        id="currentpassword"
+                        name="currentpassword"
+                        type="password"
+                        placeholder="Enter current password"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="col-12 mt--10">
-                  <div className="rbt-form-group">
-                    <Link className="rbt-btn btn-gradient" href="#">
-                      Update Password
-                    </Link>
+                  <div className="col-12">
+                    <div className="rbt-form-group">
+                      <label htmlFor="newpassword">New Password</label>
+                      <input
+                        id="newpassword"
+                        name="newpassword"
+                        type="password"
+                        placeholder="Enter new password (min 8 characters)"
+                        required
+                        minLength="8"
+                      />
+                    </div>
                   </div>
-                </div>
-              </form>
+                  <div className="col-12">
+                    <div className="rbt-form-group">
+                      <label htmlFor="confirmpassword">
+                        Confirm New Password
+                      </label>
+                      <input
+                        id="confirmpassword"
+                        name="confirmpassword"
+                        type="password"
+                        placeholder="Re-enter new password"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="col-12 mt--10">
+                    <div className="rbt-form-group">
+                      <button
+                        className="rbt-btn btn-gradient"
+                        type="submit"
+                        disabled={passwordLoading}
+                      >
+                        {passwordLoading
+                          ? 'Updating Password...'
+                          : 'Update Password'}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
 
             <div
@@ -702,20 +954,6 @@ const Setting = ({ userProfile }) => {
           </div>
         </div>
       </div>
-
-      {/* Phone Verification Modal */}
-      <PhoneVerificationModal
-        isOpen={showPhoneVerificationModal}
-        onClose={() => setShowPhoneVerificationModal(false)}
-        onSuccess={() => {
-          setPhoneVerified(true);
-          setMessage({
-            type: 'success',
-            text: 'Phone number verified successfully!',
-          });
-        }}
-        userProfile={{ phone: formData.phone }}
-      />
     </>
   );
 };

@@ -1,0 +1,87 @@
+{
+  "sections": [
+    {
+      "title": "Main",
+      "items": [
+        {
+          "key": "dashboard",
+          "label": "Dashboard",
+          "icon": "feather-home"
+        },
+        {
+          "key": "profile",
+          "label": "My Profile",
+          "icon": "feather-user"
+        },
+        {
+          "key": "enrolled-courses",
+          "label": "Enrolled Courses",
+          "icon": "feather-book-open"
+        },
+        {
+          "key": "wishlist",
+          "label": "Wishlist",
+          "icon": "feather-bookmark"
+        },
+        {
+          "key": "reviews",
+          "label": "Reviews",
+          "icon": "feather-star"
+        },
+        {
+          "key": "quiz-attempts",
+          "label": "My Quiz Attempts",
+          "icon": "feather-help-circle"
+        },
+        {
+          "key": "order-history",
+          "label": "Order History",
+          "icon": "feather-shopping-bag"
+        }
+      ]
+    },
+    {
+      "title": "Instructor",
+      "requiresInstructorAccess": true,
+      "items": [
+        {
+          "key": "my-courses",
+          "label": "My Courses",
+          "icon": "feather-monitor"
+        },
+        {
+          "key": "students",
+          "label": "Students",
+          "icon": "feather-users"
+        },
+        {
+          "key": "announcements",
+          "label": "Announcements",
+          "icon": "feather-volume-2"
+        },
+        {
+          "key": "assignments",
+          "label": "Assignments",
+          "icon": "feather-list"
+        }
+      ]
+    },
+    {
+      "title": "Account",
+      "items": [
+        {
+          "key": "settings",
+          "label": "Settings",
+          "icon": "feather-settings"
+        },
+        {
+          "key": "logout",
+          "label": "Logout",
+          "icon": "feather-log-out",
+          "href": "/",
+          "isStatic": true
+        }
+      ]
+    }
+  ]
+}
