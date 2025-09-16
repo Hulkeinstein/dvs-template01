@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { redirect } from 'next/navigation';
+import { getDashboardUrl } from '@/app/lib/utils/roleRoutes';
 import AdminRedirect from '@/components/Admin/AdminRedirect';
 
 // 동적 렌더링 강제
@@ -26,7 +27,7 @@ const AdminPage = async () => {
 
   // Admin 역할이 아닌 경우 접근 거부
   if (userRole !== 'admin') {
-    redirect('/dashboard');
+    redirect(getDashboardUrl(userRole));
   }
 
   // Admin 앱(포트 3002)으로 리디렉트

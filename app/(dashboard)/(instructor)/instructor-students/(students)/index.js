@@ -12,6 +12,7 @@ import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
 import RoleProtection from '@/components/Auth/RoleProtection';
+import { INSTRUCTOR_REALM_ROLES } from '@/app/lib/auth/realmRoles';
 
 const StudentManagementPage = () => {
   return (
@@ -29,7 +30,7 @@ const StudentManagementPage = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <RoleProtection allowedRoles={['instructor']}>
+                  <RoleProtection allowedRoles={INSTRUCTOR_REALM_ROLES}>
                     <InstructorDashboardHeader />
 
                     <div className="row g-5">

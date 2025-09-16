@@ -2,6 +2,10 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { getUserProfile } from '@/app/lib/actions/getUserProfile';
 import { redirect } from 'next/navigation';
+import {
+  hasInstructorAccess,
+  getDashboardUrl,
+} from '@/app/lib/utils/roleRoutes';
 import BackToTop from '@/app/backToTop';
 import SettingPage from './(settings)';
 
@@ -19,9 +23,11 @@ const SettingLayout = async () => {
     redirect('/login');
   }
 
+  const userRole = session.user?.role || 'student';
+
   // Admin과 instructor만 접근 가능
-  if (session.user?.role !== 'instructor' && session.user?.role !== 'admin') {
-    redirect('/student-settings');
+  if (!hasInstructorAccess(userRole)) {
+    redirect(getDashboardUrl(userRole));
   }
 
   const userId = session?.user?.id;

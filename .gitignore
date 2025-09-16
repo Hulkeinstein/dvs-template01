@@ -23,8 +23,17 @@ yarn-debug.log*
 yarn-error.log*
 
 # Claude & Cursor
-.claude/
+.claude/logs/*.log
+.claude/backup/snapshots/*
+.claude/emergency/snapshots/*
+.claude/emergency/backup/*
+.claude/EMERGENCY_LOCK
+.claude/emergency/*.backup.json
 !.claude/agents/
+!.claude/hooks/
+!.claude/settings.json
+!.claude/backup/auto-backup.js
+!.claude/emergency/stop.js
 cursor.config.json
 
 # MCP (Model Context Protocol) configuration

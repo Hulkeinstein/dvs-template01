@@ -133,6 +133,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                 numberClass="color-primary"
                 icon="feather-book-open"
                 title="Enrolled Courses"
+                subtitle=""
                 value={stats.enrolledCourses}
               />
             </div>
@@ -144,6 +145,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                 numberClass="color-secondary"
                 icon="feather-monitor"
                 title="Active Courses"
+                subtitle=""
                 value={stats.activeCourses}
               />
             </div>
@@ -155,6 +157,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                 numberClass="color-violet"
                 icon="feather-award"
                 title="Completed Courses"
+                subtitle=""
                 value={stats.completedCourses}
               />
             </div>

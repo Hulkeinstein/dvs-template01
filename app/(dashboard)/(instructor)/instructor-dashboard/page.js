@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import InstructorDashboard from './(dashboard)';
 import { getInstructorDashboardData } from '@/app/lib/actions/getInstructorDashboardData';
 import { getUserProfile } from '@/app/lib/actions/getUserProfile';
+import { getDashboardUrl } from '@/app/lib/utils/roleRoutes';
 import BackToTop from '@/app/backToTop';
 
 // 메타데이터 설정
@@ -26,7 +27,7 @@ const InstructorDashboardPage = async () => {
 
   // Admin 또는 Instructor 역할만 접근 가능 (Admin의 듀얼 역할 지원)
   if (userRole !== 'admin' && userRole !== 'instructor') {
-    redirect('/dashboard');
+    redirect(getDashboardUrl(userRole));
   }
 
   // Fetch user profile for display name

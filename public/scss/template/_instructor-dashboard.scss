@@ -107,6 +107,46 @@
     }
 }
 
+/* ----------------------------
+   Profile: Section title + Edit button alignment
+   (Student & Instructor 공통)
+-----------------------------*/
+.rbt-dashboard-content {
+  .section-title {
+    display: flex;
+    align-items: center;     // ⬅️ 상하(수직) 중앙
+    min-height: 64px;        // 터치 타겟/비주얼 안정
+
+    .rbt-title-style-3 {
+      /* 전역 스타일은 유지하되, 이 컨텍스트에서만 하단 여백/보더 제거 */
+      margin-block-end: 0;
+      padding-block-end: 0;  // 기존 padding-bottom:20px 무효화
+      border-bottom: 0;
+      flex: 1;               // 타이틀이 남은 공간 차지
+    }
+
+    .rbt-btn.btn-sm,
+    .rbt-btn.btn-gradient {
+      margin-inline-start: auto;  // 오른쪽 정렬 (RTL 안전)
+      flex-shrink: 0;            // 버튼 크기 유지
+    }
+  }
+}
+
+/* 극소폭 화면에서 세로 스택 (선택) */
+@media (max-width: 480px) {
+  .rbt-dashboard-content .section-title {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .5rem;
+
+    .rbt-btn {
+      margin-inline-start: 0;
+      align-self: flex-end;
+    }
+  }
+}
+
 /*----------------------------
     Professional Table Header Alignment
     - 현업 표준에 맞는 데이터 타입별 정렬
@@ -114,16 +154,145 @@
 ------------------------------*/
 .rbt-table.table-header-align {
     thead th {
-        &.text-start { 
-            text-align: left; 
+        &.text-start {
+            text-align: left;
         }
-        
-        &.text-end { 
-            text-align: right; 
+
+        &.text-end {
+            text-align: right;
         }
-        
-        &.text-center { 
-            text-align: center; 
+
+        &.text-center {
+            text-align: center;
+        }
+    }
+}
+
+/*----------------------------
+    Profile Row Enhancements
+    - 프로필 페이지 스타일 개선
+    - 호버 효과 및 교차 배경색
+------------------------------*/
+.rbt-dashboard-content {
+    .rbt-profile-row {
+        padding: 0 25px;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 0 -25px;
+
+        // 교차 배경색 (짝수 행)
+        &:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        // 호버 효과
+        &:hover {
+            background-color: #f1f3f5;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        // 아이콘 원형 배경 스타일
+        .icon-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            margin-right: 12px;
+            flex-shrink: 0;
+
+            i {
+                color: #fff;
+                font-size: 14px;
+            }
+        }
+
+        // 라벨과 값 스타일 통일
+        .rbt-profile-content {
+            display: flex;
+            align-items: center;
+            font-size: 15px !important;
+            line-height: 1.6;
+
+            &.b2 {
+                font-size: 15px !important;
+                color: var(--color-body);
+            }
+        }
+
+        // 배지 스타일
+        .badge {
+            font-weight: 500;
+            padding: 5px 14px;
+            font-size: 13px;
+            border-radius: 15px;
+
+            &.bg-light {
+                background-color: #e9ecef !important;
+                color: #6c757d;
+            }
+
+            &.bg-primary {
+                background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)) !important;
+                color: #fff;
+            }
+        }
+    }
+}
+
+// 소셜 링크 스타일
+.social-icon-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .rbt-btn-link {
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--color-body);
+        background-color: #fff;
+
+        &:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(var(--color-primary-rgb), 0.2);
+
+            i {
+                color: var(--color-primary);
+            }
+        }
+
+        i {
+            font-size: 16px;
+            transition: color 0.3s ease;
+            color: var(--color-body);
+            vertical-align: middle;
+            line-height: 1;
+
+            // Font Awesome 아이콘 정렬
+            &.fab {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        span {
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 6px;
+            vertical-align: middle;
         }
     }
 }

@@ -1,6 +1,6 @@
 // Admin Course Management Types
 
-export type CourseStatus = 'draft' | 'published' | 'archived';
+export type CourseStatus = 'draft' | 'published' | 'archived' | 'pending';
 export type CourseBadge = 'featured' | 'hot' | 'new' | 'bestseller';
 
 export interface InstructorInfo {

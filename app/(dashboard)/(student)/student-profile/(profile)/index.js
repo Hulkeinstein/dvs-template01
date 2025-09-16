@@ -5,7 +5,7 @@ import FooterOne from '@/components/Footer/Footer-One';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
 import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
-import Profile from '@/components/Student/Profile';
+import Profile from '@/components/Student/Profile.tsx';
 import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
 import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
 import Context from '@/context/Context';

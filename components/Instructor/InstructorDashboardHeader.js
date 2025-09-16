@@ -10,10 +10,15 @@ const InstructorDashboardHeader = () => {
           <div className="rbt-tutor-information-left">
             <div className="thumbnail rbt-avatars size-lg">
               <Image
-                width={300}
-                height={300}
+                width={120}
+                height={120}
                 src="/images/team/avatar.jpg"
                 alt="Instructor"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }}
               />
             </div>
             <div className="tutor-content">

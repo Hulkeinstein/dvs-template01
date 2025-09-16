@@ -2,7 +2,7 @@ import { UserRole } from '@/types/auth';
 
 // 권한 매트릭스: 각 역할이 접근할 수 있는 리소스 정의
 const PERMISSIONS = {
-  admin: ['*'], // 모든 권한
+  admin: ['*' as const], // 모든 권한
   instructor: [
     'instructor-dashboard',
     'courses:manage',
@@ -10,14 +10,14 @@ const PERMISSIONS = {
     'quizzes:manage',
     'assignments:manage',
     'announcements:manage',
-  ],
+  ] as const,
   student: [
     'student-dashboard',
     'courses:enroll',
     'courses:view',
     'quizzes:take',
     'assignments:submit',
-  ],
+  ] as const,
 } as const;
 
 // 역할 계층 구조: 상위 역할은 하위 역할의 모든 권한을 포함
@@ -49,14 +49,14 @@ export function roleIncludes(
 export function canAccess(resource: string, userRole?: UserRole): boolean {
   if (!userRole) return false;
 
-  const permissions = PERMISSIONS[userRole];
+  const permissions = PERMISSIONS[userRole] as readonly string[];
   if (!permissions) return false;
 
   // admin은 모든 리소스 접근 가능
   if (permissions.includes('*')) return true;
 
   // 특정 권한 체크
-  return permissions.includes(resource as any);
+  return permissions.includes(resource);
 }
 
 /**
