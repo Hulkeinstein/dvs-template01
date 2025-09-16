@@ -145,7 +145,8 @@
       "Bash(NODE_ENV=development bash scripts/deployment/deploy-checklist.sh)",
       "Bash(export NODE_ENV=development)",
       "Bash(vercel:*)",
-      "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\app\\lib\\actions\")"
+      "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\app\\lib\\actions\")",
+      "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\components\\Student\")"
     ],
     "deny": []
   },

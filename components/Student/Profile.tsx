@@ -19,6 +19,19 @@ interface UserProfile {
   last_name?: string | null;
   username?: string | null;
   photo_url?: string | null;
+  avatar_url?: string | null;
+  facebook_url?: string | null;
+  twitter_url?: string | null;
+  instagram_url?: string | null;
+  linkedin_url?: string | null;
+  website_url?: string | null;
+  github_url?: string | null;
+}
+
+interface SocialLink {
+  name: string;
+  url: string | null | undefined;
+  icon: string;
 }
 
 const Profile: React.FC = () => {
@@ -96,6 +109,34 @@ const Profile: React.FC = () => {
     };
   };
 
+  // Prepare social links data
+  const getSocialLinks = (): SocialLink[] => {
+    if (!userProfile) return [];
+
+    const links: SocialLink[] = [
+      {
+        name: 'Facebook',
+        url: userProfile.facebook_url,
+        icon: 'feather-facebook',
+      },
+      { name: 'X', url: userProfile.twitter_url, icon: 'fab fa-x-twitter' },
+      {
+        name: 'Instagram',
+        url: userProfile.instagram_url,
+        icon: 'feather-instagram',
+      },
+      {
+        name: 'LinkedIn',
+        url: userProfile.linkedin_url,
+        icon: 'feather-linkedin',
+      },
+      { name: 'Website', url: userProfile.website_url, icon: 'feather-globe' },
+      { name: 'GitHub', url: userProfile.github_url, icon: 'feather-github' },
+    ];
+
+    return links.filter((link) => link.url);
+  };
+
   if (loading) {
     return (
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
@@ -123,6 +164,7 @@ const Profile: React.FC = () => {
   };
 
   const { firstName, lastName } = getDisplayName();
+  const socialLinks = getSocialLinks();
 
   return (
     <>
@@ -143,7 +185,12 @@ const Profile: React.FC = () => {
           {/* Registration Date */}
           <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Registration Date</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-calendar"></i>
+                </span>
+                Registration Date
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
               <div className="rbt-profile-content b2">
@@ -153,41 +200,96 @@ const Profile: React.FC = () => {
           </div>
 
           {/* First Name */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">First Name</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-user"></i>
+                </span>
+                First Name
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
-              <div className="rbt-profile-content b2">{firstName}</div>
+              <div className="rbt-profile-content b2">
+                {firstName === 'N/A' ? (
+                  <span className="badge bg-light">Not set</span>
+                ) : (
+                  firstName
+                )}
+              </div>
             </div>
           </div>
 
           {/* Last Name */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Last Name</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-user"></i>
+                </span>
+                Last Name
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
-              <div className="rbt-profile-content b2">{lastName}</div>
+              <div className="rbt-profile-content b2">
+                {lastName === 'N/A' ? (
+                  <span className="badge bg-light">Not set</span>
+                ) : (
+                  lastName
+                )}
+              </div>
             </div>
           </div>
 
           {/* Username */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Username</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-at-sign"></i>
+                </span>
+                Username
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
               <div className="rbt-profile-content b2">
-                {userData.username || 'Not set'}
+                {userData.username ? (
+                  userData.username
+                ) : (
+                  <span className="badge bg-light">Not set</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Role */}
+          <div className="rbt-profile-row row row--15">
+            <div className="col-lg-4 col-md-4">
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-shield"></i>
+                </span>
+                Role
+              </div>
+            </div>
+            <div className="col-lg-8 col-md-8">
+              <div className="rbt-profile-content b2">
+                <span className="badge bg-primary">
+                  {userData.role || 'student'}
+                </span>
               </div>
             </div>
           </div>
 
           {/* Email */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Email</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-mail"></i>
+                </span>
+                Email
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
               <div className="rbt-profile-content b2">{userData.email}</div>
@@ -195,40 +297,104 @@ const Profile: React.FC = () => {
           </div>
 
           {/* Phone Number */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Phone Number</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-phone"></i>
+                </span>
+                Phone Number
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
               <div className="rbt-profile-content b2">
-                {userData.phone || 'Not provided'}
+                {userData.phone ? (
+                  userData.phone
+                ) : (
+                  <span className="badge bg-light">Not provided</span>
+                )}
               </div>
             </div>
           </div>
 
           {/* Skill/Occupation */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Skill/Occupation</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-briefcase"></i>
+                </span>
+                Skill/Occupation
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
               <div className="rbt-profile-content b2">
-                {userData.skill_occupation || 'Not provided'}
+                {userData.skill_occupation ? (
+                  userData.skill_occupation
+                ) : (
+                  <span className="badge bg-light">Not provided</span>
+                )}
               </div>
             </div>
           </div>
 
           {/* Biography */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
-              <div className="rbt-profile-content b2">Biography</div>
+              <div className="rbt-profile-content b2">
+                <span className="icon-circle">
+                  <i className="feather-file-text"></i>
+                </span>
+                Biography
+              </div>
             </div>
             <div className="col-lg-8 col-md-8">
               <div className="rbt-profile-content b2">
-                {userData.bio || 'No biography provided'}
+                {userData.bio ? (
+                  userData.bio
+                ) : (
+                  <span className="badge bg-light">No biography provided</span>
+                )}
               </div>
             </div>
           </div>
+
+          {/* Social Links Section */}
+          {socialLinks.length > 0 && (
+            <div className="rbt-profile-row row row--15">
+              <div className="col-lg-4 col-md-4">
+                <div className="rbt-profile-content b2">
+                  <span className="icon-circle">
+                    <i className="feather-share-2"></i>
+                  </span>
+                  Social Links
+                </div>
+              </div>
+              <div className="col-lg-8 col-md-8">
+                <div className="rbt-profile-content b2">
+                  <div className="social-icon-wrapper">
+                    {socialLinks.map((link, index) => (
+                      <a
+                        key={index}
+                        href={link.url!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="rbt-btn-link me-3"
+                        title={link.name}
+                      >
+                        {link.icon.startsWith('fab') ? (
+                          <i className={`${link.icon} me-1`}></i>
+                        ) : (
+                          <i className={`${link.icon} me-1`}></i>
+                        )}
+                        <span>{link.name}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -162,7 +162,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* First Name */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">First Name</div>
             </div>
@@ -172,7 +172,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Last Name */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Last Name</div>
             </div>
@@ -182,7 +182,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Username */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Username</div>
             </div>
@@ -194,7 +194,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Role */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Role</div>
             </div>
@@ -206,7 +206,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Email */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Email</div>
             </div>
@@ -216,7 +216,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Phone Number */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Phone Number</div>
             </div>
@@ -228,7 +228,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Skill/Occupation */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Skill/Occupation</div>
             </div>
@@ -240,7 +240,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
           </div>
 
           {/* Biography */}
-          <div className="rbt-profile-row row row--15 mt--15">
+          <div className="rbt-profile-row row row--15">
             <div className="col-lg-4 col-md-4">
               <div className="rbt-profile-content b2">Biography</div>
             </div>
@@ -253,7 +253,7 @@ const Profile: React.FC<ProfileProps> = ({ userProfile }) => {
 
           {/* Social Links Section */}
           {socialLinks.length > 0 && (
-            <div className="rbt-profile-row row row--15 mt--15">
+            <div className="rbt-profile-row row row--15">
               <div className="col-lg-4 col-md-4">
                 <div className="rbt-profile-content b2">Social Links</div>
               </div>

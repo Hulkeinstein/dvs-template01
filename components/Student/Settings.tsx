@@ -1,34 +1,96 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  ChangeEvent,
+  FormEvent,
+} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
-import PasswordGuidance from '@/components/shared/PasswordGuidance';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
+import PasswordGuidance from '@/components/shared/PasswordGuidance';
+import {
+  uploadProfilePhoto,
+  uploadCoverPhoto,
+  updateUserProfile,
+} from '@/app/lib/actions/profileActions';
+import { setPassword, changePassword } from '@/app/lib/actions/passwordActions';
 
-const Setting = ({ userProfile }) => {
+// Types
+interface UserProfile {
+  id: string;
+  email: string;
+  name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  phone?: string | null;
+  skill_occupation?: string | null;
+  bio?: string | null;
+  facebook_url?: string | null;
+  twitter_url?: string | null;
+  instagram_url?: string | null;
+  linkedin_url?: string | null;
+  website_url?: string | null;
+  github_url?: string | null;
+  avatar_url?: string | null;
+  photo_url?: string | null;
+  cover_photo_url?: string | null;
+  is_phone_verified?: boolean;
+  auth_provider?: string | null;
+  password_hash?: string | null;
+}
+
+interface SettingProps {
+  userProfile: UserProfile | null;
+}
+
+interface FormData {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  skill_occupation: string;
+  bio: string;
+  facebook_url: string;
+  twitter_url: string;
+  instagram_url: string;
+  linkedin_url: string;
+  website_url: string;
+  github_url: string;
+}
+
+interface Message {
+  type: 'success' | 'error' | 'warning' | '';
+  text: string;
+}
+
+const Setting: React.FC<SettingProps> = ({ userProfile }) => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [message, setMessage] = useState<Message>({ type: '', text: '' });
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [otpValue, setOtpValue] = useState('');
   const [otpTimer, setOtpTimer] = useState(0);
   const [otpLoading, setOtpLoading] = useState(false);
-
-  // Password form states
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const [passwordMessage, setPasswordMessage] = useState({
-    type: '',
-    text: '',
-  });
+  const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(null);
+  const [currentCoverUrl, setCurrentCoverUrl] = useState<string | null>(null);
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  // File input refs
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   // Form data state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     first_name: '',
     last_name: '',
     phone: '',
@@ -36,10 +98,10 @@ const Setting = ({ userProfile }) => {
     bio: '',
     facebook_url: '',
     twitter_url: '',
+    instagram_url: '',
     linkedin_url: '',
     website_url: '',
     github_url: '',
-    instagram_url: '',
   });
 
   // Initialize form with user data
@@ -56,12 +118,16 @@ const Setting = ({ userProfile }) => {
         bio: userProfile.bio || '',
         facebook_url: userProfile.facebook_url || '',
         twitter_url: userProfile.twitter_url || '',
+        instagram_url: userProfile.instagram_url || '',
         linkedin_url: userProfile.linkedin_url || '',
         website_url: userProfile.website_url || '',
         github_url: userProfile.github_url || '',
-        instagram_url: userProfile.instagram_url || '',
       });
       setPhoneVerified(userProfile.is_phone_verified || false);
+      setCurrentAvatarUrl(
+        userProfile.avatar_url || userProfile.photo_url || null
+      );
+      setCurrentCoverUrl(userProfile.cover_photo_url || null);
     }
   }, [userProfile]);
 
@@ -73,12 +139,117 @@ const Setting = ({ userProfile }) => {
     }
   }, [otpTimer]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Handle profile photo upload
+  const handlePhotoUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Client-side validation
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: '파일 크기는 5MB 이하여야 합니다.' });
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({
+        type: 'error',
+        text: '이미지 파일만 업로드할 수 있습니다.',
+      });
+      return;
+    }
+
+    setUploadingPhoto(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const result = await uploadProfilePhoto(formData);
+
+      if (result.success) {
+        setMessage({
+          type: 'success',
+          text: '프로필 사진이 업데이트되었습니다!',
+        });
+        setCurrentAvatarUrl(result.avatar_url || null);
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || '업로드에 실패했습니다.',
+        });
+      }
+    } catch {
+      setMessage({ type: 'error', text: '업로드 중 오류가 발생했습니다.' });
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  // Handle cover photo upload
+  const handleCoverUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Client-side validation
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: 'error', text: '파일 크기는 5MB 이하여야 합니다.' });
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      setMessage({
+        type: 'error',
+        text: '이미지 파일만 업로드할 수 있습니다.',
+      });
+      return;
+    }
+
+    setUploadingCover(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // Create FormData
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const result = await uploadCoverPhoto(formData);
+
+      if (result.success) {
+        setMessage({
+          type: 'success',
+          text: '커버 사진이 업데이트되었습니다!',
+        });
+        setCurrentCoverUrl(result.cover_photo_url || null);
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || '업로드에 실패했습니다.',
+        });
+      }
+    } catch {
+      setMessage({ type: 'error', text: '업로드 중 오류가 발생했습니다.' });
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handleEditPhone = () => {
+    setPhoneVerified(false);
+    setShowOtpInput(false);
+    setOtpValue('');
+    setOtpTimer(0);
   };
 
   const handleSendOTP = async () => {
@@ -125,7 +296,7 @@ const Setting = ({ userProfile }) => {
           });
         }
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: 'error',
         text: 'An error occurred. Please try again.',
@@ -170,13 +341,27 @@ const Setting = ({ userProfile }) => {
         // In development, allow test OTP
         if (otpValue === '123456') {
           console.log('Development mode: Test OTP accepted');
-          setPhoneVerified(true);
-          setShowOtpInput(false);
-          setOtpValue('');
-          setMessage({
-            type: 'success',
-            text: 'Phone number verified successfully! (Development mode)',
+
+          // Save phone and verification status to database even in dev mode
+          const updateResult = await updateUserProfile({
+            phone: formData.phone,
+            is_phone_verified: true,
           });
+
+          if (updateResult.success) {
+            setPhoneVerified(true);
+            setShowOtpInput(false);
+            setOtpValue('');
+            setMessage({
+              type: 'success',
+              text: 'Phone number verified successfully! (Development mode)',
+            });
+          } else {
+            setMessage({
+              type: 'error',
+              text: 'Failed to save phone verification',
+            });
+          }
         } else {
           setMessage({
             type: 'error',
@@ -184,7 +369,7 @@ const Setting = ({ userProfile }) => {
           });
         }
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: 'error',
         text: 'An error occurred. Please try again.',
@@ -194,59 +379,12 @@ const Setting = ({ userProfile }) => {
     }
   };
 
-  const handleProfileSubmit = async (e) => {
+  const handleProfileSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          name: `${formData.first_name} ${formData.last_name}`.trim(),
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage({ type: 'success', text: 'Profile updated successfully!' });
-        // Update session if needed
-        if (session) {
-          await fetch('/api/auth/session?update');
-        }
-      } else {
-        setMessage({
-          type: 'error',
-          text: result.error || 'Failed to update profile',
-        });
-      }
-    } catch (error) {
-      setMessage({
-        type: 'error',
-        text: 'An error occurred. Please try again.',
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Form submit handler for profile updates
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
-
-    try {
-      // Import the update action
-      const { updateUserProfile } = await import(
-        '@/app/lib/actions/profileActions'
-      );
-
       // Include phone verification status in the update
       const profileData = {
         ...formData,
@@ -256,7 +394,7 @@ const Setting = ({ userProfile }) => {
       const result = await updateUserProfile(profileData);
 
       if (result.success) {
-        setMessage({ type: 'success', text: 'Profile updated successfully!' });
+        setMessage({ type: 'success', text: '프로필이 업데이트되었습니다!' });
         // Maintain phone verification status after update
         setPhoneVerified(phoneVerified);
         // Update session if needed
@@ -269,7 +407,7 @@ const Setting = ({ userProfile }) => {
           text: result.error || 'Failed to update profile',
         });
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: 'error',
         text: 'An error occurred. Please try again.',
@@ -279,142 +417,191 @@ const Setting = ({ userProfile }) => {
     }
   };
 
-  // Password setup handler for Google OAuth users
+  const handleSocialSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      const socialData = {
+        facebook_url: formData.facebook_url,
+        twitter_url: formData.twitter_url,
+        instagram_url: formData.instagram_url,
+        linkedin_url: formData.linkedin_url,
+        website_url: formData.website_url,
+        github_url: formData.github_url,
+      };
+
+      const result = await updateUserProfile(socialData);
+
+      if (result.success) {
+        setMessage({
+          type: 'success',
+          text: 'Social links updated successfully!',
+        });
+      } else {
+        setMessage({
+          type: 'error',
+          text: result.error || 'Failed to update social links',
+        });
+      }
+    } catch {
+      setMessage({
+        type: 'error',
+        text: 'An error occurred. Please try again.',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Password management functions
   const handlePasswordSetup = useCallback(
-    async (e) => {
+    async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setPasswordLoading(true);
-      setPasswordMessage({ type: '', text: '' });
-
-      const formData = new FormData(e.currentTarget);
-      const newPassword = formData.get('newpassword');
-      const confirmPassword = formData.get('confirmpassword');
-
-      // Validation
-      if (newPassword !== confirmPassword) {
-        setPasswordMessage({ type: 'error', text: 'Passwords do not match' });
-        setPasswordLoading(false);
-        return;
-      }
-
-      if (newPassword.length < 8) {
-        setPasswordMessage({
-          type: 'error',
-          text: 'Password must be at least 8 characters',
-        });
-        setPasswordLoading(false);
-        return;
-      }
+      setMessage({ type: '', text: '' });
 
       try {
-        const { setPassword } = await import(
-          '@/app/lib/actions/passwordActions'
-        );
+        const formData = new FormData(e.currentTarget);
+        const newPassword = String(formData.get('newpassword') ?? '');
+        const confirmPassword = String(formData.get('confirmpassword') ?? '');
+
+        if (newPassword !== confirmPassword) {
+          setMessage({ type: 'error', text: '비밀번호가 일치하지 않습니다.' });
+          return;
+        }
+        if (newPassword.length < 8) {
+          setMessage({
+            type: 'error',
+            text: '비밀번호는 최소 8자 이상이어야 합니다.',
+          });
+          return;
+        }
+
         const result = await setPassword({
-          userId: session?.user?.id,
           newPassword,
+          confirmPassword,
         });
 
         if (result.success) {
-          setPasswordMessage({
+          setMessage({
             type: 'success',
-            text: 'Password set successfully!',
+            text: result.message || '비밀번호가 설정되었습니다!',
           });
           setShowPasswordSetup(false);
-          // Refresh the page to update auth_provider status
-          setTimeout(() => window.location.reload(), 1500);
+          e.currentTarget.reset();
+          // Update the local state to reflect that password is now set
+          if (userProfile) {
+            userProfile.password_hash = 'set';
+          }
         } else {
-          setPasswordMessage({
+          setMessage({
             type: 'error',
-            text: result.message || 'Failed to set password',
+            text: result.error || '비밀번호 설정에 실패했습니다.',
           });
         }
-      } catch (error) {
-        setPasswordMessage({
+      } catch {
+        setMessage({
           type: 'error',
-          text: 'An error occurred. Please try again.',
+          text: '비밀번호 설정 중 오류가 발생했습니다.',
         });
       } finally {
         setPasswordLoading(false);
       }
     },
-    [session]
+    [setMessage, userProfile]
   );
 
-  // Password change handler for users with existing passwords
   const handlePasswordChange = useCallback(
-    async (e) => {
+    async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setPasswordLoading(true);
-      setPasswordMessage({ type: '', text: '' });
-
-      const formData = new FormData(e.currentTarget);
-      const currentPassword = formData.get('currentpassword');
-      const newPassword = formData.get('newpassword');
-      const confirmPassword = formData.get('confirmpassword');
-
-      // Validation
-      if (newPassword !== confirmPassword) {
-        setPasswordMessage({ type: 'error', text: 'Passwords do not match' });
-        setPasswordLoading(false);
-        return;
-      }
-
-      if (newPassword.length < 8) {
-        setPasswordMessage({
-          type: 'error',
-          text: 'Password must be at least 8 characters',
-        });
-        setPasswordLoading(false);
-        return;
-      }
+      setMessage({ type: '', text: '' });
 
       try {
-        const { changePassword } = await import(
-          '@/app/lib/actions/passwordActions'
-        );
+        const formData = new FormData(e.currentTarget);
+        const currentPassword = String(formData.get('currentpassword') ?? '');
+        const newPassword = String(formData.get('newpassword') ?? '');
+        const confirmPassword = String(formData.get('retypenewpassword') ?? '');
+
+        if (!currentPassword) {
+          setMessage({ type: 'error', text: '현재 비밀번호를 입력해주세요.' });
+          return;
+        }
+        if (newPassword !== confirmPassword) {
+          setMessage({ type: 'error', text: '비밀번호가 일치하지 않습니다.' });
+          return;
+        }
+        if (newPassword.length < 8) {
+          setMessage({
+            type: 'error',
+            text: '비밀번호는 최소 8자 이상이어야 합니다.',
+          });
+          return;
+        }
+
         const result = await changePassword({
-          userId: session?.user?.id,
           currentPassword,
           newPassword,
+          confirmPassword,
         });
 
         if (result.success) {
-          setPasswordMessage({
+          setMessage({
             type: 'success',
-            text: 'Password changed successfully!',
+            text: result.message || '비밀번호가 변경되었습니다!',
           });
-          // Clear form
-          e.target.reset();
+          e.currentTarget.reset();
         } else {
-          setPasswordMessage({
+          setMessage({
             type: 'error',
-            text: result.message || 'Failed to change password',
+            text: result.error || '비밀번호 변경에 실패했습니다.',
           });
         }
-      } catch (error) {
-        setPasswordMessage({
+      } catch {
+        setMessage({
           type: 'error',
-          text: 'An error occurred. Please try again.',
+          text: '비밀번호 변경 중 오류가 발생했습니다.',
         });
       } finally {
         setPasswordLoading(false);
       }
     },
-    [session]
+    [setMessage]
   );
 
   return (
     <>
+      {/* Hidden file inputs */}
+      <input
+        ref={photoInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoUpload}
+        style={{ display: 'none' }}
+      />
+      <input
+        ref={coverInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleCoverUpload}
+        style={{ display: 'none' }}
+      />
+
       {/* Profile Completion Checklist */}
       {userProfile && (
-        <ProfileCompletionChecklist
-          userProfile={{
-            ...userProfile,
-            phone: formData.phone,
-            is_phone_verified: phoneVerified,
-          }}
-        />
+        <div className="mb-4">
+          <ProfileCompletionChecklist
+            userProfile={{
+              ...userProfile,
+              phone: formData.phone,
+              is_phone_verified: userProfile.is_phone_verified || false,
+              skill_occupation: formData.skill_occupation,
+              bio: formData.bio,
+            }}
+          />
+        </div>
       )}
 
       <div className="rbt-dashboard-content bg-color-white rbt-shadow-box">
@@ -425,7 +612,7 @@ const Setting = ({ userProfile }) => {
 
           {message.text && (
             <div
-              className={`alert alert-${message.type === 'success' ? 'success' : 'danger'} mb-4`}
+              className={`alert alert-${message.type === 'success' ? 'success' : message.type === 'warning' ? 'warning' : 'danger'} mb-4`}
               role="alert"
             >
               {message.text}
@@ -491,35 +678,63 @@ const Setting = ({ userProfile }) => {
               aria-labelledby="profile-tab"
             >
               <div className="rbt-dashboard-content-wrapper">
-                <div className="tutor-bg-photo bg_image bg_image--23 height-245"></div>
+                <div
+                  className="tutor-bg-photo bg_image height-245"
+                  style={
+                    currentCoverUrl
+                      ? {
+                          backgroundImage: `url(${currentCoverUrl})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                        }
+                      : {}
+                  }
+                ></div>
                 <div className="rbt-tutor-information">
                   <div className="rbt-tutor-information-left">
                     <div className="thumbnail rbt-avatars size-lg position-relative">
                       <Image
-                        width={300}
-                        height={300}
+                        width={120}
+                        height={120}
                         src={
-                          userProfile?.photo_url ||
+                          currentAvatarUrl ||
                           session?.user?.image ||
-                          '/images/team/avatar-2.jpg'
+                          '/images/team/avatar.jpg'
                         }
                         alt="Student"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
                       />
                       <div className="rbt-edit-photo-inner">
-                        <button className="rbt-edit-photo" title="Upload Photo">
-                          <i className="feather-camera" />
+                        <button
+                          className="rbt-edit-photo"
+                          title="Upload Photo"
+                          type="button"
+                          onClick={() => photoInputRef.current?.click()}
+                          disabled={uploadingPhoto}
+                        >
+                          {uploadingPhoto ? (
+                            <span className="spinner-border spinner-border-sm" />
+                          ) : (
+                            <i className="feather-camera" />
+                          )}
                         </button>
                       </div>
                     </div>
                   </div>
                   <div className="rbt-tutor-information-right">
                     <div className="tutor-btn">
-                      <Link
+                      <button
                         className="rbt-btn btn-sm btn-border color-white radius-round-10"
-                        href="#"
+                        type="button"
+                        onClick={() => coverInputRef.current?.click()}
+                        disabled={uploadingCover}
                       >
-                        Edit Cover Photo
-                      </Link>
+                        {uploadingCover ? 'Uploading...' : 'Edit Cover Photo'}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -537,7 +752,7 @@ const Setting = ({ userProfile }) => {
                       type="text"
                       value={formData.first_name}
                       onChange={handleInputChange}
-                      placeholder="First Name"
+                      placeholder="John"
                     />
                   </div>
                 </div>
@@ -550,7 +765,7 @@ const Setting = ({ userProfile }) => {
                       type="text"
                       value={formData.last_name}
                       onChange={handleInputChange}
-                      placeholder="Last Name"
+                      placeholder="Doe"
                     />
                   </div>
                 </div>
@@ -558,139 +773,132 @@ const Setting = ({ userProfile }) => {
                   <div className="rbt-form-group">
                     <label htmlFor="phone">
                       Phone Number
-                      {phoneVerified ? (
+                      {phoneVerified && (
                         <span className="badge bg-success ms-2">
                           <i className="feather-check me-1"></i>Verified
                         </span>
-                      ) : formData.phone ? (
-                        <span className="badge bg-warning ms-2">
-                          Not Verified
-                        </span>
-                      ) : null}
+                      )}
                     </label>
-                    <div className="phone-input-wrapper position-relative">
-                      <div className="phone-input-container position-relative">
-                        <PhoneInput
-                          country={'us'}
-                          value={formData.phone}
-                          onChange={(phone) => {
-                            const newPhone = phone ? '+' + phone : '';
+                    <div className="phone-input-wrapper">
+                      <PhoneInput
+                        country={'us'}
+                        value={formData.phone}
+                        onChange={(value) => {
+                          if (!phoneVerified) {
+                            const newPhone = value
+                              ? value.startsWith('+')
+                                ? value
+                                : '+' + value
+                              : '';
                             setFormData((prev) => ({
                               ...prev,
                               phone: newPhone,
                             }));
-
-                            // If phone was verified and number changed, unverify it
-                            if (
-                              phoneVerified &&
-                              newPhone !== userProfile?.phone
-                            ) {
-                              setPhoneVerified(false);
-                            }
-                          }}
-                          disabled={loading}
-                          inputStyle={{
-                            width: '100%',
-                            height: '50px',
-                            fontSize: '16px',
-                            fontWeight: '400',
-                            lineHeight: '28px',
-                            paddingLeft: '48px',
-                            paddingRight:
-                              formData.phone && !phoneVerified
-                                ? '85px'
-                                : '15px',
-                            border: '2px solid #e6e3f1',
-                            borderRadius: '6px',
-                            boxShadow:
-                              '0 13px 14px 0 rgba(129, 104, 145, 0.05)',
-                            background: phoneVerified
-                              ? '#f8f9fa'
-                              : 'transparent',
-                            color: '#5f5a70',
-                          }}
-                          buttonStyle={{
-                            border: '2px solid #e6e3f1',
-                            borderRadius: '6px 0 0 6px',
-                            borderRight: 'none',
-                            background: phoneVerified
-                              ? '#f8f9fa'
-                              : 'transparent',
-                            height: '50px',
-                          }}
-                          dropdownStyle={{
-                            borderRadius: '8px',
-                          }}
-                          containerClass="w-100"
-                          enableSearch={true}
-                          searchPlaceholder="Search countries"
-                          preferredCountries={[
-                            'us',
-                            'kr',
-                            'jp',
-                            'cn',
-                            'gb',
-                            'ca',
-                            'au',
-                          ]}
-                        />
-                        {formData.phone &&
-                          formData.phone.length > 3 &&
-                          !phoneVerified && (
-                            <button
-                              type="button"
-                              className="btn btn-primary btn-sm position-absolute"
-                              style={{
-                                right: '8px',
-                                top: '50%',
-                                transform: 'translateY(-50%)',
-                                padding: '4px 16px',
-                                fontSize: '14px',
-                                borderRadius: '4px',
-                                height: '34px',
-                                zIndex: 10,
-                              }}
-                              onClick={handleSendOTP}
-                              disabled={otpLoading}
-                            >
-                              Verify
-                            </button>
-                          )}
-                      </div>
+                          }
+                        }}
+                        inputProps={{
+                          name: 'phone',
+                          required: false,
+                          autoFocus: false,
+                          readOnly: phoneVerified,
+                        }}
+                        containerClass="phone-input-container"
+                        inputClass="form-control"
+                        buttonClass="flag-dropdown"
+                        inputStyle={{
+                          background: phoneVerified ? '#f8f9fa' : 'transparent',
+                          cursor: phoneVerified ? 'default' : 'text',
+                        }}
+                        buttonStyle={{
+                          background: phoneVerified ? '#f8f9fa' : 'transparent',
+                          cursor: phoneVerified ? 'default' : 'pointer',
+                        }}
+                      />
+                      {phoneVerified && (
+                        <button
+                          type="button"
+                          className="send-code-btn btn btn-sm btn-primary"
+                          onClick={handleEditPhone}
+                        >
+                          <i className="feather-edit-2"></i> Edit
+                        </button>
+                      )}
+                      {!phoneVerified &&
+                        !showOtpInput &&
+                        formData.phone &&
+                        formData.phone.length > 3 && (
+                          <button
+                            type="button"
+                            className="send-code-btn btn btn-sm btn-primary"
+                            onClick={handleSendOTP}
+                            disabled={otpLoading}
+                          >
+                            {otpLoading ? 'Sending...' : 'Verify'}
+                          </button>
+                        )}
+                      {showOtpInput && !phoneVerified && otpTimer > 0 && (
+                        <span className="timer-badge">
+                          {Math.floor(otpTimer / 60)}:
+                          {(otpTimer % 60).toString().padStart(2, '0')}
+                        </span>
+                      )}
                     </div>
-
-                    {/* OTP Input Section */}
-                    {showOtpInput && !phoneVerified && (
+                    {!phoneVerified && formData.phone && (
+                      <small className="text-muted mt-1 d-block">
+                        Verify your phone to enable SMS notifications and
+                        enhance account security
+                      </small>
+                    )}
+                    {showOtpInput && (
                       <div className="mt-3">
-                        <div className="d-flex align-items-center gap-3">
+                        <div className="position-relative">
                           <input
                             type="text"
                             className="form-control"
-                            placeholder="Enter 6-digit code"
+                            placeholder="Enter 6-digit verification code"
                             value={otpValue}
                             onChange={(e) => setOtpValue(e.target.value)}
-                            maxLength="6"
-                            style={{ maxWidth: '200px' }}
+                            maxLength={6}
+                            style={{
+                              height: '50px',
+                              paddingRight: '120px',
+                            }}
                           />
                           <button
                             type="button"
-                            className="btn btn-primary"
+                            className="btn btn-success"
                             onClick={handleVerifyOTP}
                             disabled={otpLoading || !otpValue}
+                            style={{
+                              position: 'absolute',
+                              right: '10px',
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              height: '34px',
+                              padding: '0 20px',
+                              fontSize: '14px',
+                              fontWeight: '500',
+                              minWidth: '100px',
+                            }}
                           >
-                            {otpLoading ? 'Verifying...' : 'Verify Code'}
+                            {otpLoading ? 'Verifying...' : 'Verify OTP'}
                           </button>
-                          {otpTimer > 0 ? (
-                            <span className="text-muted ms-2">
-                              {Math.floor(otpTimer / 60)}:
-                              {(otpTimer % 60).toString().padStart(2, '0')}
-                            </span>
-                          ) : (
+                        </div>
+                        <div className="mt-2 d-flex align-items-center justify-content-between">
+                          <small className="text-muted">
+                            Didn&apos;t receive the code?
+                          </small>
+                          {otpTimer === 0 && (
                             <button
                               type="button"
-                              className="btn btn-link btn-sm"
+                              className="btn btn-link text-primary"
                               onClick={handleSendOTP}
                               disabled={otpLoading}
+                              style={{
+                                fontSize: '14px',
+                                textDecoration: 'none',
+                                fontWeight: '500',
+                              }}
                             >
                               Resend Code
                             </button>
@@ -735,8 +943,8 @@ const Setting = ({ userProfile }) => {
                     <textarea
                       id="bio"
                       name="bio"
-                      cols="20"
-                      rows="5"
+                      cols={20}
+                      rows={5}
                       value={formData.bio}
                       onChange={handleInputChange}
                       placeholder="Write something about yourself..."
@@ -765,34 +973,35 @@ const Setting = ({ userProfile }) => {
             >
               {/* Password Guidance Component */}
               <PasswordGuidance
-                authProvider={userProfile?.auth_provider}
+                authProvider={userProfile?.auth_provider ?? undefined}
                 hasPasswordHash={!!userProfile?.password_hash}
               />
 
-              {/* Password Messages */}
-              {passwordMessage.text && (
-                <div
-                  className={`alert alert-${passwordMessage.type === 'error' ? 'danger' : passwordMessage.type} mb-3`}
-                >
-                  {passwordMessage.text}
-                </div>
-              )}
-
-              {/* Conditional rendering based on auth_provider and password_hash */}
               {userProfile?.auth_provider === 'google' &&
               !userProfile?.password_hash ? (
-                // Google OAuth user without password
+                // Google OAuth 사용자이며 비밀번호가 설정되지 않은 경우
                 <div className="rbt-profile-row">
                   <div className="col-12">
-                    <p className="mb-3">
-                      비밀번호를 설정하면 Google 계정 외에도 이메일과 비밀번호로
-                      로그인할 수 있습니다.
-                    </p>
-                    <div className="text-center">
+                    <div className="small text-muted mb-3">
+                      <div className="mb-1">
+                        <i className="feather-check-circle me-2 text-success"></i>
+                        모바일 앱이나 디바이스에서 편리하게 로그인
+                      </div>
+                      <div className="mb-1">
+                        <i className="feather-check-circle me-2 text-success"></i>
+                        Google 서비스 장애 시 백업 로그인 방법
+                      </div>
+                      <div className="mb-1">
+                        <i className="feather-check-circle me-2 text-success"></i>
+                        회사나 공용 PC에서 OAuth가 차단된 경우 대안
+                      </div>
+                    </div>
+
+                    <div className="text-center mt-4">
                       <button
-                        className="rbt-btn btn-gradient mb-4"
-                        onClick={() => setShowPasswordSetup(!showPasswordSetup)}
                         type="button"
+                        className="rbt-btn btn-gradient"
+                        onClick={() => setShowPasswordSetup(true)}
                         aria-label="비밀번호 추가 설정 열기"
                       >
                         <i className="feather-lock me-2"></i>
@@ -824,9 +1033,12 @@ const Setting = ({ userProfile }) => {
                               name="newpassword"
                               type="password"
                               placeholder="Enter new password (min 8 characters)"
+                              minLength={8}
                               required
-                              minLength="8"
                             />
+                            <small className="text-muted">
+                              최소 8자, 대소문자와 숫자를 포함해주세요
+                            </small>
                           </div>
                         </div>
                         <div className="col-12">
@@ -839,20 +1051,27 @@ const Setting = ({ userProfile }) => {
                               name="confirmpassword"
                               type="password"
                               placeholder="Re-enter new password"
+                              minLength={8}
                               required
                             />
                           </div>
                         </div>
                         <div className="col-12 mt--10">
-                          <div className="rbt-form-group">
+                          <div className="rbt-form-group d-flex gap-3">
                             <button
                               className="rbt-btn btn-gradient"
                               type="submit"
                               disabled={passwordLoading}
                             >
-                              {passwordLoading
-                                ? 'Setting Password...'
-                                : 'Set Password'}
+                              {passwordLoading ? '처리 중...' : '비밀번호 설정'}
+                            </button>
+                            <button
+                              className="rbt-btn btn-border"
+                              type="button"
+                              onClick={() => setShowPasswordSetup(false)}
+                              disabled={passwordLoading}
+                            >
+                              취소
                             </button>
                           </div>
                         </div>
@@ -861,7 +1080,7 @@ const Setting = ({ userProfile }) => {
                   )}
                 </div>
               ) : (
-                // Users with password already set (email or both)
+                // 기존 비밀번호 변경 폼 (이메일 로그인 사용자 또는 비밀번호가 이미 설정된 경우)
                 <form
                   className="rbt-profile-row rbt-default-form row row--15"
                   onSubmit={handlePasswordChange}
@@ -895,21 +1114,22 @@ const Setting = ({ userProfile }) => {
                         name="newpassword"
                         type="password"
                         placeholder="Enter new password (min 8 characters)"
+                        minLength={8}
                         required
-                        minLength="8"
                       />
                     </div>
                   </div>
                   <div className="col-12">
                     <div className="rbt-form-group">
-                      <label htmlFor="confirmpassword">
+                      <label htmlFor="retypenewpassword">
                         Confirm New Password
                       </label>
                       <input
-                        id="confirmpassword"
-                        name="confirmpassword"
+                        id="retypenewpassword"
+                        name="retypenewpassword"
                         type="password"
                         placeholder="Re-enter new password"
+                        minLength={8}
                         required
                       />
                     </div>
@@ -921,9 +1141,7 @@ const Setting = ({ userProfile }) => {
                         type="submit"
                         disabled={passwordLoading}
                       >
-                        {passwordLoading
-                          ? 'Updating Password...'
-                          : 'Update Password'}
+                        {passwordLoading ? '처리 중...' : 'Update Password'}
                       </button>
                     </div>
                   </div>
@@ -938,7 +1156,7 @@ const Setting = ({ userProfile }) => {
               aria-labelledby="social-tab"
             >
               <form
-                onSubmit={handleSubmit}
+                onSubmit={handleSocialSubmit}
                 className="rbt-profile-row rbt-default-form row row--15"
               >
                 <div className="col-12">
@@ -1027,7 +1245,7 @@ const Setting = ({ userProfile }) => {
                       type="text"
                       value={formData.github_url}
                       onChange={handleInputChange}
-                      placeholder="https://github.com/yourusername"
+                      placeholder="https://github.com/yourprofile"
                     />
                   </div>
                 </div>
