@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { ROUTES } from '@/app/lib/constants/routes';
 import {
   LayoutDashboard,
   GraduationCap,
@@ -163,7 +164,7 @@ const ModernAdminSidebar: React.FC = () => {
               {section.items.map((item) => {
                 const isActive = pathname === item.href;
                 const Icon = item.icon;
-                
+
                 return (
                   <Link
                     key={item.href}
@@ -195,7 +196,7 @@ const ModernAdminSidebar: React.FC = () => {
         <div className="flex items-center justify-between">
           <span className="text-sm text-[#6a6a6a]">v1.0.0</span>
           <Link
-            href="/admin-help"
+            href={ROUTES.ADMIN.HELP}
             className="text-sm text-blue-400 hover:text-blue-300 font-medium"
           >
             Need Help?

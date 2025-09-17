@@ -7,6 +7,7 @@ import {
   getInstructorCourses,
   deleteCourse,
 } from '@/app/lib/actions/courseActions';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 const MyCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -311,7 +312,7 @@ const MyCourses = () => {
                         Create a new course to get started!
                       </p>
                       <Link
-                        href="/create-course"
+                        href={ROUTES.INSTRUCTOR.CREATE_COURSE}
                         className="rbt-btn btn-gradient hover-icon-reverse"
                       >
                         <span className="icon-reverse-wrapper">

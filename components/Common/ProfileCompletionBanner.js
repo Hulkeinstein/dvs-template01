@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 const ProfileCompletionBanner = ({ userProfile }) => {
   const [dismissed, setDismissed] = useState(false);
@@ -43,7 +44,7 @@ const ProfileCompletionBanner = ({ userProfile }) => {
             <div className="col-lg-4 col-md-4">
               <div className="info-action text-md-end">
                 <Link
-                  href="/instructor-profile"
+                  href={ROUTES.INSTRUCTOR.PROFILE}
                   className="rbt-btn btn-sm hover-icon-reverse"
                 >
                   <span className="icon-reverse-wrapper">

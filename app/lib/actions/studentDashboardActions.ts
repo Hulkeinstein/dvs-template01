@@ -140,6 +140,7 @@ export async function getEnrolledCourses(
       `
       )
       .eq('user_id', userId)
+      .is('deleted_at', null) // 삭제되지 않은 행만
       .order('last_accessed_at', { ascending: false, nullsFirst: false });
 
     if (error) {
@@ -173,7 +174,7 @@ export async function getEnrolledCourses(
           .from('lesson_progress')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', userId)
-          .eq('course_id', enrollment.course_id)
+          .eq('enrollment_id', enrollment.id)
           .eq('completed', true);
 
         return {
@@ -197,6 +198,44 @@ export async function getEnrolledCourses(
     console.error('Error in getEnrolledCourses:', error);
     return [];
   }
+}
+
+// RPC를 사용한 효율적인 enrolled courses 조회
+export async function getEnrolledCoursesRPC(
+  userId: string
+): Promise<EnrolledCourse[]> {
+  const { data, error } = await supabase.rpc(
+    'get_enrolled_courses_with_progress',
+    { p_user_id: userId }
+  );
+
+  if (error) {
+    console.error('Error in getEnrolledCoursesRPC:', error);
+    return [];
+  }
+
+  return (data ?? []).map((row: any) => ({
+    id: row.enrollment_id,
+    course_id: row.course_id,
+    progress: Number(row.calculated_progress ?? row.manual_progress ?? 0),
+    enrolled_at: row.enrolled_at,
+    last_accessed_at: row.last_accessed_at,
+    status: row.status,
+    course: {
+      id: row.course_id,
+      title: row.course_title,
+      description: row.course_description,
+      thumbnail_url: row.course_thumbnail,
+      instructor_id: row.instructor_id,
+      instructor: {
+        id: row.instructor_id,
+        name: row.instructor_name ?? 'Unknown',
+        avatar_url: row.instructor_avatar ?? null,
+      },
+      total_lessons: Number(row.total_lessons ?? 0),
+    },
+    completed_lessons: Number(row.completed_lessons ?? 0),
+  }));
 }
 
 export async function getBookmarkedCourses(

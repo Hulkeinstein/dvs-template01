@@ -8,6 +8,7 @@ import Select, {
 } from 'react-select';
 import { sampleAssignmentsData } from '@/constants/sampleAssignmentsData';
 import type { Assignment } from '@/types/assignment';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface SelectOption {
   value: string;
@@ -210,7 +211,9 @@ const Assignments: React.FC<AssignmentsProps> = ({
                         <p className="b3">
                           Course:{' '}
                           <Link
-                            href={`/instructor/courses/${assignment.course_id}/edit`}
+                            href={ROUTES.INSTRUCTOR.EDIT_COURSE(
+                              assignment.course_id
+                            )}
                           >
                             {assignment.course?.title || 'Unknown Course'}
                           </Link>
@@ -241,7 +244,10 @@ const Assignments: React.FC<AssignmentsProps> = ({
                         <div className="rbt-button-group justify-content-end">
                           <Link
                             className="rbt-btn btn-xs bg-primary-opacity radius-round"
-                            href={`/instructor/courses/${assignment.course_id}/edit/assignment/${assignment.lesson_id}`}
+                            href={ROUTES.INSTRUCTOR.EDIT_ASSIGNMENT(
+                              assignment.course_id,
+                              assignment.lesson_id
+                            )}
                             title="Edit"
                           >
                             <i className="feather-edit"></i> Edit

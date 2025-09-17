@@ -6,6 +6,7 @@ import {
   getUserBookmarks,
   removeBookmark,
 } from '@/app/lib/actions/bookmarkActions';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface WishlistProps {
   userId?: string;
@@ -127,7 +128,9 @@ const Wishlist = ({ userId }: WishlistProps) => {
                     <tr key={bookmark.id}>
                       <th>
                         <div className="course-info d-flex align-items-center">
-                          <Link href={`/course-details/${bookmark.course_id}`}>
+                          <Link
+                            href={ROUTES.COURSE.DETAILS(bookmark.course_id)}
+                          >
                             {bookmark.courses.thumbnail_url ? (
                               <img
                                 src={bookmark.courses.thumbnail_url}
@@ -163,7 +166,7 @@ const Wishlist = ({ userId }: WishlistProps) => {
                           <div>
                             <h6 className="mb-0">
                               <Link
-                                href={`/course-details/${bookmark.course_id}`}
+                                href={ROUTES.COURSE.DETAILS(bookmark.course_id)}
                               >
                                 {bookmark.courses.title}
                               </Link>
@@ -189,7 +192,7 @@ const Wishlist = ({ userId }: WishlistProps) => {
                       <td>
                         <div className="rbt-button-group justify-content-end">
                           <Link
-                            href={`/course-details/${bookmark.course_id}`}
+                            href={ROUTES.COURSE.DETAILS(bookmark.course_id)}
                             className="rbt-btn btn-xs bg-primary-opacity radius-round"
                             title="View Course"
                           >
@@ -232,7 +235,7 @@ const Wishlist = ({ userId }: WishlistProps) => {
                 Add courses to your wishlist to save them for later
               </p>
               <Link
-                href="/course-filter-one-toggle"
+                href={ROUTES.STUDENT.COURSE_BROWSER}
                 className="rbt-btn btn-gradient btn-sm mt-3"
               >
                 Browse Courses

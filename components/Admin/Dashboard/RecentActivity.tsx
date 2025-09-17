@@ -3,6 +3,7 @@
 import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { ActivityItem } from '@/types/dashboard';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface Props {
   activities: ActivityItem[];
@@ -39,7 +40,7 @@ const RecentActivity: React.FC<Props> = ({ activities }) => {
               <p className="b3 text-muted">Latest platform events</p>
             </div>
             <a
-              href="/admin-logs"
+              href={ROUTES.ADMIN.LOGS}
               className="rbt-btn btn-sm btn-outline-primary"
             >
               View All

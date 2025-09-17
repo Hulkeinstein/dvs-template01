@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 const InstructorDashboardHeader = () => {
   return (
@@ -39,7 +40,7 @@ const InstructorDashboardHeader = () => {
             <div className="tutor-btn">
               <Link
                 className="rbt-btn btn-md hover-icon-reverse"
-                href="/create-course"
+                href={ROUTES.INSTRUCTOR.CREATE_COURSE}
               >
                 <span className="icon-reverse-wrapper">
                   <span className="btn-text">Create a New Course</span>

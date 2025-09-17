@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getEnrolledCourses } from '@/app/lib/actions/studentDashboardActions';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface EnrolledCoursesProps {
   userId?: string;
@@ -79,7 +80,7 @@ const EnrolledCourses = ({ userId }: EnrolledCoursesProps) => {
   const CourseCard = ({ enrollment }: { enrollment: EnrolledCourse }) => (
     <div className="rbt-card variation-01 rbt-hover">
       <div className="rbt-card-img">
-        <Link href={`/course-details/${enrollment.course_id}`}>
+        <Link href={ROUTES.COURSE.DETAILS(enrollment.course_id)}>
           {enrollment.course.thumbnail_url ? (
             <img
               src={enrollment.course.thumbnail_url}
@@ -119,7 +120,7 @@ const EnrolledCourses = ({ userId }: EnrolledCoursesProps) => {
         </ul>
 
         <h4 className="rbt-card-title">
-          <Link href={`/course-details/${enrollment.course_id}`}>
+          <Link href={ROUTES.COURSE.DETAILS(enrollment.course_id)}>
             {enrollment.course.title}
           </Link>
         </h4>
@@ -155,7 +156,7 @@ const EnrolledCourses = ({ userId }: EnrolledCoursesProps) => {
           </div>
           <Link
             className="rbt-btn-link"
-            href={`/course-details/${enrollment.course_id}`}
+            href={ROUTES.COURSE.DETAILS(enrollment.course_id)}
           >
             {enrollment.status === 'completed'
               ? 'Review Course'
@@ -176,7 +177,7 @@ const EnrolledCourses = ({ userId }: EnrolledCoursesProps) => {
         ></i>
         <h5 className="mt-3">{message}</h5>
         <Link
-          href="/course-filter-one-toggle"
+          href={ROUTES.STUDENT.COURSE_BROWSER}
           className="rbt-btn btn-gradient btn-sm mt-3"
         >
           Browse Courses

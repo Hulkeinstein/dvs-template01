@@ -8,6 +8,7 @@ import {
   deleteCourse,
 } from '@/app/lib/actions/courseActions';
 import CourseBadges from '@/components/Common/CourseBadges';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 const CourseWidget = ({
   data,
@@ -213,7 +214,7 @@ const CourseWidget = ({
     <>
       <div className="rbt-card variation-05 rbt-hover">
         <div className="rbt-card-img">
-          <Link href={`/course-details/${data.id}`}>
+          <Link href={ROUTES.COURSE.DETAILS(data.id)}>
             <Image
               width={330}
               height={227}
@@ -271,7 +272,7 @@ const CourseWidget = ({
                 </div>
               </div>
               <h4 className="rbt-card-title">
-                <Link href={`/course-details/${data.id}`}>{data.title}</Link>
+                <Link href={ROUTES.COURSE.DETAILS(data.id)}>{data.title}</Link>
               </h4>
             </>
           )}
@@ -405,7 +406,7 @@ const CourseWidget = ({
               ) : (
                 <Link
                   className="rbt-btn-link"
-                  href={`/course-details/${data.id}`}
+                  href={ROUTES.COURSE.DETAILS(data.id)}
                 >
                   Learn More
                   <i className="feather-arrow-right" />
