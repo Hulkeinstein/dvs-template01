@@ -8,6 +8,7 @@ import {
   getNextLessonRecommendation,
 } from '@/app/lib/actions/studentDashboardActions';
 import Link from 'next/link';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface DashboardProps {
   userId?: string;
@@ -204,7 +205,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                 <div className="section-title d-flex align-items-center justify-content-between">
                   <h5 className="rbt-title-style-3 mb--20">My Courses</h5>
                   <Link
-                    href="/student-enrolled-course"
+                    href={ROUTES.STUDENT.ENROLLED_COURSES}
                     className="rbt-btn-link"
                   >
                     View All <i className="feather-arrow-right"></i>
@@ -220,7 +221,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                       <div className="rbt-card variation-01 rbt-hover">
                         <div className="rbt-card-img">
                           <Link
-                            href={`/course-details/${enrollment.course_id}`}
+                            href={ROUTES.COURSE.DETAILS(enrollment.course_id)}
                           >
                             {enrollment.course.thumbnail_url ? (
                               <img
@@ -261,7 +262,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                         <div className="rbt-card-body">
                           <h4 className="rbt-card-title">
                             <Link
-                              href={`/course-details/${enrollment.course_id}`}
+                              href={ROUTES.COURSE.DETAILS(enrollment.course_id)}
                             >
                               {enrollment.course.title}
                             </Link>
@@ -303,7 +304,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                           <div className="rbt-card-bottom">
                             <Link
                               className="rbt-btn-link"
-                              href={`/course-details/${enrollment.course_id}`}
+                              href={ROUTES.COURSE.DETAILS(enrollment.course_id)}
                             >
                               Continue Learning
                               <i className="feather-arrow-right"></i>
@@ -326,7 +327,7 @@ const Dashboard = ({ userId }: DashboardProps) => {
                       Start your learning journey by enrolling in a course
                     </p>
                     <Link
-                      href="/course-filter-one-toggle"
+                      href={ROUTES.STUDENT.COURSE_BROWSER}
                       className="rbt-btn btn-gradient btn-sm mt-3"
                     >
                       Browse Courses

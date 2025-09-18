@@ -15,6 +15,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import ProfileCompletionChecklist from '@/components/Common/ProfileCompletionChecklist';
 import PasswordGuidance from '@/components/shared/PasswordGuidance';
+import { ROUTES } from '@/app/lib/constants/routes';
 import {
   uploadProfilePhoto,
   uploadCoverPhoto,
@@ -1090,7 +1091,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
                       <label htmlFor="currentpassword">
                         Current Password
                         <Link
-                          href="/auth/forgot-password"
+                          href={ROUTES.AUTH.FORGOT_PASSWORD}
                           className="text-primary ms-2"
                           style={{ fontSize: '14px' }}
                         >

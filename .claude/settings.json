@@ -19,19 +19,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-exec.js",
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/pre-exec.js",
             "timeout": 30,
             "blockOnFailure": true
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/git-safety.js",
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/git-safety.js",
             "timeout": 20,
             "blockOnFailure": true
           },
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/db-safety.js",
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/db-safety.js",
             "timeout": 20,
             "blockOnFailure": true
           }
@@ -42,7 +42,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/file-safety.js",
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/file-safety.js",
             "timeout": 20,
             "blockOnFailure": true
           }
@@ -55,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node $CLAUDE_PROJECT_DIR/.claude/backup/auto-backup.js",
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/backup/auto-backup.js",
             "timeout": 10
           }
         ]

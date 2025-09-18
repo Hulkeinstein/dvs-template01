@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface ComingSoonPageProps {
   title: string;
@@ -60,7 +61,7 @@ const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
 
               <div className="mt-5">
                 <Link
-                  href="/dashboard"
+                  href={ROUTES.DASHBOARD}
                   className="rbt-btn btn-gradient hover-icon-reverse"
                 >
                   <span className="icon-reverse-wrapper">

@@ -296,3 +296,97 @@
         }
     }
 }
+
+/*-----------------------------------
+    Student Enrolled Courses Styles
+----------------------------------*/
+
+// 로딩 스켈레톤 애니메이션
+.enrolled-courses-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: enrolled-skeleton-loading 1.5s infinite;
+  border-radius: 8px;
+
+  &.enrolled-courses-skeleton-text {
+    height: 20px;
+    margin: 10px 0;
+
+    &.enrolled-courses-skeleton-text-short {
+      width: 60%;
+    }
+
+    &.enrolled-courses-skeleton-text-medium {
+      width: 80%;
+    }
+  }
+
+  &.enrolled-courses-skeleton-image {
+    height: 200px;
+  }
+}
+
+@keyframes enrolled-skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+// 코스 썸네일 이미지
+.enrolled-course-thumbnail {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+// 이미지 플레이스홀더
+.enrolled-course-placeholder {
+  width: 100%;
+  height: 200px;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 8px 0 0;
+
+  i {
+    font-size: 48px;
+    color: #ccc;
+  }
+}
+
+// 빈 상태 아이콘
+.enrolled-course-empty-icon {
+  font-size: 48px;
+  color: #ccc;
+}
+
+// 선택된 카드 강조
+.enrolled-courses-selected {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+// 드롭다운 메뉴 커스터마이징
+.enrolled-courses-dropdown {
+  min-width: 160px;
+
+  .dropdown-item {
+    &:hover {
+      background-color: var(--color-primary-opacity, rgba(var(--color-primary-rgb), 0.1));
+    }
+  }
+}
+
+// 코스 카드 hover 효과
+.enrolled-course-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+}

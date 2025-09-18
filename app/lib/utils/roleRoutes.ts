@@ -3,6 +3,8 @@
  * Single source of truth for all role-specific routes
  */
 
+import { ROUTES } from '@/app/lib/constants/routes';
+
 export type UserRole = 'student' | 'instructor' | 'admin';
 
 /**
@@ -65,13 +67,13 @@ export function getEnrolledCoursesUrl(
 ): string {
   switch (role) {
     case 'student':
-      return '/student-enrolled-course';
+      return ROUTES.STUDENT.ENROLLED_COURSES;
     case 'instructor':
-      return '/instructor-enrolled-course';
+      return ROUTES.INSTRUCTOR.ENROLLED_COURSES;
     case 'admin':
-      return '/instructor-enrolled-course';
+      return ROUTES.INSTRUCTOR.ENROLLED_COURSES;
     default:
-      return '/student-enrolled-course';
+      return ROUTES.STUDENT.ENROLLED_COURSES;
   }
 }
 

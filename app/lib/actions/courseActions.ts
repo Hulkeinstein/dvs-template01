@@ -6,14 +6,94 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { revalidatePath } from 'next/cache';
 import { BADGE_CONFIG } from '@/app/lib/constants/badgeConfig';
+import { ROUTES } from '@/app/lib/constants/routes';
 import {
   mapFormDataToDB,
   mapFormDataToSettings,
   logUnmappedFields,
 } from '@/app/lib/utils/courseDataMapper';
 
+// =========================================================================
+// Type Definitions
+// =========================================================================
+
+export interface ActionResult<T = any> {
+  success?: boolean;
+  error?: string;
+  data?: T;
+  lessonId?: string;
+  course?: any;
+  message?: string;
+  [key: string]: any;
+}
+
+export interface CourseSummary {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string | null;
+  thumbnail_url?: string | null;
+  status?: string;
+  is_free?: boolean;
+  regular_price?: number | null;
+  discounted_price?: number | null;
+  instructor_id?: string;
+  instructor?: {
+    id: string;
+    name: string;
+    avatar_url?: string | null;
+  };
+}
+
+export interface CourseFilter {
+  q?: string; // Search query
+  instructorId?: string; // Filter by instructor
+  status?: string[]; // Filter by status
+  limit?: number; // Pagination limit
+  offset?: number; // Pagination offset
+}
+
+export interface CourseBadge {
+  badge_type: string;
+  priority: number;
+}
+
+export interface CourseFormData {
+  title: string;
+  description?: string;
+  category?: string;
+  difficulty_level?: string;
+  regular_price?: number;
+  discounted_price?: number;
+  is_free?: boolean;
+  thumbnail_url?: string;
+  [key: string]: any; // For additional form fields
+}
+
+export interface CreateCourseResult {
+  error?: string;
+  success?: boolean;
+  courseId?: string;
+}
+
+export interface UpdateCourseResult {
+  error?: string;
+  success?: boolean;
+}
+
+export interface DeleteCourseResult {
+  success: boolean;
+  error?: string;
+}
+
+// =========================================================================
+// Course CRUD Operations
+// =========================================================================
+
 // Create a new course
-export async function createCourse(formData) {
+export async function createCourse(
+  formData: CourseFormData
+): Promise<CreateCourseResult> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -40,7 +120,7 @@ export async function createCourse(formData) {
     }
 
     // slug 생성 (title에서 자동 생성)
-    const createSlug = (title) => {
+    const createSlug = (title: string) => {
       return (
         title
           .toLowerCase()
@@ -164,8 +244,8 @@ export async function createCourse(formData) {
       }
     }
 
-    revalidatePath('/instructor/courses');
-    revalidatePath('/courses');
+    revalidatePath(ROUTES.INSTRUCTOR.COURSES);
+    revalidatePath('/courses'); // TODO: Add to ROUTES
 
     return { success: true, courseId: course.id };
   } catch (error) {
@@ -177,7 +257,10 @@ export async function createCourse(formData) {
 }
 
 // Update course information
-export async function updateCourse(courseId, formData) {
+export async function updateCourse(
+  courseId: string,
+  formData: any
+): Promise<ActionResult<void>> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -481,8 +564,8 @@ export async function updateCourse(courseId, formData) {
     }
 
     revalidatePath(`/courses/${courseId}`);
-    revalidatePath('/instructor/courses');
-    revalidatePath('/create-course');
+    revalidatePath(ROUTES.INSTRUCTOR.COURSES);
+    revalidatePath(ROUTES.INSTRUCTOR.CREATE_COURSE);
 
     return { success: true };
   } catch (error) {
@@ -494,7 +577,10 @@ export async function updateCourse(courseId, formData) {
 }
 
 // Add a lesson to a course
-export async function addLesson(courseId, lessonData) {
+export async function addLesson(
+  courseId: string,
+  lessonData: any
+): Promise<ActionResult<{ id: string }>> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -576,7 +662,9 @@ export async function addLesson(courseId, lessonData) {
 }
 
 // Delete a lesson
-export async function deleteLesson(lessonId) {
+export async function deleteLesson(
+  lessonId: string
+): Promise<ActionResult<void>> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -601,7 +689,7 @@ export async function deleteLesson(lessonId) {
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || lesson.courses.instructor_id !== userData.id) {
+    if (!userData || (lesson.courses as any).instructor_id !== userData.id) {
       return { error: 'You do not have permission to delete this lesson' };
     }
 
@@ -628,7 +716,10 @@ export async function deleteLesson(lessonId) {
 }
 
 // Publish or unpublish a course
-export async function updateCourseStatus(courseId, status) {
+export async function updateCourseStatus(
+  courseId: string,
+  status: string
+): Promise<ActionResult<void>> {
   try {
     const session = await getServerSession(authOptions);
 
@@ -669,8 +760,8 @@ export async function updateCourseStatus(courseId, status) {
     }
 
     revalidatePath(`/courses/${courseId}`);
-    revalidatePath('/instructor/courses');
-    revalidatePath('/courses');
+    revalidatePath(ROUTES.INSTRUCTOR.COURSES);
+    revalidatePath('/courses'); // TODO: Add to ROUTES
 
     return { success: true };
   } catch (error) {
@@ -797,10 +888,12 @@ export async function getInstructorCourses() {
         try {
           if (course.course_badges && Array.isArray(course.course_badges)) {
             course.badges = course.course_badges
-              .sort((a, b) => a.priority - b.priority)
-              .map((badge) => ({
+              .sort((a: CourseBadge, b: CourseBadge) => a.priority - b.priority)
+              .map((badge: CourseBadge) => ({
                 ...badge,
-                ...(BADGE_CONFIG[badge.badge_type] || {}),
+                ...(BADGE_CONFIG[
+                  badge.badge_type as keyof typeof BADGE_CONFIG
+                ] || {}),
                 type: badge.badge_type,
               }));
           } else {
@@ -828,7 +921,9 @@ export async function getInstructorCourses() {
 // Get single course details
 // 서버는 통합 lessons 배열만 반환 - 순서/일관성 보장과 타입 추가 시 비용 최소화를 위해
 // content_type으로 구분되며, 클라이언트에서 필요시 필터링
-export async function getCourseById(courseId) {
+export async function getCourseById(
+  courseId: string
+): Promise<ActionResult<any>> {
   try {
     console.log('getCourseById called with ID:', courseId);
 
@@ -885,10 +980,11 @@ export async function getCourseById(courseId) {
     try {
       if (course.course_badges && Array.isArray(course.course_badges)) {
         course.badges = course.course_badges
-          .sort((a, b) => a.priority - b.priority)
-          .map((badge) => ({
+          .sort((a: CourseBadge, b: CourseBadge) => a.priority - b.priority)
+          .map((badge: CourseBadge) => ({
             ...badge,
-            ...(BADGE_CONFIG[badge.badge_type] || {}),
+            ...(BADGE_CONFIG[badge.badge_type as keyof typeof BADGE_CONFIG] ||
+              {}),
             type: badge.badge_type,
           }));
       } else {
@@ -971,7 +1067,9 @@ export async function getCourseById(courseId) {
  * @param {string} courseId - The ID of the course to delete
  * @returns {Promise<{success: boolean, message?: string, error?: string}>}
  */
-export async function deleteCourse(courseId) {
+export async function deleteCourse(
+  courseId: string
+): Promise<ActionResult<void>> {
   try {
     // 1. NextAuth로 세션 확인
     const session = await getServerSession(authOptions);
@@ -1070,6 +1168,88 @@ export async function deleteCourse(courseId) {
     return {
       success: false,
       error: 'An unexpected error occurred while deleting the course',
+    };
+  }
+}
+
+// Get available courses for enrollment (for testing or course selection)
+export async function getAvailableCourses(
+  filter: CourseFilter = {}
+): Promise<{ success: boolean; error?: string; courses: CourseSummary[] }> {
+  try {
+    const { status = ['published', 'draft'], limit, offset } = filter;
+
+    let query = supabase
+      .from('courses')
+      .select(
+        `
+        id,
+        title,
+        description,
+        thumbnail_url,
+        status,
+        is_free,
+        regular_price,
+        discounted_price,
+        instructor_id,
+        user!courses_instructor_id_fkey (
+          id,
+          name,
+          avatar_url
+        )
+      `
+      )
+      .in('status', status)
+      .order('created_at', { ascending: false });
+
+    // Apply pagination if provided
+    if (limit) {
+      query = query.limit(limit);
+    }
+    if (offset) {
+      query = query.range(offset, offset + (limit || 10) - 1);
+    }
+
+    const { data: courses, error } = await query;
+
+    if (error) {
+      console.error('Error fetching available courses:', error);
+      return { success: false, error: error.message, courses: [] };
+    }
+
+    // Format the data for easier use
+    const formattedCourses: CourseSummary[] =
+      courses?.map((course: any) => ({
+        id: course.id,
+        title: course.title,
+        slug:
+          course.slug ||
+          course.title?.toLowerCase().replace(/\s+/g, '-') ||
+          course.id,
+        description: course.description,
+        thumbnail_url: course.thumbnail_url,
+        status: course.status,
+        is_free: course.is_free,
+        regular_price: course.regular_price,
+        discounted_price: course.discounted_price,
+        instructor_id: course.instructor_id,
+        instructor: {
+          id: course.instructor_id,
+          name: course.user?.name || 'Unknown Instructor',
+          avatar_url: course.user?.avatar_url,
+        },
+      })) || [];
+
+    return {
+      success: true,
+      courses: formattedCourses,
+    };
+  } catch (error) {
+    console.error('Error in getAvailableCourses:', error);
+    return {
+      success: false,
+      error: 'Failed to fetch available courses',
+      courses: [],
     };
   }
 }

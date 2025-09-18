@@ -59,9 +59,7 @@
       "files": 13,
       "functions": 55,
       "preserveDirective": "use server",
-      "targets": [
-        "app/lib/actions/*.js"
-      ]
+      "targets": ["app/lib/actions/*.js"]
     },
     {
       "id": "phase-3",

@@ -40,7 +40,7 @@ const nextConfig = {
             value: [
               "default-src 'self'",
               // 개발에서만 unsafe-eval 허용, 프로덕션에서는 제거
-              process.env.NODE_ENV === 'development' 
+              process.env.NODE_ENV === 'development'
                 ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
                 : "script-src 'self' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'",
@@ -50,28 +50,28 @@ const nextConfig = {
               "connect-src 'self' https://datvqaemqzhgitxxfvar.supabase.co wss://datvqaemqzhgitxxfvar.supabase.co",
               "frame-ancestors 'none'",
               // frame-src 제거 (X-Frame-Options와 충돌)
-            ].join('; ')
+            ].join('; '),
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
+            value: 'strict-origin-when-cross-origin',
           },
           {
             key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()'
-          }
-        ]
-      }
-    ]
-  }
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

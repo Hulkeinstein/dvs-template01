@@ -4,13 +4,7 @@ import { getAdminCourses } from './actions';
 import CourseTable from '@/components/Admin/CourseManagement/CourseTable';
 import CourseFilters from '@/components/Admin/CourseManagement/CourseFilters';
 import { Button } from '@/components/ui/button';
-import { 
-  Plus, 
-  BookOpen, 
-  CheckCircle, 
-  Clock, 
-  DollarSign 
-} from 'lucide-react';
+import { Plus, BookOpen, CheckCircle, Clock, DollarSign } from 'lucide-react';
 import type {
   CourseFilters as CourseFiltersType,
   CourseStatus,
@@ -65,7 +59,7 @@ export default async function AdminCoursesPage({ searchParams }: PageProps) {
             </p>
           </div>
           <Link href="/create-course">
-            <Button 
+            <Button
               size="lg"
               className="h-14 px-8 text-lg bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200"
             >
@@ -89,13 +83,13 @@ export default async function AdminCoursesPage({ searchParams }: PageProps) {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-card rounded-xl border border-border p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg text-muted-foreground">Published</p>
               <p className="text-3xl font-bold text-green-500 mt-2">
-                {courses.filter(c => c.status === 'published').length}
+                {courses.filter((c) => c.status === 'published').length}
               </p>
             </div>
             <div className="w-14 h-14 bg-green-500/5 rounded-lg flex items-center justify-center">
@@ -103,13 +97,13 @@ export default async function AdminCoursesPage({ searchParams }: PageProps) {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-card rounded-xl border border-border p-6">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg text-muted-foreground">Pending</p>
               <p className="text-3xl font-bold text-yellow-500 mt-2">
-                {courses.filter(c => c.status === 'pending').length}
+                {courses.filter((c) => c.status === 'pending').length}
               </p>
             </div>
             <div className="w-14 h-14 bg-yellow-500/5 rounded-lg flex items-center justify-center">
@@ -117,7 +111,7 @@ export default async function AdminCoursesPage({ searchParams }: PageProps) {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-card rounded-xl border border-border p-6">
           <div className="flex items-center justify-between">
             <div>

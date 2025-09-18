@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getUserCertificates } from "@/app/lib/certificate/actions/certificateActions";
 import { isFeatureEnabled } from "@/app/lib/certificate/utils/featureFlags";
+import { ROUTES } from "@/app/lib/constants/routes";
 
 const StudentCertificates = ({ userId }) => {
   const [certificates, setCertificates] = useState([]);
@@ -72,7 +73,7 @@ const StudentCertificates = ({ userId }) => {
             <i className="feather-award" style={{ fontSize: '48px', color: '#ddd' }}></i>
             <p className="mt-3 text-muted">You haven&apos;t earned any certificates yet.</p>
             <p className="text-muted">Complete your enrolled courses to earn certificates!</p>
-            <Link href="/course-filter-one-toggle" className="rbt-btn btn-sm mt-3">
+            <Link href={ROUTES.STUDENT.COURSE_BROWSER} className="rbt-btn btn-sm mt-3">
               Browse Courses
             </Link>
           </div>

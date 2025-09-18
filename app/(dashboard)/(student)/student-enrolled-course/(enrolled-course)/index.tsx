@@ -5,7 +5,7 @@ import FooterOne from '@/components/Footer/Footer-One';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
 import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
-import EnrolledCourses from '@/components/Student/EnrolledCourses';
+import EnrolledCoursesTS from '@/components/Student/EnrolledCoursesTS';
 import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
 import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
 import Context from '@/context/Context';
@@ -44,7 +44,7 @@ const StudentCourse = () => {
                       </div>
 
                       <div className="col-lg-9">
-                        <EnrolledCourses userId={session?.user?.id} />
+                        <EnrolledCoursesTS userId={session?.user?.id} />
                       </div>
                     </div>
                   </RoleProtection>

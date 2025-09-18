@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { TopCourse } from '@/types/dashboard';
+import { ROUTES } from '@/app/lib/constants/routes';
 
 interface Props {
   courses: TopCourse[];
@@ -83,7 +84,7 @@ const TopCoursesTable: React.FC<Props> = ({ courses }) => {
               <p className="b3 text-muted">Courses with highest engagement</p>
             </div>
             <a
-              href="/admin-courses"
+              href={ROUTES.ADMIN.COURSES}
               className="rbt-btn btn-sm btn-outline-primary"
             >
               View All Courses
