@@ -13,7 +13,12 @@ import {
   type ColumnFiltersState,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,7 +34,9 @@ export function DataTable<TData, TValue>({
   pageSize = 10,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
@@ -62,7 +69,10 @@ export function DataTable<TData, TValue>({
           <table className="w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b border-border bg-muted/50">
+                <tr
+                  key={headerGroup.id}
+                  className="border-b border-border bg-muted/50"
+                >
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
@@ -83,9 +93,15 @@ export function DataTable<TData, TValue>({
               {loading ? (
                 // Loading state with skeleton
                 Array.from({ length: pageSize }).map((_, index) => (
-                  <tr key={`skeleton-${index}`} className="border-b border-border">
+                  <tr
+                    key={`skeleton-${index}`}
+                    className="border-b border-border"
+                  >
                     {columns.map((_, cellIndex) => (
-                      <td key={`skeleton-cell-${cellIndex}`} className="h-14 px-4">
+                      <td
+                        key={`skeleton-cell-${cellIndex}`}
+                        className="h-14 px-4"
+                      >
                         <div className="h-4 w-full animate-pulse rounded bg-muted/30" />
                       </td>
                     ))}
@@ -100,8 +116,14 @@ export function DataTable<TData, TValue>({
                     className="border-b border-border transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted/50"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="h-14 px-4 py-3 text-sm text-foreground">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <td
+                        key={cell.id}
+                        className="h-14 px-4 py-3 text-sm text-foreground"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </td>
                     ))}
                   </tr>
@@ -109,10 +131,7 @@ export function DataTable<TData, TValue>({
               ) : (
                 // Empty state
                 <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="h-32 text-center"
-                  >
+                  <td colSpan={columns.length} className="h-32 text-center">
                     <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
                       <svg
                         className="mb-3 h-10 w-10 text-muted-foreground/50"
@@ -139,14 +158,14 @@ export function DataTable<TData, TValue>({
           </table>
         </div>
       </div>
-      
+
       {/* Tweakcn Style Pagination */}
       <div className="flex items-center justify-between rounded-md border border-border bg-card px-4 py-3">
         <div className="text-xs text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{' '}
           {table.getFilteredRowModel().rows.length} row(s) selected
         </div>
-        
+
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <Button
@@ -170,14 +189,14 @@ export function DataTable<TData, TValue>({
               <span className="sr-only">Previous page</span>
             </Button>
           </div>
-          
+
           <div className="flex items-center gap-1">
             <div className="flex h-8 items-center rounded-md bg-muted px-3 text-xs font-medium">
               Page {table.getState().pagination.pageIndex + 1} of{' '}
               {table.getPageCount()}
             </div>
           </div>
-          
+
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
