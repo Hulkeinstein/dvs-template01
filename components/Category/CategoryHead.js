@@ -147,6 +147,7 @@ const CategoryHead = ({
                     {pathname === '/course-filter-two-open' ||
                     pathname === '/course-filter-two-toggle' ||
                     pathname === '/course-filter-one-toggle' ||
+                    pathname === '/all-courses' ||
                     pathname === '/course-card-2' ||
                     pathname === '/course-card-3' ||
                     pathname === '/course-masonry' ? (

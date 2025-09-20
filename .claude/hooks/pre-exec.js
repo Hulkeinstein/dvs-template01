@@ -6,6 +6,11 @@ const toolInput = JSON.parse(process.env.CLAUDE_TOOL_INPUT || '{}');
 const command = toolInput.command || process.argv[2];
 const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 
+// 안전 가드: 명령이 없으면 조용히 통과
+if (!command || typeof command !== 'string' || command.trim() === '') {
+  process.exit(0);
+}
+
 // 설정 로드
 const settings = JSON.parse(
   fs.readFileSync(path.join(projectDir, '.claude/settings.json'), 'utf8')

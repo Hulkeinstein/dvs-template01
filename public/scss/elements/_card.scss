@@ -549,21 +549,58 @@
         }
     }
 
+    &.variation-01 {
+        // CourseFilterOneToggle 전용 - 이미지 크기 고정
+        .rbt-card-img {
+            a {
+                position: relative;
+                display: block;
+                width: 100%;
+                height: 244px; // 고정 높이 (355x244 비율)
+                overflow: hidden;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover; // 비율 유지하며 영역 채우기
+                    object-position: center; // 이미지 중앙 정렬
+                    border-radius: var(--radius);
+                }
+            }
+        }
+
+        // 리스트 뷰일 때
+        &.card-list-2 {
+            .rbt-card-img {
+                a {
+                    height: 150px; // 리스트 뷰에서는 더 작은 높이
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        border-radius: 2px 0 0 2px;
+                    }
+                }
+            }
+        }
+    }
+
     &.variation-05 {
         // CourseWidget 전용 - 크기 완전 고정
         min-height: 420px;
         max-height: 420px;
         display: flex;
         flex-direction: column;
-        
+
         .rbt-card-img {
             flex-shrink: 0;
-            
+
             a {
                 display: block;
                 aspect-ratio: 330 / 227;
                 overflow: hidden;
-                
+
                 img {
                     width: 100%;
                     height: 100%;
