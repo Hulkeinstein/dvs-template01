@@ -1172,6 +1172,100 @@ export async function deleteCourse(
   }
 }
 
+// Get all courses with instructor details and statistics for public display
+export async function getAllCoursesWithDetails(): Promise<any[]> {
+  try {
+    // 1. Fetch only published courses with instructor info
+    const { data: courses, error: coursesError } = await supabase
+      .from('courses')
+      .select(
+        `
+        *,
+        instructor:user!instructor_id(
+          id,
+          name,
+          avatar_url
+        )
+      `
+      )
+      .eq('status', 'published') // Only published courses
+      .order('created_at', { ascending: false });
+
+    if (coursesError) {
+      console.error('Error fetching courses:', coursesError);
+      return [];
+    }
+
+    if (!courses || courses.length === 0) {
+      return [];
+    }
+
+    // 2. Get statistics for each course (parallel processing)
+    const coursesWithStats = await Promise.all(
+      courses.map(async (course) => {
+        // Get lesson count
+        const { count: lessonCount } = await supabase
+          .from('lessons')
+          .select('*', { count: 'exact', head: true })
+          .eq('course_id', course.id);
+
+        // Get enrollment count
+        const { count: enrollmentCount } = await supabase
+          .from('enrollments')
+          .select('*', { count: 'exact', head: true })
+          .eq('course_id', course.id);
+
+        // Transform to UI format matching CourseDetails structure
+        return {
+          id: course.id,
+          courseTitle: course.title,
+          desc: course.description || '',
+          courseImg: course.thumbnail_url || '/images/course/1.jpg',
+          userCategory: course.category || 'Web Design',
+          courseType: course.difficulty_level || 'All Levels',
+          price: course.discounted_price || course.regular_price || 0,
+          offPrice: course.regular_price || 0,
+          name: course.instructor?.name || 'Instructor',
+          userImg:
+            course.instructor?.avatar_url || '/images/client/avater-1.png',
+          student: `${enrollmentCount || 0} Students`,
+          lesson: lessonCount || 0,
+          review: '5.0', // Placeholder - implement reviews later
+          reviewCount: '15', // Placeholder - implement reviews later
+          duration: '8 Hours', // Placeholder - calculate from lessons later
+        };
+      })
+    );
+
+    return coursesWithStats;
+  } catch (error) {
+    console.error('Error in getAllCoursesWithDetails:', error);
+    return [];
+  }
+}
+
+// Get user's bookmarked courses
+export async function getUserBookmarks(userId: string): Promise<string[]> {
+  if (!userId) return [];
+
+  try {
+    const { data, error } = await supabase
+      .from('course_bookmarks')
+      .select('course_id')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching bookmarks:', error);
+      return [];
+    }
+
+    return data?.map((b) => b.course_id) || [];
+  } catch (error) {
+    console.error('Error in getUserBookmarks:', error);
+    return [];
+  }
+}
+
 // Get available courses for enrollment (for testing or course selection)
 export async function getAvailableCourses(
   filter: CourseFilter = {}
