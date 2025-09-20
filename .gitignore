@@ -70,3 +70,10 @@ scripts/keys/
 *.key
 *.crt
 *.b64
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+
+# SCSS compiled files and source maps
+public/css/
+!public/css/.gitkeep
