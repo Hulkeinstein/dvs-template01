@@ -44,7 +44,7 @@ const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
     <>
       <Provider store={Store}>
         <Context>
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType={true as any} />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <MobileMenu />
           <Cart />
 
