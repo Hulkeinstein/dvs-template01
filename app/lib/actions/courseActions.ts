@@ -17,14 +17,14 @@ import {
 // Type Definitions
 // =========================================================================
 
-export interface ActionResult<T = any> {
+export interface ActionResult<T = unknown> {
   success?: boolean;
   error?: string;
   data?: T;
   lessonId?: string;
-  course?: any;
+  course?: unknown;
   message?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface CourseSummary {
@@ -67,7 +67,7 @@ export interface CourseFormData {
   discounted_price?: number;
   is_free?: boolean;
   thumbnail_url?: string;
-  [key: string]: any; // For additional form fields
+  [key: string]: unknown; // For additional form fields
 }
 
 export interface CreateCourseResult {
@@ -187,13 +187,10 @@ export async function createCourse(
     }
 
     // Create topics and lessons
-    if (formData.topics && formData.topics.length > 0) {
-      for (
-        let topicIndex = 0;
-        topicIndex < formData.topics.length;
-        topicIndex++
-      ) {
-        const topic = formData.topics[topicIndex];
+    const topics = (formData as any).topics;
+    if (topics && Array.isArray(topics) && topics.length > 0) {
+      for (let topicIndex = 0; topicIndex < topics.length; topicIndex++) {
+        const topic = topics[topicIndex];
 
         // Create topic
         const { data: topicData, error: topicError } = await supabase
@@ -579,7 +576,7 @@ export async function updateCourse(
 // Add a lesson to a course
 export async function addLesson(
   courseId: string,
-  lessonData: any
+  lessonData: Record<string, unknown>
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const session = await getServerSession(authOptions);
@@ -636,8 +633,8 @@ export async function addLesson(
         title: lessonData.title,
         description: lessonData.description,
         video_url: lessonData.videoUrl,
-        duration_minutes: lessonData.duration
-          ? parseInt(lessonData.duration)
+        duration_minutes: (lessonData as any).duration
+          ? parseInt((lessonData as any).duration)
           : null,
         order_index: nextOrder,
         is_preview: lessonData.isPreview || false,
@@ -1312,7 +1309,7 @@ export async function getAvailableCourses(
     }
 
     // Format the data for easier use
-    const formattedCourses: CourseSummary[] =
+    const formattedCourses: any[] =
       courses?.map((course: any) => ({
         id: course.id,
         title: course.title,
@@ -1329,8 +1326,8 @@ export async function getAvailableCourses(
         instructor_id: course.instructor_id,
         instructor: {
           id: course.instructor_id,
-          name: course.user?.name || 'Unknown Instructor',
-          avatar_url: course.user?.avatar_url,
+          name: course.user?.[0]?.name || 'Unknown Instructor',
+          avatar_url: course.user?.[0]?.avatar_url,
         },
       })) || [];
 

@@ -9,6 +9,32 @@ import {
   ActivityItem,
   TopCourse,
 } from '@/types/dashboard';
+
+// Supabase data types
+interface UserData {
+  id: string;
+  created_at: string;
+  role: string;
+  last_sign_in_at?: string;
+  display_name?: string;
+}
+
+interface CourseData {
+  id: string;
+  title?: string;
+  created_at?: string;
+  status: string;
+  price: number;
+  instructor_id: string;
+  enrollments?: { count: number }[];
+}
+
+interface EnrollmentData {
+  id: string;
+  created_at: string;
+  progress: number;
+  course_id: string;
+}
 import { format, subDays } from 'date-fns';
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
@@ -66,14 +92,14 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     const totalUsers = users.length;
     // These might be needed for future features - keeping for reference
     // const totalInstructors = users.filter(
-    //   (u: any) => u.role === 'instructor'
+    //   (u: UserData) => u.role === 'instructor'
     // ).length;
-    // const totalStudents = users.filter((u: any) => u.role === 'student').length;
+    // const totalStudents = users.filter((u: UserData) => u.role === 'student').length;
     // const newUsersToday = users.filter(
-    //   (u: any) => new Date(u.created_at).toDateString() === today.toDateString()
+    //   (u: UserData) => new Date(u.created_at).toDateString() === today.toDateString()
     // ).length;
     // const activeUsersWeek = users.filter(
-    //   (u: any) =>
+    //   (u: UserData) =>
     //     u.last_sign_in_at && new Date(u.last_sign_in_at) >= sevenDaysAgo
     // ).length;
 
@@ -81,7 +107,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     const courses = coursesData.data || [];
     // const totalCourses = courses.length; // For future dashboard metrics
     const activeCourses = courses.filter(
-      (c: any) => c.status === 'published'
+      (c: CourseData) => c.status === 'published'
     ).length;
 
     // Process enrollment data
@@ -89,11 +115,11 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     const totalEnrollments = enrollments.length;
 
     // Calculate revenue (simplified - you may want to use orders table)
-    const totalRevenue = courses.reduce((sum: number, course: any) => {
+    const totalRevenue = courses.reduce((sum: number, course: CourseData) => {
       const courseEnrollments = enrollments.filter(
-        (e: any) => e.course_id === course.id
+        (e: EnrollmentData) => e.course_id === course.id
       ).length;
-      return sum + course.price * courseEnrollments;
+      return sum + (course.price || 0) * courseEnrollments;
     }, 0);
 
     // Generate KPIs with trends
@@ -111,19 +137,19 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
         label: 'Active Courses',
         value: activeCourses,
         deltaPct: calculateGrowthRate(
-          courses.filter((c: any) => c.status === 'published'),
+          courses.filter((c: CourseData) => c.status === 'published'),
           thirtyDaysAgo
         ),
         direction: getDirection(
           calculateGrowthRate(
-            courses.filter((c: any) => c.status === 'published'),
+            courses.filter((c: CourseData) => c.status === 'published'),
             thirtyDaysAgo
           )
         ),
         icon: 'feather-monitor',
         color: 'success',
         sparkline: generateSparkline(
-          courses.filter((c: any) => c.status === 'published'),
+          courses.filter((c: CourseData) => c.status === 'published'),
           7
         ),
       },
@@ -161,28 +187,30 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     const courseDistribution: Series[] = [
       {
         label: 'Published',
-        value: courses.filter((c: any) => c.status === 'published').length,
+        value: courses.filter((c: CourseData) => c.status === 'published')
+          .length,
       },
       {
         label: 'Draft',
-        value: courses.filter((c: any) => c.status === 'draft').length,
+        value: courses.filter((c: CourseData) => c.status === 'draft').length,
       },
       {
         label: 'Archived',
-        value: courses.filter((c: any) => c.status === 'archived').length,
+        value: courses.filter((c: CourseData) => c.status === 'archived')
+          .length,
       },
     ].filter((item) => item.value > 0);
 
     // Course enrollments bar chart data
     const courseBarData: Series[] =
-      topCoursesData.data?.slice(0, 5).map((course: any) => ({
+      topCoursesData.data?.slice(0, 5).map((course: CourseData) => ({
         label: course.title?.substring(0, 20) || 'Unknown',
         value: course.enrollments?.[0]?.count || 0,
       })) || [];
 
     // Recent activity
     const recentActivity: ActivityItem[] = (recentActivityData.data || []).map(
-      (item: any) => ({
+      (item: UserData) => ({
         id: item.id,
         type: item.role === 'instructor' ? 'user' : 'enrollment',
         message: `New ${item.role} registered: ${item.display_name || 'Unknown User'}`,
@@ -194,7 +222,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
 
     // Top courses
     const topCourses: TopCourse[] = await Promise.all(
-      (topCoursesData.data || []).map(async (course: any) => {
+      (topCoursesData.data || []).map(async (course: CourseData) => {
         // Get instructor name
         const { data: instructor } = await supabase
           .from('user')

@@ -8,7 +8,7 @@ const BlogLayout = ({ params }) => {
 
   useEffect(() => {
     router.push('/post-format-gallery/blog-10');
-  }, []);
+  }, [router]);
 };
 
 export default BlogLayout;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 
 import CourseDetails from '../../../data/course-details/courseData.json';
 
@@ -21,8 +21,9 @@ const CourseFilerOneOpenPage = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
-  let getAllCourse = JSON.parse(
-    JSON.stringify(CourseDetails.courseDetails.slice(0, 12))
+  const getAllCourse = useMemo(
+    () => JSON.parse(JSON.stringify(CourseDetails.courseDetails.slice(0, 12))),
+    []
   );
 
   const startIndex = (page - 1) * 6;
@@ -40,7 +41,7 @@ const CourseFilerOneOpenPage = () => {
   useEffect(() => {
     setCourse(getAllCourse);
     setTotalPages(Math.ceil(getAllCourse.length / 6));
-  }, [setTotalPages, setCourse]);
+  }, [getAllCourse]);
 
   return (
     <>

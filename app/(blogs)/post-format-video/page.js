@@ -8,7 +8,7 @@ const BlogLayout = ({ params }) => {
 
   useEffect(() => {
     router.push('/post-format-video/blog-5');
-  }, []);
+  }, [router]);
 };
 
 export default BlogLayout;

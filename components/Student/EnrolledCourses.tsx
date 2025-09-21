@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getEnrolledCourses } from '@/app/lib/actions/studentDashboardActions';
 import { ROUTES } from '@/app/lib/constants/routes';
@@ -82,9 +83,11 @@ const EnrolledCourses = ({ userId }: EnrolledCoursesProps) => {
       <div className="rbt-card-img">
         <Link href={ROUTES.COURSE.DETAILS(enrollment.course_id)}>
           {enrollment.course.thumbnail_url ? (
-            <img
+            <Image
               src={enrollment.course.thumbnail_url}
               alt={enrollment.course.title}
+              width={300}
+              height={200}
               style={{ width: '100%', height: '200px', objectFit: 'cover' }}
             />
           ) : (

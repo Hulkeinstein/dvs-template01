@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { User } from './types';
 import UserActions from './UserActions';
 import { formatDistanceToNow } from 'date-fns';
@@ -76,14 +77,16 @@ const UserRow: React.FC<UserRowProps> = ({
       </td>
       <td>
         <div className="d-flex align-items-center">
-          <img
+          <Image
             src={
               user.avatar ||
               `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2f57ef&color=fff`
             }
             alt={user.name}
             className="rounded-circle me-3"
-            style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+            width={40}
+            height={40}
+            style={{ objectFit: 'cover' }}
           />
           <div>
             <div className="fw-medium">{user.name}</div>

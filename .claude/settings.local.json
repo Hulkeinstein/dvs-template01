@@ -147,7 +147,10 @@
       "Bash(vercel:*)",
       "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\app\\lib\\actions\")",
       "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\components\\Student\")",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" pr view 41)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" pr checks 41)",
+      "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" run view 17896239701 --log-failed)"
     ],
     "deny": []
   },
