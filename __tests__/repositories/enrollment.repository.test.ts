@@ -160,9 +160,9 @@ describe('EnrollmentRepository', () => {
 
       // Then: 해당 사용자의 등록만 반환
       expect(userEnrollments).toHaveLength(3);
-      expect(userEnrollments.every((e: any) => e.user_id === userId)).toBe(
-        true
-      );
+      expect(
+        userEnrollments.every((e: Enrollment) => e.user_id === userId)
+      ).toBe(true);
     });
 
     it('should categorize enrollments by status', async () => {
@@ -209,11 +209,15 @@ describe('EnrollmentRepository', () => {
 
       // Then: 정확한 분류
       expect(completed).toHaveLength(2);
-      expect(completed.every((e: any) => e.completed_at != null)).toBe(true);
+      expect(completed.every((e: Enrollment) => e.completed_at != null)).toBe(
+        true
+      );
 
       expect(inProgress).toHaveLength(2);
       expect(
-        inProgress.every((e: any) => e.progress! > 0 && e.progress! < 100)
+        inProgress.every(
+          (e: Enrollment) => e.progress! > 0 && e.progress! < 100
+        )
       ).toBe(true);
     });
   });
@@ -256,16 +260,16 @@ describe('EnrollmentRepository', () => {
       // Then: 해당 코스의 등록만 반환
       expect(courseEnrollments).toHaveLength(3);
       expect(
-        courseEnrollments.every((e: any) => e.course_id === courseId)
+        courseEnrollments.every((e: Enrollment) => e.course_id === courseId)
       ).toBe(true);
 
       // 통계 계산
       const completedCount = courseEnrollments.filter(
-        (e: any) => e.completed_at
+        (e: Enrollment) => e.completed_at
       ).length;
       const averageProgress =
         courseEnrollments.reduce(
-          (sum: any, e: any) => sum + (e.progress || 0),
+          (sum: number, e: Enrollment) => sum + (e.progress || 0),
           0
         ) / courseEnrollments.length;
 

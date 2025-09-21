@@ -24,7 +24,7 @@ const BlogGridMinimal = ({ isPagination, blogdata, start, end }) => {
   useEffect(() => {
     setBlogs(blogdata);
     setTotalPages(Math.ceil(blogdata.length / 9));
-  }, [setTotalPages, setBlogs]);
+  }, [blogdata]);
   return (
     <>
       <div className="row g-5">

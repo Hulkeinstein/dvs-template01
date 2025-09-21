@@ -2,24 +2,24 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import CourseCard from '../../data/course-details/courseData.json';
 
 const CardSix = ({ parentClass, childClass, types }) => {
   const [courseFilter, setCourseFilter] = useState('');
 
-  const filterItem = (types) => {
+  const filterItem = useCallback((types) => {
     const updateItem = CourseCard.courseDetails.filter((curElm) => {
       return curElm.courseType === types;
     });
 
     setCourseFilter(updateItem);
-  };
+  }, []);
 
   useEffect(() => {
     filterItem(types);
-  }, []);
+  }, [types, filterItem]);
 
   return (
     <>

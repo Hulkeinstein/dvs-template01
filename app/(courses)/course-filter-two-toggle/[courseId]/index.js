@@ -38,7 +38,7 @@ const SingleCoursePage = ({ getParams }) => {
     }
 
     setFilteredCourses(checkMatchCourse);
-  }, [getParams.courseId]);
+  }, [checkMatchCourse, courseId, matchedCourse, router]);
 
   return (
     <>

@@ -35,7 +35,7 @@ const SingleEvent = ({ getParams }) => {
     if (postId && getMatchEvent === undefined) {
       router.push('/event-list');
     }
-  }, [getMatchEvent, router]);
+  }, [getMatchEvent, router, postId]);
 
   return (
     <>

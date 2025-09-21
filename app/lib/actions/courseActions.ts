@@ -187,7 +187,9 @@ export async function createCourse(
     }
 
     // Create topics and lessons
-    const topics = (formData as any).topics;
+    const topics = (formData as Record<string, unknown>).topics as
+      | Array<{ name: string; summary: string; lessons?: Array<unknown> }>
+      | undefined;
     if (topics && Array.isArray(topics) && topics.length > 0) {
       for (let topicIndex = 0; topicIndex < topics.length; topicIndex++) {
         const topic = topics[topicIndex];
@@ -256,7 +258,7 @@ export async function createCourse(
 // Update course information
 export async function updateCourse(
   courseId: string,
-  formData: any
+  formData: unknown
 ): Promise<ActionResult<void>> {
   try {
     const session = await getServerSession(authOptions);
@@ -633,8 +635,8 @@ export async function addLesson(
         title: lessonData.title,
         description: lessonData.description,
         video_url: lessonData.videoUrl,
-        duration_minutes: (lessonData as any).duration
-          ? parseInt((lessonData as any).duration)
+        duration_minutes: (lessonData as Record<string, unknown>).duration
+          ? parseInt(String((lessonData as Record<string, unknown>).duration))
           : null,
         order_index: nextOrder,
         is_preview: lessonData.isPreview || false,
@@ -686,7 +688,10 @@ export async function deleteLesson(
       .eq('email', session.user.email)
       .single();
 
-    if (!userData || (lesson.courses as any).instructor_id !== userData.id) {
+    if (
+      !userData ||
+      (lesson.courses as Record<string, unknown>).instructor_id !== userData.id
+    ) {
       return { error: 'You do not have permission to delete this lesson' };
     }
 
@@ -920,7 +925,7 @@ export async function getInstructorCourses() {
 // content_type으로 구분되며, 클라이언트에서 필요시 필터링
 export async function getCourseById(
   courseId: string
-): Promise<ActionResult<any>> {
+): Promise<ActionResult<Record<string, unknown>>> {
   try {
     console.log('getCourseById called with ID:', courseId);
 
@@ -1170,7 +1175,9 @@ export async function deleteCourse(
 }
 
 // Get all courses with instructor details and statistics for public display
-export async function getAllCoursesWithDetails(): Promise<any[]> {
+export async function getAllCoursesWithDetails(): Promise<
+  Array<Record<string, unknown>>
+> {
   try {
     // 1. Fetch only published courses with instructor info
     const { data: courses, error: coursesError } = await supabase
@@ -1309,8 +1316,8 @@ export async function getAvailableCourses(
     }
 
     // Format the data for easier use
-    const formattedCourses: any[] =
-      courses?.map((course: any) => ({
+    const formattedCourses: Array<unknown> =
+      courses?.map((course: Record<string, unknown>) => ({
         id: course.id,
         title: course.title,
         slug:

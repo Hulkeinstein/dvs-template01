@@ -10,9 +10,15 @@ interface EnrolledCoursesProps {
 }
 
 const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
-  const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
-  const [activeCourses, setActiveCourses] = useState<any[]>([]);
-  const [completedCourses, setCompletedCourses] = useState<any[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<
+    Array<Record<string, unknown>>
+  >([]);
+  const [activeCourses, setActiveCourses] = useState<
+    Array<Record<string, unknown>>
+  >([]);
+  const [completedCourses, setCompletedCourses] = useState<
+    Array<Record<string, unknown>>
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,31 +32,34 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
         const courses = await getEnrolledCoursesRPC(userId);
 
         // Transform data to match CourseWidget format
-        const transformedCourses = courses.map((enrollment: any) => ({
-          id: enrollment.course_id,
-          title: enrollment.course.title,
-          courseThumbnail:
-            enrollment.course.thumbnail_url || '/images/course/course-01.jpg',
-          coursePrice: enrollment.course.regular_price || 0,
-          offerPrice: enrollment.course.discounted_price || 0,
-          lectures: enrollment.course.total_lessons || 0,
-          enrolledStudent: enrollment.course.enrolled_students || 0,
-          reviews: { total: 0 },
-          rating: { average: 0 },
-          progress: enrollment.progress || 0,
-          status: enrollment.status,
-          instructor: enrollment.course.instructor,
-        }));
+        const transformedCourses = courses.map(
+          (enrollment: Record<string, unknown>) => ({
+            id: enrollment.course_id,
+            title: enrollment.course.title,
+            courseThumbnail:
+              enrollment.course.thumbnail_url || '/images/course/course-01.jpg',
+            coursePrice: enrollment.course.regular_price || 0,
+            offerPrice: enrollment.course.discounted_price || 0,
+            lectures: enrollment.course.total_lessons || 0,
+            enrolledStudent: enrollment.course.enrolled_students || 0,
+            reviews: { total: 0 },
+            rating: { average: 0 },
+            progress: enrollment.progress || 0,
+            status: enrollment.status,
+            instructor: enrollment.course.instructor,
+          })
+        );
 
         // Separate by status
         const enrolled = transformedCourses.filter(
-          (c: any) => c.status === 'active'
+          (c: Record<string, unknown>) => c.status === 'active'
         );
         const active = transformedCourses.filter(
-          (c: any) => c.status === 'active' && c.progress > 0
+          (c: Record<string, unknown>) =>
+            c.status === 'active' && (c.progress as number) > 0
         );
         const completed = transformedCourses.filter(
-          (c: any) => c.status === 'completed'
+          (c: Record<string, unknown>) => c.status === 'completed'
         );
 
         setEnrolledCourses(enrolled);

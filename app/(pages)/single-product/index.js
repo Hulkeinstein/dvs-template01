@@ -29,7 +29,7 @@ const SingleProductPage = ({ getParams }) => {
     if (productId && checkMatch === undefined) {
       router.push('/shop');
     }
-  }, [checkMatch, router]);
+  }, [checkMatch, router, productId]);
 
   return (
     <>

@@ -68,10 +68,10 @@ describe('CourseRepository', () => {
 
       // Then: 해당 강사의 코스만 반환
       expect(result).toHaveLength(2);
-      expect(result.every((c: any) => c.instructor_id === instructorId)).toBe(
-        true
-      );
-      expect(result.map((c: any) => c.title)).toEqual([
+      expect(
+        result.every((c: Course) => c.instructor_id === instructorId)
+      ).toBe(true);
+      expect(result.map((c: Course) => c.title)).toEqual([
         'React Basics',
         'Advanced React',
       ]);

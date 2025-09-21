@@ -51,7 +51,7 @@ export const logger = {
   },
 
   // 테이블 - 개발 환경에서만
-  table: (data: any): void => {
+  table: (data: unknown): void => {
     if (isDevelopment) {
       console.table(data);
     }
@@ -112,7 +112,7 @@ if (typeof window !== 'undefined' && !isDevelopment) {
       method === 'time' ||
       method === 'timeEnd'
     ) {
-      (window.console as any)[method] = () => {};
+      (window.console as Record<string, unknown>)[method] = () => {};
     }
   });
 }

@@ -29,7 +29,7 @@ const SingleProfile = ({ getParams }) => {
     if (postId && checkMatchProfile === undefined) {
       router.push('/profile/1');
     }
-  }, [checkMatchProfile, router]);
+  }, [checkMatchProfile, router, postId]);
 
   return (
     <>

@@ -33,7 +33,7 @@ const Events = ({
   useEffect(() => {
     setEvents(getEvents.events);
     setTotalPages(Math.ceil(getEvents.events.length / 6));
-  }, [setTotalPages, setEvents]);
+  }, [getEvents.events]);
 
   return (
     <>

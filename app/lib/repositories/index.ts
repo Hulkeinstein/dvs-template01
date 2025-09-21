@@ -35,12 +35,12 @@ export type { Enrollment } from './enrollment.repository';
  * 테스트에서 mock repository를 주입하기 위한 팩토리
  */
 export class RepositoryFactory {
-  private static repositories = new Map<string, any>();
+  private static repositories = new Map<string, unknown>();
 
   /**
    * Repository 등록
    */
-  static register(name: string, repository: any): void {
+  static register(name: string, repository: unknown): void {
     this.repositories.set(name, repository);
   }
 

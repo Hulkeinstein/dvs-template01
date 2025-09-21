@@ -29,7 +29,7 @@ const CourseFilterOneToggle = ({ course, start, end }) => {
   useEffect(() => {
     setCourse(course);
     setTotalPages(Math.ceil(course.length / 6));
-  }, [setTotalPages, setCourse, getSelectedCourse]);
+  }, [course]);
 
   return (
     <>

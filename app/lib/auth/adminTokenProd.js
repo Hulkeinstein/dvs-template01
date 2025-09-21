@@ -130,7 +130,9 @@ async function markTokenConsumed(jti) {
   //   .eq('jti', jti);
 }
 
-export default {
+const adminTokenProd = {
   issueAdminSso,
   verifyAdminSso,
 };
+
+export default adminTokenProd;

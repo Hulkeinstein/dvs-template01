@@ -150,7 +150,7 @@ export async function getInstructorEnrolledStudents(): Promise<
           created_at: enrollment.created_at,
           updated_at: enrollment.updated_at,
         },
-        student: (enrollment.user as any as StudentProfile) || {
+        student: (enrollment.user as unknown as StudentProfile) || {
           id: enrollment.user_id,
           email: 'Unknown',
           name: null,
@@ -161,7 +161,7 @@ export async function getInstructorEnrolledStudents(): Promise<
           phone: null,
           bio: null,
         },
-        course: (enrollment.course as any as CourseInfo) || {
+        course: (enrollment.course as unknown as CourseInfo) || {
           id: enrollment.course_id,
           title: 'Unknown Course',
           thumbnail_url: null,
@@ -340,7 +340,7 @@ export async function getEnrolledStudentsByCourse(
           created_at: enrollment.created_at,
           updated_at: enrollment.updated_at,
         },
-        student: (enrollment.user as any as StudentProfile) || {
+        student: (enrollment.user as unknown as StudentProfile) || {
           id: enrollment.user_id,
           email: 'Unknown',
           name: null,
@@ -351,7 +351,7 @@ export async function getEnrolledStudentsByCourse(
           phone: null,
           bio: null,
         },
-        course: (enrollment.course as any as CourseInfo) || {
+        course: (enrollment.course as unknown as CourseInfo) || {
           id: enrollment.course_id,
           title: 'Unknown Course',
           thumbnail_url: null,

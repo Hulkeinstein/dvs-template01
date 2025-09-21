@@ -86,6 +86,10 @@
       "Bash(nvm use:*)",
       "Bash(bash:*)",
       "Bash(for file in app/lib/actions/*.js)",
+      "Bash(for file in app/(courses)/course-filter-*-*/[courseId]/index.js)",
+      "Bash(do if [ -f \"$file\" ])",
+      "Bash(then sed -i 's/}, \\[getParams.courseId\\]);/}, [checkMatchCourse, courseId, matchedCourse, router]);/' \"$file\")",
+      "Bash(fi)",
       "Bash(do sed -i.bak \"s|import { supabase }|import { supabaseServer as supabase }|g\" \"$file\")",
       "Bash(done)",
       "Bash(for file in app/api/**/*.js)",
@@ -152,7 +156,8 @@
       "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" pr checks 41)",
       "Bash(\"C:\\Program Files\\GitHub CLI\\gh.exe\" run view 17896239701 --log-failed)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   },
   "enableAllProjectMcpServers": true
 }

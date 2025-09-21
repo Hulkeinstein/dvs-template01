@@ -262,7 +262,7 @@ export const monitoring = {
  * };
  */
 
-export default {
+const securityConfig = {
   csp,
   cspProduction,
   cors,
@@ -275,3 +275,5 @@ export default {
   uploadRestrictions,
   monitoring,
 };
+
+export default securityConfig;

@@ -30,7 +30,7 @@ const BlogList = ({ isPagination, blogdata }) => {
     };
 
     getBlogs();
-  }, [setBlogs, setTotalPages, 7]);
+  }, [blogdata]);
 
   return (
     <>

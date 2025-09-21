@@ -24,7 +24,7 @@ const LessonSidebar = () => {
         setActiveTab(lesson.id);
       }
     });
-  }, [pathname]);
+  }, [pathname, isActive]);
 
   return (
     <>

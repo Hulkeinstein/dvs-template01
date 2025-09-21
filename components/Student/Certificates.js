@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { getUserCertificates } from "@/app/lib/certificate/actions/certificateActions";
@@ -12,13 +12,7 @@ const StudentCertificates = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (userId) {
-      loadCertificates();
-    }
-  }, [userId]);
-
-  const loadCertificates = async () => {
+  const loadCertificates = useCallback(async () => {
     try {
       setLoading(true);
       const result = await getUserCertificates(userId);
@@ -34,7 +28,13 @@ const StudentCertificates = ({ userId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      loadCertificates();
+    }
+  }, [userId, loadCertificates]);
 
   // Check if feature is enabled
   if (!isFeatureEnabled('CERTIFICATE_ENABLED')) {
