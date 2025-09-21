@@ -8,7 +8,7 @@ const BlogLayout = ({ params }) => {
 
   useEffect(() => {
     router.push('/post-format-audio/blog-5');
-  }, []);
+  }, [router]);
 };
 
 export default BlogLayout;

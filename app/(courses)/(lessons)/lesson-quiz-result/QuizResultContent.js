@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import LessonSidebar from '@/components/Lesson/LessonSidebar';
@@ -19,9 +19,9 @@ const QuizResultContent = () => {
     if (attemptId) {
       loadQuizResult();
     }
-  }, [attemptId]);
+  }, [attemptId, loadQuizResult]);
 
-  const loadQuizResult = async () => {
+  const loadQuizResult = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -50,7 +50,7 @@ const QuizResultContent = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [attemptId]);
 
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);

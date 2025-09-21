@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import {
   getUserBookmarks,
@@ -132,12 +133,12 @@ const Wishlist = ({ userId }: WishlistProps) => {
                             href={ROUTES.COURSE.DETAILS(bookmark.course_id)}
                           >
                             {bookmark.courses.thumbnail_url ? (
-                              <img
+                              <Image
                                 src={bookmark.courses.thumbnail_url}
                                 alt={bookmark.courses.title}
+                                width={60}
+                                height={60}
                                 style={{
-                                  width: '60px',
-                                  height: '60px',
                                   objectFit: 'cover',
                                   borderRadius: '4px',
                                   marginRight: '15px',

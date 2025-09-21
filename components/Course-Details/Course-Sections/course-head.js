@@ -16,7 +16,7 @@ import CourseBreadcrumbFive from './Breadcrumb/CourseBreadcrumb-Five';
 import CourseBreadcrumbSix from './Breadcrumb/CourseBreadcrumb-Six';
 import CourseBreadcrumbSeven from './Breadcrumb/CourseBreadcrumb-Seven';
 
-const CourseHead = ({ checkMatch }) => {
+const CourseHead = ({ checkMatch, reviewStats }) => {
   const pathname = usePathname();
   const path = useParams();
 
@@ -25,7 +25,10 @@ const CourseHead = ({ checkMatch }) => {
       {pathname === `/course-detail-2/${path.courseId}` ? (
         <div className="container">
           <div className="row">
-            <CourseBreadcrumbTwo getMatchCourse={checkMatch && checkMatch} />
+            <CourseBreadcrumbTwo
+              getMatchCourse={checkMatch && checkMatch}
+              reviewStats={reviewStats}
+            />
           </div>
         </div>
       ) : (
@@ -45,7 +48,10 @@ const CourseHead = ({ checkMatch }) => {
           </div>
           <div className="container">
             <div className="row">
-              <CourseBreadcrumb getMatchCourse={checkMatch && checkMatch} />
+              <CourseBreadcrumb
+                getMatchCourse={checkMatch && checkMatch}
+                reviewStats={reviewStats}
+              />
             </div>
           </div>
         </>

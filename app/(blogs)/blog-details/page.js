@@ -8,7 +8,7 @@ const BlogLayout = ({ params }) => {
 
   useEffect(() => {
     router.push('/blog-list');
-  }, []);
+  }, [router]);
 };
 
 export default BlogLayout;

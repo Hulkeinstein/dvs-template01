@@ -11,7 +11,7 @@ const EventLayout = ({ params }) => {
     if (postId === undefined) {
       router.push('/event-list');
     }
-  }, []);
+  }, [postId, router]);
 };
 
 export default EventLayout;

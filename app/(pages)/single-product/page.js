@@ -11,7 +11,7 @@ const ShopLayout = ({ params }) => {
     if (postId === undefined) {
       router.push('/shop');
     }
-  }, []);
+  }, [postId, router]);
 };
 
 export default ShopLayout;

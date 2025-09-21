@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { User } from './types';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -62,14 +63,16 @@ const UserDetailDrawer: React.FC<UserDetailDrawerProps> = ({
         <div className="drawer-body">
           {/* User Header */}
           <div className="text-center mb-4">
-            <img
+            <Image
               src={
                 user.avatar ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2f57ef&color=fff`
               }
               alt={user.name}
               className="rounded-circle mb-3"
-              style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+              width={100}
+              height={100}
+              style={{ objectFit: 'cover' }}
             />
             <h4 className="mb-1">{user.name}</h4>
             <p className="text-muted mb-2">{user.email}</p>

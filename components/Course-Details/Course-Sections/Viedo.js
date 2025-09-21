@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '@/context/Context';
 import { addToCartAction } from '@/redux/action/CartAction';
 
-const Viedo = ({ checkMatchCourses }) => {
+const Viedo = ({ checkMatchCourses, instructor = {} }) => {
   const pathname = usePathname();
   const { cartToggle, setCart } = useAppContext();
   const [toggle, setToggle] = useState(false);
@@ -231,7 +231,7 @@ const Viedo = ({ checkMatchCourses }) => {
             <p className="rbt-badge-2 mt--10 justify-content-center w-100">
               <i className="feather-phone mr--5"></i> Call Us:
               <Link href="#">
-                <strong>+444 555 666 777</strong>
+                <strong>{instructor?.phone || 'Contact Support'}</strong>
               </Link>
             </p>
           </div>

@@ -50,17 +50,17 @@ const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
 
           <CategoryHead
             category={getAllCourse}
-            filterItem={undefined as any}
-            courseFilter={undefined as any}
-            setCourseFilter={undefined as any}
+            filterItem={undefined}
+            courseFilter={undefined}
+            setCourseFilter={undefined}
           />
           <div className="rbt-section-overlayping-top rbt-section-gapBottom">
             <div className="inner">
               <div className="container">
                 <CourseFilterOneToggle
                   course={getSelectedCourse}
-                  start={undefined as any}
-                  end={undefined as any}
+                  start={undefined}
+                  end={undefined}
                 />
 
                 {getAllCourse.length > 6 ? (
@@ -82,10 +82,10 @@ const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
 
           <Separator />
           <FooterOne
-            isBox={undefined as any}
-            bgColor={undefined as any}
-            newsletterBorder={undefined as any}
-            islamic={undefined as any}
+            isBox={undefined}
+            bgColor={undefined}
+            newsletterBorder={undefined}
+            islamic={undefined}
           />
         </Context>
       </Provider>

@@ -3,6 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import Image from 'next/image';
 import { formatCurrency, formatNumber, getInitials } from './utils';
 import type { AdminCourse } from '@/types/admin-course';
 import { CourseRowActions } from './row-actions';
@@ -87,9 +88,11 @@ export const columns: ColumnDef<AdminCourse>[] = [
         <div className="flex items-center gap-3">
           <div className="relative h-12 w-20 overflow-hidden rounded-md border border-border bg-muted">
             {course.thumbnail_url ? (
-              <img
+              <Image
                 src={course.thumbnail_url}
                 alt={course.title}
+                width={80}
+                height={48}
                 className="h-full w-full object-cover"
               />
             ) : (
@@ -143,9 +146,11 @@ export const columns: ColumnDef<AdminCourse>[] = [
         <div className="flex items-center gap-2">
           <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted">
             {instructor?.avatar_url ? (
-              <img
+              <Image
                 src={instructor.avatar_url}
                 alt={name}
+                width={32}
+                height={32}
                 className="h-full w-full object-cover"
               />
             ) : (

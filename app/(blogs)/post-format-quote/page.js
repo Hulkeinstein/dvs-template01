@@ -8,7 +8,7 @@ const PostFormatQuoteLayout = ({ params }) => {
 
   useEffect(() => {
     router.push('/post-format-quote/blog-1');
-  }, []);
+  }, [router]);
 };
 
 export default PostFormatQuoteLayout;

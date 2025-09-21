@@ -8,7 +8,7 @@ const PostFormatStandardLayout = ({ params }) => {
 
   useEffect(() => {
     router.push('/post-format-standard/blog-1');
-  }, []);
+  }, [router]);
 };
 
 export default PostFormatStandardLayout;

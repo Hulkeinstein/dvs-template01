@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import CounterWidget from '../Instructor/Dashboard-Section/widgets/CounterWidget';
 import {
   getStudentDashboardStats,
@@ -224,9 +225,11 @@ const Dashboard = ({ userId }: DashboardProps) => {
                             href={ROUTES.COURSE.DETAILS(enrollment.course_id)}
                           >
                             {enrollment.course.thumbnail_url ? (
-                              <img
+                              <Image
                                 src={enrollment.course.thumbnail_url}
                                 alt={enrollment.course.title}
+                                width={300}
+                                height={200}
                                 style={{
                                   width: '100%',
                                   height: '200px',

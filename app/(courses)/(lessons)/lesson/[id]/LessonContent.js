@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import LessonSidebar from '@/components/Lesson/LessonSidebar';
@@ -25,9 +25,9 @@ const LessonContent = ({ lessonId }) => {
 
   useEffect(() => {
     loadLessonData();
-  }, [lessonId]);
+  }, [lessonId, loadLessonData]);
 
-  const loadLessonData = async () => {
+  const loadLessonData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -60,7 +60,7 @@ const LessonContent = ({ lessonId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [lessonId, session?.user?.id]);
 
   if (loading) {
     return (

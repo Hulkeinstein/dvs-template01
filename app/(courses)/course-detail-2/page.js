@@ -11,7 +11,7 @@ const CourseLayout = ({ params }) => {
     if (postId === undefined) {
       router.push('/course-detail-2/13');
     }
-  }, []);
+  }, [postId, router]);
 };
 
 export default CourseLayout;

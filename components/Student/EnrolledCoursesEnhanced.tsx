@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState, useMemo } from 'react';
 import { getEnrolledCoursesRPC } from '@/app/lib/actions/studentDashboardActions';
 import {
@@ -226,9 +227,11 @@ const EnrolledCoursesEnhanced = ({ userId }: EnrolledCoursesProps) => {
         <div className="rbt-card-img">
           <Link href={ROUTES.COURSE.DETAILS(enrollment.course_id)}>
             {enrollment.course.thumbnail_url ? (
-              <img
+              <Image
                 src={enrollment.course.thumbnail_url}
                 alt={enrollment.course.title}
+                width={300}
+                height={200}
                 className="enrolled-course-thumbnail"
               />
             ) : (

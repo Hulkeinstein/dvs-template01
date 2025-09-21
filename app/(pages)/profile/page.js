@@ -11,7 +11,7 @@ const Profile = ({ params }) => {
     if (postId === undefined) {
       router.push('/profile/1');
     }
-  }, []);
+  }, [postId, router]);
 };
 
 export default Profile;
