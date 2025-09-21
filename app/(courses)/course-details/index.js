@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import Store from '@/redux/store';
 import Context from '@/context/Context';
 import { CourseProviderFactory } from '@/app/lib/course-providers/CourseProviderFactory';
+import { getCourseReviewStats } from '@/app/lib/actions/reviewActions';
 
 import MobileMenu from '@/components/Header/MobileMenu';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
@@ -30,6 +31,7 @@ const SingleCourse = ({ getParams }) => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [reviewStats, setReviewStats] = useState(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -42,6 +44,29 @@ const SingleCourse = ({ getParams }) => {
 
         if (courseData) {
           setCourse(courseData);
+
+          // Fetch review stats for the course
+          try {
+            const stats = await getCourseReviewStats(courseId);
+            console.log('[Review Stats] Fetched for course:', courseId, stats);
+            setReviewStats(
+              stats || {
+                averageRating: 0,
+                totalReviews: 0,
+                ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+                percentages: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+              }
+            );
+          } catch (reviewError) {
+            console.error('Error fetching review stats:', reviewError);
+            // Set default stats if review fetch fails
+            setReviewStats({
+              averageRating: 0,
+              totalReviews: 0,
+              ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+              percentages: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+            });
+          }
         } else {
           setError('Course not found');
           router.push('/course-filter-one-toggle');
@@ -139,7 +164,7 @@ const SingleCourse = ({ getParams }) => {
           ) : course ? (
             <>
               <div className="rbt-breadcrumb-default rbt-breadcrumb-style-3">
-                <CourseHead checkMatch={course} />
+                <CourseHead checkMatch={course} reviewStats={reviewStats} />
               </div>
 
               <div className="rbt-course-details-area ptb--60">

@@ -1,6 +1,15 @@
 import React from 'react';
 
-const Review = () => {
+const Review = ({ reviewStats }) => {
+  // Handle null or undefined reviewStats
+  const stats = reviewStats || {};
+
+  // Extract review statistics with default values
+  const {
+    averageRating = 0,
+    totalReviews = 0,
+    percentages = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+  } = stats;
   return (
     <>
       <div className="course-content">
@@ -10,7 +19,7 @@ const Review = () => {
         <div className="row g-5 align-items-center">
           <div className="col-lg-3">
             <div className="rating-box">
-              <div className="rating-number">5.0</div>
+              <div className="rating-number">{averageRating.toFixed(1)}</div>
               <div className="rating">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -125,13 +134,13 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: '63%' }}
-                    aria-valuenow="63"
+                    style={{ width: `${percentages[5]}%` }}
+                    aria-valuenow={percentages[5]}
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                 </div>
-                <span className="value-text">63%</span>
+                <span className="value-text">{percentages[5]}%</span>
               </div>
 
               <div className="single-progress-bar">
@@ -191,13 +200,13 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: '29%' }}
-                    aria-valuenow="29"
+                    style={{ width: `${percentages[4]}%` }}
+                    aria-valuenow={percentages[4]}
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                 </div>
-                <span className="value-text">29%</span>
+                <span className="value-text">{percentages[4]}%</span>
               </div>
 
               <div className="single-progress-bar">
@@ -257,13 +266,13 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: '6%' }}
-                    aria-valuenow="6"
+                    style={{ width: `${percentages[3]}%` }}
+                    aria-valuenow={percentages[3]}
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                 </div>
-                <span className="value-text">6%</span>
+                <span className="value-text">{percentages[3]}%</span>
               </div>
 
               <div className="single-progress-bar">
@@ -323,13 +332,13 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: '1%' }}
-                    aria-valuenow="1"
+                    style={{ width: `${percentages[2]}%` }}
+                    aria-valuenow={percentages[2]}
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                 </div>
-                <span className="value-text">1%</span>
+                <span className="value-text">{percentages[2]}%</span>
               </div>
 
               <div className="single-progress-bar">
@@ -389,13 +398,13 @@ const Review = () => {
                   <div
                     className="progress-bar"
                     role="progressbar"
-                    style={{ width: '1%' }}
-                    aria-valuenow="1"
+                    style={{ width: `${percentages[1]}%` }}
+                    aria-valuenow={percentages[1]}
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
                 </div>
-                <span className="value-text">1%</span>
+                <span className="value-text">{percentages[1]}%</span>
               </div>
             </div>
           </div>

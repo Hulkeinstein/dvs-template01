@@ -146,7 +146,8 @@
       "Bash(export NODE_ENV=development)",
       "Bash(vercel:*)",
       "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\app\\lib\\actions\")",
-      "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\components\\Student\")"
+      "Bash(dir \"D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01\\components\\Student\")",
+      "Bash(findstr:*)"
     ],
     "deny": []
   },
