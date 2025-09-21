@@ -29,7 +29,7 @@ const BlogGrid = ({ isPagination, blogdata, top, start, end }) => {
   useEffect(() => {
     setBlogs(blogdata);
     setTotalPages(Math.ceil(blogdata.length / 10));
-  }, [setTotalPages, setBlogs]);
+  }, [blogdata]);
   return (
     <>
       {top ? (

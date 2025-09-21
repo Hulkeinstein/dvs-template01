@@ -50,7 +50,9 @@ const RevenueChart: React.FC<Props> = ({ data }) => {
                 tickFormatter={formatCurrency}
               />
               <Tooltip
-                formatter={(value: any) => formatCurrency(value)}
+                formatter={(value: number | string) =>
+                  formatCurrency(value as number)
+                }
                 contentStyle={{
                   backgroundColor: '#fff',
                   border: '1px solid #e0e0e0',

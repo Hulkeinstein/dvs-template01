@@ -40,7 +40,7 @@ const CourseCardThreeLayout = () => {
   useEffect(() => {
     setCourse(getAllCourse);
     setTotalPages(Math.ceil(getAllCourse.length / 6));
-  }, [setTotalPages, setCourse]);
+  }, [getAllCourse]);
 
   return (
     <>

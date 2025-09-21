@@ -101,7 +101,7 @@ export async function enrollInCourse(data: EnrollmentData) {
 
 export async function updateEnrollmentProgress(data: EnrollmentUpdateData) {
   try {
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       last_accessed_at: new Date().toISOString(),
     };
 

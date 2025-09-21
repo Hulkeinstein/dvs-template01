@@ -30,7 +30,7 @@ const BlogSidebar = ({ blogdata }) => {
     };
 
     getBlogs();
-  }, [setBlogs, setTotalPages, 5]);
+  }, [blogdata]);
 
   return (
     <>

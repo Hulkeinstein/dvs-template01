@@ -25,7 +25,14 @@ const CourseDistribution: React.FC<Props> = ({ data }) => {
     innerRadius,
     outerRadius,
     percent,
-  }: any) => {
+  }: {
+    cx: number;
+    cy: number;
+    midAngle: number;
+    innerRadius: number;
+    outerRadius: number;
+    percent: number;
+  }) => {
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
     const x = cx + radius * Math.cos(-midAngle * RADIAN);

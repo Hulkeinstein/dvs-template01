@@ -38,7 +38,7 @@ async function assertAdmin(): Promise<string> {
 async function logAdminAction(
   adminId: string,
   action: string,
-  details: any
+  details: unknown
 ): Promise<void> {
   try {
     await supabase.from('admin_audit_logs').insert({
@@ -160,7 +160,7 @@ export async function updateCourseStatus(
     }
 
     // Update course status
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       status,
       updated_at: new Date().toISOString(),
     };

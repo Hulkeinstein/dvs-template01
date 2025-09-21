@@ -9,14 +9,14 @@ interface LogData {
   timestamp: string;
   component: string;
   action: string;
-  data: any;
+  data: unknown;
   stackTrace?: string;
 }
 
 interface ErrorData {
   component: string;
   message: string;
-  context: Record<string, any>;
+  context: Record<string, unknown>;
   timestamp: string;
 }
 
@@ -42,7 +42,7 @@ declare global {
 export const debugLog = (
   component: string,
   action: string,
-  data: any
+  data: unknown
 ): void => {
   if (!DEBUG_MODE) return;
 
@@ -83,7 +83,7 @@ export const debugLog = (
 export const trackError = (
   component: string,
   error: Error,
-  context: Record<string, any> = {}
+  context: Record<string, unknown> = {}
 ): void => {
   // console.error(`❌ [${component}] Error:`, {
   //   message: error.message,

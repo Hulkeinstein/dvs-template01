@@ -23,7 +23,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
   protected abstract tableName: string;
 
   // Lazy initialization for CI build compatibility
-  private _supabase: any | null = null;
+  private _supabase: ReturnType<typeof getServerClient> | null = null;
   protected get supabase() {
     return (this._supabase ??= getServerClient());
   }
@@ -119,7 +119,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
   /**
    * 조건부 조회 헬퍼
    */
-  protected async findByField(field: string, value: any): Promise<T[]> {
+  protected async findByField(field: string, value: unknown): Promise<T[]> {
     const { data, error } = await this.supabase
       .from(this.tableName)
       .select('*')
@@ -136,7 +136,10 @@ export abstract class BaseRepository<T> implements IRepository<T> {
   /**
    * 단일 레코드 조건부 조회
    */
-  protected async findOneByField(field: string, value: any): Promise<T | null> {
+  protected async findOneByField(
+    field: string,
+    value: unknown
+  ): Promise<T | null> {
     const { data, error } = await this.supabase
       .from(this.tableName)
       .select('*')

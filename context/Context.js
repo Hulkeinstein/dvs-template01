@@ -58,7 +58,7 @@ const Context = ({ children }) => {
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-  }, [cart]);
+  }, [cart, dispatch]);
 
   useEffect(() => {
     if (!mounted) return;

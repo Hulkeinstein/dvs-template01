@@ -13,7 +13,7 @@ export interface Lesson {
   title: string;
   description?: string;
   content_type: 'video' | 'quiz' | 'assignment' | 'text';
-  content_data?: any;
+  content_data?: unknown;
   video_url?: string;
   duration?: string;
   order_index: number;
@@ -105,12 +105,12 @@ export class LessonRepository extends BaseRepository<Lesson> {
   async bulkReorder(
     updates: { id: string; order_index: number }[]
   ): Promise<void> {
-    const promises = updates.map(({ id, order_index }: any) =>
+    const promises = updates.map(({ id, order_index }) =>
       supabase.from(this.tableName).update({ order_index }).eq('id', id)
     );
 
     const results = await Promise.all(promises);
-    const errors = results.filter((r: any) => r.error);
+    const errors = results.filter((r) => (r as { error?: unknown }).error);
 
     if (errors.length > 0) {
       console.error('Errors during bulk reorder:', errors);
@@ -126,7 +126,7 @@ export class LessonRepository extends BaseRepository<Lesson> {
     topic_id?: string;
     title: string;
     description?: string;
-    content_data: any;
+    content_data: unknown;
     order_index: number;
   }): Promise<Lesson> {
     return this.create({

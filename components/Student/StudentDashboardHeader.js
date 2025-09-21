@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getUserCertificates } from '@/app/lib/certificate/actions/certificateActions';
 import { isFeatureEnabled } from '@/app/lib/certificate/utils/featureFlags';
 
@@ -10,13 +10,7 @@ const StudentDashboardHeader = ({ userId, userProfile }) => {
   const [certificateCount, setCertificateCount] = useState(0);
   const [enrolledCount, setEnrolledCount] = useState(5); // Default value
 
-  useEffect(() => {
-    if (userId && isFeatureEnabled('CERTIFICATE_ENABLED')) {
-      loadCertificateCount();
-    }
-  }, [userId]);
-
-  const loadCertificateCount = async () => {
+  const loadCertificateCount = useCallback(async () => {
     try {
       const result = await getUserCertificates(userId);
       if (result.success) {
@@ -25,7 +19,13 @@ const StudentDashboardHeader = ({ userId, userProfile }) => {
     } catch (error) {
       console.error('Error loading certificate count:', error);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId && isFeatureEnabled('CERTIFICATE_ENABLED')) {
+      loadCertificateCount();
+    }
+  }, [userId, loadCertificateCount]);
 
   return (
     <>

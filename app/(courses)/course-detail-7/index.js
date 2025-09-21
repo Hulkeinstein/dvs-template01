@@ -55,7 +55,7 @@ const SingleCourseSeven = ({ getParams }) => {
       threshold: 0.01,
       once: true,
     });
-  }, [checkMatch, router]);
+  }, [checkMatch, router, postId]);
 
   return (
     <>

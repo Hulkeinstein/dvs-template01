@@ -45,7 +45,7 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
     localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart]);
+  }, [cart, dispatch]);
 
   // =====> For video PopUp
   useEffect(() => {

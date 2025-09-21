@@ -271,7 +271,10 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
 }
 
 // Helper functions
-function calculateGrowthRate(items: any[], compareDate: Date): number {
+function calculateGrowthRate(
+  items: Array<{ created_at: string | Date }>,
+  compareDate: Date
+): number {
   const recent = items.filter(
     (item) => new Date(item.created_at) >= compareDate
   ).length;
@@ -289,7 +292,10 @@ function getDirection(growth: number): 'up' | 'down' | 'stable' {
   return 'stable';
 }
 
-function generateSparkline(items: any[], days: number): number[] {
+function generateSparkline(
+  items: Array<{ created_at: string | Date }>,
+  days: number
+): number[] {
   const sparkline: number[] = [];
   const today = new Date();
 
@@ -305,7 +311,10 @@ function generateSparkline(items: any[], days: number): number[] {
   return sparkline;
 }
 
-function generateTimeSeriesData(items: any[], days: number): LinePoint[] {
+function generateTimeSeriesData(
+  items: Array<{ created_at: string | Date }>,
+  days: number
+): LinePoint[] {
   const data: LinePoint[] = [];
   const today = new Date();
   let cumulative = 0;

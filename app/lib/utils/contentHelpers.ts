@@ -110,7 +110,7 @@ export const contentHelpers = {
   },
 
   // 타입별 API 호출
-  deleteContent: async (content: ContentItem): Promise<any> => {
+  deleteContent: async (content: ContentItem): Promise<unknown> => {
     const contentType = content.type || content.content_type;
 
     switch (contentType) {

@@ -12,8 +12,12 @@ const LessonProgressDTO = z.object({
 
 export class ProgressService {
   // Dependency injection for testability and lazy initialization
-  constructor(private readonly getClient: () => any = getServerClient) {}
-  private _supabase: any | null = null;
+  constructor(
+    private readonly getClient: () => ReturnType<
+      typeof getServerClient
+    > = getServerClient
+  ) {}
+  private _supabase: ReturnType<typeof getServerClient> | null = null;
   private get supabase() {
     return (this._supabase ??= this.getClient());
   }
@@ -41,7 +45,7 @@ export class ProgressService {
     //   await this.processBatch(batch, enrollment);
     // }
 
-    const progressRecords = lessons.map((lesson: any) => ({
+    const progressRecords = lessons.map((lesson: { id: string }) => ({
       user_id: enrollment.user_id,
       lesson_id: lesson.id,
       course_id: enrollment.course_id,

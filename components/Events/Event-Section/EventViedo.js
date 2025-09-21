@@ -28,7 +28,7 @@ const EventViedo = ({ getEventData }) => {
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
     localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart]);
+  }, [cart, dispatch]);
 
   useEffect(() => {
     import('venobox/dist/venobox.min.js').then((venobox) => {

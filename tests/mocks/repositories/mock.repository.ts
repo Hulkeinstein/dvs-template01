@@ -90,7 +90,7 @@ export class MockRepository<T extends { id: string }>
   /**
    * 특정 필드로 검색
    */
-  async findByField(field: keyof T, value: any): Promise<T[]> {
+  async findByField(field: keyof T, value: unknown): Promise<T[]> {
     return Array.from(this.data.values()).filter(
       (item) => item[field] === value
     );
