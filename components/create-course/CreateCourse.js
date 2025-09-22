@@ -26,7 +26,7 @@ import CreateCourseData from '../../data/createCourse.json';
 import svgImg from '../../public/images/icons/certificate-none.svg';
 import svgImg2 from '../../public/images/icons/certificate-none-portrait.svg';
 
-import InfoForm from './InfoForm';
+import InfoFormNew from './InfoFormNew';
 import TopicModal from './QuizModals/TopicModal';
 import AdditionalForm from './AdditionalForm';
 import LessonModal from './QuizModals/LessonModal';
@@ -56,6 +56,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   const [formData, setFormData] = useState({
     // Basic info
     title: '',
+    slug: '', // URL slug 추가
     shortDescription: '',
     description: '',
     category: '',
@@ -623,7 +624,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                   data-bs-parent="#tutionaccordionExamplea1"
                 >
                   <div className="accordion-body card-body">
-                    <InfoForm
+                    <InfoFormNew
                       formData={formData}
                       onFormDataChange={handleFormDataChange}
                       onThumbnailChange={handleThumbnailChange}

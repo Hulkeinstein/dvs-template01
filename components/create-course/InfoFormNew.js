@@ -1,16 +1,83 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { debounce } from '@/app/lib/utils/debounce';
 
 import img from '../../public/images/others/thumbnail-placeholder.svg';
 
 const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [slugAvailable, setSlugAvailable] = useState(null);
+  const [slugSuggestion, setSlugSuggestion] = useState('');
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const fileInputRef = useRef(null);
+
+  // 슬러그 생성 함수
+  const generateSlugFromTitle = (title) => {
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s가-힣-]/g, '')
+      .replace(/[\s_]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
+  // 슬러그 중복 체크 함수
+  const checkSlugAvailability = useCallback(
+    debounce(async (slug) => {
+      if (!slug || slug.length < 3) {
+        setSlugAvailable(null);
+        return;
+      }
+
+      setIsCheckingSlug(true);
+      try {
+        const response = await fetch('/api/check-slug', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug }),
+        });
+
+        const data = await response.json();
+        setSlugAvailable(data.available);
+        setSlugSuggestion(data.suggestion || '');
+      } catch (error) {
+        console.error('Slug check error:', error);
+        setSlugAvailable(null);
+      } finally {
+        setIsCheckingSlug(false);
+      }
+    }, 500),
+    []
+  );
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // 제목 변경 시 슬러그 자동 생성
+    if (name === 'title' && !formData.slug) {
+      const generatedSlug = generateSlugFromTitle(value);
+      onFormDataChange({
+        ...formData,
+        title: value,
+        slug: generatedSlug,
+      });
+      checkSlugAvailability(generatedSlug);
+      return;
+    }
+
+    // 슬러그 직접 입력 시 중복 체크
+    if (name === 'slug') {
+      const cleanSlug = value.toLowerCase().replace(/[^a-z0-9가-힣-]/g, '-');
+      onFormDataChange({
+        ...formData,
+        slug: cleanSlug,
+      });
+      checkSlugAvailability(cleanSlug);
+      return;
+    }
+
     onFormDataChange({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
@@ -67,6 +134,67 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
         </div>
 
         <div className="course-field mb--15">
+          <label htmlFor="slug">
+            Course URL Slug
+            {isCheckingSlug && (
+              <span className="text-muted ms-2">
+                <i className="feather-loader"></i> 확인 중...
+              </span>
+            )}
+          </label>
+          <input
+            id="slug"
+            name="slug"
+            type="text"
+            placeholder="web-development-intro"
+            value={formData.slug || ''}
+            onChange={handleInputChange}
+          />
+
+          {/* URL 미리보기 및 상태 메시지 */}
+          <small className="d-block mt_dec--5">
+            <i className="feather-link"></i> URL: courses/
+            {formData.slug || 'your-course-slug'}
+          </small>
+
+          {/* 슬러그 상태 메시지 */}
+          {slugAvailable === true && (
+            <small className="d-block mt_dec--5 text-success">
+              <i className="feather-check-circle"></i> 사용 가능한 URL입니다
+            </small>
+          )}
+
+          {slugAvailable === false && (
+            <>
+              <small className="d-block mt_dec--5 text-danger">
+                <i className="feather-alert-circle"></i> 이미 사용 중인
+                URL입니다
+              </small>
+              {slugSuggestion && (
+                <small className="d-block mt_dec--5">
+                  <i className="feather-info"></i> 추천:{' '}
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onFormDataChange({
+                        ...formData,
+                        slug: slugSuggestion,
+                      });
+                      setSlugAvailable(true);
+                      setSlugSuggestion('');
+                    }}
+                    className="text-primary"
+                  >
+                    {slugSuggestion}
+                  </a>
+                </small>
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="course-field mb--15">
           <label htmlFor="field-2">Short Description</label>
           <input
             id="field-2"
@@ -103,43 +231,47 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
           <div className="col-lg-6">
             <div className="course-field mb--20">
               <label htmlFor="category">Course Category</label>
-              <select
-                id="category"
-                name="category"
-                className="form-select"
-                value={formData.category || ''}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Select Category</option>
-                <option value="web-development">Web Development</option>
-                <option value="mobile-development">Mobile Development</option>
-                <option value="programming">Programming Languages</option>
-                <option value="data-science">Data Science</option>
-                <option value="business">Business</option>
-                <option value="design">Design</option>
-                <option value="marketing">Marketing</option>
-                <option value="personal-development">
-                  Personal Development
-                </option>
-              </select>
+              <div className="rbt-modern-select bg-transparent height-45 mb--10">
+                <select
+                  id="category"
+                  name="category"
+                  className="w-100"
+                  value={formData.category || ''}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select Category</option>
+                  <option value="web-development">Web Development</option>
+                  <option value="mobile-development">Mobile Development</option>
+                  <option value="programming">Programming Languages</option>
+                  <option value="data-science">Data Science</option>
+                  <option value="business">Business</option>
+                  <option value="design">Design</option>
+                  <option value="marketing">Marketing</option>
+                  <option value="personal-development">
+                    Personal Development
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
           <div className="col-lg-6">
             <div className="course-field mb--20">
               <label htmlFor="level">Difficulty Level</label>
-              <select
-                className="form-select"
-                id="level"
-                name="level"
-                value={formData.level || 'all_levels'}
-                onChange={handleInputChange}
-              >
-                <option value="all_levels">All Levels</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
+              <div className="rbt-modern-select bg-transparent height-45 mb--10">
+                <select
+                  className="w-100"
+                  id="level"
+                  name="level"
+                  value={formData.level || 'all_levels'}
+                  onChange={handleInputChange}
+                >
+                  <option value="all_levels">All Levels</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -148,24 +280,26 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
           <div className="col-lg-6">
             <div className="course-field mb--20">
               <label htmlFor="language">Course Language</label>
-              <select
-                id="language"
-                name="language"
-                className="form-select"
-                value={formData.language || 'English'}
-                onChange={handleInputChange}
-              >
-                <option value="English">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Korean">Korean</option>
-                <option value="Portuguese">Portuguese</option>
-                <option value="Russian">Russian</option>
-                <option value="Arabic">Arabic</option>
-              </select>
+              <div className="rbt-modern-select bg-transparent height-45 mb--10">
+                <select
+                  id="language"
+                  name="language"
+                  className="w-100"
+                  value={formData.language || 'English'}
+                  onChange={handleInputChange}
+                >
+                  <option value="English">English</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Chinese">Chinese</option>
+                  <option value="Japanese">Japanese</option>
+                  <option value="Korean">Korean</option>
+                  <option value="Portuguese">Portuguese</option>
+                  <option value="Russian">Russian</option>
+                  <option value="Arabic">Arabic</option>
+                </select>
+              </div>
             </div>
           </div>
           <div className="col-lg-6">

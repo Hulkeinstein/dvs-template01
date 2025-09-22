@@ -60,6 +60,7 @@ export interface CourseBadge {
 
 export interface CourseFormData {
   title: string;
+  slug?: string; // Optional slug field
   description?: string;
   category?: string;
   difficulty_level?: string;
@@ -84,6 +85,66 @@ export interface UpdateCourseResult {
 export interface DeleteCourseResult {
   success: boolean;
   error?: string;
+}
+
+// =========================================================================
+// Slug Helper Functions
+// =========================================================================
+
+// Check if a slug is unique in the database
+async function isSlugUnique(
+  slug: string,
+  excludeId?: string
+): Promise<boolean> {
+  let query = supabase
+    .from('courses')
+    .select('id', { count: 'exact', head: true })
+    .eq('slug', slug);
+
+  if (excludeId) {
+    query = query.neq('id', excludeId);
+  }
+
+  const { count, error } = await query;
+  if (error) {
+    console.error('Error checking slug uniqueness:', error);
+    throw error;
+  }
+
+  return (count ?? 0) === 0;
+}
+
+// Generate base slug from title (kebab-case, 100 chars max)
+function toBaseSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .substring(0, 100);
+}
+
+// Generate unique slug with incremental numbers if needed
+export async function generateUniqueSlug(
+  titleOrSlug: string,
+  excludeId?: string
+): Promise<string> {
+  const base = toBaseSlug(titleOrSlug);
+
+  // Try the base slug first
+  if (await isSlugUnique(base, excludeId)) {
+    return base;
+  }
+
+  // Try with incremental numbers (1-10)
+  for (let i = 1; i <= 10; i++) {
+    const candidate = `${base}-${i}`;
+    if (await isSlugUnique(candidate, excludeId)) {
+      return candidate;
+    }
+  }
+
+  // Last resort: use timestamp
+  return `${base}-${Date.now()}`;
 }
 
 // =========================================================================
@@ -119,24 +180,15 @@ export async function createCourse(
       return { error: 'Only instructors and admins can create courses' };
     }
 
-    // slug 생성 (title에서 자동 생성)
-    const createSlug = (title: string) => {
-      return (
-        title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '')
-          .substring(0, 100) +
-        '-' +
-        Date.now()
-      );
-    };
+    // 사용자가 제공한 slug 또는 제목에서 자동 생성
+    const desiredSlug = formData.slug?.trim() || formData.title;
+    const slug = await generateUniqueSlug(desiredSlug);
 
     // Create course - mapper를 사용하여 데이터 변환
     const mappedData = mapFormDataToDB(formData);
     const courseData = {
       instructor_id: userData.id,
-      slug: createSlug(formData.title),
+      slug, // Use the generated unique slug
       status: 'draft',
       is_public: false,
       enable_qa: false,
@@ -166,8 +218,16 @@ export async function createCourse(
         hint: courseError.hint,
         code: courseError.code,
       });
+
+      // Check for unique violation
+      const isUniqueViolation =
+        courseError.code === '23505' ||
+        /duplicate key|unique/i.test(courseError.message || '');
+
       return {
-        error: `Failed to create course: ${courseError.message || 'Unknown error'}`,
+        error: isUniqueViolation
+          ? '이미 사용 중인 URL입니다. 다른 제목이나 슬러그를 시도해 주세요.'
+          : `코스 생성 실패: ${courseError.message || '알 수 없는 오류'}`,
       };
     }
 
@@ -251,7 +311,9 @@ export async function createCourse(
     if (process.env.NODE_ENV === 'development') {
       console.error('Unexpected error:', error);
     }
-    return { error: 'An unexpected error occurred' };
+    return {
+      error: '코스를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+    };
   }
 }
 
@@ -294,7 +356,20 @@ export async function updateCourse(
     }
 
     // Update course - mapper를 사용하여 데이터 변환
-    const courseData = mapFormDataToDB(formData);
+    let courseData = mapFormDataToDB(formData);
+
+    // Generate unique slug if slug or title is provided
+    const formDataObj = formData as Record<string, unknown>;
+    if (formDataObj.slug !== undefined || formDataObj.title !== undefined) {
+      const desiredSlug =
+        (formDataObj.slug as string)?.trim() ||
+        (formDataObj.title as string) ||
+        '';
+      if (desiredSlug) {
+        const uniqueSlug = await generateUniqueSlug(desiredSlug, courseId);
+        courseData = { ...courseData, slug: uniqueSlug };
+      }
+    }
 
     // 디버깅: 매핑되지 않은 필드 확인
     if (process.env.NODE_ENV === 'development') {
@@ -321,8 +396,16 @@ export async function updateCourse(
         hint: updateError.hint,
         code: updateError.code,
       });
+
+      // Check for unique violation
+      const isUniqueViolation =
+        updateError.code === '23505' ||
+        /duplicate key|unique/i.test(updateError.message || '');
+
       return {
-        error: `Failed to update course: ${updateError.message || 'Unknown error'}`,
+        error: isUniqueViolation
+          ? '이미 사용 중인 URL입니다. 다른 값으로 수정해 주세요.'
+          : `코스 업데이트 실패: ${updateError.message || '알 수 없는 오류'}`,
       };
     }
 
@@ -571,7 +654,9 @@ export async function updateCourse(
     if (process.env.NODE_ENV === 'development') {
       console.error('Unexpected error:', error);
     }
-    return { error: 'An unexpected error occurred' };
+    return {
+      error: '코스를 업데이트하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+    };
   }
 }
 
