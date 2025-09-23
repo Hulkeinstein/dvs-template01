@@ -987,6 +987,48 @@ html[data-theme="dark"] {
         box-shadow: var(--dark-shadow-2);
     }
 
+    // Bootstrap 기본 dropdown 다크모드 스타일
+    .dropdown-menu {
+        background-color: var(--color-darker);
+        border-color: var(--dark-color-border);
+        box-shadow: var(--dark-shadow-2);
+
+        .dropdown-item {
+            color: var(--color-white-dark);
+
+            &:hover,
+            &:focus {
+                color: var(--color-white-off);
+                background-color: var(--color-bodyest);
+            }
+
+            // 컨텍스트 색상 클래스 유지
+            &.text-primary {
+                color: var(--color-primary) !important;
+            }
+
+            &.text-warning {
+                color: var(--color-warning) !important;
+            }
+
+            &.text-danger {
+                color: var(--color-danger) !important;
+            }
+
+            &.text-secondary {
+                color: var(--color-secondary) !important;
+            }
+
+            &.text-info {
+                color: var(--color-info) !important;
+            }
+        }
+
+        .dropdown-divider {
+            border-color: var(--dark-color-border);
+        }
+    }
+
     .rbt-modern-select .bootstrap-select button.actions-btn:hover {
         background: var(--color-primary) !important;
     }

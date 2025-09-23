@@ -38,9 +38,14 @@ const LessonModal = ({
   // 편집 모드일 때 기존 데이터 로드
   useEffect(() => {
     if (editingLesson) {
+      // 이미 CreateCourse.js에서 매핑된 데이터를 받음
+      // is_preview → enablePreview 매핑이 이미 완료됨
       console.log('[LessonModal.js] Editing lesson data received:', {
         id: editingLesson.id,
         title: editingLesson.title,
+        enablePreview: editingLesson.enablePreview,
+        hasEnablePreview: 'enablePreview' in editingLesson,
+        enablePreviewValue: editingLesson.enablePreview,
         hasThumbnail: !!editingLesson.thumbnail,
         thumbnailValue: editingLesson.thumbnail,
         hasAttachments: !!editingLesson.attachments,
@@ -61,7 +66,7 @@ const LessonModal = ({
         hours: hours,
         minutes: minutes,
         seconds: seconds,
-        enablePreview: editingLesson.enablePreview || false,
+        enablePreview: Boolean(editingLesson.enablePreview),
         thumbnail: editingLesson.thumbnail || null,
       });
 
@@ -92,16 +97,24 @@ const LessonModal = ({
         lessonData.hours * 3600 + lessonData.minutes * 60 + lessonData.seconds;
 
       // Prepare lesson data with calculated duration
-      const lessonToAdd = {
+      const lessonToSubmit = {
         ...lessonData,
         duration: totalDuration,
-        thumbnail: featureImageUrl || null, // URL만 저장
-        attachments: attachments, // 추가
+        thumbnail: featureImageUrl || null,
+        attachments: attachments,
+        // enablePreview는 이미 lessonData에 있음
+        // DB 저장 시 is_preview로 변환 필요
+        is_preview: Boolean(lessonData.enablePreview),
       };
+
+      // enablePreview 필드는 제거 (is_preview로 이미 변환됨)
+      delete lessonToSubmit.enablePreview;
 
       debugLog('LessonModal', 'handleSubmit', {
         isEditing: !!editingLesson,
         lessonTitle: lessonData.title,
+        enablePreview: lessonData.enablePreview,
+        is_preview: lessonToSubmit.is_preview,
         hasThumbnail: !!featureImagePreview,
         thumbnailUrl: featureImageUrl,
         hasAttachments: attachments.length > 0,
@@ -110,17 +123,23 @@ const LessonModal = ({
         modalId: modalId,
       });
 
-      console.log('[LessonModal.js] Submitting lesson with data:', {
-        thumbnail: featureImageUrl || null,
-        attachments: attachments,
-      });
+      console.log('📤 [LessonModal.js] Submitting lesson with data:');
+      console.log('   ✅ Enable Preview State:');
+      console.log('      UI Field (enablePreview):', lessonData.enablePreview);
+      console.log('      DB Field (is_preview):', lessonToSubmit.is_preview);
+      console.log('   📎 Other Data:');
+      console.log(
+        '      Thumbnail:',
+        lessonToSubmit.thumbnail ? 'Present' : 'None'
+      );
+      console.log('      Attachments:', lessonToSubmit.attachments.length);
 
       if (editingLesson) {
         // 편집 모드: 기존 레슨 업데이트
-        onAddLesson({ ...lessonToAdd, id: editingLesson.id });
+        onAddLesson({ ...lessonToSubmit, id: editingLesson.id });
       } else {
         // 추가 모드: 새 레슨 추가
-        onAddLesson(lessonToAdd);
+        onAddLesson(lessonToSubmit);
       }
 
       // Reset form
@@ -157,11 +176,17 @@ const LessonModal = ({
 
   const handleFeatureImageClick = (e) => {
     e.preventDefault();
+    console.log('🔥 handleFeatureImageClick called!', fileInputRef.current);
     debugLog('LessonModal', 'handleFeatureImageClick', {
       action: 'Feature image button clicked',
       modalId: modalId,
     });
-    fileInputRef.current.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+      console.log('✨ Programmatically clicked file input');
+    } else {
+      console.error('❌ fileInputRef.current is null!');
+    }
   };
 
   const handleAttachmentClick = (e) => {
@@ -244,8 +269,15 @@ const LessonModal = ({
   };
 
   const handleFileChange = async (event) => {
+    console.log('🎯 handleFileChange triggered!', event.target.files); // 디버깅용 추가
+
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      console.log('❌ No file selected');
+      return;
+    }
+
+    console.log('✅ File selected:', file.name, file.size, file.type); // 디버깅용 추가
 
     // Race condition 방지: 각 선택에 고유 ID 부여
     const pickId = ++lastPickIdRef.current;
@@ -389,6 +421,7 @@ const LessonModal = ({
       hours: 0,
       minutes: 0,
       seconds: 0,
+      enablePreview: false, // enablePreview 초기화 추가
     });
     setFeatureImagePreview(null);
     setFeatureImageUrl(null);
@@ -473,10 +506,10 @@ const LessonModal = ({
                         type="text"
                         value={lessonData.title}
                         onChange={(e) =>
-                          setLessonData({
-                            ...lessonData,
+                          setLessonData((prev) => ({
+                            ...prev,
                             title: e.target.value,
-                          })
+                          }))
                         }
                       />
                       <small>
@@ -492,10 +525,10 @@ const LessonModal = ({
                         name="lessonModalSummary"
                         value={lessonData.description}
                         onChange={(e) =>
-                          setLessonData({
-                            ...lessonData,
+                          setLessonData((prev) => ({
+                            ...prev,
                             description: e.target.value,
-                          })
+                          }))
                         }
                       ></textarea>
                       <small>
@@ -521,6 +554,14 @@ const LessonModal = ({
                               className="inputfile"
                               accept="image/*"
                               onChange={handleFileChange}
+                              style={{
+                                position: 'absolute',
+                                width: '100%',
+                                height: '100%',
+                                opacity: 0,
+                                cursor: 'pointer',
+                                zIndex: 11, // z-index를 label보다 높게 설정
+                              }}
                             />
                             <Image
                               id="lessonFeatureImagePreview"
@@ -536,6 +577,17 @@ const LessonModal = ({
                             <label
                               className="d-flex"
                               htmlFor="lessonFeatureImage"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                console.log(
+                                  '📌 Label clicked, triggering file input...'
+                                );
+                                handleFeatureImageClick(e);
+                              }}
+                              style={{
+                                cursor: 'pointer',
+                                zIndex: 10, // input보다 낮게 설정
+                              }}
                               title="No File Choosen"
                             >
                               <i className="feather-upload"></i>
@@ -575,10 +627,10 @@ const LessonModal = ({
                           className="w-100"
                           value={lessonData.videoSource}
                           onChange={(e) =>
-                            setLessonData({
-                              ...lessonData,
+                            setLessonData((prev) => ({
+                              ...prev,
                               videoSource: e.target.value,
-                            })
+                            }))
                           }
                         >
                           <option value="youtube">Youtube</option>
@@ -598,10 +650,10 @@ const LessonModal = ({
                         placeholder="Enter video URL"
                         value={lessonData.videoUrl}
                         onChange={(e) =>
-                          setLessonData({
-                            ...lessonData,
+                          setLessonData((prev) => ({
+                            ...prev,
                             videoUrl: e.target.value,
-                          })
+                          }))
                         }
                       />
                       <small>
@@ -621,10 +673,10 @@ const LessonModal = ({
                             min="0"
                             value={lessonData.hours}
                             onChange={(e) =>
-                              setLessonData({
-                                ...lessonData,
+                              setLessonData((prev) => ({
+                                ...prev,
                                 hours: parseInt(e.target.value) || 0,
-                              })
+                              }))
                             }
                           />
                           <small className="d-block mt_dec--5">
@@ -641,10 +693,10 @@ const LessonModal = ({
                             max="59"
                             value={lessonData.minutes}
                             onChange={(e) =>
-                              setLessonData({
-                                ...lessonData,
+                              setLessonData((prev) => ({
+                                ...prev,
                                 minutes: parseInt(e.target.value) || 0,
-                              })
+                              }))
                             }
                           />
                           <small className="d-block mt_dec--5">
@@ -661,10 +713,10 @@ const LessonModal = ({
                             max="59"
                             value={lessonData.seconds}
                             onChange={(e) =>
-                              setLessonData({
-                                ...lessonData,
+                              setLessonData((prev) => ({
+                                ...prev,
                                 seconds: parseInt(e.target.value) || 0,
-                              })
+                              }))
                             }
                           />
                           <small className="d-block mt_dec--5">
@@ -770,18 +822,44 @@ const LessonModal = ({
                     <div className="course-field mb--20">
                       <p className="rbt-checkbox-wrapper mb--5 d-flex">
                         <input
-                          id="rbt-checkbox-11"
-                          name="rbt-checkbox-11"
+                          className="form-check-input"
+                          id={`preview-checkbox-${modalId}`}
+                          name={`preview-checkbox-${modalId}`}
                           type="checkbox"
-                          checked={lessonData.enablePreview}
-                          onChange={(e) =>
-                            setLessonData({
-                              ...lessonData,
-                              enablePreview: e.target.checked,
-                            })
-                          }
+                          checked={Boolean(lessonData?.enablePreview)}
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+                            console.log(
+                              '✅ Enable Course Preview Checkbox Changed'
+                            );
+                            console.log(
+                              '   📍 Current value:',
+                              lessonData.enablePreview
+                            );
+                            console.log('   📍 New value:', isChecked);
+                            console.log(
+                              '   📍 Event target checked:',
+                              e.target.checked
+                            );
+
+                            setLessonData((prev) => {
+                              const newState = {
+                                ...prev,
+                                enablePreview: isChecked,
+                              };
+                              console.log(
+                                '   📍 State update - Previous:',
+                                prev.enablePreview
+                              );
+                              console.log(
+                                '   📍 State update - New:',
+                                newState.enablePreview
+                              );
+                              return newState;
+                            });
+                          }}
                         />
-                        <label htmlFor="rbt-checkbox-11">
+                        <label htmlFor={`preview-checkbox-${modalId}`}>
                           Enable Course Preview
                         </label>
                       </p>
