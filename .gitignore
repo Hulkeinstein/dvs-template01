@@ -23,6 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Claude & Cursor
+.claude/settings.local.json
 .claude/logs/*.log
 .claude/backup/snapshots/*
 .claude/emergency/snapshots/*
