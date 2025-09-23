@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { debugLog, trackError } from '@/app/lib/utils/debugHelper';
 import { uploadLessonAttachmentDirect } from '@/app/lib/actions/uploadActions';
@@ -15,6 +15,7 @@ const LessonModal = ({
 }) => {
   const fileInputRef = useRef(null);
   const attachmentInputRef = useRef(null);
+  // blob URL ref 제거 (data URL 사용으로 불필요)
   const [featureImagePreview, setFeatureImagePreview] = useState(null);
   const [featureImageUrl, setFeatureImageUrl] = useState(null);
   const [uploadingFeatureImage, setUploadingFeatureImage] = useState(false);
@@ -254,33 +255,39 @@ const LessonModal = ({
 
     if (file) {
       try {
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-          setFeatureImageError(
-            '이미지 파일을 선택해주세요. (JPG, PNG, GIF, WEBP)'
-          );
+        // Validate file type with strict MIME checking
+        const ALLOWED_TYPES = [
+          'image/jpeg',
+          'image/jpg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+        ];
+        if (!ALLOWED_TYPES.includes(file.type)) {
+          setFeatureImageError('JPG, PNG, GIF, WEBP 파일만 가능합니다.');
+          event.target.value = ''; // 입력 초기화
           return;
         }
 
-        // Validate file size (3MB limit)
-        const maxSize = 3 * 1024 * 1024;
-        if (file.size > maxSize) {
-          setFeatureImageError(
-            `파일 크기가 너무 큽니다. 최대 ${maxSize / 1024 / 1024}MB까지 가능합니다.`
-          );
+        // Validate file size (8MB limit)
+        const MAX_SIZE = 8 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+          setFeatureImageError(`파일 크기는 최대 8MB까지 가능합니다.`);
+          event.target.value = ''; // 입력 초기화
           return;
         }
 
         setUploadingFeatureImage(true);
         setFeatureImageError(null);
 
-        // Create preview using FileReader
+        // FileReader로 data URL 생성 (CSP 호환)
         const reader = new FileReader();
         reader.onloadend = () => {
-          setFeatureImagePreview(reader.result);
+          setFeatureImagePreview(reader.result); // data:image/... 형식
           debugLog('LessonModal', 'featureImagePreview:set', {
             fileName: file.name,
-            previewLength: reader.result?.length,
+            previewType: 'dataURL',
+            previewLength: reader.result ? reader.result.length : 0,
           });
         };
         reader.readAsDataURL(file);
@@ -300,6 +307,10 @@ const LessonModal = ({
 
           if (result.success) {
             setFeatureImageUrl(result.url);
+
+            // 업로드 성공 시 preview를 null로 설정 (data URL은 자동 메모리 관리)
+            setFeatureImagePreview(null);
+
             debugLog('LessonModal', 'featureImage:uploaded', {
               fileName: file.name,
               url: result.url,
@@ -324,6 +335,66 @@ const LessonModal = ({
       }
     }
   };
+
+  // Modal 초기화 함수
+  const resetModal = useCallback(() => {
+    debugLog('LessonModal', 'resetModal:start');
+
+    // data URL은 자동으로 메모리 관리되므로 추가 cleanup 불필요
+
+    // 상태 초기화
+    setLessonData({
+      title: '',
+      description: '',
+      contentType: 'video',
+      videoSource: 'YouTube',
+      videoUrl: '',
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+    });
+    setFeatureImagePreview(null);
+    setFeatureImageUrl(null);
+    setFeatureImageError(null);
+    setAttachments([]);
+    setAttachmentErrors([]);
+
+    // 파일 입력 초기화
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.value = '';
+    }
+
+    debugLog('LessonModal', 'resetModal:complete');
+  }, []);
+
+  // Modal이 닫힐 때 cleanup
+  useEffect(() => {
+    const modalElement = document.getElementById(modalId);
+
+    const handleModalHidden = () => {
+      debugLog('LessonModal', 'modal:hidden');
+      // 편집 모드가 아닐 때만 초기화
+      if (!editingLesson) {
+        resetModal();
+      }
+    };
+
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', handleModalHidden);
+    }
+
+    // Cleanup
+    return () => {
+      if (modalElement) {
+        modalElement.removeEventListener('hidden.bs.modal', handleModalHidden);
+      }
+      // data URL은 자동 메모리 관리
+    };
+  }, [modalId, editingLesson, resetModal]);
+
   return (
     <>
       <div
@@ -403,6 +474,7 @@ const LessonModal = ({
                             data-black-overlay="9"
                           >
                             <input
+                              ref={fileInputRef}
                               name="lessonFeatureImage"
                               id="lessonFeatureImage"
                               type="file"
@@ -412,7 +484,9 @@ const LessonModal = ({
                             />
                             <Image
                               id="lessonFeatureImagePreview"
-                              src={featureImagePreview || img}
+                              src={
+                                featureImageUrl || featureImagePreview || img
+                              }
                               width={797}
                               height={262}
                               alt="file image"
@@ -576,12 +650,6 @@ const LessonModal = ({
                             </span>
                           </span>
                         </button>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          style={{ display: 'none' }}
-                          onChange={handleFileChange}
-                        />
                         {/* Attachment 파일 input - 별도로 추가 */}
                         <input
                           type="file"
