@@ -1,5 +1,4 @@
-#!/usr/bin/env node
-
+// TypeScript Migration Check Hook
 const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
