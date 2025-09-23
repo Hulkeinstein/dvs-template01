@@ -15,7 +15,7 @@ const LessonModal = ({
 }) => {
   const fileInputRef = useRef(null);
   const attachmentInputRef = useRef(null);
-  // blob URL ref 제거 (data URL 사용으로 불필요)
+  const lastPickIdRef = useRef(0); // Race condition 방지용 추가
   const [featureImagePreview, setFeatureImagePreview] = useState(null);
   const [featureImageUrl, setFeatureImageUrl] = useState(null);
   const [uploadingFeatureImage, setUploadingFeatureImage] = useState(false);
@@ -244,96 +244,133 @@ const LessonModal = ({
   };
 
   const handleFileChange = async (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Race condition 방지: 각 선택에 고유 ID 부여
+    const pickId = ++lastPickIdRef.current;
 
     debugLog('LessonModal', 'handleFileChange', {
-      fileName: file?.name,
-      fileSize: file?.size,
-      fileType: file?.type,
-      triggeredBy: 'featureImage',
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+      pickId: pickId,
     });
 
-    if (file) {
+    // Validate file type with strict MIME checking
+    const ALLOWED_TYPES = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+    ];
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setFeatureImageError('JPG, PNG, GIF, WEBP 파일만 가능합니다.');
+      event.target.value = ''; // 입력 초기화
+      return;
+    }
+
+    // Validate file size (8MB limit)
+    const MAX_SIZE = 8 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setFeatureImageError(`파일 크기는 최대 8MB까지 가능합니다.`);
+      event.target.value = ''; // 입력 초기화
+      return;
+    }
+
+    setUploadingFeatureImage(true);
+    setFeatureImageError(null);
+
+    // FileReader로 data URL 생성 (CSP 호환)
+    const reader = new FileReader();
+
+    reader.onloadend = async () => {
+      // 다른 파일이 더 늦게 선택되었으면 중단
+      if (pickId !== lastPickIdRef.current) {
+        debugLog('LessonModal', 'handleFileChange:aborted', {
+          pickId,
+          currentPickId: lastPickIdRef.current,
+        });
+        return;
+      }
+
+      const dataUrl = reader.result; // data:image/... 형식
+      setFeatureImagePreview(dataUrl);
+
+      debugLog('LessonModal', 'featureImagePreview:set', {
+        fileName: file.name,
+        previewType: 'dataURL',
+        previewLength: dataUrl ? dataUrl.length : 0,
+        pickId: pickId,
+      });
+
+      // 서버에 업로드
       try {
-        // Validate file type with strict MIME checking
-        const ALLOWED_TYPES = [
-          'image/jpeg',
-          'image/jpg',
-          'image/png',
-          'image/gif',
-          'image/webp',
-        ];
-        if (!ALLOWED_TYPES.includes(file.type)) {
-          setFeatureImageError('JPG, PNG, GIF, WEBP 파일만 가능합니다.');
-          event.target.value = ''; // 입력 초기화
+        debugLog('LessonModal', 'featureImage:uploading', {
+          fileName: file.name,
+          fileSize: file.size,
+          pickId: pickId,
+        });
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('fileName', file.name);
+
+        const result = await uploadLessonAttachmentDirect(formData);
+
+        // 결과 검증
+        if (!result?.success || !result?.url) {
+          throw new Error(result?.error || '업로드에 실패했습니다.');
+        }
+
+        // 여전히 최신 선택인지 확인
+        if (pickId !== lastPickIdRef.current) {
+          debugLog('LessonModal', 'handleFileChange:upload-aborted', {
+            pickId,
+            currentPickId: lastPickIdRef.current,
+          });
           return;
         }
 
-        // Validate file size (8MB limit)
-        const MAX_SIZE = 8 * 1024 * 1024;
-        if (file.size > MAX_SIZE) {
-          setFeatureImageError(`파일 크기는 최대 8MB까지 가능합니다.`);
-          event.target.value = ''; // 입력 초기화
-          return;
-        }
+        // 업로드 성공: 공개 URL로 전환
+        setFeatureImageUrl(result.url);
+        setFeatureImagePreview(null); // data URL 제거 (메모리 절약)
 
-        setUploadingFeatureImage(true);
-        setFeatureImageError(null);
-
-        // FileReader로 data URL 생성 (CSP 호환)
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFeatureImagePreview(reader.result); // data:image/... 형식
-          debugLog('LessonModal', 'featureImagePreview:set', {
-            fileName: file.name,
-            previewType: 'dataURL',
-            previewLength: reader.result ? reader.result.length : 0,
-          });
-        };
-        reader.readAsDataURL(file);
-
-        // Upload to storage using FormData
-        try {
-          debugLog('LessonModal', 'featureImage:uploading', {
-            fileName: file.name,
-            fileSize: file.size,
-          });
-
-          const formData = new FormData();
-          formData.append('file', file);
-          formData.append('fileName', file.name);
-
-          const result = await uploadLessonAttachmentDirect(formData);
-
-          if (result.success) {
-            setFeatureImageUrl(result.url);
-
-            // 업로드 성공 시 preview를 null로 설정 (data URL은 자동 메모리 관리)
-            setFeatureImagePreview(null);
-
-            debugLog('LessonModal', 'featureImage:uploaded', {
-              fileName: file.name,
-              url: result.url,
-            });
-          } else {
-            throw new Error(result.error || '업로드에 실패했습니다.');
-          }
-        } catch (uploadError) {
+        debugLog('LessonModal', 'featureImage:uploaded', {
+          fileName: file.name,
+          url: result.url,
+          pickId: pickId,
+        });
+      } catch (uploadError) {
+        // 여전히 최신 선택인지 확인
+        if (pickId === lastPickIdRef.current) {
           trackError('LessonModal.handleFileChange:upload', uploadError, {
             file,
+            pickId: pickId,
           });
           setFeatureImageError(
             uploadError.message ||
               '이미지 업로드에 실패했습니다. 다시 시도해주세요.'
           );
-        } finally {
+        }
+      } finally {
+        // 최신 선택일 때만 로딩 상태 해제
+        if (pickId === lastPickIdRef.current) {
           setUploadingFeatureImage(false);
         }
-      } catch (error) {
-        trackError('LessonModal.handleFileChange', error, { file });
+      }
+    };
+
+    reader.onerror = () => {
+      if (pickId === lastPickIdRef.current) {
+        setFeatureImageError('파일을 읽을 수 없습니다. 다시 시도해주세요.');
         setUploadingFeatureImage(false);
       }
-    }
+    };
+
+    // FileReader로 파일 읽기 시작
+    reader.readAsDataURL(file);
   };
 
   // Modal 초기화 함수
@@ -358,6 +395,9 @@ const LessonModal = ({
     setFeatureImageError(null);
     setAttachments([]);
     setAttachmentErrors([]);
+
+    // Race condition 방지 카운터 리셋
+    lastPickIdRef.current = 0;
 
     // 파일 입력 초기화
     if (fileInputRef.current) {
