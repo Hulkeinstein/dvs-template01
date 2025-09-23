@@ -33,7 +33,8 @@
           },
           {
             "type": "command",
-            "command": "#!/bin/bash\n  # git commit 시 TypeScript 마이그레이션 체크\n\n  # JSON에서 명령어 추출\n  COMMAND=$(echo \"$1\" | jq -r '.tool_input.command')\n\n  # git commit 명령인지 확인\n  if [[ \"$COMMAND\" == *\"git commit\"* ]] || [[ \"$COMMAND\" == *\"git add\"* ]]; then\n      # staged 파일 목록 가져오기\n      STAGED_FILES=$(git diff --cached --name-only 2>/dev/null)\n      # 체크할 문제들\n      HAS_ANY=false\n      HAS_JS=false\n\n      for FILE in $STAGED_FILES; do\n          # .js 파일 체크\n          if [[ \"$FILE\" == *.js ]]; then\n              echo \"⚠️  JavaScript 파일 발견: $FILE (TypeScript로 전환 필요)\" >&2\n              HAS_JS=true\n          fi\n\n          # any 타입 체크 (.ts, .tsx 파일)\n          if [[ \"$FILE\" == *.ts ]] || [[ \"$FILE\" == *.tsx ]]; then\n              if grep -q \": any\" \"$FILE\" 2>/dev/null || grep -q \"<any>\" \"$FILE\" 2>/dev/null; then\n                  echo \"⚠️  'any' 타입 발견: $FILE\" >&2\n                  HAS_ANY=true\n              fi\n          fi\n      done\n     # 경고만 표시 (차단하지 않음)\n      if [ \"$HAS_ANY\" = true ] || [ \"$HAS_JS\" = true ]; then\n          echo \"💡 코드 품질 개선이 필요합니다. 다음 커밋에서 수정해주세요.\" >&2\n      fi\n  fi\n\n  # 항상 통과 (exit 0)\n  exit 0\n\n  이 스크립트는:\n  - git commit/add 명령 감지\n  - staged 파일에서 .js 파일과 any 타입 체크\n  - 경고만 표시하고 커밋은 진행 (점진적 개선)"
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/typescript-check.js",
+            "timeout": 20
           }
         ]
       },
