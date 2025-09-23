@@ -87,7 +87,7 @@ export async function getUserBookmarks(userId: string) {
     // Transform the data to ensure user is an object
     const transformedData =
       data?.map((bookmark) => {
-        const courseData = bookmark.courses as any;
+        const courseData = bookmark.courses as any; // Test for any type hook
         return {
           ...bookmark,
           courses: {
