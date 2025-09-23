@@ -112,7 +112,7 @@ if (typeof window !== 'undefined' && !isDevelopment) {
       method === 'time' ||
       method === 'timeEnd'
     ) {
-      (window.console as Record<string, unknown>)[method] = () => {};
+      (window.console as any)[method] = () => {};
     }
   });
 }

@@ -35,7 +35,7 @@ export default async function AdminCoursesPage({ searchParams }: PageProps) {
     status: (searchParams.status as CourseStatus | 'all') || 'all',
     category: searchParams.category,
     instructorId: searchParams.instructorId,
-    sortBy: (searchParams.sort as SortOption) || 'created_desc',
+    sortBy: (searchParams.sort as any) || 'created_desc',
     page: Number(searchParams.page) || 1,
     isFeatured: searchParams.featured === 'true',
     limit: 20,

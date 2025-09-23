@@ -278,7 +278,7 @@ export async function createCourse(
             lessonIndex < topic.lessons.length;
             lessonIndex++
           ) {
-            const lesson = topic.lessons[lessonIndex];
+            const lesson = topic.lessons[lessonIndex] as any;
 
             const { error: lessonError } = await supabase
               .from('lessons')
@@ -320,7 +320,7 @@ export async function createCourse(
 // Update course information
 export async function updateCourse(
   courseId: string,
-  formData: unknown
+  formData: any
 ): Promise<ActionResult<void>> {
   try {
     const session = await getServerSession(authOptions);
@@ -773,10 +773,7 @@ export async function deleteLesson(
       .eq('email', session.user.email)
       .single();
 
-    if (
-      !userData ||
-      (lesson.courses as Record<string, unknown>).instructor_id !== userData.id
-    ) {
+    if (!userData || (lesson.courses as any).instructor_id !== userData.id) {
       return { error: 'You do not have permission to delete this lesson' };
     }
 
@@ -1260,9 +1257,7 @@ export async function deleteCourse(
 }
 
 // Get all courses with instructor details and statistics for public display
-export async function getAllCoursesWithDetails(): Promise<
-  Array<Record<string, unknown>>
-> {
+export async function getAllCoursesWithDetails(): Promise<any[]> {
   try {
     // 1. Fetch only published courses with instructor info
     const { data: courses, error: coursesError } = await supabase
@@ -1402,7 +1397,7 @@ export async function getAvailableCourses(
 
     // Format the data for easier use
     const formattedCourses: Array<unknown> =
-      courses?.map((course: Record<string, unknown>) => ({
+      courses?.map((course: any) => ({
         id: course.id,
         title: course.title,
         slug:
@@ -1425,7 +1420,7 @@ export async function getAvailableCourses(
 
     return {
       success: true,
-      courses: formattedCourses,
+      courses: formattedCourses as CourseSummary[],
     };
   } catch (error) {
     console.error('Error in getAvailableCourses:', error);
