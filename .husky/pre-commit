@@ -1,17 +1,20 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Pre-commit 시작 알림
-echo "🔍 Pre-commit 검사 시작..."
+echo "🔎 pre-commit: JS/JSX gate"
 
-# lint-staged 실행 (자동으로 .lintstagedrc.json 설정 사용)
-npx lint-staged
-
-# 결과 확인
-if [ $? -eq 0 ]; then
-  echo "✅ Pre-commit 검사 통과!"
-else
-  echo "❌ Pre-commit 검사 실패! 위의 오류를 수정하세요."
-  echo "💡 팁: 'npm run lint -- --fix'로 자동 수정을 시도해보세요."
+# 1) 스테이징에 JS/JSX 있는지 검사(실제 변경된 추가/수정만, scripts 폴더 제외)
+if git diff --cached --name-only --diff-filter=AM | grep -E '\.jsx?$' | grep -v '^scripts/' >/dev/null; then
+  echo "❌ JS/JSX 파일이 스테이징되어 있습니다."
+  echo "   → TypeScript로 변환 후 다시 커밋하세요."
+  echo "   예) npm run migrate:ts src/App.jsx src/components/Button.js"
   exit 1
 fi
+
+# 2) 나머지 품질 체크
+npx lint-staged || exit 1
+
+# (선택) 프로젝트가 작다면 타입체크도 차단으로
+# npm run -s typecheck || exit 1
+
+echo "✅ pre-commit passed"
