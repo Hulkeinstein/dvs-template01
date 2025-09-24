@@ -832,10 +832,20 @@ export async function updateCourseStatus(
       return { error: 'You do not have permission to update this course' };
     }
 
-    // Update status
+    // Update status and automatically set is_public for published courses
+    const updateData: any = { status };
+
+    // Auto-set is_public=true when publishing, false when unpublishing
+    if (status === 'published') {
+      updateData.is_public = true;
+      updateData.published_at = new Date().toISOString();
+    } else if (status === 'draft' || status === 'archived') {
+      updateData.is_public = false;
+    }
+
     const { error: updateError } = await supabase
       .from('courses')
-      .update({ status })
+      .update(updateData)
       .eq('id', courseId);
 
     if (updateError) {
