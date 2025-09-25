@@ -1,4 +1,5 @@
 'use client';
+// Test comment for hook testing
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';

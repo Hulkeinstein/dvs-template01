@@ -1,5 +1,4 @@
 {
-  "version": "1.0.0",
   "permissions": {
     "deny": [
       "Bash:rm -rf /",
@@ -20,20 +19,22 @@
           {
             "type": "command",
             "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/pre-exec.js",
-            "timeout": 30,
-            "blockOnFailure": true
+            "timeout": 30
           },
           {
             "type": "command",
             "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/git-safety.js",
-            "timeout": 20,
-            "blockOnFailure": true
+            "timeout": 20
           },
           {
             "type": "command",
             "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/db-safety.js",
-            "timeout": 20,
-            "blockOnFailure": true
+            "timeout": 20
+          },
+          {
+            "type": "command",
+            "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/typescript-check.js",
+            "timeout": 20
           }
         ]
       },
@@ -43,8 +44,7 @@
           {
             "type": "command",
             "command": "node D:/kamwoo/6.programing/DEV/Cursor/project/dvs-template01/DVS-TEMPLATE01/.claude/hooks/file-safety.js",
-            "timeout": 20,
-            "blockOnFailure": true
+            "timeout": 20
           }
         ]
       }
@@ -62,6 +62,7 @@
       }
     ]
   },
+  "version": "1.0.0",
   "safety": {
     "mode": "strict",
     "maxFilesPerOperation": 5,

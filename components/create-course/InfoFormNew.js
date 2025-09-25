@@ -7,11 +7,29 @@ import { debounce } from '@/app/lib/utils/debounce';
 import img from '../../public/images/others/thumbnail-placeholder.svg';
 
 const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(
+    formData.thumbnailPreview || null
+  );
   const [slugAvailable, setSlugAvailable] = useState(null);
   const [slugSuggestion, setSlugSuggestion] = useState('');
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const fileInputRef = useRef(null);
+
+  // Edit 모드에서 formData.thumbnailPreview 동기화
+  useEffect(() => {
+    if (
+      formData.thumbnailPreview &&
+      formData.thumbnailPreview !== thumbnailPreview
+    ) {
+      setThumbnailPreview(formData.thumbnailPreview);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          '[Thumbnail] Syncing preview from formData:',
+          formData.thumbnailPreview
+        );
+      }
+    }
+  }, [formData.thumbnailPreview]);
 
   // 슬러그 생성 함수
   const generateSlugFromTitle = (title) => {
@@ -54,6 +72,16 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    // 체크박스 클릭 디버깅
+    if (type === 'checkbox') {
+      console.log('🔄 Checkbox clicked:', {
+        name,
+        type,
+        checked,
+        currentValue: formData[name],
+      });
+    }
 
     // 제목 변경 시 슬러그 자동 생성
     if (name === 'title' && !formData.slug) {
@@ -105,11 +133,14 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setThumbnailPreview(reader.result);
+
+        // Pass both file and base64 data to parent component
+        onThumbnailChange({
+          file: file,
+          base64: reader.result,
+        });
       };
       reader.readAsDataURL(file);
-
-      // Pass file to parent component
-      onThumbnailChange(file);
     }
   };
 
@@ -421,6 +452,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     id="certificateEnabled"
                     name="certificateEnabled"
                     checked={formData.certificateEnabled || false}
+                    value={formData.certificateEnabled || false}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -446,6 +478,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     id="lifetimeAccess"
                     name="lifetimeAccess"
                     checked={formData.lifetimeAccess !== false}
+                    value={formData.lifetimeAccess !== false}
                     onChange={handleInputChange}
                   />
                 </div>

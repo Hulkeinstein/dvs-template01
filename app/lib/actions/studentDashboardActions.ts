@@ -156,7 +156,7 @@ export async function getEnrolledCourses(
     const enrichedCourses = await Promise.all(
       enrollments.map(async (enrollment) => {
         // Get instructor details
-        const courseData = enrollment.courses as Record<string, unknown>;
+        const courseData = enrollment.courses as any;
         const { data: instructor } = await supabase
           .from('user')
           .select('id, name, avatar_url')
@@ -214,7 +214,7 @@ export async function getEnrolledCoursesRPC(
     return [];
   }
 
-  return (data ?? []).map((row: Record<string, unknown>) => ({
+  return (data ?? []).map((row: any) => ({
     id: row.enrollment_id,
     course_id: row.course_id,
     progress: Number(row.calculated_progress ?? row.manual_progress ?? 0),
@@ -273,7 +273,7 @@ export async function getBookmarkedCourses(
 
     return (
       bookmarks?.map((bookmark) => {
-        const courseData = bookmark.courses as Record<string, unknown>;
+        const courseData = bookmark.courses as any;
         return {
           id: bookmark.id,
           course_id: bookmark.course_id,
@@ -346,7 +346,7 @@ export async function getNextLessonRecommendation(userId: string) {
     );
 
     if (nextLesson) {
-      const courseData = recentEnrollment.courses as Record<string, unknown>;
+      const courseData = recentEnrollment.courses as any;
       return {
         lesson: nextLesson,
         course: courseData,

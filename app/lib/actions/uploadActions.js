@@ -6,6 +6,9 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { base64ToBlob } from '@/app/lib/utils/fileUpload';
 import { debugLog, trackError } from '@/app/lib/utils/debugHelper';
 
+// Storage configuration - 모든 업로드 함수가 사용할 공통 버킷
+const STORAGE_BUCKET = 'courses'; // 기존에 작동하던 버킷명으로 복구
+
 // Upload course thumbnail - now accepts base64 data
 export async function uploadCourseThumbnail(base64Data, fileName) {
   try {
@@ -80,32 +83,14 @@ export async function uploadCourseThumbnail(base64Data, fileName) {
       });
     }
 
-    // Upload to Supabase Storage - try 'courses' bucket first
-    let bucketName = 'courses';
-    let uploadData, uploadError;
-
-    ({ data: uploadData, error: uploadError } = await supabase.storage
-      .from(bucketName)
+    // Upload to Supabase Storage using common bucket
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
       .upload(filePath, blob, {
         cacheControl: '3600',
         upsert: false,
         contentType: fileType,
-      }));
-
-    // If failed, try 'course-images' bucket
-    if (uploadError && uploadError.message?.includes('bucket')) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Trying alternative bucket: course-images');
-      }
-      bucketName = 'course-images';
-      ({ data: uploadData, error: uploadError } = await supabase.storage
-        .from(bucketName)
-        .upload(filePath, blob, {
-          cacheControl: '3600',
-          upsert: false,
-          contentType: fileType,
-        }));
-    }
+      });
 
     if (uploadError) {
       console.error('Upload error:', uploadError);
@@ -118,7 +103,7 @@ export async function uploadCourseThumbnail(base64Data, fileName) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+    } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
     return { success: true, url: publicUrl };
   } catch (error) {
@@ -168,11 +153,11 @@ export async function uploadLessonAttachmentDirect(formData) {
     // 파일명 정리
     const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '-');
     const uniqueFileName = `${Date.now()}-${sanitizedFileName}`;
-    const filePath = `lessons/attachments/${uniqueFileName}`;
+    const filePath = `lesson-attachments/${uniqueFileName}`;
 
     // Supabase Storage에 직접 업로드
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('courses')
+      .from(STORAGE_BUCKET)
       .upload(filePath, file, {
         cacheControl: '3600',
         upsert: false,
@@ -195,7 +180,7 @@ export async function uploadLessonAttachmentDirect(formData) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from('courses').getPublicUrl(filePath);
+    } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
     return {
       success: true,
@@ -317,7 +302,7 @@ export async function uploadLessonAttachment(base64Data, fileName) {
     // Sanitize filename and create unique path
     const sanitizedFileName = fileName.replace(/[^a-zA-Z0-9.-]/g, '-');
     const uniqueFileName = `${Date.now()}-${sanitizedFileName}`;
-    const filePath = `lessons/attachments/${uniqueFileName}`;
+    const filePath = `lesson-attachments/${uniqueFileName}`;
 
     debugLog('uploadActions', 'uploadLessonAttachment:uploading', {
       filePath,
@@ -325,59 +310,27 @@ export async function uploadLessonAttachment(base64Data, fileName) {
       mimeType,
     });
 
-    // Try to upload to 'courses' bucket first (존재하는 버킷)
-    let bucketName = 'courses';
-    let uploadData, uploadError;
-
+    // Upload to Supabase Storage using common bucket
     debugLog('uploadActions', 'uploadLessonAttachment:trying-bucket', {
-      bucket: bucketName,
+      bucket: STORAGE_BUCKET,
       filePath,
       mimeType,
     });
 
-    ({ data: uploadData, error: uploadError } = await supabase.storage
-      .from(bucketName)
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(STORAGE_BUCKET)
       .upload(filePath, blob, {
         cacheControl: '3600',
         upsert: false,
         contentType: mimeType,
-      }));
-
-    // If failed with bucket error, try 'course-attachments' bucket as fallback
-    if (uploadError) {
-      debugLog('uploadActions', 'uploadLessonAttachment:first-attempt-failed', {
-        bucket: bucketName,
-        error: uploadError.message,
-        errorCode: uploadError.code,
       });
-
-      // Only try alternative bucket if it's a bucket-related error
-      if (
-        uploadError.message?.includes('bucket') ||
-        uploadError.message?.includes('not found')
-      ) {
-        bucketName = 'course-attachments';
-
-        debugLog('uploadActions', 'uploadLessonAttachment:trying-fallback', {
-          bucket: bucketName,
-        });
-
-        ({ data: uploadData, error: uploadError } = await supabase.storage
-          .from(bucketName)
-          .upload(filePath, blob, {
-            cacheControl: '3600',
-            upsert: false,
-            contentType: mimeType,
-          }));
-      }
-    }
 
     if (uploadError) {
       // 더 자세한 에러 메시지
       let errorMessage = uploadError.message;
 
       if (errorMessage.includes('bucket')) {
-        errorMessage = `Storage bucket '${bucketName}' not found. Please create the bucket in Supabase dashboard or use existing 'courses' bucket.`;
+        errorMessage = `Storage bucket '${STORAGE_BUCKET}' not found. Please create the bucket in Supabase dashboard.`;
       } else if (errorMessage.includes('row level security')) {
         errorMessage =
           'Permission denied. Please check storage policies in Supabase.';
@@ -388,7 +341,7 @@ export async function uploadLessonAttachment(base64Data, fileName) {
       debugLog('uploadActions', 'uploadLessonAttachment:final-error', {
         originalError: uploadError.message,
         enhancedError: errorMessage,
-        bucket: bucketName,
+        bucket: STORAGE_BUCKET,
       });
 
       throw new Error(errorMessage);
@@ -397,11 +350,11 @@ export async function uploadLessonAttachment(base64Data, fileName) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+    } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
     debugLog('uploadActions', 'uploadLessonAttachment:success', {
       publicUrl,
-      bucketUsed: bucketName,
+      bucketUsed: STORAGE_BUCKET,
       filePath,
     });
 
@@ -479,7 +432,7 @@ export async function uploadLessonVideo(courseId, lessonId, file) {
     // Get public URL
     const {
       data: { publicUrl },
-    } = supabase.storage.from('courses').getPublicUrl(filePath);
+    } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
     // Update lesson video URL
     const { error: updateError } = await supabase

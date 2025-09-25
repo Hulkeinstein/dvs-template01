@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Select from 'react-select';
@@ -19,6 +19,7 @@ import {
 import { getLessonsByCourse } from '@/app/lib/actions/lessonActions';
 import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
 import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
+import { useAutoSave, getRelativeTime } from '@/app/hooks/useAutoSave';
 
 // import CourseData from "../../data/course-details/courseData.json";
 import CreateCourseData from '../../data/createCourse.json';
@@ -51,6 +52,14 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailBase64, setThumbnailBase64] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
+  const [draftTimestamp, setDraftTimestamp] = useState(null);
+
+  // tempId를 useRef로 고정 (새로고침 전까지 유지)
+  const tempIdRef = useRef(null);
+  if (!tempIdRef.current) {
+    tempIdRef.current = Math.random().toString(36).slice(2, 11);
+  }
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -85,6 +94,53 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
     // Course content
     topics: [],
+  });
+
+  // 안정적인 userId 생성 (null 체크)
+  const userId = useMemo(() => {
+    if (userProfile?.id) return `uid_${userProfile.id}`;
+    if (session?.user?.email)
+      return `email_${session.user.email.replace('@', '_at_')}`;
+    // userId가 없으면 null 반환 (guest 사용하지 않음)
+    return null;
+  }, [userProfile?.id, session?.user?.email]);
+
+  // 자동 저장 키 생성 (userId가 준비된 후에만)
+  const storageKey = useMemo(() => {
+    if (!userId) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AutoSave] userId not ready, storageKey is null');
+      }
+      return null;
+    }
+
+    // 편집 모드일 때는 courseId 사용, 새 코스일 때는 tempId 사용
+    const courseIdentifier =
+      editMode && courseId ? courseId : tempIdRef.current;
+    const key = `course_draft_${userId}_${courseIdentifier}`;
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[AutoSave] storageKey generated:', key);
+    }
+
+    return key;
+  }, [userId, editMode, courseId]);
+
+  // 자동 저장 훅 사용 (storageKey가 있을 때만 활성화)
+  const {
+    status: saveStatus,
+    lastSavedAt,
+    saveNow,
+    recover,
+    getRecoverable,
+    clearDraft,
+  } = useAutoSave(formData, setFormData, {
+    storageKey: storageKey || '', // null일 때 빈 문자열
+    debounceMs: 3000,
+    intervalMs: 30000,
+    schemaVersion: 'v2', // 버전 업데이트
+    excludeFields: ['thumbnailPreview', 'thumbnailFile'], // 큰 데이터는 제외
+    enabled: !!storageKey, // storageKey가 있을 때만 활성화
   });
 
   const loadCourseData = useCallback(async () => {
@@ -293,6 +349,40 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     }
   }, [editMode, courseId, loadCourseData]);
 
+  // 페이지 로드 시 복구 가능한 draft 확인
+  useEffect(() => {
+    // storageKey가 준비되고 편집 모드가 아닐 때만 복구 확인
+    if (!editMode && storageKey) {
+      // 약간의 지연을 주어 컴포넌트가 완전히 마운트되도록 함
+      setTimeout(() => {
+        const { data, timestamp } = getRecoverable();
+        if (data && timestamp) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[AutoSave] Recovery data found:', {
+              timestamp,
+              hasData: !!data,
+            });
+          }
+          setDraftTimestamp(timestamp);
+          setShowRecoveryModal(true);
+        }
+      }, 100);
+    }
+  }, [editMode, storageKey, getRecoverable]);
+
+  // Ctrl+S 단축키로 수동 저장
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveNow();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [saveNow]);
+
   const previewImages = CreateCourseData.createCourse[0].landscape.filter(
     (item) => item.type === 'preview'
   );
@@ -406,6 +496,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       }
 
       if (result.success) {
+        // 성공 시 임시 저장 데이터 삭제
+        clearDraft();
+
         if (saveAsDraft && !editMode) {
           // If saving as draft for new course, redirect to edit mode with new ID
           router.push(`/create-course?edit=${result.courseId}`);
@@ -425,7 +518,11 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   };
 
   const handleFormDataChange = (newData) => {
-    setFormData(newData);
+    console.log('📝 FormData updating:', {
+      certificateEnabled: newData.certificateEnabled,
+      lifetimeAccess: newData.lifetimeAccess,
+    });
+    setFormData({ ...newData }); // 새 객체로 생성하여 React 리렌더링 보장
   };
 
   const handleThumbnailChange = (data) => {
@@ -600,6 +697,47 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   };
   return (
     <>
+      {/* 자동 저장 상태 표시 */}
+      <div className="row mb-3">
+        <div className="col-12 text-end">
+          <div className="d-inline-flex align-items-center gap-2">
+            {/* 저장 상태 배지 */}
+            {saveStatus === 'saving' && (
+              <span className="badge bg-info">
+                <i className="feather-loader me-1"></i>저장 중...
+              </span>
+            )}
+            {saveStatus === 'saved' && (
+              <span className="badge bg-success">
+                <i className="feather-check me-1"></i>자동 저장됨
+              </span>
+            )}
+            {saveStatus === 'dirty' && (
+              <span className="badge bg-warning">
+                <i className="feather-edit me-1"></i>변경사항 있음
+              </span>
+            )}
+            {saveStatus === 'error' && (
+              <span className="badge bg-danger">
+                <i className="feather-alert-circle me-1"></i>저장 실패
+              </span>
+            )}
+
+            {/* 마지막 저장 시간 */}
+            {lastSavedAt && saveStatus !== 'saving' && (
+              <small className="text-muted">
+                ({getRelativeTime(lastSavedAt)})
+              </small>
+            )}
+
+            {/* 수동 저장 힌트 */}
+            <small className="text-muted">
+              <kbd>Ctrl</kbd>+<kbd>S</kbd> 수동 저장
+            </small>
+          </div>
+        </div>
+      </div>
+
       <div className="row g-5">
         <div className="col-lg-8">
           <div className="rbt-accordion-style rbt-accordion-01 rbt-accordion-06 accordion">
@@ -1206,6 +1344,116 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           </div>
         </div>
       )}
+
+      {/* 복구 모달 */}
+      {showRecoveryModal && (
+        <div className="rbt-modal-overlay" style={{ display: 'block' }}>
+          <div className="rbt-modal-wrapper">
+            <div className="rbt-modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  <i className="feather-clock me-2"></i>
+                  임시 저장된 데이터 발견
+                </h5>
+              </div>
+              <div className="modal-body">
+                <p>이전에 작업하던 코스 데이터가 있습니다.</p>
+                <p className="text-muted small">
+                  마지막 저장:{' '}
+                  {draftTimestamp
+                    ? new Date(draftTimestamp).toLocaleString('ko-KR')
+                    : '알 수 없음'}
+                </p>
+                <p>이전 작업을 복구하시겠습니까?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="rbt-btn btn-border btn-sm"
+                  onClick={() => {
+                    setShowRecoveryModal(false);
+                    clearDraft(); // 무시하고 새로 시작
+                  }}
+                >
+                  <span className="icon-reverse-wrapper">
+                    <span className="btn-text">무시하고 새로 시작</span>
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="rbt-btn btn-gradient btn-sm"
+                  onClick={() => {
+                    recover(); // 데이터 복구
+                    setShowRecoveryModal(false);
+                  }}
+                >
+                  <span className="icon-reverse-wrapper">
+                    <span className="btn-text">복구하기</span>
+                    <span className="btn-icon">
+                      <i className="feather-check"></i>
+                    </span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .rbt-modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.5);
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .rbt-modal-wrapper {
+          max-width: 500px;
+          width: 90%;
+          margin: 0 auto;
+        }
+
+        .rbt-modal-content {
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+          padding: 20px;
+          border-bottom: 1px solid #e5e5e5;
+        }
+
+        .modal-body {
+          padding: 20px;
+        }
+
+        .modal-footer {
+          padding: 20px;
+          border-top: 1px solid #e5e5e5;
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+          .rbt-modal-content {
+            background: #1a1a1a;
+          }
+
+          .modal-header,
+          .modal-footer {
+            border-color: #333;
+          }
+        }
+      `}</style>
     </>
   );
 };

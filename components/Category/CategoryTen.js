@@ -1,3 +1,4 @@
+// Test comment for hook testing after restart
 import Link from 'next/link';
 import Image from 'next/image';
 

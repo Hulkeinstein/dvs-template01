@@ -30,7 +30,9 @@
     "git:setup": "husky && echo 'Git hooks setup complete'",
     "git:workflow": "node scripts/automation/git-workflow-helper.js",
     "git:enable-auto-push": "node -e \"const fs=require('fs');const cfg='.git-workflow.json';const c=JSON.parse(fs.readFileSync(cfg));c.autoPush=true;fs.writeFileSync(cfg,JSON.stringify(c,null,2))\" && echo 'Auto-push enabled'",
-    "git:disable-auto-push": "node -e \"const fs=require('fs');const cfg='.git-workflow.json';const c=JSON.parse(fs.readFileSync(cfg));c.autoPush=false;fs.writeFileSync(cfg,JSON.stringify(c,null,2))\" && echo 'Auto-push disabled'"
+    "git:disable-auto-push": "node -e \"const fs=require('fs');const cfg='.git-workflow.json';const c=JSON.parse(fs.readFileSync(cfg));c.autoPush=false;fs.writeFileSync(cfg,JSON.stringify(c,null,2))\" && echo 'Auto-push disabled'",
+    "migrate:ts": "node scripts/migrate-js-to-ts.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -129,6 +131,7 @@
     "lint-staged": "^16.1.4",
     "postcss": "^8.5.6",
     "prettier": "3.5.3",
+    "puppeteer": "^24.22.0",
     "shadcn": "^3.0.0",
     "styled-jsx": "^5.1.6",
     "tailwindcss": "^3.4.17",
