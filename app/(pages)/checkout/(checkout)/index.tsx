@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Provider } from 'react-redux';
 import Store from '@/redux/store';
 import Context from '@/context/Context';
@@ -12,12 +13,12 @@ import Checkout from '@/components/Checkout/Checkout';
 import Separator from '@/components/Common/Separator';
 import FooterOne from '@/components/Footer/Footer-One';
 
-const CheckoutPage = () => {
+const CheckoutPage = (): JSX.Element => {
   return (
     <>
       <Provider store={Store}>
         <Context>
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <MobileMenu />
           <Cart />
           <BreadCrumb title="Checkout" text="Checkout" />
@@ -26,7 +27,12 @@ const CheckoutPage = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox={false}
+            bgColor=""
+            newsletterBorder={false}
+            islamic={false}
+          />
         </Context>
       </Provider>
     </>
