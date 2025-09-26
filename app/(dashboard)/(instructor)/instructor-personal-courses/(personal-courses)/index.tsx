@@ -18,7 +18,7 @@ const PersonalCoursesPage = () => {
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -45,7 +45,12 @@ const PersonalCoursesPage = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox={false}
+            bgColor=""
+            newsletterBorder=""
+            islamic={false}
+          />
         </Context>
       </Provider>
     </>
