@@ -8,13 +8,56 @@ import {
   deleteCourse,
 } from '@/app/lib/actions/courseActions';
 import { ROUTES } from '@/app/lib/constants/routes';
+import type { CourseStatus } from '@/types/course';
 
-const MyCourses = () => {
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Type definitions for the component
+interface Course {
+  id: string;
+  title: string;
+  description?: string | null;
+  thumbnail_url?: string | null;
+  status?: CourseStatus;
+  badges?: any[]; // TODO(ANY-TODO #001): Define proper Badge type
+  regular_price?: number | null;
+  discounted_price?: number | null;
+  total_duration_hours?: number;
+  difficulty_level?: string;
+  lessons?: {
+    count: number;
+  };
+  enrollments?: {
+    count: number;
+  };
+  reviews?: any; // TODO(ANY-TODO #002): Define proper Review type
+}
 
-  const fetchCourses = async () => {
+interface FormattedCourseData {
+  id: string;
+  courseThumbnail: string;
+  title: string;
+  badges: any[]; // TODO(ANY-TODO #003): Define proper Badge type
+  shortDescription: string;
+  regular_price: number;
+  discounted_price?: number; // Changed from number | null to optional number
+  regularPrice: number; // Legacy compatibility
+  discountedPrice?: number; // Legacy compatibility - changed from number | null
+  courseDuration: string;
+  lectures: number;
+  enrolledStudent: number;
+  courseLevel: string;
+  status?: CourseStatus;
+  rating: {
+    average: number;
+  };
+  reviews?: any; // TODO(ANY-TODO #004): Define proper Review type
+}
+
+const MyCourses: React.FC = () => {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCourses = async (): Promise<void> => {
     try {
       setLoading(true);
       const result = await getInstructorCourses();
@@ -22,7 +65,7 @@ const MyCourses = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        setCourses(result.courses || []);
+        setCourses((result.courses as Course[]) || []);
       }
     } catch (err) {
       setError('Failed to fetch courses');
@@ -36,7 +79,7 @@ const MyCourses = () => {
     fetchCourses();
   }, []);
 
-  const handleDeleteCourse = async (courseId) => {
+  const handleDeleteCourse = async (courseId: string): Promise<void> => {
     try {
       const result = await deleteCourse(courseId);
       if (result.success) {
@@ -52,7 +95,7 @@ const MyCourses = () => {
   };
 
   const publishedCourses = courses.filter(
-    (course) => course.status === 'published' || course.status === 'unpublished'
+    (course) => course.status === 'published'
   );
   const pendingCourses = courses.filter(
     (course) => course.status === 'pending'
@@ -62,28 +105,51 @@ const MyCourses = () => {
     (course) => course.status === 'archived'
   );
 
-  const formatCourseData = (course) => ({
-    id: course.id,
-    courseThumbnail: course.thumbnail_url || '/images/course/course-01.jpg',
-    title: course.title,
-    courseTitle: course.title,
-    badges: course.badges || [],
-    shortDescription: course.description || '',
-    courseShortDescription: course.description || '',
-    coursePrice: course.regular_price || 0,
-    offerPrice: course.discounted_price || course.regular_price || 0,
-    courseDuration: course.total_duration_hours
-      ? `${course.total_duration_hours} hours`
-      : 'TBD',
-    lectures: course.lessons?.count || 0,
-    courseLecture: course.lessons?.count || 0,
-    enrolledStudent: course.enrollments?.count || 0,
-    courseEnrolled: course.enrollments?.count || 0,
-    courseLevel: course.difficulty_level || 'All Levels',
-    status: course.status,
-    rating: { average: 0 },
-    reviews: course.reviews || undefined,
-  });
+  const formatCourseData = (course: Course): FormattedCourseData => {
+    const formatted: FormattedCourseData = {
+      id: course.id,
+      courseThumbnail: course.thumbnail_url || '/images/course/course-01.jpg',
+      title: course.title,
+      badges: course.badges || [],
+      shortDescription: course.description || '',
+
+      // 신규 가격 필드 (snake_case 우선)
+      regular_price: Number(course?.regular_price ?? 0),
+      discounted_price:
+        course?.discounted_price != null
+          ? Number(course.discounted_price)
+          : undefined,
+
+      // 하위 호환용 camelCase
+      regularPrice: Number(course?.regular_price ?? 0),
+      discountedPrice:
+        course?.discounted_price != null
+          ? Number(course.discounted_price)
+          : undefined,
+
+      // 기타 필드
+      courseDuration: course.total_duration_hours
+        ? `${course.total_duration_hours} hours`
+        : 'TBD',
+      lectures: course.lessons?.count || 0,
+      enrolledStudent: course.enrollments?.count || 0,
+      courseLevel: course.difficulty_level || 'All Levels',
+      status: course.status,
+      rating: { average: 0 },
+      reviews: course.reviews || undefined,
+    };
+
+    // 개발 환경에서 구 키 사용 경고
+    if (process.env.NODE_ENV === 'development') {
+      if ('coursePrice' in formatted || 'offerPrice' in formatted) {
+        console.warn(
+          '[MyCourses] ⚠️ Legacy price keys detected - should use regular_price/discounted_price'
+        );
+      }
+    }
+
+    return formatted;
+  };
 
   if (loading) {
     return (

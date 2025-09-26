@@ -223,15 +223,17 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
     }
 
     return (
-      <div className="dropdown">
+      <div className="dropdown flex-shrink-0">
         <button
-          className="btn btn-icon btn-sm dropdown-toggle"
+          className="btn btn-link p-0 text-muted"
           type="button"
           id={`dropdownMenu-${data.id}`}
           data-bs-toggle="dropdown"
           aria-expanded="false"
+          title="Course actions"
+          aria-label="More options"
         >
-          <i className="feather-more-vertical"></i>
+          <span className="fs-1">⋮</span>
         </button>
         <ul
           className="dropdown-menu"
@@ -468,16 +470,27 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
                 </span>
               )}
             </div>
-            {isEdit && (
-              <div className="d-flex gap-2">
+            {isEdit ? (
+              <div className="card-actions d-flex gap-2 align-items-center">
                 <Link
-                  href={ROUTES.INSTRUCTOR.EDIT_COURSE(data.id)}
-                  className="btn btn-sm btn-outline-primary"
+                  className="rbt-btn-link left-icon"
+                  href={`/create-course?edit=${data.id}`}
                 >
                   <i className="feather-edit"></i>
+                  <span className="edit-text"> Edit</span>
                 </Link>
                 {userRole === 'instructor' && renderStatusDropdown()}
               </div>
+            ) : userRole === 'instructor' ? (
+              <div className="card-actions">{renderStatusDropdown()}</div>
+            ) : (
+              <Link
+                className="rbt-btn-link"
+                href={ROUTES.COURSE.DETAILS(data.id)}
+              >
+                Learn More
+                <i className="feather-arrow-right" />
+              </Link>
             )}
           </div>
         </div>

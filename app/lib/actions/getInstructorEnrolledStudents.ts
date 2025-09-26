@@ -22,10 +22,17 @@ export async function getInstructorEnrolledStudents(): Promise<
   try {
     // Get current user session
     const session = await getServerSession(authOptions);
+    console.log('[getInstructorEnrolledStudents] Session check:', {
+      hasSession: !!session,
+      email: session?.user?.email,
+    });
 
     if (!session?.user?.email) {
+      console.error(
+        '[getInstructorEnrolledStudents] No session or email found'
+      );
       return {
-        error: 'Unauthorized',
+        error: 'AUTH_REQUIRED',
         message: 'You must be logged in to view enrolled students',
       };
     }
@@ -37,21 +44,36 @@ export async function getInstructorEnrolledStudents(): Promise<
       .eq('email', session.user.email)
       .single();
 
+    console.log('[getInstructorEnrolledStudents] User lookup:', {
+      found: !!userData,
+      role: userData?.role,
+      error: userError?.message,
+    });
+
     if (userError || !userData) {
+      console.error(
+        '[getInstructorEnrolledStudents] User lookup failed:',
+        userError
+      );
       return {
-        error: 'User not found',
+        error: 'USER_NOT_FOUND',
         message: 'Could not find user in database',
       };
     }
 
     if (userData.role !== 'instructor' && userData.role !== 'admin') {
+      console.error(
+        '[getInstructorEnrolledStudents] Role check failed:',
+        userData.role
+      );
       return {
-        error: 'Unauthorized',
+        error: 'ROLE_UNAUTHORIZED',
         message: 'Only instructors can view enrolled students',
       };
     }
 
     const instructorId = userData.id;
+    console.log('[getInstructorEnrolledStudents] Instructor ID:', instructorId);
 
     // First, get all courses taught by this instructor
     const { data: instructorCourses, error: coursesError } = await supabase
@@ -59,16 +81,27 @@ export async function getInstructorEnrolledStudents(): Promise<
       .select('id')
       .eq('instructor_id', instructorId);
 
+    console.log('[getInstructorEnrolledStudents] Courses query:', {
+      courseCount: instructorCourses?.length || 0,
+      error: coursesError?.message,
+    });
+
     if (coursesError) {
-      console.error('Error fetching instructor courses:', coursesError);
+      console.error(
+        '[getInstructorEnrolledStudents] Courses query failed:',
+        coursesError
+      );
       return {
-        error: 'Failed to fetch courses',
+        error: 'COURSES_QUERY_FAILED',
         message: coursesError.message,
       };
     }
 
     if (!instructorCourses || instructorCourses.length === 0) {
-      // No courses, return empty result
+      console.log(
+        '[getInstructorEnrolledStudents] No courses found for instructor'
+      );
+      // No courses, return empty result with clear indication
       return {
         students: [],
         summary: {
@@ -83,6 +116,7 @@ export async function getInstructorEnrolledStudents(): Promise<
 
     // Extract course IDs
     const courseIds = instructorCourses.map((course) => course.id);
+    console.log('[getInstructorEnrolledStudents] Course IDs:', courseIds);
 
     // Fetch all enrollments for instructor's courses with student and course details
     const { data: enrollments, error: enrollmentsError } = await supabase
@@ -126,11 +160,37 @@ export async function getInstructorEnrolledStudents(): Promise<
       .in('course_id', courseIds)
       .order('enrolled_at', { ascending: false });
 
+    console.log('[getInstructorEnrolledStudents] Enrollments query result:', {
+      enrollmentCount: enrollments?.length || 0,
+      error: enrollmentsError?.message,
+      hasError: !!enrollmentsError,
+    });
+
     if (enrollmentsError) {
-      console.error('Error fetching enrollments:', enrollmentsError);
+      console.error(
+        '[getInstructorEnrolledStudents] Enrollments query failed:',
+        enrollmentsError
+      );
       return {
-        error: 'Failed to fetch enrollments',
+        error: 'ENROLLMENTS_QUERY_FAILED',
         message: enrollmentsError.message,
+      };
+    }
+
+    if (!enrollments || enrollments.length === 0) {
+      console.log(
+        '[getInstructorEnrolledStudents] No enrollments found for courses'
+      );
+      // No enrollments but courses exist - students haven't enrolled yet
+      return {
+        students: [],
+        summary: {
+          total: 0,
+          enrolled: 0,
+          active: 0,
+          completed: 0,
+          dropped: 0,
+        },
       };
     }
 
