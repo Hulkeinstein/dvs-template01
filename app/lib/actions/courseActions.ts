@@ -1267,13 +1267,18 @@ export async function deleteCourse(
 }
 
 // Get all courses with instructor details and statistics for public display
-export async function getAllCoursesWithDetails(): Promise<any[]> {
+export async function getAllCoursesWithDetails(options?: {
+  includePending?: boolean;
+  includeRejected?: boolean;
+  includeDraft?: boolean;
+  instructorId?: string;
+  onlyPublished?: boolean;
+  onlyStatus?: string[]; // Added for specific status filtering
+}): Promise<any[]> {
   try {
-    // 1. Fetch only published courses with instructor info
-    const { data: courses, error: coursesError } = await supabase
-      .from('courses')
-      .select(
-        `
+    // 1. Build query with optional filters
+    let query = supabase.from('courses').select(
+      `
         *,
         instructor:user!instructor_id(
           id,
@@ -1281,9 +1286,39 @@ export async function getAllCoursesWithDetails(): Promise<any[]> {
           avatar_url
         )
       `
-      )
-      .eq('status', 'published') // Only published courses
-      .order('created_at', { ascending: false });
+    );
+
+    // Apply status filters based on options
+    if (options?.onlyStatus && options.onlyStatus.length > 0) {
+      // If specific statuses are requested, use them
+      query = query.in('status', options.onlyStatus);
+    } else if (options?.onlyPublished === false) {
+      // Include all statuses or specific ones based on options
+      const statuses: string[] = [];
+
+      // Always include published unless explicitly excluded
+      statuses.push('published');
+
+      if (options.includePending) statuses.push('pending');
+      if (options.includeRejected) statuses.push('rejected');
+      if (options.includeDraft) statuses.push('draft');
+
+      query = query.in('status', statuses);
+    } else {
+      // Default behavior: only published courses
+      query = query.eq('status', 'published');
+    }
+
+    // Filter by instructor if specified
+    if (options?.instructorId) {
+      query = query.eq('instructor_id', options.instructorId);
+    }
+
+    // Order by creation date
+    const { data: courses, error: coursesError } = await query.order(
+      'created_at',
+      { ascending: false }
+    );
 
     if (coursesError) {
       console.error('Error fetching courses:', coursesError);
@@ -1310,8 +1345,15 @@ export async function getAllCoursesWithDetails(): Promise<any[]> {
           .eq('course_id', course.id);
 
         // Transform to UI format matching CourseDetails structure
+        // Include raw course data for admin pages
         return {
+          // Raw course data for admin
+          ...course,
+          courseThumbnail: course.thumbnail_url,
+
+          // Transformed data for public pages
           id: course.id,
+          title: course.title,
           courseTitle: course.title,
           desc: course.description || '',
           courseImg: course.thumbnail_url || '/images/course/1.jpg',
@@ -1331,10 +1373,18 @@ export async function getAllCoursesWithDetails(): Promise<any[]> {
       })
     );
 
-    return coursesWithStats;
+    // Return as object with courses array for consistency with other functions
+    // This allows admin pages to access raw data while maintaining compatibility
+    return {
+      success: true,
+      courses: coursesWithStats,
+    } as any;
   } catch (error) {
     console.error('Error in getAllCoursesWithDetails:', error);
-    return [];
+    return {
+      success: false,
+      courses: [],
+    } as any;
   }
 }
 
