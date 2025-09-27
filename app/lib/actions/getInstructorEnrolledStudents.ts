@@ -118,7 +118,8 @@ export async function getInstructorEnrolledStudents(): Promise<
     const courseIds = instructorCourses.map((course) => course.id);
     console.log('[getInstructorEnrolledStudents] Course IDs:', courseIds);
 
-    // Fetch all enrollments for instructor's courses with student and course details
+    // Fetch all enrollments for instructor's courses (without user join to avoid RLS circular reference)
+    console.log('[RLS-FIX] Step 1: Fetching enrollments without user join');
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select(
@@ -134,17 +135,6 @@ export async function getInstructorEnrolledStudents(): Promise<
         status,
         created_at,
         updated_at,
-        user:user_id (
-          id,
-          email,
-          name,
-          first_name,
-          last_name,
-          avatar_url,
-          username,
-          phone,
-          bio
-        ),
         course:course_id (
           id,
           title,
@@ -160,17 +150,14 @@ export async function getInstructorEnrolledStudents(): Promise<
       .in('course_id', courseIds)
       .order('enrolled_at', { ascending: false });
 
-    console.log('[getInstructorEnrolledStudents] Enrollments query result:', {
+    console.log('[RLS-FIX] Enrollments query result:', {
       enrollmentCount: enrollments?.length || 0,
       error: enrollmentsError?.message,
       hasError: !!enrollmentsError,
     });
 
     if (enrollmentsError) {
-      console.error(
-        '[getInstructorEnrolledStudents] Enrollments query failed:',
-        enrollmentsError
-      );
+      console.error('[RLS-FIX] Enrollments query failed:', enrollmentsError);
       return {
         error: 'ENROLLMENTS_QUERY_FAILED',
         message: enrollmentsError.message,
@@ -194,6 +181,37 @@ export async function getInstructorEnrolledStudents(): Promise<
       };
     }
 
+    // Step 2: Extract unique user IDs
+    const userIds = [...new Set(enrollments.map((e) => e.user_id))];
+    console.log('[RLS-FIX] Step 2: User IDs to fetch:', userIds.length);
+
+    // Step 3: Fetch user information separately
+    const { data: users, error: usersError } = await supabase
+      .from('user')
+      .select(
+        'id, email, name, first_name, last_name, avatar_url, username, phone, bio'
+      )
+      .in('id', userIds);
+
+    if (usersError) {
+      console.error('[RLS-FIX] Users query failed:', usersError);
+      // Continue without user data (fallback)
+    }
+
+    console.log('[RLS-FIX] Step 3: Fetched users:', users?.length || 0);
+
+    // Create a map for quick user lookup
+    const usersMap = new Map<string, StudentProfile>();
+    if (users) {
+      users.forEach((user) => {
+        usersMap.set(user.id, user as StudentProfile);
+      });
+    }
+
+    console.log(
+      `[RLS-FIX] Data combination: enrollments=${enrollments.length}, users=${users?.length || 0}`
+    );
+
     // Transform the data into the expected format
     const enrolledStudents: EnrolledStudent[] = (enrollments || []).map(
       (enrollment) => ({
@@ -210,7 +228,7 @@ export async function getInstructorEnrolledStudents(): Promise<
           created_at: enrollment.created_at,
           updated_at: enrollment.updated_at,
         },
-        student: (enrollment.user as unknown as StudentProfile) || {
+        student: usersMap.get(enrollment.user_id) || {
           id: enrollment.user_id,
           email: 'Unknown',
           name: null,
@@ -334,7 +352,11 @@ export async function getEnrolledStudentsByCourse(
       };
     }
 
-    // Fetch enrollments for this course
+    // Fetch enrollments for this course (without user join to avoid RLS circular reference)
+    console.log(
+      '[RLS-FIX-COURSE] Step 1: Fetching enrollments without user join for course:',
+      courseId
+    );
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select(
@@ -350,17 +372,6 @@ export async function getEnrolledStudentsByCourse(
         status,
         created_at,
         updated_at,
-        user:user_id (
-          id,
-          email,
-          name,
-          first_name,
-          last_name,
-          avatar_url,
-          username,
-          phone,
-          bio
-        ),
         course:course_id (
           id,
           title,
@@ -377,12 +388,54 @@ export async function getEnrolledStudentsByCourse(
       .order('enrolled_at', { ascending: false });
 
     if (enrollmentsError) {
-      console.error('Error fetching enrollments:', enrollmentsError);
+      console.error(
+        '[RLS-FIX-COURSE] Enrollments query failed:',
+        enrollmentsError
+      );
       return {
         error: 'Failed to fetch enrollments',
         message: enrollmentsError.message,
       };
     }
+
+    console.log(
+      '[RLS-FIX-COURSE] Enrollments fetched:',
+      enrollments?.length || 0
+    );
+
+    // Step 2: Extract unique user IDs
+    const userIds = [...new Set((enrollments || []).map((e) => e.user_id))];
+    console.log('[RLS-FIX-COURSE] Step 2: User IDs to fetch:', userIds.length);
+
+    // Step 3: Fetch user information separately
+    const usersMap = new Map<string, StudentProfile>();
+    if (userIds.length > 0) {
+      const { data: users, error: usersError } = await supabase
+        .from('user')
+        .select(
+          'id, email, name, first_name, last_name, avatar_url, username, phone, bio'
+        )
+        .in('id', userIds);
+
+      if (usersError) {
+        console.error('[RLS-FIX-COURSE] Users query failed:', usersError);
+        // Continue without user data (fallback)
+      } else {
+        console.log(
+          '[RLS-FIX-COURSE] Step 3: Fetched users:',
+          users?.length || 0
+        );
+        if (users) {
+          users.forEach((user) => {
+            usersMap.set(user.id, user as StudentProfile);
+          });
+        }
+      }
+    }
+
+    console.log(
+      `[RLS-FIX-COURSE] Data combination: enrollments=${enrollments?.length || 0}, users=${usersMap.size}`
+    );
 
     // Transform the data into the expected format
     const enrolledStudents: EnrolledStudent[] = (enrollments || []).map(
@@ -400,7 +453,7 @@ export async function getEnrolledStudentsByCourse(
           created_at: enrollment.created_at,
           updated_at: enrollment.updated_at,
         },
-        student: (enrollment.user as unknown as StudentProfile) || {
+        student: usersMap.get(enrollment.user_id) || {
           id: enrollment.user_id,
           email: 'Unknown',
           name: null,
