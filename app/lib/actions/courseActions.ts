@@ -1274,7 +1274,7 @@ export async function getAllCoursesWithDetails(options?: {
   instructorId?: string;
   onlyPublished?: boolean;
   onlyStatus?: string[]; // Added for specific status filtering
-}): Promise<any[]> {
+}): Promise<{ success: boolean; courses: any[] }> {
   try {
     // 1. Build query with optional filters
     let query = supabase.from('courses').select(
@@ -1322,11 +1322,11 @@ export async function getAllCoursesWithDetails(options?: {
 
     if (coursesError) {
       console.error('Error fetching courses:', coursesError);
-      return [];
+      return { success: false, courses: [] };
     }
 
     if (!courses || courses.length === 0) {
-      return [];
+      return { success: true, courses: [] };
     }
 
     // 2. Get statistics for each course (parallel processing)
