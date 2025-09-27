@@ -22,15 +22,8 @@ export async function getInstructorEnrolledStudents(): Promise<
   try {
     // Get current user session
     const session = await getServerSession(authOptions);
-    console.log('[getInstructorEnrolledStudents] Session check:', {
-      hasSession: !!session,
-      email: session?.user?.email,
-    });
 
     if (!session?.user?.email) {
-      console.error(
-        '[getInstructorEnrolledStudents] No session or email found'
-      );
       return {
         error: 'AUTH_REQUIRED',
         message: 'You must be logged in to view enrolled students',
@@ -44,17 +37,7 @@ export async function getInstructorEnrolledStudents(): Promise<
       .eq('email', session.user.email)
       .single();
 
-    console.log('[getInstructorEnrolledStudents] User lookup:', {
-      found: !!userData,
-      role: userData?.role,
-      error: userError?.message,
-    });
-
     if (userError || !userData) {
-      console.error(
-        '[getInstructorEnrolledStudents] User lookup failed:',
-        userError
-      );
       return {
         error: 'USER_NOT_FOUND',
         message: 'Could not find user in database',
@@ -62,10 +45,6 @@ export async function getInstructorEnrolledStudents(): Promise<
     }
 
     if (userData.role !== 'instructor' && userData.role !== 'admin') {
-      console.error(
-        '[getInstructorEnrolledStudents] Role check failed:',
-        userData.role
-      );
       return {
         error: 'ROLE_UNAUTHORIZED',
         message: 'Only instructors can view enrolled students',
@@ -73,7 +52,6 @@ export async function getInstructorEnrolledStudents(): Promise<
     }
 
     const instructorId = userData.id;
-    console.log('[getInstructorEnrolledStudents] Instructor ID:', instructorId);
 
     // First, get all courses taught by this instructor
     const { data: instructorCourses, error: coursesError } = await supabase
@@ -81,16 +59,7 @@ export async function getInstructorEnrolledStudents(): Promise<
       .select('id')
       .eq('instructor_id', instructorId);
 
-    console.log('[getInstructorEnrolledStudents] Courses query:', {
-      courseCount: instructorCourses?.length || 0,
-      error: coursesError?.message,
-    });
-
     if (coursesError) {
-      console.error(
-        '[getInstructorEnrolledStudents] Courses query failed:',
-        coursesError
-      );
       return {
         error: 'COURSES_QUERY_FAILED',
         message: coursesError.message,
@@ -98,9 +67,6 @@ export async function getInstructorEnrolledStudents(): Promise<
     }
 
     if (!instructorCourses || instructorCourses.length === 0) {
-      console.log(
-        '[getInstructorEnrolledStudents] No courses found for instructor'
-      );
       // No courses, return empty result with clear indication
       return {
         students: [],
@@ -116,10 +82,8 @@ export async function getInstructorEnrolledStudents(): Promise<
 
     // Extract course IDs
     const courseIds = instructorCourses.map((course) => course.id);
-    console.log('[getInstructorEnrolledStudents] Course IDs:', courseIds);
 
     // Fetch all enrollments for instructor's courses (without user join to avoid RLS circular reference)
-    console.log('[RLS-FIX] Step 1: Fetching enrollments without user join');
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select(
@@ -150,14 +114,7 @@ export async function getInstructorEnrolledStudents(): Promise<
       .in('course_id', courseIds)
       .order('enrolled_at', { ascending: false });
 
-    console.log('[RLS-FIX] Enrollments query result:', {
-      enrollmentCount: enrollments?.length || 0,
-      error: enrollmentsError?.message,
-      hasError: !!enrollmentsError,
-    });
-
     if (enrollmentsError) {
-      console.error('[RLS-FIX] Enrollments query failed:', enrollmentsError);
       return {
         error: 'ENROLLMENTS_QUERY_FAILED',
         message: enrollmentsError.message,
@@ -165,9 +122,6 @@ export async function getInstructorEnrolledStudents(): Promise<
     }
 
     if (!enrollments || enrollments.length === 0) {
-      console.log(
-        '[getInstructorEnrolledStudents] No enrollments found for courses'
-      );
       // No enrollments but courses exist - students haven't enrolled yet
       return {
         students: [],
@@ -183,7 +137,6 @@ export async function getInstructorEnrolledStudents(): Promise<
 
     // Step 2: Extract unique user IDs
     const userIds = [...new Set(enrollments.map((e) => e.user_id))];
-    console.log('[RLS-FIX] Step 2: User IDs to fetch:', userIds.length);
 
     // Step 3: Fetch user information separately
     const { data: users, error: usersError } = await supabase
@@ -194,11 +147,8 @@ export async function getInstructorEnrolledStudents(): Promise<
       .in('id', userIds);
 
     if (usersError) {
-      console.error('[RLS-FIX] Users query failed:', usersError);
       // Continue without user data (fallback)
     }
-
-    console.log('[RLS-FIX] Step 3: Fetched users:', users?.length || 0);
 
     // Create a map for quick user lookup
     const usersMap = new Map<string, StudentProfile>();
@@ -207,10 +157,6 @@ export async function getInstructorEnrolledStudents(): Promise<
         usersMap.set(user.id, user as StudentProfile);
       });
     }
-
-    console.log(
-      `[RLS-FIX] Data combination: enrollments=${enrollments.length}, users=${users?.length || 0}`
-    );
 
     // Transform the data into the expected format
     const enrolledStudents: EnrolledStudent[] = (enrollments || []).map(
@@ -280,7 +226,6 @@ export async function getInstructorEnrolledStudents(): Promise<
       summary,
     };
   } catch (error) {
-    console.error('Unexpected error in getInstructorEnrolledStudents:', error);
     return {
       error: 'Unexpected error',
       message:
@@ -353,10 +298,6 @@ export async function getEnrolledStudentsByCourse(
     }
 
     // Fetch enrollments for this course (without user join to avoid RLS circular reference)
-    console.log(
-      '[RLS-FIX-COURSE] Step 1: Fetching enrollments without user join for course:',
-      courseId
-    );
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select(
@@ -388,24 +329,14 @@ export async function getEnrolledStudentsByCourse(
       .order('enrolled_at', { ascending: false });
 
     if (enrollmentsError) {
-      console.error(
-        '[RLS-FIX-COURSE] Enrollments query failed:',
-        enrollmentsError
-      );
       return {
         error: 'Failed to fetch enrollments',
         message: enrollmentsError.message,
       };
     }
 
-    console.log(
-      '[RLS-FIX-COURSE] Enrollments fetched:',
-      enrollments?.length || 0
-    );
-
     // Step 2: Extract unique user IDs
     const userIds = [...new Set((enrollments || []).map((e) => e.user_id))];
-    console.log('[RLS-FIX-COURSE] Step 2: User IDs to fetch:', userIds.length);
 
     // Step 3: Fetch user information separately
     const usersMap = new Map<string, StudentProfile>();
@@ -418,13 +349,8 @@ export async function getEnrolledStudentsByCourse(
         .in('id', userIds);
 
       if (usersError) {
-        console.error('[RLS-FIX-COURSE] Users query failed:', usersError);
         // Continue without user data (fallback)
       } else {
-        console.log(
-          '[RLS-FIX-COURSE] Step 3: Fetched users:',
-          users?.length || 0
-        );
         if (users) {
           users.forEach((user) => {
             usersMap.set(user.id, user as StudentProfile);
@@ -432,10 +358,6 @@ export async function getEnrolledStudentsByCourse(
         }
       }
     }
-
-    console.log(
-      `[RLS-FIX-COURSE] Data combination: enrollments=${enrollments?.length || 0}, users=${usersMap.size}`
-    );
 
     // Transform the data into the expected format
     const enrolledStudents: EnrolledStudent[] = (enrollments || []).map(
@@ -505,7 +427,6 @@ export async function getEnrolledStudentsByCourse(
       summary,
     };
   } catch (error) {
-    console.error('Unexpected error in getEnrolledStudentsByCourse:', error);
     return {
       error: 'Unexpected error',
       message:
