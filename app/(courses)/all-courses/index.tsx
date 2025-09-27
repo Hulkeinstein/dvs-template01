@@ -17,7 +17,10 @@ import { CourseCardData, AllCoursesPageProps } from '@/types/course-ui';
 const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
   initialCourses = [],
 }) => {
-  const [courses, setCourse] = useState<CourseCardData[]>(initialCourses);
+  // Ensure initialCourses is always an array
+  const coursesArray = Array.isArray(initialCourses) ? initialCourses : [];
+
+  const [courses, setCourse] = useState<CourseCardData[]>(coursesArray);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(0);
 
@@ -36,9 +39,9 @@ const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
   };
 
   useEffect(() => {
-    setCourse(initialCourses);
-    setTotalPages(Math.ceil(initialCourses.length / 6));
-  }, [initialCourses]);
+    setCourse(coursesArray);
+    setTotalPages(Math.ceil(coursesArray.length / 6));
+  }, [coursesArray]);
 
   return (
     <>
