@@ -140,7 +140,7 @@ const EnrolledStudentsClient = ({
                                   check the status of your courses in the
                                   <a
                                     href="/instructor-personal-courses"
-                                    className="ms-1"
+                                    className="ms-1 text-primary"
                                   >
                                     courses management page
                                   </a>
