@@ -33964,6 +33964,28 @@ Course Sidebar
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
+/*-----------------------------------
+    Dark Mode Safe Links
+    - bg-light 컨테이너 내 링크 가시성 보장
+----------------------------------*/
+.rbt-dashboard-content .bg-light .dark-safe-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.rbt-dashboard-content .bg-light .dark-safe-link:hover {
+  color: var(--color-secondary);
+}
+
+.active-dark-mode .rbt-dashboard-content .bg-light .dark-safe-link,
+html[data-theme=dark] .rbt-dashboard-content .bg-light .dark-safe-link {
+  color: var(--color-primary) !important;
+}
+.active-dark-mode .rbt-dashboard-content .bg-light .dark-safe-link:hover,
+html[data-theme=dark] .rbt-dashboard-content .bg-light .dark-safe-link:hover {
+  color: var(--color-secondary) !important;
+}
+
 .icon-circle {
   width: 48px;
   height: 48px;
@@ -38946,6 +38968,46 @@ html[data-theme=dark] .footer-style-1 .description {
 html[data-theme=dark] .rbt-modern-select .dropdown-menu {
   background-color: var(--color-bodyest);
   box-shadow: var(--dark-shadow-2);
+}
+.active-dark-mode .dropdown-menu,
+html[data-theme=dark] .dropdown-menu {
+  background-color: var(--color-darker);
+  border-color: var(--dark-color-border);
+  box-shadow: var(--dark-shadow-2);
+}
+.active-dark-mode .dropdown-menu .dropdown-item,
+html[data-theme=dark] .dropdown-menu .dropdown-item {
+  color: var(--color-white-dark);
+}
+.active-dark-mode .dropdown-menu .dropdown-item:hover, .active-dark-mode .dropdown-menu .dropdown-item:focus,
+html[data-theme=dark] .dropdown-menu .dropdown-item:hover,
+html[data-theme=dark] .dropdown-menu .dropdown-item:focus {
+  color: var(--color-white-off);
+  background-color: var(--color-bodyest);
+}
+.active-dark-mode .dropdown-menu .dropdown-item.text-primary,
+html[data-theme=dark] .dropdown-menu .dropdown-item.text-primary {
+  color: var(--color-primary) !important;
+}
+.active-dark-mode .dropdown-menu .dropdown-item.text-warning,
+html[data-theme=dark] .dropdown-menu .dropdown-item.text-warning {
+  color: var(--color-warning) !important;
+}
+.active-dark-mode .dropdown-menu .dropdown-item.text-danger,
+html[data-theme=dark] .dropdown-menu .dropdown-item.text-danger {
+  color: var(--color-danger) !important;
+}
+.active-dark-mode .dropdown-menu .dropdown-item.text-secondary,
+html[data-theme=dark] .dropdown-menu .dropdown-item.text-secondary {
+  color: var(--color-secondary) !important;
+}
+.active-dark-mode .dropdown-menu .dropdown-item.text-info,
+html[data-theme=dark] .dropdown-menu .dropdown-item.text-info {
+  color: var(--color-info) !important;
+}
+.active-dark-mode .dropdown-menu .dropdown-divider,
+html[data-theme=dark] .dropdown-menu .dropdown-divider {
+  border-color: var(--dark-color-border);
 }
 .active-dark-mode .rbt-modern-select .bootstrap-select button.actions-btn:hover,
 html[data-theme=dark] .rbt-modern-select .bootstrap-select button.actions-btn:hover {

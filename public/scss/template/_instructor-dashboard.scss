@@ -390,3 +390,38 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   }
 }
+
+/*-----------------------------------
+    Dark Mode Safe Links
+    - bg-light 컨테이너 내 링크 가시성 보장
+----------------------------------*/
+.rbt-dashboard-content {
+  .bg-light {
+    // bg-light 내부 링크는 다크 모드에서도 primary 색상 유지
+    .dark-safe-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: var(--color-secondary);
+      }
+    }
+  }
+}
+
+// 다크 모드에서도 강제 오버라이드
+.active-dark-mode,
+html[data-theme="dark"] {
+  .rbt-dashboard-content {
+    .bg-light {
+      .dark-safe-link {
+        color: var(--color-primary) !important;
+
+        &:hover {
+          color: var(--color-secondary) !important;
+        }
+      }
+    }
+  }
+}
