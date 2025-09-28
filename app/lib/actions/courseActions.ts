@@ -869,58 +869,18 @@ export async function updateCourseStatus(
 // Get instructor's courses
 export async function getInstructorCourses() {
   try {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('=== getInstructorCourses 시작 ===');
-    }
-
     const session = await getServerSession(authOptions);
-    if (process.env.NODE_ENV === 'development') {
-      console.log('세션 정보:', {
-        exists: !!session,
-        userEmail: session?.user?.email,
-        userId: session?.user?.id,
-        userRole: session?.user?.role,
-      });
-    }
-
     if (!session?.user?.email) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('세션이 없거나 이메일이 없음');
-      }
       return { error: 'You must be logged in to view your courses' };
     }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Supabase 클라이언트 초기화 시도...');
-    }
-    const { data: userData, error: userError } = await supabase
+    const { data: userData } = await supabase
       .from('user')
       .select('id')
       .eq('email', session.user.email)
       .single();
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('사용자 조회 결과:', {
-        userData,
-        userError: userError
-          ? {
-              message: userError.message,
-              code: userError.code,
-              details: userError.details,
-            }
-          : null,
-      });
-    }
-
     if (!userData) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('사용자를 찾을 수 없음 - 이메일:', session.user.email);
-      }
       return { error: 'User not found' };
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('사용자 ID로 코스 조회 시도:', userData.id);
     }
     const { data: courses, error } = await supabase
       .from('courses')
@@ -936,41 +896,7 @@ export async function getInstructorCourses() {
       .eq('instructor_id', userData.id)
       .order('created_at', { ascending: false });
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('코스 조회 결과:', {
-        coursesCount: courses?.length || 0,
-        error: error
-          ? {
-              message: error.message,
-              code: error.code,
-              details: error.details,
-            }
-          : null,
-      });
-    }
-
-    // Debug log to check the structure of returned data
-    if (courses && courses.length > 0) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Sample course data structure:', {
-          id: courses[0].id,
-          title: courses[0].title,
-          lessons: courses[0].lessons,
-          enrollments: courses[0].enrollments,
-          lessonsType: typeof courses[0].lessons,
-          enrollmentsType: typeof courses[0].enrollments,
-        });
-      }
-    }
-
     if (error) {
-      console.error('Fetch courses error - Full details:', {
-        error: error,
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-      });
       return {
         error: `Failed to fetch courses: ${error.message || 'Unknown error'}`,
       };
@@ -993,21 +919,14 @@ export async function getInstructorCourses() {
           } else {
             course.badges = [];
           }
-        } catch (error) {
-          console.warn('Badge processing failed for course:', course.id, error);
+        } catch {
           course.badges = [];
         }
         return course;
       }) || [];
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('=== getInstructorCourses 완료 ===');
-    }
     return { courses: coursesWithBadges };
-  } catch (error) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('Unexpected error:', error);
-    }
+  } catch {
     return { error: 'An unexpected error occurred' };
   }
 }
@@ -1019,8 +938,6 @@ export async function getCourseById(
   courseId: string
 ): Promise<ActionResult<Record<string, unknown>>> {
   try {
-    console.log('getCourseById called with ID:', courseId);
-
     // 1. 먼저 코스 기본 정보 로드
     const { data: course, error } = await supabase
       .from('courses')
@@ -1035,14 +952,6 @@ export async function getCourseById(
       .single();
 
     if (error) {
-      console.error('Fetch course error - Full details:', {
-        error: error,
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-        courseId: courseId,
-      });
       return {
         error: `Failed to fetch course: ${error.message || 'Unknown error'}`,
       };
@@ -1267,74 +1176,164 @@ export async function deleteCourse(
 }
 
 // Get all courses with instructor details and statistics for public display
-export async function getAllCoursesWithDetails(): Promise<any[]> {
+export async function getAllCoursesWithDetails(options?: {
+  includePending?: boolean;
+  includeRejected?: boolean;
+  includeDraft?: boolean;
+  instructorId?: string;
+  onlyPublished?: boolean;
+  onlyStatus?: string[]; // Added for specific status filtering
+}): Promise<{ success: boolean; courses: any[] }> {
   try {
-    // 1. Fetch only published courses with instructor info
-    const { data: courses, error: coursesError } = await supabase
-      .from('courses')
-      .select(
-        `
-        *,
-        instructor:user!instructor_id(
-          id,
-          name,
-          avatar_url
-        )
-      `
-      )
-      .eq('status', 'published') // Only published courses
-      .order('created_at', { ascending: false });
+    // 1. Build query with optional filters - WITHOUT JOIN to avoid losing courses
+    let query = supabase.from('courses').select('*');
+
+    // Apply status filters based on options
+    if (options?.onlyStatus && options.onlyStatus.length > 0) {
+      // If specific statuses are requested, use them
+      query = query.in('status', options.onlyStatus);
+    } else if (options?.onlyPublished === false) {
+      // Include all statuses or specific ones based on options
+      const statuses: string[] = [];
+
+      // Always include published unless explicitly excluded
+      statuses.push('published');
+
+      if (options.includePending) statuses.push('pending');
+      if (options.includeRejected) statuses.push('rejected');
+      if (options.includeDraft) statuses.push('draft');
+
+      query = query.in('status', statuses);
+    } else {
+      // Default behavior: only published courses
+      query = query.eq('status', 'published');
+    }
+
+    // Filter by instructor if specified
+    if (options?.instructorId) {
+      query = query.eq('instructor_id', options.instructorId);
+    }
+
+    // Order by creation date
+    const { data: courses, error: coursesError } = await query.order(
+      'created_at',
+      { ascending: false }
+    );
+
+    // 2. Fetch instructor information separately
+    if (courses && courses.length > 0) {
+      const instructorIds = [
+        ...new Set(courses.map((c) => c.instructor_id).filter(Boolean)),
+      ];
+
+      if (instructorIds.length > 0) {
+        const { data: instructors } = await supabase
+          .from('user')
+          .select('id, name, avatar_url')
+          .in('id', instructorIds);
+
+        // Map instructors to courses
+        if (instructors) {
+          const instructorMap = new Map(instructors.map((i) => [i.id, i]));
+          courses.forEach((course) => {
+            if (course.instructor_id) {
+              course.instructor =
+                instructorMap.get(course.instructor_id) || null;
+            }
+          });
+        }
+      }
+    }
 
     if (coursesError) {
       console.error('Error fetching courses:', coursesError);
-      return [];
+      return { success: false, courses: [] };
     }
 
     if (!courses || courses.length === 0) {
-      return [];
+      return { success: true, courses: [] };
     }
 
     // 2. Get statistics for each course (parallel processing)
-    const coursesWithStats = await Promise.all(
+    const coursesWithStatsResults = await Promise.allSettled(
       courses.map(async (course) => {
-        // Get lesson count
-        const { count: lessonCount } = await supabase
-          .from('lessons')
-          .select('*', { count: 'exact', head: true })
-          .eq('course_id', course.id);
+        try {
+          // Check if instructor exists
+          if (!course.instructor) {
+            // Continue processing anyway
+          }
 
-        // Get enrollment count
-        const { count: enrollmentCount } = await supabase
-          .from('enrollments')
-          .select('*', { count: 'exact', head: true })
-          .eq('course_id', course.id);
+          // Get lesson count
+          const { count: lessonCount, error: lessonError } = await supabase
+            .from('lessons')
+            .select('*', { count: 'exact', head: true })
+            .eq('course_id', course.id);
 
-        // Transform to UI format matching CourseDetails structure
-        return {
-          id: course.id,
-          courseTitle: course.title,
-          desc: course.description || '',
-          courseImg: course.thumbnail_url || '/images/course/1.jpg',
-          userCategory: course.category || 'Web Design',
-          courseType: course.difficulty_level || 'All Levels',
-          price: course.discounted_price || course.regular_price || 0,
-          offPrice: course.regular_price || 0,
-          name: course.instructor?.name || 'Instructor',
-          userImg:
-            course.instructor?.avatar_url || '/images/client/avater-1.png',
-          student: `${enrollmentCount || 0} Students`,
-          lesson: lessonCount || 0,
-          review: '5.0', // Placeholder - implement reviews later
-          reviewCount: '15', // Placeholder - implement reviews later
-          duration: '8 Hours', // Placeholder - calculate from lessons later
-        };
+          // Get enrollment count
+          const { count: enrollmentCount, error: enrollmentError } =
+            await supabase
+              .from('enrollments')
+              .select('*', { count: 'exact', head: true })
+              .eq('course_id', course.id);
+
+          if (lessonError || enrollmentError) {
+            // Continue with 0 counts instead of throwing
+          }
+
+          // Transform to UI format matching CourseDetails structure
+          // Include raw course data for admin pages
+          return {
+            // Raw course data for admin
+            ...course,
+            courseThumbnail: course.thumbnail_url,
+
+            // Transformed data for public pages
+            id: course.id,
+            title: course.title,
+            courseTitle: course.title,
+            desc: course.description || '',
+            courseImg: course.thumbnail_url || '/images/course/1.jpg',
+            userCategory: course.category || 'Web Design',
+            courseType: course.difficulty_level || 'All Levels',
+            price: course.discounted_price || course.regular_price || 0,
+            offPrice: course.regular_price || 0,
+            name: course.instructor?.name || 'Instructor',
+            userImg:
+              course.instructor?.avatar_url || '/images/client/avater-1.png',
+            student: `${enrollmentCount || 0} Students`,
+            lesson: lessonCount || 0,
+            review: '5.0', // Placeholder - implement reviews later
+            reviewCount: '15', // Placeholder - implement reviews later
+            duration: '8 Hours', // Placeholder - calculate from lessons later
+          };
+        } catch (error) {
+          throw error; // Re-throw to be caught by Promise.allSettled
+        }
       })
     );
 
-    return coursesWithStats;
+    // Filter out failed results and extract successful ones
+    const coursesWithStats = coursesWithStatsResults
+      .filter((result): result is PromiseFulfilledResult<any> => {
+        if (result.status === 'rejected') {
+          return false;
+        }
+        return true;
+      })
+      .map((result) => result.value);
+
+    // Return as object with courses array for consistency with other functions
+    // This allows admin pages to access raw data while maintaining compatibility
+    return {
+      success: true,
+      courses: coursesWithStats,
+    } as any;
   } catch (error) {
     console.error('Error in getAllCoursesWithDetails:', error);
-    return [];
+    return {
+      success: false,
+      courses: [],
+    } as any;
   }
 }
 

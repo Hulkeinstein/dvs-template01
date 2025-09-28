@@ -15,7 +15,11 @@ export const metadata: Metadata = {
 
 const AllCoursesLayout = async (): Promise<JSX.Element> => {
   // SSR: Fetch data on server
-  const courses = await getAllCoursesWithDetails();
+  // Only show published courses to students
+  const coursesResult = await getAllCoursesWithDetails();
+
+  // Extract courses array from the result object
+  const courses = coursesResult?.courses || [];
 
   // Get user bookmarks if logged in
   const session = await getServerSession(authOptions);

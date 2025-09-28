@@ -159,8 +159,8 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
                         isEdit={false}
                         showDescription={false}
                         showAuthor={false}
-                        onStatusChange={() => {}}
-                        onDeleteCourse={() => {}}
+                        onStatusChange={async () => {}}
+                        onDeleteCourse={async () => {}}
                       />
                     </div>
                   ))
@@ -202,8 +202,8 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
                         isEdit={false}
                         showDescription={false}
                         showAuthor={false}
-                        onStatusChange={() => {}}
-                        onDeleteCourse={() => {}}
+                        onStatusChange={async () => {}}
+                        onDeleteCourse={async () => {}}
                       />
                     </div>
                   ))
@@ -245,8 +245,8 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
                         showDescription={false}
                         isEdit={false}
                         showAuthor={false}
-                        onStatusChange={() => {}}
-                        onDeleteCourse={() => {}}
+                        onStatusChange={async () => {}}
+                        onDeleteCourse={async () => {}}
                       />
                     </div>
                   ))

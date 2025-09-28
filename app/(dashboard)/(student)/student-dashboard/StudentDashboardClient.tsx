@@ -1,42 +1,46 @@
 'use client';
 
-import Separator from '@/components/Common/Separator';
+import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
+import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
+import Dashboard from '@/components/Student/Dashboard';
 import FooterOne from '@/components/Footer/Footer-One';
-import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
 import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
-import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
-import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
-import MyCourses from '@/components/Instructor/MyCourses';
+import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
+import Separator from '@/components/Common/Separator';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
 
-const PersonalCoursesPage = () => {
+interface StudentDashboardClientProps {
+  userId?: string;
+}
+
+const StudentDashboardClient = ({ userId }: StudentDashboardClientProps) => {
   return (
     <>
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
-            <div className="rbt-banner-image" />
+            <div className="rbt-banner-image"></div>
           </div>
+
           <div className="rbt-dashboard-area rbt-section-overlayping-top rbt-section-gapBottom">
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <InstructorDashboardHeader />
+                  <StudentDashboardHeader userId={userId} userProfile={null} />
 
                   <div className="row g-5">
                     <div className="col-lg-3">
-                      <InstructorDashboardSidebar />
+                      <StudentDashboardSidebar />
                     </div>
-
                     <div className="col-lg-9">
-                      <MyCourses />
+                      <Dashboard />
                     </div>
                   </div>
                 </div>
@@ -45,11 +49,16 @@ const PersonalCoursesPage = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            bgColor="bg-color-white"
+            isBox={false}
+            newsletterBorder={false}
+            islamic={false}
+          />
         </Context>
       </Provider>
     </>
   );
 };
 
-export default PersonalCoursesPage;
+export default StudentDashboardClient;

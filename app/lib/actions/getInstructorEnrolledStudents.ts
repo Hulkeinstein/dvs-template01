@@ -25,7 +25,7 @@ export async function getInstructorEnrolledStudents(): Promise<
 
     if (!session?.user?.email) {
       return {
-        error: 'Unauthorized',
+        error: 'AUTH_REQUIRED',
         message: 'You must be logged in to view enrolled students',
       };
     }
@@ -39,14 +39,14 @@ export async function getInstructorEnrolledStudents(): Promise<
 
     if (userError || !userData) {
       return {
-        error: 'User not found',
+        error: 'USER_NOT_FOUND',
         message: 'Could not find user in database',
       };
     }
 
     if (userData.role !== 'instructor' && userData.role !== 'admin') {
       return {
-        error: 'Unauthorized',
+        error: 'ROLE_UNAUTHORIZED',
         message: 'Only instructors can view enrolled students',
       };
     }
@@ -60,15 +60,14 @@ export async function getInstructorEnrolledStudents(): Promise<
       .eq('instructor_id', instructorId);
 
     if (coursesError) {
-      console.error('Error fetching instructor courses:', coursesError);
       return {
-        error: 'Failed to fetch courses',
+        error: 'COURSES_QUERY_FAILED',
         message: coursesError.message,
       };
     }
 
     if (!instructorCourses || instructorCourses.length === 0) {
-      // No courses, return empty result
+      // No courses, return empty result with clear indication
       return {
         students: [],
         summary: {
@@ -84,7 +83,7 @@ export async function getInstructorEnrolledStudents(): Promise<
     // Extract course IDs
     const courseIds = instructorCourses.map((course) => course.id);
 
-    // Fetch all enrollments for instructor's courses with student and course details
+    // Fetch all enrollments for instructor's courses (without user join to avoid RLS circular reference)
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select(
@@ -100,17 +99,6 @@ export async function getInstructorEnrolledStudents(): Promise<
         status,
         created_at,
         updated_at,
-        user:user_id (
-          id,
-          email,
-          name,
-          first_name,
-          last_name,
-          avatar_url,
-          username,
-          phone,
-          bio
-        ),
         course:course_id (
           id,
           title,
@@ -127,11 +115,47 @@ export async function getInstructorEnrolledStudents(): Promise<
       .order('enrolled_at', { ascending: false });
 
     if (enrollmentsError) {
-      console.error('Error fetching enrollments:', enrollmentsError);
       return {
-        error: 'Failed to fetch enrollments',
+        error: 'ENROLLMENTS_QUERY_FAILED',
         message: enrollmentsError.message,
       };
+    }
+
+    if (!enrollments || enrollments.length === 0) {
+      // No enrollments but courses exist - students haven't enrolled yet
+      return {
+        students: [],
+        summary: {
+          total: 0,
+          enrolled: 0,
+          active: 0,
+          completed: 0,
+          dropped: 0,
+        },
+      };
+    }
+
+    // Step 2: Extract unique user IDs
+    const userIds = [...new Set(enrollments.map((e) => e.user_id))];
+
+    // Step 3: Fetch user information separately
+    const { data: users, error: usersError } = await supabase
+      .from('user')
+      .select(
+        'id, email, name, first_name, last_name, avatar_url, username, phone, bio'
+      )
+      .in('id', userIds);
+
+    if (usersError) {
+      // Continue without user data (fallback)
+    }
+
+    // Create a map for quick user lookup
+    const usersMap = new Map<string, StudentProfile>();
+    if (users) {
+      users.forEach((user) => {
+        usersMap.set(user.id, user as StudentProfile);
+      });
     }
 
     // Transform the data into the expected format
@@ -150,7 +174,7 @@ export async function getInstructorEnrolledStudents(): Promise<
           created_at: enrollment.created_at,
           updated_at: enrollment.updated_at,
         },
-        student: (enrollment.user as unknown as StudentProfile) || {
+        student: usersMap.get(enrollment.user_id) || {
           id: enrollment.user_id,
           email: 'Unknown',
           name: null,
@@ -202,7 +226,6 @@ export async function getInstructorEnrolledStudents(): Promise<
       summary,
     };
   } catch (error) {
-    console.error('Unexpected error in getInstructorEnrolledStudents:', error);
     return {
       error: 'Unexpected error',
       message:
@@ -274,7 +297,7 @@ export async function getEnrolledStudentsByCourse(
       };
     }
 
-    // Fetch enrollments for this course
+    // Fetch enrollments for this course (without user join to avoid RLS circular reference)
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select(
@@ -290,17 +313,6 @@ export async function getEnrolledStudentsByCourse(
         status,
         created_at,
         updated_at,
-        user:user_id (
-          id,
-          email,
-          name,
-          first_name,
-          last_name,
-          avatar_url,
-          username,
-          phone,
-          bio
-        ),
         course:course_id (
           id,
           title,
@@ -317,11 +329,34 @@ export async function getEnrolledStudentsByCourse(
       .order('enrolled_at', { ascending: false });
 
     if (enrollmentsError) {
-      console.error('Error fetching enrollments:', enrollmentsError);
       return {
         error: 'Failed to fetch enrollments',
         message: enrollmentsError.message,
       };
+    }
+
+    // Step 2: Extract unique user IDs
+    const userIds = [...new Set((enrollments || []).map((e) => e.user_id))];
+
+    // Step 3: Fetch user information separately
+    const usersMap = new Map<string, StudentProfile>();
+    if (userIds.length > 0) {
+      const { data: users, error: usersError } = await supabase
+        .from('user')
+        .select(
+          'id, email, name, first_name, last_name, avatar_url, username, phone, bio'
+        )
+        .in('id', userIds);
+
+      if (usersError) {
+        // Continue without user data (fallback)
+      } else {
+        if (users) {
+          users.forEach((user) => {
+            usersMap.set(user.id, user as StudentProfile);
+          });
+        }
+      }
     }
 
     // Transform the data into the expected format
@@ -340,7 +375,7 @@ export async function getEnrolledStudentsByCourse(
           created_at: enrollment.created_at,
           updated_at: enrollment.updated_at,
         },
-        student: (enrollment.user as unknown as StudentProfile) || {
+        student: usersMap.get(enrollment.user_id) || {
           id: enrollment.user_id,
           email: 'Unknown',
           name: null,
@@ -392,7 +427,6 @@ export async function getEnrolledStudentsByCourse(
       summary,
     };
   } catch (error) {
-    console.error('Unexpected error in getEnrolledStudentsByCourse:', error);
     return {
       error: 'Unexpected error',
       message:
