@@ -15,6 +15,7 @@ export const metadata: Metadata = {
 
 const AllCoursesLayout = async (): Promise<JSX.Element> => {
   // SSR: Fetch data on server
+  // Only show published courses to students
   const coursesResult = await getAllCoursesWithDetails();
 
   // Extract courses array from the result object
