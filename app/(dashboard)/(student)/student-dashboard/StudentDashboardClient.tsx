@@ -33,14 +33,14 @@ const StudentDashboardClient = ({ userId }: StudentDashboardClientProps) => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <StudentDashboardHeader />
+                  <StudentDashboardHeader userId={userId} userProfile={null} />
 
                   <div className="row g-5">
                     <div className="col-lg-3">
                       <StudentDashboardSidebar />
                     </div>
                     <div className="col-lg-9">
-                      <Dashboard userId={userId} />
+                      <Dashboard />
                     </div>
                   </div>
                 </div>
@@ -49,7 +49,12 @@ const StudentDashboardClient = ({ userId }: StudentDashboardClientProps) => {
           </div>
 
           <Separator />
-          <FooterOne bgColor="" />
+          <FooterOne
+            bgColor="bg-color-white"
+            isBox={false}
+            newsletterBorder={false}
+            islamic={false}
+          />
         </Context>
       </Provider>
     </>
