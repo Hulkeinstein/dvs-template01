@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 // import ProductsReducer from "./reducer/ProductsReducer";
-import { CartReducer } from './reducer/CartReducer';
+import { CartReducer } from './reducer/CartReducer.ts';
 const root = combineReducers({
   //   ProductsReducer,
   CartReducer,

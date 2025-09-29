@@ -78,3 +78,77 @@ declare module '@/tests/mocks/repositories/mock.repository' {
     [key: string]: any;
   }
 }
+
+// 8) External libraries without types
+declare module 'venobox/dist/venobox.min.js' {
+  interface VenoboxOptions {
+    selector?: string;
+    [key: string]: any;
+  }
+
+  class Venobox {
+    constructor(options?: VenoboxOptions);
+  }
+
+  export default Venobox;
+}
+
+declare module 'venobox/dist/venobox.min.css';
+
+declare module 'sal.js' {
+  interface SalOptions {
+    threshold?: number;
+    once?: boolean;
+    [key: string]: any;
+  }
+
+  function sal(options?: SalOptions): void;
+
+  export default sal;
+}
+
+// 9) Context API (if not typed yet)
+declare module '@/context/Context' {
+  import React from 'react';
+
+  export interface AppContextType {
+    toggle: boolean;
+    setToggle: (value: boolean) => void;
+    mobile: boolean;
+    setMobile: (value: boolean) => void;
+    smallMobileMenu: boolean;
+    setsmallMobileMenu: (value: boolean) => void;
+    cartToggle: boolean;
+    setCart: (value: boolean) => void;
+    search: boolean;
+    setSearch: (value: boolean) => void;
+    pricing: boolean;
+    setPricing: (value: boolean) => void;
+    pricingTwo: boolean;
+    setPricingTwo: (value: boolean) => void;
+    pricingThree: boolean;
+    setPricingThree: (value: boolean) => void;
+    pricingFour: boolean;
+    setPricingFour: (value: boolean) => void;
+    isLightTheme: boolean;
+    setLightTheme: (value: boolean) => void;
+    toggleTheme: () => void;
+    [key: string]: any;
+  }
+
+  export const CreateContext: React.Context<AppContextType>;
+  export function useAppContext(): AppContextType;
+
+  const Context: React.FC<{ children: React.ReactNode }>;
+  export default Context;
+}
+
+// 10) Redux Cart Action types
+declare module '@/redux/action/CartAction' {
+  import { ThunkDispatch } from 'redux-thunk';
+  import { AnyAction } from 'redux';
+
+  export const addToCartAction: (id: string, amount: number, product: any) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+  export const toggleAmount: (id: string, value: 'inc' | 'dec') => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+  export const deleteProduct: (id: string) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+}

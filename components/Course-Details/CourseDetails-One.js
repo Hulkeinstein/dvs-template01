@@ -10,7 +10,7 @@ import Overview from './Course-Sections/Overview';
 import RelatedCourse from './Course-Sections/RelatedCourse';
 import Requirements from './Course-Sections/Requirements';
 import Review from './Course-Sections/Review';
-import Viedo from './Course-Sections/Viedo';
+import Viedo from './Course-Sections/Viedo.tsx';
 import { getCourseReviewStats } from '@/app/lib/actions/reviewActions';
 
 // ID 정규화 함수 - ID 형식 불일치 해결

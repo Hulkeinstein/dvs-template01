@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
 
-import CartItems from './CartItems';
+import CartItems from './CartItems.tsx';
 
 const CartPage = () => {
   const dispatch = useDispatch();

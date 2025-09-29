@@ -83,3 +83,49 @@ export interface CheckoutState {
   currentStep: 'billing' | 'payment' | 'review' | 'complete';
   formData: Partial<CheckoutFormData>;
 }
+
+// Database Types (matching new structure)
+export interface Order {
+  id: string; // UUID
+  user_id: string;
+  course_id?: string;
+  order_number: string;
+  idempotency_key: string;
+  amount: number;
+  subtotal?: number;
+  tax_amount?: number;
+  discount_amount?: number;
+  total_amount?: number;
+  currency: string;
+  payment_method?: string;
+  payment_status?: string;
+  status?: string;
+  transaction_id?: string;
+  order_data?: any; // JSONB
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Payment {
+  id: string;
+  order_id: string;
+  gateway: 'stripe' | 'paypal' | 'manual' | 'free';
+  gateway_payment_id: string;
+  amount_cents: number;
+  currency: string;
+  status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded';
+  metadata?: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrderItemDB {
+  id: string;
+  order_id: string;
+  course_id: string;
+  price: number;
+  quantity: number;
+  subtotal: number;
+  created_at: string;
+}

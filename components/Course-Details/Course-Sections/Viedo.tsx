@@ -10,8 +10,41 @@ import 'venobox/dist/venobox.min.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '@/context/Context';
 import { addToCartAction } from '@/redux/action/CartAction';
+import { CartProduct, CartState } from '@/types/cart';
 
-const Viedo = ({ checkMatchCourses, instructor = {} }) => {
+interface RoadmapItem {
+  text: string;
+  desc: string;
+}
+
+interface CourseData extends CartProduct {
+  courseImg?: string;
+  previewVideoUrl?: string | null;
+  price: number;
+  offPrice?: number;
+  days?: string;
+  roadmap?: RoadmapItem[];
+}
+
+interface Instructor {
+  id?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  avatar_url?: string;
+  role?: string;
+}
+
+interface ViedoProps {
+  checkMatchCourses: CourseData;
+  instructor?: Instructor;
+}
+
+interface RootState {
+  CartReducer: CartState;
+}
+
+const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => {
   const pathname = usePathname();
   const { cartToggle, setCart } = useAppContext();
   const [toggle, setToggle] = useState(false);
@@ -32,14 +65,36 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
   );
 
   // =====> Start ADD-To-Cart
-  const dispatch = useDispatch();
-  const { cart } = useSelector((state) => state.CartReducer);
+  const dispatch = useDispatch<any>();
+  const { cart } = useSelector((state: RootState) => state.CartReducer);
 
-  const [amount, setAmount] = useState(1);
+  // 코스는 항상 수량이 1
+  const amount = 1;
 
-  const addToCartFun = (id, amount, product) => {
-    dispatch(addToCartAction(id, amount, product));
+  const addToCartFun = (id: string, amount: number, product: CourseData) => {
+    // 코스 데이터 정규화
+    const normalizedProduct: CartProduct = {
+      ...product,
+      kind: 'course',
+      courseId: product.courseId || product.id || '',
+      courseTitle: product.courseTitle || product.title || '',
+      productKey: product.productKey || `course:${product.id || product.courseId || (product.title || '').toLowerCase()}`,
+    };
+
+    // 코스는 항상 수량 1로 카트에 추가
+    dispatch(addToCartAction(normalizedProduct.courseId || id, 1, normalizedProduct));
     setCart(!cartToggle);
+  };
+
+  const handleAddToCart = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    addToCartFun(checkMatchCourses.id || '', amount, checkMatchCourses);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    // Add single item to cart and go to checkout
+    addToCartFun(checkMatchCourses.id || '', 1, checkMatchCourses);
   };
 
   useEffect(() => {
@@ -50,7 +105,7 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
   // =====> For video PopUp
   useEffect(() => {
     import('venobox/dist/venobox.min.js').then((venobox) => {
-      new venobox.default({
+      new (venobox as any).default({
         selector: '.popup-video',
       });
     });
@@ -69,6 +124,25 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
     };
   }, []);
 
+  const getVideoUrl = (): string => {
+    return checkMatchCourses.previewVideoUrl || 'https://www.youtube.com/watch?v=nA1Aqp0sPQo';
+  };
+
+  const getEmbedUrl = (): string => {
+    const videoUrl = checkMatchCourses.previewVideoUrl;
+    if (videoUrl) {
+      return videoUrl
+        .replace('watch?v=', 'embed/')
+        .replace('youtu.be/', 'youtube.com/embed/') +
+        '?autoplay=0&controls=1&rel=0&modestbranding=1';
+    }
+    return 'https://www.youtube.com/embed/DR9lxZ8kPYQ?autoplay=0&controls=1&rel=0&modestbranding=1';
+  };
+
+  const formatPrice = (price?: number): string => {
+    return price !== undefined ? `$${price}` : '$0';
+  };
+
   return (
     <>
       {!disableVideo ? (
@@ -77,10 +151,7 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
             hideOnScroll ? 'd-none' : ''
           }`}
           data-vbtype="video"
-          href={
-            checkMatchCourses.previewVideoUrl ||
-            'https://www.youtube.com/watch?v=nA1Aqp0sPQo'
-          }
+          href={getVideoUrl()}
         >
           <div className="video-content">
             {checkMatchCourses.courseImg && (
@@ -102,9 +173,8 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
             </span>
           </div>
         </Link>
-      ) : (
-        ''
-      )}
+      ) : null}
+
       {isVideo ? (
         <div
           className={`radius-6 overflow-hidden sidebar-video-hidden mb--30 ${
@@ -114,14 +184,7 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
           <div className="plyr__video-embed rbtplayer">
             <iframe
               className="radius-6 overflow-hidden"
-              src={
-                checkMatchCourses.previewVideoUrl
-                  ? checkMatchCourses.previewVideoUrl
-                      .replace('watch?v=', 'embed/')
-                      .replace('youtu.be/', 'youtube.com/embed/') +
-                    '?autoplay=0&controls=1&rel=0&modestbranding=1'
-                  : 'https://www.youtube.com/embed/DR9lxZ8kPYQ?autoplay=0&controls=1&rel=0&modestbranding=1'
-              }
+              src={getEmbedUrl()}
               allowFullScreen
               width={355}
               height={200}
@@ -129,19 +192,17 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
             ></iframe>
           </div>
         </div>
-      ) : (
-        ''
-      )}
+      ) : null}
 
       <div className="content-item-content">
         <div className="rbt-price-wrapper d-flex flex-wrap align-items-center justify-content-between">
           <div className="rbt-price">
-            <span className="current-price">${checkMatchCourses.price}</span>
-            <span className="off-price">${checkMatchCourses.offPrice}</span>
+            <span className="current-price">{formatPrice(checkMatchCourses.price)}</span>
+            <span className="off-price">{formatPrice(checkMatchCourses.offPrice)}</span>
           </div>
           <div className="discount-time">
             <span className="rbt-badge color-danger bg-color-danger-opacity">
-              <i className="feather-clock"></i> {checkMatchCourses.days} days
+              <i className="feather-clock"></i> {checkMatchCourses.days || '3'} days
               left!
             </span>
           </div>
@@ -151,9 +212,7 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
           <Link
             className="rbt-btn btn-gradient icon-hover w-100 d-block text-center"
             href="#"
-            onClick={() =>
-              addToCartFun(checkMatchCourses.id, amount, checkMatchCourses)
-            }
+            onClick={handleAddToCart}
           >
             <span className="btn-text">Add to Cart</span>
             <span className="btn-icon">
@@ -165,7 +224,8 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
         <div className="buy-now-btn mt--15">
           <Link
             className="rbt-btn btn-border icon-hover w-100 d-block text-center"
-            href="#"
+            href="/checkout"
+            onClick={handleBuyNow}
           >
             <span className="btn-text">Buy Now</span>
             <span className="btn-icon">
@@ -182,7 +242,7 @@ const Viedo = ({ checkMatchCourses, instructor = {} }) => {
           }`}
         >
           <ul className="has-show-more-inner-content rbt-course-details-list-wrapper">
-            {checkMatchCourses &&
+            {checkMatchCourses.roadmap &&
               checkMatchCourses.roadmap.map((item, innerIndex) => (
                 <li key={innerIndex}>
                   <span>{item.text}</span>

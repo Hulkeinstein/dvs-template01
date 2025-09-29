@@ -4,7 +4,7 @@ import Requirements from './Course-Sections/Requirements';
 import Instructor from './Course-Sections/Instructor';
 import Review from './Course-Sections/Review';
 import Featured from './Course-Sections/Featured';
-import Viedo from './Course-Sections/Viedo';
+import Viedo from './Course-Sections/Viedo.tsx';
 
 const CourseDetailsEight = ({ checkMatchCourses }) => {
   return (

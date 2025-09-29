@@ -48,6 +48,12 @@ const Checkout = (): JSX.Element => {
   // Constants
   const TAX_RATE = 0.05; // 5% tax rate
 
+  // Calculate if this is a free order
+  const subtotal = total_amount;
+  const tax = subtotal * TAX_RATE;
+  const grandTotal = subtotal + tax;
+  const isFreeOrder = grandTotal === 0;
+
   const handlePaymentMethodChange = (method: string) => {
     setSelectedPaymentMethod(method);
     // Map payment method values to our system
@@ -73,6 +79,24 @@ const Checkout = (): JSX.Element => {
     }
 
     // Call the form's place order method
+    await checkoutFormRef.current.handlePlaceOrder();
+  };
+
+  const handleFreeEnrollment = async () => {
+    setPaymentError(null);
+
+    if (!agreeToTerms) {
+      setPaymentError('Please accept the terms & conditions');
+      return;
+    }
+
+    if (!checkoutFormRef.current) {
+      setPaymentError('Form not ready, please try again');
+      return;
+    }
+
+    // For free orders, set payment method to 'free' and process immediately
+    checkoutFormRef.current.setPaymentMethod('cash_on_delivery'); // Using COD for free orders
     await checkoutFormRef.current.handlePlaceOrder();
   };
 
@@ -147,18 +171,20 @@ const Checkout = (): JSX.Element => {
               </div>
 
               <div className="col-12 mb--60">
-                <h4 className="checkout-title">Payment Method</h4>
+                {!isFreeOrder && (
+                  <>
+                    <h4 className="checkout-title">Payment Method</h4>
 
-                {paymentError && (
-                  <div className="alert alert-danger mb-3" role="alert">
-                    {paymentError}
-                  </div>
-                )}
+                    {paymentError && (
+                      <div className="alert alert-danger mb-3" role="alert">
+                        {paymentError}
+                      </div>
+                    )}
 
-                <div
-                  className="checkout-payment-method accordion rbt-accordion-style rbt-accordion-05 accordion"
-                  id="accordionExamplea1"
-                >
+                    <div
+                      className="checkout-payment-method accordion rbt-accordion-style rbt-accordion-05 accordion"
+                      id="accordionExamplea1"
+                    >
                   <div className="single-method">
                     <input
                       type="radio"
@@ -259,39 +285,70 @@ const Checkout = (): JSX.Element => {
                       </div>
                     </div>
                   </div>
+                    </div>
+                  </>
+                )}
 
-                  <div className="single-method">
-                    <input
-                      type="checkbox"
-                      id="accept_terms"
-                      checked={agreeToTerms}
-                      onChange={(e) => setAgreeToTerms(e.target.checked)}
-                    />
-                    <label htmlFor="accept_terms">
-                      I&apos;ve read and accept the terms & conditions
-                    </label>
+                {/* Terms and conditions for all orders */}
+                {paymentError && isFreeOrder && (
+                  <div className="alert alert-danger mb-3" role="alert">
+                    {paymentError}
                   </div>
+                )}
+
+                <div className="single-method">
+                  <input
+                    type="checkbox"
+                    id="accept_terms"
+                    checked={agreeToTerms}
+                    onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  />
+                  <label htmlFor="accept_terms">
+                    I&apos;ve read and accept the terms & conditions
+                  </label>
                 </div>
                 <div className="plceholder-button mt--50">
-                  <button
-                    className="rbt-btn btn-gradient hover-icon-reverse"
-                    onClick={handlePlaceOrder}
-                    disabled={checkoutFormRef.current?.isLoading}
-                  >
-                    <span className="icon-reverse-wrapper">
-                      <span className="btn-text">
-                        {checkoutFormRef.current?.isLoading
-                          ? 'Processing...'
-                          : 'Place order'}
+                  {isFreeOrder ? (
+                    <button
+                      className="rbt-btn btn-gradient hover-icon-reverse"
+                      onClick={handleFreeEnrollment}
+                      disabled={checkoutFormRef.current?.isLoading}
+                    >
+                      <span className="icon-reverse-wrapper">
+                        <span className="btn-text">
+                          {checkoutFormRef.current?.isLoading
+                            ? 'Processing...'
+                            : 'Enroll Now (Free)'}
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-arrow-right"></i>
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-arrow-right"></i>
+                        </span>
                       </span>
-                      <span className="btn-icon">
-                        <i className="feather-arrow-right"></i>
+                    </button>
+                  ) : (
+                    <button
+                      className="rbt-btn btn-gradient hover-icon-reverse"
+                      onClick={handlePlaceOrder}
+                      disabled={checkoutFormRef.current?.isLoading}
+                    >
+                      <span className="icon-reverse-wrapper">
+                        <span className="btn-text">
+                          {checkoutFormRef.current?.isLoading
+                            ? 'Processing...'
+                            : 'Place order'}
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-arrow-right"></i>
+                        </span>
+                        <span className="btn-icon">
+                          <i className="feather-arrow-right"></i>
+                        </span>
                       </span>
-                      <span className="btn-icon">
-                        <i className="feather-arrow-right"></i>
-                      </span>
-                    </span>
-                  </button>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

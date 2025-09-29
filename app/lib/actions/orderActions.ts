@@ -4,7 +4,15 @@ import { createClient } from '@supabase/supabase-js';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { Resend } from 'resend';
-import crypto from 'crypto';
+import {
+  calculateTotals,
+  generateOrderNumber,
+  generateCartHash,
+  generateIdempotencyKey,
+  isFreeOrder,
+  getTaxRate,
+  type CartLine,
+} from '@/app/lib/checkout/priceCalculator';
 import type {
   CheckoutFormData,
   CheckoutResponse,
@@ -22,29 +30,9 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM =
   process.env.EMAIL_FROM || 'DVS Education <no-reply@dvs-education.com>';
 
-// Constants
-const TAX_RATE = 0.05; // 5% tax
-const ORDER_NUMBER_PREFIX = 'ORD';
-
 // =========================================================================
 // Helper Functions
 // =========================================================================
-
-/**
- * Generate unique order number
- * Format: ORD-20250928-XXXX
- */
-function generateOrderNumber(): string {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const random = Math.floor(Math.random() * 10000)
-    .toString()
-    .padStart(4, '0');
-
-  return `${ORDER_NUMBER_PREFIX}-${year}${month}${day}-${random}`;
-}
 
 /**
  * Validate cart prices and calculate totals
@@ -84,18 +72,24 @@ async function validateAndCalculatePrices(items: CartItem[]) {
     };
   });
 
-  // Calculate totals
-  const subtotal = validatedItems.reduce((sum, item) => sum + item.subtotal, 0);
-  const tax = subtotal * TAX_RATE;
-  const discount = 0; // Discount will be implemented in Phase 3
-  const total = subtotal + tax - discount;
+  // Calculate totals using the price calculator
+  const cartLines: CartLine[] = validatedItems.map(item => ({
+    id: item.product.id,
+    course_id: item.product.id,
+    qty: item.amount,
+    unit: item.validated_price,
+    title: item.course_title
+  }));
+
+  const taxRate = getTaxRate('US'); // Can be enhanced with location-based tax
+  const totals = calculateTotals(cartLines, { taxRate });
 
   return {
     validatedItems,
-    subtotal,
-    tax,
-    discount,
-    total,
+    subtotal: totals.subtotal,
+    tax: totals.tax,
+    discount: totals.discount,
+    total: totals.total,
   };
 }
 
@@ -288,7 +282,13 @@ export async function createOrder(
     }
 
     // 4. Generate unique identifiers
-    const idempotencyKey = crypto.randomUUID();
+    const cartHash = generateCartHash(cartItems.map(item => ({
+      id: item.product.id,
+      qty: item.amount,
+      unit: item.product.price,
+      title: item.product.title || item.product.courseTitle || ''
+    })));
+    const idempotencyKey = generateIdempotencyKey(userData.id, cartHash);
     const orderNumber = generateOrderNumber();
 
     // 5. Prepare order data
@@ -340,7 +340,7 @@ export async function createOrder(
       console.error('Order creation error:', orderError);
 
       // Check if it's a duplicate order
-      if (orderError.message?.includes('duplicate key')) {
+      if (orderError.message?.includes('duplicate key') || orderError.message?.includes('already exists')) {
         return {
           success: false,
           error:
@@ -354,7 +354,34 @@ export async function createOrder(
       };
     }
 
-    // 7. Send order confirmation email (non-blocking)
+    // Check if it's a duplicate order (from RPC return value)
+    const isDuplicate = orderResult?.[0]?.is_duplicate;
+    if (isDuplicate) {
+      return {
+        success: false,
+        error: 'This order has already been placed. Please check your email for confirmation.',
+      };
+    }
+
+    // 7. Create enrollments for purchased courses (only for non-free orders)
+    // Note: Free orders automatically create enrollments in the RPC function
+    const isOrderFree = isFreeOrder({
+      subtotal,
+      tax,
+      discount,
+      total,
+      currency: 'USD'
+    });
+
+    if (!isOrderFree) {
+      // For paid orders that will be processed through payment gateway
+      // Enrollments will be created after successful payment
+      console.log('Paid order created, awaiting payment for enrollment activation');
+    } else {
+      console.log('Free order - enrollments created automatically');
+    }
+
+    // 8. Send order confirmation email (non-blocking)
     const customerName = `${formData.shipping.firstName} ${formData.shipping.lastName}`;
     sendOrderConfirmationEmail({
       email: formData.shipping.email,
@@ -370,7 +397,7 @@ export async function createOrder(
       console.error('Email sending failed:', error);
     });
 
-    // 8. Return success response
+    // 9. Return success response
     const orderId = orderResult?.[0]?.order_id || idempotencyKey;
     return {
       success: true,
