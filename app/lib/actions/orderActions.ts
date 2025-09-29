@@ -109,6 +109,8 @@ interface OrderItem {
     courseTitle?: string;
   };
   amount: number;
+  validated_price?: number;
+  subtotal?: number;
 }
 
 async function sendOrderConfirmationEmail(data: {
@@ -127,16 +129,16 @@ async function sendOrderConfirmationEmail(data: {
       (item) => `
     <tr>
       <td style="padding: 8px; border-bottom: 1px solid #eee;">
-        ${item.course_title || item.product.title || item.product.courseTitle}
+        ${item.course_title || item.product?.title || item.product?.courseTitle}
       </td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: center;">
         ${item.amount}
       </td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">
-        $${item.validated_price.toFixed(2)}
+        $${(item.validated_price || 0).toFixed(2)}
       </td>
       <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">
-        $${item.subtotal.toFixed(2)}
+        $${(item.subtotal || 0).toFixed(2)}
       </td>
     </tr>
   `

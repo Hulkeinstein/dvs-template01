@@ -102,7 +102,7 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
                   profile.first_name || profile.name?.split(' ')[0] || '',
                 lastName:
                   profile.last_name || profile.name?.split(' ')[1] || '',
-                email: profile.email || session.user.email,
+                email: profile.email || session.user.email || '',
                 phone: profile.phone || '',
                 company: '',
                 // Keep address fields empty for user to fill
