@@ -1,14 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import type { CheckoutFormData, CartItem } from '@/types/checkout';
 import { createOrder } from '@/app/lib/actions/orderActions';
+import { getUserProfile } from '@/app/lib/actions/userActions';
+
+// Cart item type
+interface CartItemProduct {
+  id: string;
+  title?: string;
+  courseTitle?: string;
+  price?: number;
+  regular_price?: number;
+}
+
+interface CartItemType {
+  id: string;
+  amount: number;
+  product: CartItemProduct;
+}
 
 // Redux state type
 interface CartState {
-  cart: any[];
+  cart: CartItemType[];
   total_amount: number;
   shipping_fee: number;
   total_items: number;
@@ -30,10 +47,12 @@ export interface CheckoutFormRef {
 
 const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const cartItems = useSelector((state: RootState) => state.CartReducer.cart);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sameAsShipping, setSameAsShipping] = useState(true);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<CheckoutFormData>({
@@ -67,6 +86,47 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
     agreeToTerms: false,
   });
 
+  // Auto-fill user information when logged in
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (session?.user?.email) {
+        setIsLoadingProfile(true);
+        try {
+          const profile = await getUserProfile(session.user.email);
+          if (profile) {
+            setFormData((prev) => ({
+              ...prev,
+              shipping: {
+                ...prev.shipping,
+                firstName:
+                  profile.first_name || profile.name?.split(' ')[0] || '',
+                lastName:
+                  profile.last_name || profile.name?.split(' ')[1] || '',
+                email: profile.email || session.user.email,
+                phone: profile.phone || '',
+                company: '',
+                // Keep address fields empty for user to fill
+                address: prev.shipping.address || '',
+                city: prev.shipping.city || '',
+                state: prev.shipping.state || '',
+                zipCode: prev.shipping.zipCode || '',
+                country: prev.shipping.country || 'United States',
+              },
+            }));
+          }
+        } catch (error) {
+          console.error('Failed to load user profile:', error);
+        } finally {
+          setIsLoadingProfile(false);
+        }
+      }
+    };
+
+    if (status === 'authenticated') {
+      loadUserProfile();
+    }
+  }, [session, status]);
+
   // Handle input changes
   const handleShippingChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -98,29 +158,64 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
     isLoading,
   }));
 
+  // Email validation helper
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // Phone validation helper (accepts various formats)
+  const isValidPhone = (phone: string): boolean => {
+    // Remove all non-digit characters for validation
+    const digitsOnly = phone.replace(/\D/g, '');
+    // Check if it has at least 10 digits (for US/CA numbers)
+    return digitsOnly.length >= 10;
+  };
+
   // Handle Place Order
   const handlePlaceOrder = async () => {
     setError(null);
 
-    // Basic validation
+    // Enhanced validation with field-specific errors
+    const validationErrors: string[] = [];
+
     if (!formData.shipping.firstName || !formData.shipping.lastName) {
-      setError('Please enter your first and last name');
-      return;
+      validationErrors.push('Please enter your first and last name');
     }
+
     if (!formData.shipping.email) {
-      setError('Please enter your email address');
-      return;
+      validationErrors.push('Please enter your email address');
+    } else if (!isValidEmail(formData.shipping.email)) {
+      validationErrors.push('Please enter a valid email address');
     }
+
+    if (!formData.shipping.phone) {
+      validationErrors.push('Please enter your phone number');
+    } else if (!isValidPhone(formData.shipping.phone)) {
+      validationErrors.push(
+        'Please enter a valid phone number (at least 10 digits)'
+      );
+    }
+
     if (!formData.shipping.address || !formData.shipping.city) {
-      setError('Please enter your shipping address');
-      return;
+      validationErrors.push('Please enter your complete shipping address');
     }
+
+    if (!formData.shipping.zipCode) {
+      validationErrors.push('Please enter your zip/postal code');
+    }
+
     if (!formData.agreeToTerms) {
-      setError('Please agree to the terms and conditions');
-      return;
+      validationErrors.push('Please agree to the terms and conditions');
     }
+
     if (cartItems.length === 0) {
-      setError('Your cart is empty');
+      validationErrors.push('Your cart is empty');
+    }
+
+    // Show all validation errors
+    if (validationErrors.length > 0) {
+      setError(validationErrors[0]); // Show first error
       return;
     }
 
@@ -128,7 +223,7 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
 
     try {
       // Prepare cart items for order
-      const orderItems: CartItem[] = cartItems.map((item: any) => ({
+      const orderItems: CartItem[] = cartItems.map((item: CartItemType) => ({
         id: item.id,
         amount: item.amount,
         product: {
@@ -144,23 +239,30 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
         formData.billing = { ...formData.shipping, sameAsShipping: true };
       }
 
-      // Create order
+      // Create order with improved error handling
       const result = await createOrder(formData, orderItems);
 
       if (result.success) {
         // Clear cart from localStorage
         localStorage.removeItem('cartItems');
 
-        // Redirect to success page or dashboard
+        // Show success message briefly
+        setError(null);
+
+        // Redirect to success page with order info
         router.push(
-          result.redirectUrl || '/student/dashboard?orderSuccess=true'
+          result.redirectUrl ||
+            `/order-success?orderId=${result.orderId}&orderNumber=${result.orderNumber}`
         );
       } else {
-        setError(result.error || 'Failed to place order');
+        setError(result.error || 'Failed to place order. Please try again.');
+        // Keep form data for retry
       }
     } catch (err) {
       console.error('Place order error:', err);
-      setError('An unexpected error occurred. Please try again.');
+      setError(
+        'An unexpected error occurred. Please try again or contact support.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -170,9 +272,25 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
     <>
       <div className="col-lg-7">
         <div className="checkout-content-wrapper">
-          {error && (
+          {/* Loading overlay for profile data */}
+          {isLoadingProfile && (
+            <div className="alert alert-info mb-4" role="alert">
+              <i className="feather-loader mr-2 spin"></i> Loading your
+              information...
+            </div>
+          )}
+
+          {/* Processing order overlay */}
+          {isLoading && (
+            <div className="alert alert-warning mb-4" role="alert">
+              <i className="feather-loader mr-2 spin"></i> Processing your
+              order... Please do not refresh the page.
+            </div>
+          )}
+
+          {error && !isLoading && (
             <div className="alert alert-danger mb-4" role="alert">
-              {error}
+              <i className="feather-alert-circle mr-2"></i> {error}
             </div>
           )}
 
@@ -190,6 +308,7 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
                     handleShippingChange('firstName', e.target.value)
                   }
                   required
+                  disabled={isLoadingProfile || isLoading}
                 />
               </div>
 
@@ -203,6 +322,7 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
                     handleShippingChange('lastName', e.target.value)
                   }
                   required
+                  disabled={isLoadingProfile || isLoading}
                 />
               </div>
 
@@ -216,19 +336,21 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
                     handleShippingChange('email', e.target.value)
                   }
                   required
+                  disabled={isLoadingProfile || isLoading}
                 />
               </div>
 
               <div className="col-md-6 col-12 mb--20">
                 <label>Phone no*</label>
                 <input
-                  type="text"
-                  placeholder="Phone number"
+                  type="tel"
+                  placeholder="Phone number (e.g., 123-456-7890)"
                   value={formData.shipping.phone}
                   onChange={(e) =>
                     handleShippingChange('phone', e.target.value)
                   }
                   required
+                  disabled={isLoadingProfile || isLoading}
                 />
               </div>
 

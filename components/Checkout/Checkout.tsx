@@ -45,6 +45,9 @@ const Checkout = (): JSX.Element => {
   const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
+  // Constants
+  const TAX_RATE = 0.05; // 5% tax rate
+
   const handlePaymentMethodChange = (method: string) => {
     setSelectedPaymentMethod(method);
     // Map payment method values to our system
@@ -72,6 +75,34 @@ const Checkout = (): JSX.Element => {
     // Call the form's place order method
     await checkoutFormRef.current.handlePlaceOrder();
   };
+
+  // Show empty cart message
+  if (!cart || cart.length === 0) {
+    return (
+      <div className="container">
+        <div className="row">
+          <div className="col-12">
+            <div className="empty-cart-message text-center py-5">
+              <i
+                className="feather-shopping-cart mb-4"
+                style={{ fontSize: '4rem', color: '#ccc' }}
+              ></i>
+              <h3 className="mb-3">Your cart is empty</h3>
+              <p className="mb-4">
+                Please add some courses to your cart before checkout.
+              </p>
+              <a href="/all-courses" className="rbt-btn btn-gradient">
+                <span className="btn-text">Browse Courses</span>
+                <span className="btn-icon">
+                  <i className="feather-arrow-right"></i>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -104,11 +135,13 @@ const Checkout = (): JSX.Element => {
                   </p>
 
                   <p>
-                    Tax (5%) <span>${(total_amount * 0.05).toFixed(2)}</span>
+                    Tax ({(TAX_RATE * 100).toFixed(0)}%){' '}
+                    <span>${(total_amount * TAX_RATE).toFixed(2)}</span>
                   </p>
 
                   <h4 className="mt--30">
-                    Grand Total <span>${(total_amount * 1.05).toFixed(2)}</span>
+                    Grand Total{' '}
+                    <span>${(total_amount * (1 + TAX_RATE)).toFixed(2)}</span>
                   </h4>
                 </div>
               </div>

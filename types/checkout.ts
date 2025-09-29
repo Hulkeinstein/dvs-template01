@@ -71,6 +71,7 @@ export interface OrderItem {
 export interface CheckoutResponse {
   success: boolean;
   orderId?: string;
+  orderNumber?: string;
   redirectUrl?: string;
   error?: string;
   message?: string;
