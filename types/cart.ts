@@ -45,6 +45,7 @@ export type CartActionType =
   | 'DELETE_CART_ITEM'
   | 'COUNT_CART_TOTALS'
   | 'CLEAR_CART'
+  | 'SYNC_CART'
   | 'SET_CART_ERROR'
   | 'CLEAR_CART_ERROR';
 
@@ -62,5 +63,5 @@ export interface ToggleAmountPayload {
 
 export interface CartAction {
   type: CartActionType;
-  payload?: AddToCartPayload | ToggleAmountPayload | string | undefined;
+  payload?: AddToCartPayload | ToggleAmountPayload | CartItem[] | string | undefined;
 }

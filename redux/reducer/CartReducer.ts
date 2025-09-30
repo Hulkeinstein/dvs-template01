@@ -3,8 +3,7 @@ import {
   CartAction,
   CartItem,
   AddToCartPayload,
-  ToggleAmountPayload,
-  CartProduct
+  ToggleAmountPayload
 } from '@/types/cart';
 
 const getLocalStorage = (): CartItem[] => {
@@ -54,7 +53,7 @@ export const CartReducer = (state = initialState, action: CartAction): CartState
       const payload = action.payload as AddToCartPayload;
       if (!payload) return state;
 
-      const { id, amount, product, category } = payload;
+      const { id, amount, product } = payload;
 
       // 타입 기반 판단 (레거시 호환성 포함)
       const isCourse = product.kind === 'course' || !!product.courseTitle;
@@ -198,6 +197,12 @@ export const CartReducer = (state = initialState, action: CartAction): CartState
       return {
         ...state,
         cart: [],
+      };
+
+    case 'SYNC_CART':
+      return {
+        ...state,
+        cart: Array.isArray(action.payload) ? action.payload : [],
       };
 
     case 'SET_CART_ERROR':

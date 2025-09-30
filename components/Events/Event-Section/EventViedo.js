@@ -9,6 +9,7 @@ import 'venobox/dist/venobox.min.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '@/context/Context';
 import { addToCartAction } from '@/redux/action/CartAction';
+import { useCart } from '@/hooks/useCart';
 
 const EventViedo = ({ getEventData }) => {
   const { toggle, setToggle, cartToggle, setCart } = useAppContext();
@@ -17,6 +18,7 @@ const EventViedo = ({ getEventData }) => {
   // =====> Start ADD-To-Cart
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.CartReducer);
+  const { saveCart } = useCart();
 
   const [amount, setAmount] = useState(1);
 
@@ -27,8 +29,8 @@ const EventViedo = ({ getEventData }) => {
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart, dispatch]);
+    saveCart(cart);
+  }, [cart, dispatch, saveCart]);
 
   useEffect(() => {
     import('venobox/dist/venobox.min.js').then((venobox) => {

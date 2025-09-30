@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import type { CheckoutFormData, CartItem } from '@/types/checkout';
 import { createOrder } from '@/app/lib/actions/orderActions';
 import { getUserProfile } from '@/app/lib/actions/userActions';
+import { useCart } from '@/hooks/useCart';
 
 // Cart item type
 interface CartItemProduct {
@@ -49,6 +50,7 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
   const router = useRouter();
   const { data: session, status } = useSession();
   const cartItems = useSelector((state: RootState) => state.CartReducer.cart);
+  const { clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sameAsShipping, setSameAsShipping] = useState(true);
@@ -243,8 +245,8 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
       const result = await createOrder(formData, orderItems);
 
       if (result.success) {
-        // Clear cart from localStorage
-        localStorage.removeItem('cartItems');
+        // Clear cart using centralized cart management
+        clearCart();
 
         // Show success message briefly
         setError(null);

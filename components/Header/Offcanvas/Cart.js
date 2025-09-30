@@ -9,23 +9,25 @@ import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '@/context/Context';
 import { deleteProduct } from '@/redux/action/CartAction';
+import { useCart } from '@/hooks/useCart';
 
 const Cart = () => {
   const router = useRouter();
   const path = typeof window !== 'undefined' ? window.location.pathname : '';
   const dispatch = useDispatch();
   const { cart, total_amount } = useSelector((state) => state.CartReducer);
+  const { saveCart } = useCart();
 
   const { cartToggle, setCart } = useAppContext();
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
+    saveCart(cart);
 
     if (path === '/cart') {
       setCart(true);
     }
-  }, [cart, path]);
+  }, [cart, path, saveCart]);
 
   return (
     <>

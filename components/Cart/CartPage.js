@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
+import { useCart } from '@/hooks/useCart';
 
 import CartItems from './CartItems.tsx';
 
@@ -13,11 +14,12 @@ const CartPage = () => {
   const { cart, total_amount, shipping_fee } = useSelector(
     (state) => state.CartReducer
   );
+  const { saveCart } = useCart();
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart, dispatch]);
+    saveCart(cart);
+  }, [cart, dispatch, saveCart]);
 
   return (
     <>

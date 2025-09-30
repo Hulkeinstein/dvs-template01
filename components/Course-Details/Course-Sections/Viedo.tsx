@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useAppContext } from '@/context/Context';
 import { addToCartAction } from '@/redux/action/CartAction';
 import { CartProduct, CartState } from '@/types/cart';
+import { useCart } from '@/hooks/useCart';
 
 interface RoadmapItem {
   text: string;
@@ -67,6 +68,7 @@ const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => 
   // =====> Start ADD-To-Cart
   const dispatch = useDispatch<any>();
   const { cart } = useSelector((state: RootState) => state.CartReducer);
+  const { saveCart } = useCart();
 
   // 코스는 항상 수량이 1
   const amount = 1;
@@ -99,8 +101,8 @@ const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => 
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart, dispatch]);
+    saveCart(cart);
+  }, [cart, dispatch, saveCart]);
 
   // =====> For video PopUp
   useEffect(() => {

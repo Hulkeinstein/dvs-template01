@@ -145,8 +145,7 @@ export function fromCents(cents: number): number {
  * 세율 조회 (추후 지역별 세율 적용)
  */
 export function getTaxRate(
-  country: string = 'US',
-  _state?: string
+  country: string = 'US'
 ): number {
   // 현재는 고정 5% VAT
   // 추후 지역별 세율 테이블 구현
@@ -198,12 +197,10 @@ export function calculatePaymentFee(
 /**
  * 배송비 계산 (추후 구현)
  */
-export function calculateShipping(
-  _items: CartLine[],
-  _destination?: { country: string; state?: string; city?: string }
-): number {
+export function calculateShipping(): number {
   // 현재는 무료 배송
   // 추후 무게, 거리 기반 계산 구현
+  // 나중에 파라미터 추가 예정: items: CartLine[], destination?: ShippingDestination
   return 0;
 }
 
