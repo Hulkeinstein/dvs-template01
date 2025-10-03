@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 import { Resend } from 'resend';
+import { paypalClient, isPayPalEnabled } from '@/app/lib/paypal';
+import paypal from '@paypal/checkout-server-sdk';
 import {
   calculateTotals,
   generateOrderNumber,
@@ -73,12 +75,12 @@ async function validateAndCalculatePrices(items: CartItem[]) {
   });
 
   // Calculate totals using the price calculator
-  const cartLines: CartLine[] = validatedItems.map(item => ({
+  const cartLines: CartLine[] = validatedItems.map((item) => ({
     id: item.product.id,
     course_id: item.product.id,
     qty: item.amount,
     unit: item.validated_price,
-    title: item.course_title
+    title: item.course_title,
   }));
 
   const taxRate = getTaxRate('US'); // Can be enhanced with location-based tax
@@ -282,12 +284,14 @@ export async function createOrder(
     }
 
     // 4. Generate unique identifiers
-    const cartHash = generateCartHash(cartItems.map(item => ({
-      id: item.product.id,
-      qty: item.amount,
-      unit: item.product.price,
-      title: item.product.title || item.product.courseTitle || ''
-    })));
+    const cartHash = generateCartHash(
+      cartItems.map((item) => ({
+        id: item.product.id,
+        qty: item.amount,
+        unit: item.product.price,
+        title: item.product.title || item.product.courseTitle || '',
+      }))
+    );
     const idempotencyKey = generateIdempotencyKey(userData.id, cartHash);
     const orderNumber = generateOrderNumber();
 
@@ -340,7 +344,10 @@ export async function createOrder(
       console.error('Order creation error:', orderError);
 
       // Check if it's a duplicate order
-      if (orderError.message?.includes('duplicate key') || orderError.message?.includes('already exists')) {
+      if (
+        orderError.message?.includes('duplicate key') ||
+        orderError.message?.includes('already exists')
+      ) {
         return {
           success: false,
           error:
@@ -359,7 +366,8 @@ export async function createOrder(
     if (isDuplicate) {
       return {
         success: false,
-        error: 'This order has already been placed. Please check your email for confirmation.',
+        error:
+          'This order has already been placed. Please check your email for confirmation.',
       };
     }
 
@@ -370,13 +378,15 @@ export async function createOrder(
       tax,
       discount,
       total,
-      currency: 'USD'
+      currency: 'USD',
     });
 
     if (!isOrderFree) {
       // For paid orders that will be processed through payment gateway
       // Enrollments will be created after successful payment
-      console.log('Paid order created, awaiting payment for enrollment activation');
+      console.log(
+        'Paid order created, awaiting payment for enrollment activation'
+      );
     } else {
       console.log('Free order - enrollments created automatically');
     }
@@ -397,8 +407,116 @@ export async function createOrder(
       console.error('Email sending failed:', error);
     });
 
-    // 9. Return success response
+    // 9. Handle payment method-specific redirects
     const orderId = orderResult?.[0]?.order_id || idempotencyKey;
+
+    // For PayPal, create PayPal order and return approval URL
+    if (formData.paymentMethod === 'paypal') {
+      try {
+        // 1. Check if PayPal is enabled
+        if (!isPayPalEnabled()) {
+          console.error('[OrderAction] PayPal is not enabled');
+          return {
+            success: false,
+            error: 'PayPal payment is not available',
+          };
+        }
+
+        // 2. Verify session in Server Action
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user?.id) {
+          console.error('[OrderAction] PayPal: User not authenticated');
+          return {
+            success: false,
+            error: 'You must be logged in to complete this purchase',
+          };
+        }
+
+        console.log('[OrderAction] PayPal: Session verified', {
+          userId: session.user.id,
+          email: session.user.email,
+        });
+
+        // 3. Get course information for PayPal order
+        const { data: course } = await supabase
+          .from('courses')
+          .select('id, title')
+          .eq('id', cartItems[0]?.product.id)
+          .single();
+
+        if (!course) {
+          console.error('[OrderAction] PayPal: Course not found');
+          return {
+            success: false,
+            error: 'Course not found',
+          };
+        }
+
+        // 4. Create PayPal order directly using SDK
+        const request = new paypal.orders.OrdersCreateRequest();
+        request.prefer('return=representation');
+        request.requestBody({
+          intent: 'CAPTURE',
+          purchase_units: [
+            {
+              reference_id: String(orderId), // DB order ID for tracking
+              description: course.title,
+              amount: {
+                currency_code: 'USD',
+                value: Number(total).toFixed(2),
+              },
+            },
+          ],
+          application_context: {
+            brand_name: 'DVS Education',
+            landing_page: 'NO_PREFERENCE',
+            user_action: 'PAY_NOW',
+            return_url: `${process.env.NEXTAUTH_URL}/order-success`,
+            cancel_url: `${process.env.NEXTAUTH_URL}/courses/${cartItems[0]?.product.id}`,
+          },
+        });
+
+        const response = await paypalClient.execute(request);
+
+        // 5. Extract approval URL
+        const approveUrl = response.result.links?.find(
+          (link: any) => link.rel === 'approve'
+        )?.href;
+
+        if (!approveUrl) {
+          console.error('[OrderAction] PayPal: No approve URL found');
+          return {
+            success: false,
+            error: 'Failed to get PayPal approval URL',
+          };
+        }
+
+        console.log('[OrderAction] PayPal order created successfully:', {
+          orderId: String(orderId),
+          paypalOrderId: response.result.id,
+          amount: total.toFixed(2),
+          approveUrl,
+        });
+
+        return {
+          success: true,
+          orderId: String(orderId),
+          orderNumber: orderNumber,
+          redirectUrl: approveUrl, // Redirect to PayPal
+          message: 'Redirecting to PayPal...',
+        };
+      } catch (error: any) {
+        console.error('[OrderAction] PayPal integration error:', error);
+        return {
+          success: false,
+          error:
+            error.message || 'Failed to connect to PayPal. Please try again.',
+        };
+      }
+    }
+
+    // For other payment methods, redirect to success page
     return {
       success: true,
       orderId: String(orderId),
@@ -522,6 +640,146 @@ export async function getOrderByNumber(orderNumber: string) {
     return {
       success: false,
       error: 'Failed to fetch order',
+    };
+  }
+}
+
+// =========================================================================
+// PayPal Capture
+// =========================================================================
+
+/**
+ * Capture PayPal payment after user approval
+ * Called from success page with PayPal Order ID
+ */
+export async function capturePayPalOrderAction(paypalOrderId: string) {
+  try {
+    // 1. Check if PayPal is enabled
+    if (!isPayPalEnabled()) {
+      console.error('[CapturePayPal] PayPal is not enabled');
+      return {
+        success: false,
+        error: 'PayPal payment is not available',
+      };
+    }
+
+    // 2. Verify session
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      console.error('[CapturePayPal] User not authenticated');
+      return {
+        success: false,
+        error: 'You must be logged in',
+      };
+    }
+
+    console.log('[CapturePayPal] Processing capture:', {
+      paypalOrderId,
+      userId: session.user.id,
+    });
+
+    // 3. Capture PayPal order
+    const request = new paypal.orders.OrdersCaptureRequest(paypalOrderId);
+    // Set idempotency header for duplicate prevention
+    // @ts-expect-error - PayPal SDK types don't include headers property but it exists at runtime
+    request.headers = { 'PayPal-Request-Id': `capture-${paypalOrderId}` };
+    request.requestBody({});
+
+    const capture = await paypalClient.execute(request);
+    const result = capture.result as any;
+
+    // 4. Verify capture success
+    if (result.status !== 'COMPLETED') {
+      console.error('[CapturePayPal] Capture not completed:', result.status);
+      return {
+        success: false,
+        error: `Payment capture failed: ${result.status}`,
+      };
+    }
+
+    // 5. Extract transaction details
+    const transactionId =
+      result.purchase_units[0]?.payments?.captures?.[0]?.id || paypalOrderId;
+    const amount =
+      result.purchase_units[0]?.payments?.captures?.[0]?.amount?.value;
+    const currency =
+      result.purchase_units[0]?.payments?.captures?.[0]?.amount?.currency_code;
+    const referenceId = result.purchase_units[0]?.reference_id; // Our DB order ID
+
+    console.log('[CapturePayPal] Capture successful:', {
+      paypalOrderId,
+      transactionId,
+      amount,
+      currency,
+      referenceId,
+    });
+
+    // 6. Update order in DB
+    if (referenceId) {
+      // Update order status
+      const { error: updateError } = await supabase
+        .from('orders')
+        .update({
+          transaction_id: transactionId,
+          payment_status: 'completed',
+          payment_method: 'paypal',
+        })
+        .eq('id', referenceId)
+        .eq('user_id', session.user.id); // Security check
+
+      if (updateError) {
+        console.error('[CapturePayPal] Failed to update order:', updateError);
+      }
+
+      // 7. Activate paid order (create enrollment)
+      const { data: activationResult, error: rpcError } = await supabase.rpc(
+        'activate_paid_order',
+        {
+          p_order_id: referenceId,
+        }
+      );
+
+      if (rpcError) {
+        console.error('[CapturePayPal] Failed to activate order:', {
+          error: rpcError,
+          message: rpcError.message,
+          details: rpcError.details,
+          hint: rpcError.hint,
+          code: rpcError.code,
+        });
+        return {
+          success: false,
+          error: `Failed to activate enrollment: ${rpcError.message || rpcError.details || 'Unknown error'}`,
+        };
+      }
+
+      console.log(
+        '[CapturePayPal] Order activated successfully:',
+        activationResult
+      );
+
+      // 8. Log event for idempotency
+      await supabase.from('order_events').insert({
+        stripe_event_id: paypalOrderId,
+        order_id: referenceId,
+        event_type: 'paypal.payment.capture',
+        payload: result,
+      });
+    }
+
+    return {
+      success: true,
+      orderId: referenceId,
+      transactionId,
+      amount,
+      currency,
+      status: result.status,
+    };
+  } catch (error: any) {
+    console.error('[CapturePayPal] Error:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to capture payment',
     };
   }
 }

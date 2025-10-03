@@ -51,14 +51,21 @@ const OrderSuccessPage = (): JSX.Element => {
       capturePayPalOrderAction(paypalToken)
         .then((result) => {
           console.log('[OrderSuccess] PayPal capture result:', result);
-          if (result.success) {
-            setPaypalDetails(result);
+          if (result.success && 'transactionId' in result) {
+            // Type guard ensures we have all required PayPalDetails fields
+            setPaypalDetails({
+              transactionId: result.transactionId,
+              amount: result.amount,
+              currency: result.currency,
+            });
             // Use PayPal order ID as order number if not provided
             setOrderNumber(result.orderId || paypalToken.slice(0, 10));
             setOrderId(result.orderId); // Store the database order ID (UUID)
             console.log('[OrderSuccess] Set orderId to:', result.orderId);
           } else {
-            setPaypalError(result.error || 'Payment processing failed');
+            setPaypalError(
+              'error' in result ? result.error : 'Payment processing failed'
+            );
           }
           setIsProcessingPayPal(false);
         })
