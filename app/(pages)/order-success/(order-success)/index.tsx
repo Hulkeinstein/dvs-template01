@@ -17,12 +17,20 @@ import {
   generateReceiptPDF,
 } from '@/app/lib/actions/receiptActions';
 
+interface PayPalDetails {
+  transactionId: string;
+  amount: string;
+  currency: string;
+}
+
 const OrderSuccessPage = (): JSX.Element => {
   const searchParams = useSearchParams();
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [isProcessingPayPal, setIsProcessingPayPal] = useState(false);
   const [paypalError, setPaypalError] = useState<string | null>(null);
-  const [paypalDetails, setPaypalDetails] = useState<any>(null);
+  const [paypalDetails, setPaypalDetails] = useState<PayPalDetails | null>(
+    null
+  );
   const [captureAttempted, setCaptureAttempted] = useState(false);
   const [isDownloadingReceipt, setIsDownloadingReceipt] = useState(false);
   const [receiptError, setReceiptError] = useState<string | null>(null);
@@ -73,7 +81,7 @@ const OrderSuccessPage = (): JSX.Element => {
       setOrderNumber(orderIdParam.slice(0, 10));
       setOrderId(orderIdParam);
     }
-  }, [searchParams]); // Removed isProcessingPayPal from dependencies to prevent infinite loop
+  }, [searchParams, captureAttempted]); // captureAttempted is safe - only set once
 
   // Function to handle receipt download
   const handleDownloadReceipt = async () => {
