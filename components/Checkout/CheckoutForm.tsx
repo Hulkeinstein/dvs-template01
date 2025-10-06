@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -53,7 +54,6 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
   const { clearCart } = useCart();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sameAsShipping, setSameAsShipping] = useState(true);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
   // Form state
@@ -135,16 +135,6 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
       ...prev,
       shipping: {
         ...prev.shipping,
-        [field]: value,
-      },
-    }));
-  };
-
-  const handleBillingChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      billing: {
-        ...prev.billing,
         [field]: value,
       },
     }));
@@ -235,11 +225,6 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
           price: item.product.price || item.product.regular_price || 0,
         },
       }));
-
-      // If billing same as shipping, copy shipping data
-      if (sameAsShipping) {
-        formData.billing = { ...formData.shipping, sameAsShipping: true };
-      }
 
       // Create order with improved error handling
       const result = await createOrder(formData, orderItems);
@@ -441,21 +426,21 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
               </div>
 
               <div className="col-12 mb--20">
-                <div className="check-box">
-                  <input
-                    type="checkbox"
-                    id="shiping_address"
-                    checked={!sameAsShipping}
-                    onChange={(e) => setSameAsShipping(!e.target.checked)}
-                  />
-                  <label htmlFor="shiping_address">
-                    Ship to Different Address
-                  </label>
+                {/* Legal Notice */}
+                <div className="alert alert-info mb-3">
+                  <p className="mb-0" style={{ fontSize: '0.9rem' }}>
+                    계정 생성 또는 결제 진행 시,
+                    이용약관·환불정책·개인정보처리방침에 동의한 것으로
+                    간주됩니다.
+                  </p>
                 </div>
+
+                {/* Terms Checkbox */}
                 <div className="check-box">
                   <input
                     type="checkbox"
                     id="agree_terms"
+                    required
                     checked={formData.agreeToTerms}
                     onChange={(e) =>
                       setFormData((prev) => ({
@@ -464,151 +449,35 @@ const CheckoutForm = React.forwardRef<CheckoutFormRef>((props, ref) => {
                       }))
                     }
                   />
-                  <label htmlFor="agree_terms">
-                    I agree to the Terms & Conditions
+                  <label
+                    htmlFor="agree_terms"
+                    className="d-flex align-items-start"
+                  >
+                    <span style={{ fontSize: '0.95rem' }}>
+                      I&apos;ve read and accept the{' '}
+                      <Link
+                        href="/terms-of-service"
+                        target="_blank"
+                        className="text-primary text-decoration-underline"
+                      >
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link
+                        href="/refund-policy"
+                        target="_blank"
+                        className="text-primary text-decoration-underline"
+                      >
+                        Refund Policy
+                      </Link>
+                    </span>
                   </label>
                 </div>
               </div>
             </div>
           </div>
 
-          {!sameAsShipping && (
-            <div id="shipping-form" className="mt--20">
-              <h4 className="checkout-title">Shipping Address</h4>
-              <div className="row g-5">
-                <div className="col-md-6 col-12">
-                  <label>First Name*</label>
-                  <input
-                    type="text"
-                    placeholder="First Name"
-                    value={formData.billing.firstName}
-                    onChange={(e) =>
-                      handleBillingChange('firstName', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>Last Name*</label>
-                  <input
-                    type="text"
-                    placeholder="Last Name"
-                    value={formData.billing.lastName}
-                    onChange={(e) =>
-                      handleBillingChange('lastName', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>Email Address*</label>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    value={formData.billing.email}
-                    onChange={(e) =>
-                      handleBillingChange('email', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>Phone no*</label>
-                  <input
-                    type="text"
-                    placeholder="Phone number"
-                    value={formData.billing.phone}
-                    onChange={(e) =>
-                      handleBillingChange('phone', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-12">
-                  <label>Company Name</label>
-                  <input
-                    type="text"
-                    placeholder="Company Name (Optional)"
-                    value={formData.billing.company}
-                    onChange={(e) =>
-                      handleBillingChange('company', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-12">
-                  <label>Address*</label>
-                  <input
-                    type="text"
-                    placeholder="Address"
-                    value={formData.billing.address}
-                    onChange={(e) =>
-                      handleBillingChange('address', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>Country*</label>
-                  <div className="rbt-modern-select bg-transparent height-45">
-                    <select
-                      className="w-100"
-                      value={formData.billing.country}
-                      onChange={(e) =>
-                        handleBillingChange('country', e.target.value)
-                      }
-                    >
-                      <option value="United States">United States</option>
-                      <option value="Canada">Canada</option>
-                      <option value="United Kingdom">United Kingdom</option>
-                      <option value="Australia">Australia</option>
-                      <option value="Germany">Germany</option>
-                      <option value="France">France</option>
-                      <option value="Japan">Japan</option>
-                      <option value="South Korea">South Korea</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>City*</label>
-                  <input
-                    type="text"
-                    placeholder="City"
-                    value={formData.billing.city}
-                    onChange={(e) =>
-                      handleBillingChange('city', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>State/Province</label>
-                  <input
-                    type="text"
-                    placeholder="State/Province"
-                    value={formData.billing.state}
-                    onChange={(e) =>
-                      handleBillingChange('state', e.target.value)
-                    }
-                  />
-                </div>
-
-                <div className="col-md-6 col-12">
-                  <label>Zip Code*</label>
-                  <input
-                    type="text"
-                    placeholder="Zip Code"
-                    value={formData.billing.zipCode}
-                    onChange={(e) =>
-                      handleBillingChange('zipCode', e.target.value)
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Shipping Address section removed - Online courses don't require physical shipping */}
         </div>
       </div>
     </>
