@@ -185,106 +185,72 @@ const Checkout = (): JSX.Element => {
                       className="checkout-payment-method accordion rbt-accordion-style rbt-accordion-05 accordion"
                       id="accordionExamplea1"
                     >
-                  <div className="single-method">
-                    <input
-                      type="radio"
-                      id="payment_stripe"
-                      name="payment-method"
-                      value="stripe"
-                      checked={selectedPaymentMethod === 'stripe'}
-                      onChange={(e) =>
-                        handlePaymentMethodChange(e.target.value)
-                      }
-                    />
-                    <label
-                      htmlFor="payment_stripe"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#stripe"
-                      aria-expanded="true"
-                      aria-controls="stripe"
-                    >
-                      Credit/Debit Card (Stripe)
-                    </label>
-                    <div
-                      className="accordion-collapse collapse show"
-                      id="stripe"
-                      aria-labelledby="headingOne"
-                      data-bs-parent="#accordionExamplea1"
-                    >
-                      <div className="accordion-body">
-                        Pay securely with your credit or debit card through
-                        Stripe. Your payment information is encrypted and
-                        secure.
+                      <div className="single-method">
+                        <input
+                          type="radio"
+                          id="payment_stripe"
+                          name="payment-method"
+                          value="stripe"
+                          checked={selectedPaymentMethod === 'stripe'}
+                          onChange={(e) =>
+                            handlePaymentMethodChange(e.target.value)
+                          }
+                        />
+                        <label
+                          htmlFor="payment_stripe"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#stripe"
+                          aria-expanded="true"
+                          aria-controls="stripe"
+                        >
+                          Credit/Debit Card (Stripe)
+                        </label>
+                        <div
+                          className="accordion-collapse collapse show"
+                          id="stripe"
+                          aria-labelledby="headingOne"
+                          data-bs-parent="#accordionExamplea1"
+                        >
+                          <div className="accordion-body">
+                            Pay securely with your credit or debit card through
+                            Stripe. Your payment information is encrypted and
+                            secure.
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="single-method">
-                    <input
-                      type="radio"
-                      id="payment_paypal"
-                      name="payment-method"
-                      value="paypal"
-                      checked={selectedPaymentMethod === 'paypal'}
-                      onChange={(e) =>
-                        handlePaymentMethodChange(e.target.value)
-                      }
-                    />
-                    <label
-                      htmlFor="payment_paypal"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#paypal"
-                      aria-expanded="false"
-                      aria-controls="paypal"
-                    >
-                      PayPal
-                    </label>
-                    <div
-                      className="accordion-collapse collapse"
-                      id="paypal"
-                      aria-labelledby="headingTwo"
-                      data-bs-parent="#accordionExamplea1"
-                    >
-                      <div className="accordion-body">
-                        Pay with your PayPal account. You will be redirected to
-                        PayPal to complete your payment securely.
+                      <div className="single-method">
+                        <input
+                          type="radio"
+                          id="payment_paypal"
+                          name="payment-method"
+                          value="paypal"
+                          checked={selectedPaymentMethod === 'paypal'}
+                          onChange={(e) =>
+                            handlePaymentMethodChange(e.target.value)
+                          }
+                        />
+                        <label
+                          htmlFor="payment_paypal"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#paypal"
+                          aria-expanded="false"
+                          aria-controls="paypal"
+                        >
+                          PayPal
+                        </label>
+                        <div
+                          className="accordion-collapse collapse"
+                          id="paypal"
+                          aria-labelledby="headingTwo"
+                          data-bs-parent="#accordionExamplea1"
+                        >
+                          <div className="accordion-body">
+                            Pay with your PayPal account. You will be redirected
+                            to PayPal to complete your payment securely.
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="single-method">
-                    <input
-                      type="radio"
-                      id="payment_cash"
-                      name="payment-method"
-                      value="cash"
-                      checked={selectedPaymentMethod === 'cash'}
-                      onChange={(e) =>
-                        handlePaymentMethodChange(e.target.value)
-                      }
-                    />
-                    <label
-                      htmlFor="payment_cash"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#cash"
-                      aria-expanded="false"
-                      aria-controls="cash"
-                    >
-                      Pay Later
-                    </label>
-                    <div
-                      className="accordion-collapse collapse"
-                      id="cash"
-                      aria-labelledby="headingThree"
-                      data-bs-parent="#accordionExamplea1"
-                    >
-                      <div className="accordion-body">
-                        Reserve your course now and pay later. Your enrollment
-                        will be confirmed, and you can access the course after
-                        payment is completed.
-                      </div>
-                    </div>
-                  </div>
                     </div>
                   </>
                 )}
