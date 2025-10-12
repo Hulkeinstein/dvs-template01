@@ -1,15 +1,21 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Refund Policy - Daniel Vision School',
-  description:
-    'Refund and cancellation policy for Daniel Vision School courses',
-};
+import Link from 'next/link';
+import DarkSwitch from '@/components/Header/dark-switch';
+import { useAppContext } from '@/context/Context';
 
 const RefundPolicyPage = (): JSX.Element => {
+  const { isLightTheme, toggleTheme } = useAppContext();
+
   return (
-    <div className="container py-5">
+    <div className="container py-5 legal-page">
+      {/* Theme Toggle Button - Fixed Top Right */}
+      <div
+        style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 999 }}
+      >
+        <DarkSwitch isLight={isLightTheme} switchTheme={toggleTheme} />
+      </div>
+
       <div className="row justify-content-center">
         <div className="col-lg-10">
           {/* Header */}
@@ -19,7 +25,7 @@ const RefundPolicyPage = (): JSX.Element => {
               <strong>Last Updated:</strong> October 6, 2025 (Version
               v2025-10-06)
             </div>
-            <p className="text-muted">
+            <p>
               At Daniel Vision School, we are committed to your satisfaction.
               This Refund Policy explains the conditions under which you may
               request a refund for purchased courses.
@@ -62,56 +68,58 @@ const RefundPolicyPage = (): JSX.Element => {
               You are eligible for a full refund if ALL of the following
               conditions are met:
             </p>
-            <div className="card border-success mb-3">
-              <div className="card-body">
-                <ul className="mb-0">
-                  <li>
-                    <strong>Time Limit:</strong> Request submitted within{' '}
-                    <strong>14 calendar days</strong> of purchase
-                  </li>
-                  <li>
-                    <strong>Progress Limit:</strong> You have completed less
-                    than <strong>30% of the course content</strong> (based on
-                    lessons watched, quizzes taken, and assignments submitted)
-                  </li>
-                  <li>
-                    <strong>No Downloads:</strong> You have not downloaded any
-                    downloadable resources (PDFs, templates, bonus materials)
-                  </li>
-                  <li>
-                    <strong>No Certificate:</strong> You have not requested or
-                    received a course completion certificate
-                  </li>
-                </ul>
-              </div>
+            <div className="alert alert-success">
+              <ul className="mb-0">
+                <li>
+                  <strong>Time Limit:</strong> Request submitted within{' '}
+                  <strong>14 calendar days</strong> of purchase
+                </li>
+                <li>
+                  <strong>Progress Limit:</strong> You have completed less than{' '}
+                  <strong>30% of the course content</strong> (based on lessons
+                  watched, quizzes taken, and assignments submitted)
+                </li>
+                <li>
+                  <strong>No Downloads:</strong> You have not downloaded any
+                  downloadable resources (PDFs, templates, bonus materials)
+                </li>
+                <li>
+                  <strong>No Certificate:</strong> You have not requested or
+                  received a course completion certificate
+                </li>
+              </ul>
             </div>
 
             <h4 className="mt-4">1.2 Quality Issues</h4>
-            <p>
-              If you experience technical issues that prevent you from accessing
-              the course, you may be eligible for a refund regardless of
-              progress, provided:
-            </p>
-            <ul>
-              <li>The issue is reported within 14 days of discovery</li>
-              <li>
-                You have attempted to resolve the issue with our support team
-              </li>
-              <li>The issue cannot be resolved within 5 business days</li>
-            </ul>
-            <p className="text-muted">
-              <small>
-                Examples: Video playback errors, missing content, incompatible
-                file formats. Note: Slow internet connection or personal device
-                issues do not qualify.
-              </small>
-            </p>
+            <div className="alert alert-success">
+              <p>
+                If you experience technical issues that prevent you from
+                accessing the course, you may be eligible for a refund
+                regardless of progress, provided:
+              </p>
+              <ul>
+                <li>The issue is reported within 14 days of discovery</li>
+                <li>
+                  You have attempted to resolve the issue with our support team
+                </li>
+                <li>The issue cannot be resolved within 5 business days</li>
+              </ul>
+              <p className="text-muted mb-0">
+                <small>
+                  Examples: Video playback errors, missing content, incompatible
+                  file formats. Note: Slow internet connection or personal
+                  device issues do not qualify.
+                </small>
+              </p>
+            </div>
 
             <h4 className="mt-4">1.3 Duplicate Purchases</h4>
-            <p>
-              If you accidentally purchase the same course twice, contact us
-              within 14 days for a full refund of the duplicate purchase.
-            </p>
+            <div className="alert alert-success">
+              <p className="mb-0">
+                If you accidentally purchase the same course twice, contact us
+                within 14 days for a full refund of the duplicate purchase.
+              </p>
+            </div>
           </section>
 
           {/* 2. Non-Refundable */}
@@ -251,43 +259,49 @@ const RefundPolicyPage = (): JSX.Element => {
             </div>
 
             <h4 className="mt-4">4.2 Currency Exchange</h4>
-            <p>
-              For international transactions, refunds are processed in the
-              original currency. Currency conversion rates are determined at the
-              time of refund and may differ from the purchase rate. Any exchange
-              rate differences are borne by the customer.
-            </p>
+            <div className="alert alert-warning">
+              <p className="mb-0">
+                For international transactions, refunds are processed in the
+                original currency. Currency conversion rates are determined at
+                the time of refund and may differ from the purchase rate. Any
+                exchange rate differences are borne by the customer.
+              </p>
+            </div>
 
             <h4 className="mt-4">4.3 Taxes</h4>
-            <p>
-              Taxes paid at the time of purchase will be refunded according to
-              applicable tax laws in your jurisdiction. Please consult your
-              local tax authority for details.
-            </p>
+            <div className="alert alert-warning">
+              <p className="mb-0">
+                Taxes paid at the time of purchase will be refunded according to
+                applicable tax laws in your jurisdiction. Please consult your
+                local tax authority for details.
+              </p>
+            </div>
           </section>
 
           {/* 5. Partial Refunds */}
           <section className="mb-5">
             <h2>5. Partial Refunds</h2>
-            <p>
-              In exceptional cases, we may offer partial refunds at our
-              discretion. This typically applies when:
-            </p>
-            <ul>
-              <li>You have completed between 30-50% of the course content</li>
-              <li>
-                Technical issues prevented full course access for an extended
-                period
-              </li>
-              <li>
-                Course content was significantly updated, making your completed
-                work obsolete
-              </li>
-            </ul>
-            <p className="text-muted">
-              Partial refund amounts are determined on a case-by-case basis and
-              are final once agreed upon.
-            </p>
+            <div className="alert alert-warning">
+              <p>
+                In exceptional cases, we may offer partial refunds at our
+                discretion. This typically applies when:
+              </p>
+              <ul>
+                <li>You have completed between 30-50% of the course content</li>
+                <li>
+                  Technical issues prevented full course access for an extended
+                  period
+                </li>
+                <li>
+                  Course content was significantly updated, making your
+                  completed work obsolete
+                </li>
+              </ul>
+              <p className="text-muted mb-0">
+                Partial refund amounts are determined on a case-by-case basis
+                and are final once agreed upon.
+              </p>
+            </div>
           </section>
 
           {/* 6. Abuse Prevention */}
@@ -336,35 +350,39 @@ const RefundPolicyPage = (): JSX.Element => {
             <h2>7. Special Circumstances</h2>
 
             <h4 className="mt-4">7.1 Medical or Emergency Situations</h4>
-            <p>
-              If you cannot complete a course due to a medical emergency or
-              unforeseen life event, contact us with documentation. We may
-              offer:
-            </p>
-            <ul>
-              <li>Extended access to the course (freeze account)</li>
-              <li>Course transfer to another user (one-time only)</li>
-              <li>Refund consideration on a case-by-case basis</li>
-            </ul>
+            <div className="alert alert-success">
+              <p>
+                If you cannot complete a course due to a medical emergency or
+                unforeseen life event, contact us with documentation. We may
+                offer:
+              </p>
+              <ul className="mb-0">
+                <li>Extended access to the course (freeze account)</li>
+                <li>Course transfer to another user (one-time only)</li>
+                <li>Refund consideration on a case-by-case basis</li>
+              </ul>
+            </div>
 
             <h4 className="mt-4">7.2 Course Discontinuation</h4>
-            <p>
-              If we discontinue a course you purchased, you will be offered:
-            </p>
-            <ul>
-              <li>Full refund of the purchase price</li>
-              <li>
-                OR equivalent course credit for another course of equal or
-                lesser value
-              </li>
-              <li>
-                OR lifetime access to archived course materials (if available)
-              </li>
-            </ul>
-            <p className="text-muted">
-              We will provide at least 30 days&apos; notice before discontinuing
-              any paid course.
-            </p>
+            <div className="alert alert-success">
+              <p>
+                If we discontinue a course you purchased, you will be offered:
+              </p>
+              <ul>
+                <li>Full refund of the purchase price</li>
+                <li>
+                  OR equivalent course credit for another course of equal or
+                  lesser value
+                </li>
+                <li>
+                  OR lifetime access to archived course materials (if available)
+                </li>
+              </ul>
+              <p className="text-muted mb-0">
+                We will provide at least 30 days&apos; notice before
+                discontinuing any paid course.
+              </p>
+            </div>
           </section>
 
           {/* 8. Chargebacks */}
@@ -470,7 +488,7 @@ const RefundPolicyPage = (): JSX.Element => {
           </div>
 
           {/* Footer Notice */}
-          <div className="alert alert-secondary mt-5">
+          <div className="alert alert-info mt-5">
             <h5>Acknowledgment</h5>
             <p className="mb-0">
               By making a purchase on Daniel Vision School, you acknowledge that

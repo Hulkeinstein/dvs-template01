@@ -1,15 +1,21 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service - Daniel Vision School',
-  description:
-    'Terms of Service for Daniel Vision School online learning platform',
-};
+import Link from 'next/link';
+import DarkSwitch from '@/components/Header/dark-switch';
+import { useAppContext } from '@/context/Context';
 
 const TermsOfServicePage = (): JSX.Element => {
+  const { isLightTheme, toggleTheme } = useAppContext();
+
   return (
-    <div className="container py-5">
+    <div className="container py-5 legal-page">
+      {/* Theme Toggle Button - Fixed Top Right */}
+      <div
+        style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 999 }}
+      >
+        <DarkSwitch isLight={isLightTheme} switchTheme={toggleTheme} />
+      </div>
+
       <div className="row justify-content-center">
         <div className="col-lg-10">
           {/* Header */}
@@ -19,7 +25,7 @@ const TermsOfServicePage = (): JSX.Element => {
               <strong>Last Updated:</strong> October 6, 2025 (Version
               v2025-10-06)
             </div>
-            <p className="text-muted">
+            <p>
               Welcome to Daniel Vision School. By accessing or using our online
               learning platform, you agree to be bound by these Terms of
               Service. Please read them carefully.
@@ -27,48 +33,70 @@ const TermsOfServicePage = (): JSX.Element => {
           </div>
 
           {/* Table of Contents */}
-          <div className="card mb-5">
-            <div className="card-body">
-              <h5 className="card-title">Table of Contents</h5>
-              <ol className="mb-0">
-                <li>
-                  <a href="#definitions">Definitions</a>
-                </li>
-                <li>
-                  <a href="#account">Account Creation and Management</a>
-                </li>
-                <li>
-                  <a href="#access">Course Access and License</a>
-                </li>
-                <li>
-                  <a href="#intellectual">Intellectual Property Rights</a>
-                </li>
-                <li>
-                  <a href="#prohibited">Prohibited Conduct</a>
-                </li>
-                <li>
-                  <a href="#payments">Payments and Pricing</a>
-                </li>
-                <li>
-                  <a href="#modifications">Service Modifications</a>
-                </li>
-                <li>
-                  <a href="#disclaimers">Disclaimers and Limitations</a>
-                </li>
-                <li>
-                  <a href="#termination">Termination</a>
-                </li>
-                <li>
-                  <a href="#governing">Governing Law and Dispute Resolution</a>
-                </li>
-                <li>
-                  <a href="#misc">Miscellaneous</a>
-                </li>
-                <li>
-                  <a href="#contact">Contact Information</a>
-                </li>
-              </ol>
-            </div>
+          <div className="alert alert-info mb-5">
+            <h5 className="alert-heading">Table of Contents</h5>
+            <ol className="mb-0 toc-list">
+              <li className="toc-item">
+                <a href="#definitions" className="toc-link">
+                  Definitions
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#account" className="toc-link">
+                  Account Creation and Management
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#access" className="toc-link">
+                  Course Access and License
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#intellectual" className="toc-link">
+                  Intellectual Property Rights
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#prohibited" className="toc-link">
+                  Prohibited Conduct
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#payments" className="toc-link">
+                  Payments and Pricing
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#modifications" className="toc-link">
+                  Service Modifications
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#disclaimers" className="toc-link">
+                  Disclaimers and Limitations
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#termination" className="toc-link">
+                  Termination
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#governing" className="toc-link">
+                  Governing Law and Dispute Resolution
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#misc" className="toc-link">
+                  Miscellaneous
+                </a>
+              </li>
+              <li className="toc-item">
+                <a href="#contact" className="toc-link">
+                  Contact Information
+                </a>
+              </li>
+            </ol>
           </div>
 
           {/* 1. Definitions */}
@@ -249,7 +277,7 @@ const TermsOfServicePage = (): JSX.Element => {
                 access the Platform
               </li>
             </ul>
-            <p className="alert alert-warning mt-3">
+            <p className="alert alert-info mt-3">
               <strong>
                 Violation of these terms may result in immediate account
                 termination without refund.
@@ -322,7 +350,7 @@ const TermsOfServicePage = (): JSX.Element => {
             <h2>8. Disclaimers and Limitations of Liability</h2>
 
             <h4 className="mt-4">8.1 &quot;AS IS&quot; Disclaimer</h4>
-            <p className="alert alert-warning">
+            <p className="alert alert-info">
               THE SERVICE IS PROVIDED &quot;AS IS&quot; WITHOUT WARRANTIES OF
               ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
               MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR
@@ -402,27 +430,29 @@ const TermsOfServicePage = (): JSX.Element => {
             </p>
 
             <h4 className="mt-4">10.2 Dispute Resolution</h4>
-            <p>
-              Any disputes arising from these Terms or the Service shall be
-              resolved through:
-            </p>
-            <ol>
-              <li>
-                <strong>Informal Negotiation:</strong> Contact us at{' '}
-                <a href="mailto:legal@dvs-education.com">
-                  legal@dvs-education.com
-                </a>{' '}
-                for amicable resolution (30 days).
-              </li>
-              <li>
-                <strong>Mediation:</strong> If negotiation fails, parties agree
-                to mediation before litigation.
-              </li>
-              <li>
-                <strong>Arbitration/Litigation:</strong> Unresolved disputes
-                shall be settled in the courts of Muscat, Oman.
-              </li>
-            </ol>
+            <div className="alert alert-warning">
+              <p>
+                Any disputes arising from these Terms or the Service shall be
+                resolved through:
+              </p>
+              <ol className="mb-0">
+                <li>
+                  <strong>Informal Negotiation:</strong> Contact us at{' '}
+                  <a href="mailto:legal@dvs-education.com">
+                    legal@dvs-education.com
+                  </a>{' '}
+                  for amicable resolution (30 days).
+                </li>
+                <li>
+                  <strong>Mediation:</strong> If negotiation fails, parties
+                  agree to mediation before litigation.
+                </li>
+                <li>
+                  <strong>Arbitration/Litigation:</strong> Unresolved disputes
+                  shall be settled in the courts of Muscat, Oman.
+                </li>
+              </ol>
+            </div>
 
             <h4 className="mt-4">10.3 Class Action Waiver</h4>
             <p>
@@ -484,40 +514,38 @@ const TermsOfServicePage = (): JSX.Element => {
               For questions, concerns, or notices regarding these Terms of
               Service, please contact us:
             </p>
-            <div className="card">
-              <div className="card-body">
-                <p className="mb-2">
-                  <strong>Daniel Vision School</strong>
-                </p>
-                <p className="mb-2">
-                  Email:{' '}
-                  <a href="mailto:support@dvs-education.com">
-                    support@dvs-education.com
-                  </a>
-                </p>
-                <p className="mb-2">
-                  Legal Inquiries:{' '}
-                  <a href="mailto:legal@dvs-education.com">
-                    legal@dvs-education.com
-                  </a>
-                </p>
-                <p className="mb-2">
-                  Website:{' '}
-                  <a
-                    href="https://dvs-education.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    https://dvs-education.com
-                  </a>
-                </p>
-                <p className="mb-0">Location: Muscat, Sultanate of Oman</p>
-              </div>
+            <div className="alert alert-info">
+              <p className="mb-2">
+                <strong>Daniel Vision School</strong>
+              </p>
+              <p className="mb-2">
+                Email:{' '}
+                <a href="mailto:support@dvs-education.com">
+                  support@dvs-education.com
+                </a>
+              </p>
+              <p className="mb-2">
+                Legal Inquiries:{' '}
+                <a href="mailto:legal@dvs-education.com">
+                  legal@dvs-education.com
+                </a>
+              </p>
+              <p className="mb-2">
+                Website:{' '}
+                <a
+                  href="https://dvs-education.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  https://dvs-education.com
+                </a>
+              </p>
+              <p className="mb-0">Location: Muscat, Sultanate of Oman</p>
             </div>
           </section>
 
           {/* Footer Notice */}
-          <div className="alert alert-secondary mt-5">
+          <div className="alert alert-info mt-5">
             <h5>Acknowledgment</h5>
             <p className="mb-0">
               By using Daniel Vision School, you acknowledge that you have read,
