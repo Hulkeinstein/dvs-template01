@@ -211,7 +211,7 @@
 
     // 체크박스 라벨 (필수 항목)
     .check-box label {
-        font-size: 1rem;
+        font-size: 1.1rem;
 
         // 링크 색상 유지
         a {
@@ -221,7 +221,7 @@
 
     // Optional 체크박스 (구분 필요)
     .optional-consent {
-        font-size: 0.95rem;
+        font-size: 1.2rem;
         color: var(--color-body);
         opacity: 0.85;
     }
