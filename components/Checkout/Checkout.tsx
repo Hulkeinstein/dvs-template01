@@ -42,7 +42,6 @@ const Checkout = (): JSX.Element => {
   const checkoutFormRef = useRef<CheckoutFormRef>(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
     useState<string>('stripe');
-  const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Constants
@@ -68,11 +67,6 @@ const Checkout = (): JSX.Element => {
   const handlePlaceOrder = async () => {
     setPaymentError(null);
 
-    if (!agreeToTerms) {
-      setPaymentError('Please accept the terms & conditions');
-      return;
-    }
-
     if (!checkoutFormRef.current) {
       setPaymentError('Form not ready, please try again');
       return;
@@ -84,11 +78,6 @@ const Checkout = (): JSX.Element => {
 
   const handleFreeEnrollment = async () => {
     setPaymentError(null);
-
-    if (!agreeToTerms) {
-      setPaymentError('Please accept the terms & conditions');
-      return;
-    }
 
     if (!checkoutFormRef.current) {
       setPaymentError('Form not ready, please try again');
@@ -262,17 +251,6 @@ const Checkout = (): JSX.Element => {
                   </div>
                 )}
 
-                <div className="single-method">
-                  <input
-                    type="checkbox"
-                    id="accept_terms"
-                    checked={agreeToTerms}
-                    onChange={(e) => setAgreeToTerms(e.target.checked)}
-                  />
-                  <label htmlFor="accept_terms">
-                    I&apos;ve read and accept the terms & conditions
-                  </label>
-                </div>
                 <div className="plceholder-button mt--50">
                   {isFreeOrder ? (
                     <button
