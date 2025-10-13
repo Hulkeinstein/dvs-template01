@@ -7,12 +7,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
 import { useCart } from '@/hooks/useCart';
 
-import CartItems from './CartItems.tsx';
+import CartItems from './CartItems';
+import { CartItem, CartState } from '@/types/cart';
 
-const CartPage = () => {
+// Redux root state type
+interface RootState {
+  CartReducer: CartState;
+}
+
+const CartPage = (): JSX.Element => {
+  // Feature flag: 물리적 상품(교재, 자격증 등) 판매 시 true로 변경
+  // 온라인 코스는 디지털 상품이므로 배송비 불필요
+  const ENABLE_SHIPPING = false;
+
   const dispatch = useDispatch();
   const { cart, total_amount, shipping_fee } = useSelector(
-    (state) => state.CartReducer
+    (state: RootState) => state.CartReducer
   );
   const { saveCart } = useCart();
 
@@ -41,7 +51,7 @@ const CartPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {cart.map((item) => {
+                      {cart.map((item: CartItem) => {
                         return <CartItems key={item.id} {...item} />;
                       })}
                     </tbody>
@@ -51,56 +61,59 @@ const CartPage = () => {
 
               <div className="row g-5">
                 <div className="col-lg-6 col-12">
-                  <div className="calculate-shipping edu-bg-shade">
-                    <div className="section-title text-start">
-                      <h4 className="title mb--30">Calculate Shipping</h4>
-                    </div>
-                    <form action="#">
-                      <div className="row">
-                        <div className="col-md-6 col-12 mb--25">
-                          <div className="rbt-modern-select bg-transparent height-45">
-                            <select className="w-100">
-                              <option>Bangladesh</option>
-                              <option>China</option>
-                              <option>country</option>
-                              <option>India</option>
-                              <option>Japan</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="col-md-6 col-12 mb--25">
-                          <div className="rbt-modern-select bg-transparent height-45">
-                            <select className="w-100">
-                              <option>Dhaka</option>
-                              <option>Barisal</option>
-                              <option>Khulna</option>
-                              <option>Comilla</option>
-                              <option>Chittagong</option>
-                            </select>
-                          </div>
-                        </div>
-                        <div className="col-md-6 col-12 mb--25">
-                          <input type="text" placeholder="Postcode / Zip" />
-                        </div>
-                        <div className="col-md-6 col-12 mb--25">
-                          <Link
-                            className="rbt-btn btn-gradient hover-icon-reverse btn-sm"
-                            href="#"
-                          >
-                            <span className="icon-reverse-wrapper">
-                              <span className="btn-text">Estimate</span>
-                              <span className="btn-icon">
-                                <i className="feather-arrow-right"></i>
-                              </span>
-                              <span className="btn-icon">
-                                <i className="feather-arrow-right"></i>
-                              </span>
-                            </span>
-                          </Link>
-                        </div>
+                  {/* 배송비 계산 섹션 - 물리적 상품 판매 시에만 표시 */}
+                  {ENABLE_SHIPPING && (
+                    <div className="calculate-shipping edu-bg-shade">
+                      <div className="section-title text-start">
+                        <h4 className="title mb--30">Calculate Shipping</h4>
                       </div>
-                    </form>
-                  </div>
+                      <form action="#">
+                        <div className="row">
+                          <div className="col-md-6 col-12 mb--25">
+                            <div className="rbt-modern-select bg-transparent height-45">
+                              <select className="w-100">
+                                <option>Bangladesh</option>
+                                <option>China</option>
+                                <option>country</option>
+                                <option>India</option>
+                                <option>Japan</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="col-md-6 col-12 mb--25">
+                            <div className="rbt-modern-select bg-transparent height-45">
+                              <select className="w-100">
+                                <option>Dhaka</option>
+                                <option>Barisal</option>
+                                <option>Khulna</option>
+                                <option>Comilla</option>
+                                <option>Chittagong</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="col-md-6 col-12 mb--25">
+                            <input type="text" placeholder="Postcode / Zip" />
+                          </div>
+                          <div className="col-md-6 col-12 mb--25">
+                            <Link
+                              className="rbt-btn btn-gradient hover-icon-reverse btn-sm"
+                              href="#"
+                            >
+                              <span className="icon-reverse-wrapper">
+                                <span className="btn-text">Estimate</span>
+                                <span className="btn-icon">
+                                  <i className="feather-arrow-right"></i>
+                                </span>
+                                <span className="btn-icon">
+                                  <i className="feather-arrow-right"></i>
+                                </span>
+                              </span>
+                            </Link>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  )}
 
                   <div className="discount-coupon edu-bg-shade">
                     <div className="section-title text-start">
@@ -138,12 +151,19 @@ const CartPage = () => {
                       <p>
                         Sub Total <span>${total_amount}.00</span>
                       </p>
-                      <p>
-                        Shipping Cost <span>${shipping_fee}.00</span>
-                      </p>
+                      {ENABLE_SHIPPING && (
+                        <p>
+                          Shipping Cost <span>${shipping_fee}.00</span>
+                        </p>
+                      )}
                       <h2>
                         Grand Total
-                        <span>${total_amount + shipping_fee}.00</span>
+                        <span>
+                          $
+                          {ENABLE_SHIPPING
+                            ? (total_amount + shipping_fee).toFixed(2)
+                            : total_amount.toFixed(2)}
+                        </span>
                       </h2>
                     </div>
 
