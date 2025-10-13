@@ -20,6 +20,10 @@ const CartPage = (): JSX.Element => {
   // 온라인 코스는 디지털 상품이므로 배송비 불필요
   const ENABLE_SHIPPING = false;
 
+  // Feature flag: 쿠폰 시스템 구현 시 true로 변경
+  // 현재는 백엔드 로직(검증, 할인 계산)이 없어 UI만 비활성화
+  const ENABLE_COUPONS = false;
+
   const dispatch = useDispatch();
   const { cart, total_amount, shipping_fee } = useSelector(
     (state: RootState) => state.CartReducer
@@ -115,31 +119,34 @@ const CartPage = (): JSX.Element => {
                     </div>
                   )}
 
-                  <div className="discount-coupon edu-bg-shade">
-                    <div className="section-title text-start">
-                      <h4 className="title mb--30">Discount Coupon Code</h4>
-                    </div>
-                    <form action="#">
-                      <div className="row">
-                        <div className="col-md-6 col-12 mb--25">
-                          <input type="text" placeholder="Coupon Code" />
-                        </div>
-                        <div className="col-md-6 col-12 mb--25">
-                          <button className="rbt-btn btn-gradient hover-icon-reverse btn-sm">
-                            <span className="icon-reverse-wrapper">
-                              <span className="btn-text">Apply Code</span>
-                              <span className="btn-icon">
-                                <i className="feather-arrow-right"></i>
-                              </span>
-                              <span className="btn-icon">
-                                <i className="feather-arrow-right"></i>
-                              </span>
-                            </span>
-                          </button>
-                        </div>
+                  {/* 쿠폰 코드 섹션 - 쿠폰 시스템 구현 시에만 표시 */}
+                  {ENABLE_COUPONS && (
+                    <div className="discount-coupon edu-bg-shade">
+                      <div className="section-title text-start">
+                        <h4 className="title mb--30">Discount Coupon Code</h4>
                       </div>
-                    </form>
-                  </div>
+                      <form action="#">
+                        <div className="row">
+                          <div className="col-md-6 col-12 mb--25">
+                            <input type="text" placeholder="Coupon Code" />
+                          </div>
+                          <div className="col-md-6 col-12 mb--25">
+                            <button className="rbt-btn btn-gradient hover-icon-reverse btn-sm">
+                              <span className="icon-reverse-wrapper">
+                                <span className="btn-text">Apply Code</span>
+                                <span className="btn-icon">
+                                  <i className="feather-arrow-right"></i>
+                                </span>
+                                <span className="btn-icon">
+                                  <i className="feather-arrow-right"></i>
+                                </span>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  )}
                 </div>
 
                 <div className="col-lg-5 offset-lg-1 col-12">
