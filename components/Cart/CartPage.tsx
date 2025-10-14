@@ -175,7 +175,7 @@ const CartPage = (): JSX.Element => {
                     </div>
 
                     <div className="cart-submit-btn-group">
-                      <div className="single-button w-100">
+                      <div className="single-button w-50">
                         <Link
                           href="/checkout"
                           className="rbt-btn btn-gradient rbt-switch-btn rbt-switch-y w-100 text-center"
