@@ -32,14 +32,11 @@ const CourseDetailsOne = ({ checkMatchCourses }) => {
           const rawId = checkMatchCourses.id;
           const normalizedId = normalizeId(rawId);
 
-          console.log('[Review Debug] Raw course ID:', rawId);
-          console.log('[Review Debug] Normalized course ID:', normalizedId);
-          console.log('[Review Debug] Course data:', checkMatchCourses);
+          // Debug logging removed for cleaner console
 
           // 정규화된 ID로 리뷰 통계 가져오기
           const stats = await getCourseReviewStats(normalizedId);
 
-          console.log('[Review Debug] Review stats response:', stats);
 
           // 응답이 없거나 비어있어도 기본값 설정
           const safeStats = stats || {
@@ -50,14 +47,8 @@ const CourseDetailsOne = ({ checkMatchCourses }) => {
           };
 
           setReviewStats(safeStats);
-          console.log('[Review Debug] Final review stats set:', safeStats);
         } catch (error) {
-          console.error('[Review Debug] Failed to fetch review stats:', error);
-          console.error('[Review Debug] Error details:', {
-            message: error.message,
-            stack: error.stack,
-            courseId: checkMatchCourses.id,
-          });
+          console.error('Failed to fetch review stats:', error);
 
           // 에러 발생 시에도 기본값으로 설정 (리뷰 섹션이 표시되도록)
           const defaultStats = {
@@ -67,10 +58,8 @@ const CourseDetailsOne = ({ checkMatchCourses }) => {
             percentages: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
           };
           setReviewStats(defaultStats);
-          console.log('[Review Debug] Using default stats due to error');
         }
       } else {
-        console.log('[Review Debug] No course ID available');
         // ID가 없어도 기본값 설정
         const defaultStats = {
           averageRating: 0,
@@ -84,10 +73,6 @@ const CourseDetailsOne = ({ checkMatchCourses }) => {
       // Extract instructor data from courseInstructor
       if (checkMatchCourses?.courseInstructor?.[0]) {
         setInstructor(checkMatchCourses.courseInstructor[0]);
-        console.log(
-          '[Review Debug] Instructor data set:',
-          checkMatchCourses.courseInstructor[0]
-        );
       }
     };
 

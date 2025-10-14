@@ -45,7 +45,7 @@ const nextConfig = {
                 : "script-src 'self' 'unsafe-inline'",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
-              "font-src 'self' https:",
+              "font-src 'self' data: https:",
               // Supabase 실시간 연결 추가
               "connect-src 'self' https://datvqaemqzhgitxxfvar.supabase.co wss://datvqaemqzhgitxxfvar.supabase.co",
               "frame-ancestors 'none'",

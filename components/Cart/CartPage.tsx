@@ -55,9 +55,32 @@ const CartPage = (): JSX.Element => {
                       </tr>
                     </thead>
                     <tbody>
-                      {cart.map((item: CartItem) => {
-                        return <CartItems key={item.id} {...item} />;
-                      })}
+                      {cart.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="text-center py-5">
+                            <div className="empty-cart-message">
+                              <i
+                                className="feather-shopping-cart mb-3"
+                                style={{ fontSize: '48px', color: '#6b7385' }}
+                              ></i>
+                              <h4>Your cart is empty</h4>
+                              <p className="text-muted mb-4">
+                                Looks like you haven't added any courses yet.
+                              </p>
+                              <Link
+                                href="/course-filter"
+                                className="rbt-btn btn-gradient btn-sm"
+                              >
+                                <span className="btn-text">Browse Courses</span>
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        cart.map((item: CartItem) => {
+                          return <CartItems key={item.id} {...item} />;
+                        })
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -149,43 +172,45 @@ const CartPage = (): JSX.Element => {
                   )}
                 </div>
 
-                <div className="col-lg-5 offset-lg-1 col-12">
-                  <div className="cart-summary">
-                    <div className="cart-summary-wrap">
-                      <div className="section-title text-start">
-                        <h4 className="title mb--30">CartPage Summary</h4>
-                      </div>
-                      <p>
-                        Sub Total <span>${total_amount}.00</span>
-                      </p>
-                      {ENABLE_SHIPPING && (
+                {cart.length > 0 && (
+                  <div className="col-lg-5 offset-lg-1 col-12">
+                    <div className="cart-summary">
+                      <div className="cart-summary-wrap">
+                        <div className="section-title text-start">
+                          <h4 className="title mb--30">Cart Summary</h4>
+                        </div>
                         <p>
-                          Shipping Cost <span>${shipping_fee}.00</span>
+                          Sub Total <span>${total_amount.toFixed(2)}</span>
                         </p>
-                      )}
-                      <h2>
-                        Grand Total
-                        <span>
-                          $
-                          {ENABLE_SHIPPING
-                            ? (total_amount + shipping_fee).toFixed(2)
-                            : total_amount.toFixed(2)}
-                        </span>
-                      </h2>
-                    </div>
+                        {ENABLE_SHIPPING && (
+                          <p>
+                            Shipping Cost <span>${shipping_fee.toFixed(2)}</span>
+                          </p>
+                        )}
+                        <h2>
+                          Grand Total
+                          <span>
+                            $
+                            {ENABLE_SHIPPING
+                              ? (total_amount + shipping_fee).toFixed(2)
+                              : total_amount.toFixed(2)}
+                          </span>
+                        </h2>
+                      </div>
 
-                    <div className="cart-submit-btn-group">
-                      <div className="single-button w-50">
-                        <Link
-                          href="/checkout"
-                          className="rbt-btn btn-gradient rbt-switch-btn rbt-switch-y w-100 text-center"
-                        >
-                          <span data-text="Checkout">Checkout</span>
-                        </Link>
+                      <div className="cart-submit-btn-group">
+                        <div className="single-button w-50">
+                          <Link
+                            href="/checkout"
+                            className="rbt-btn btn-gradient rbt-switch-btn rbt-switch-y w-100 text-center"
+                          >
+                            <span data-text="Checkout">Checkout</span>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>

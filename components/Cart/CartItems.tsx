@@ -18,8 +18,8 @@ const CartItems: React.FC<CartItemsProps> = ({ id, product, amount }) => {
   const dispatch = useDispatch<any>();
 
   // 타입 기반 판단 (레거시 호환성 포함)
-  const isCourse = product.kind === 'course' ||
-                   !!(product.courseTitle || product.title);
+  const isCourse =
+    product.kind === 'course' || !!(product.courseTitle || product.title);
 
   const increasePrice = () => {
     // 코스는 수량 증가 불가
@@ -51,7 +51,12 @@ const CartItems: React.FC<CartItemsProps> = ({ id, product, amount }) => {
   };
 
   const getProductImage = (): string => {
-    return product.courseImg || product.eventImg || product.thumbnail_url || '/images/course/course-01.jpg';
+    return (
+      product.courseImg ||
+      product.eventImg ||
+      product.thumbnail_url ||
+      '/images/course/course-01.jpg'
+    );
   };
 
   const getProductTitle = (): string => {
@@ -68,13 +73,13 @@ const CartItems: React.FC<CartItemsProps> = ({ id, product, amount }) => {
     textAlign: 'center' as const,
     backgroundColor: 'transparent',
     boxShadow: 'none',
-    color: 'var(--color-white-off)'
+    color: 'var(--color-white-off)',
   };
 
   const disabledButtonStyle: React.CSSProperties = {
     opacity: 0.3,
     cursor: 'not-allowed',
-    pointerEvents: 'none' as const
+    pointerEvents: 'none' as const,
   };
 
   return (
@@ -90,12 +95,10 @@ const CartItems: React.FC<CartItemsProps> = ({ id, product, amount }) => {
         </Link>
       </td>
       <td className="pro-title">
-        <Link href={getProductLink()}>
-          {getProductTitle()}
-        </Link>
+        <Link href={getProductLink()}>{getProductTitle()}</Link>
       </td>
       <td className="pro-price">
-        <span>${product.price}.00</span>
+        <span>${product.price.toFixed(2)}</span>
       </td>
       <td className="pro-quantity">
         <div className="pro-qty">
@@ -135,10 +138,15 @@ const CartItems: React.FC<CartItemsProps> = ({ id, product, amount }) => {
         </div>
       </td>
       <td className="pro-subtotal">
-        <span>${product.price * amount}.00</span>
+        <span>${(product.price * amount).toFixed(2)}</span>
       </td>
       <td className="pro-remove">
-        <Link href="#" onClick={handleDelete}>
+        <Link
+          href="#"
+          onClick={handleDelete}
+          aria-label={`Remove ${getProductTitle()} from cart`}
+          title={`Remove ${getProductTitle()}`}
+        >
           <i className="feather-x"></i>
         </Link>
       </td>
