@@ -560,8 +560,7 @@
                 overflow: hidden;
 
                 img {
-                    width: 100%;
-                    height: 100%;
+                    // width and height removed - Next.js Image fill handles sizing
                     object-fit: cover; // 비율 유지하며 영역 채우기
                     object-position: center; // 이미지 중앙 정렬
                     border-radius: var(--radius);
@@ -576,8 +575,7 @@
                     height: 150px; // 리스트 뷰에서는 더 작은 높이
 
                     img {
-                        width: 100%;
-                        height: 100%;
+                        // width and height removed - Next.js Image fill handles sizing
                         object-fit: cover;
                         border-radius: 2px 0 0 2px;
                     }
@@ -602,8 +600,7 @@
                 overflow: hidden;
 
                 img {
-                    width: 100%;
-                    height: 100%;
+                    // width and height removed - Next.js Image fill handles sizing
                     object-fit: cover;
                     border-radius: var(--radius);
                 }
