@@ -456,6 +456,8 @@ export async function createOrder(
         // 4. Create PayPal order directly using SDK
         const request = new paypal.orders.OrdersCreateRequest();
         request.prefer('return=representation');
+        // @ts-expect-error - PayPal SDK types don't include headers property but it exists at runtime
+        request.headers['Content-Type'] = 'application/json';
         request.requestBody({
           intent: 'CAPTURE',
           purchase_units: [
@@ -682,7 +684,10 @@ export async function capturePayPalOrderAction(paypalOrderId: string) {
     const request = new paypal.orders.OrdersCaptureRequest(paypalOrderId);
     // Set idempotency header for duplicate prevention
     // @ts-expect-error - PayPal SDK types don't include headers property but it exists at runtime
-    request.headers = { 'PayPal-Request-Id': `capture-${paypalOrderId}` };
+    request.headers = {
+      'PayPal-Request-Id': `capture-${paypalOrderId}`,
+      'Content-Type': 'application/json',
+    };
     request.requestBody({});
 
     const capture = await paypalClient.execute(request);
