@@ -40,8 +40,14 @@ const Checkout = (): JSX.Element => {
   );
 
   const checkoutFormRef = useRef<CheckoutFormRef>(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<string>('stripe');
+
+  // Check if Stripe is enabled
+  const isStripeEnabled = process.env.NEXT_PUBLIC_STRIPE_ENABLED === 'true';
+
+  // Set default payment method to PayPal if Stripe is disabled, otherwise Stripe
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
+    isStripeEnabled ? 'stripe' : 'paypal'
+  );
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
   // Constants
@@ -174,6 +180,7 @@ const Checkout = (): JSX.Element => {
                       className="checkout-payment-method accordion rbt-accordion-style rbt-accordion-05 accordion"
                       id="accordionExamplea1"
                     >
+                      {/* Stripe payment option - disabled if not enabled */}
                       <div className="single-method">
                         <input
                           type="radio"
@@ -184,6 +191,7 @@ const Checkout = (): JSX.Element => {
                           onChange={(e) =>
                             handlePaymentMethodChange(e.target.value)
                           }
+                          disabled={!isStripeEnabled}
                         />
                         <label
                           htmlFor="payment_stripe"
@@ -191,8 +199,18 @@ const Checkout = (): JSX.Element => {
                           data-bs-target="#stripe"
                           aria-expanded="true"
                           aria-controls="stripe"
+                          style={
+                            !isStripeEnabled
+                              ? { opacity: 0.5, cursor: 'not-allowed' }
+                              : {}
+                          }
                         >
                           Credit/Debit Card (Stripe)
+                          {!isStripeEnabled && (
+                            <span className="text-muted ms-2">
+                              (Coming Soon)
+                            </span>
+                          )}
                         </label>
                         <div
                           className="accordion-collapse collapse show"
