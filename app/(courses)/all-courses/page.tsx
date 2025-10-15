@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   description: 'Browse all available courses',
 };
 
+// Disable caching to always fetch fresh course data
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const AllCoursesLayout = async (): Promise<JSX.Element> => {
   // SSR: Fetch data on server
   // Only show published courses to students
