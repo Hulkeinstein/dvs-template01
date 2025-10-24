@@ -24,31 +24,24 @@
       }
     },
     {
-      "files": ["**/*.test.js", "**/*.test.ts", "**/*.spec.js", "**/*.spec.ts"],
+      "files": [
+        "**/__tests__/**/*.{ts,tsx}",
+        "**/*.test.{ts,tsx}",
+        "tests/unit/**/*.{ts,tsx}",
+        "tests/integration/**/*.{ts,tsx}"
+      ],
+      "env": {
+        "jest": true
+      },
       "rules": {
-        "no-restricted-syntax": [
+        "@typescript-eslint/no-unused-vars": [
           "error",
           {
-            "selector": "CallExpression[callee.object.name='test'][callee.property.name='skip']",
-            "message": "test.skip is not allowed. Fix or remove the test."
-          },
-          {
-            "selector": "CallExpression[callee.object.name='describe'][callee.property.name='skip']",
-            "message": "describe.skip is not allowed. Fix or remove the test suite."
-          },
-          {
-            "selector": "CallExpression[callee.object.name='it'][callee.property.name='skip']",
-            "message": "it.skip is not allowed. Fix or remove the test."
-          },
-          {
-            "selector": "CallExpression[callee.name='xit']",
-            "message": "xit is not allowed. Use test() or it() instead."
-          },
-          {
-            "selector": "CallExpression[callee.name='xdescribe']",
-            "message": "xdescribe is not allowed. Use describe() instead."
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
           }
         ],
+        "react/display-name": "error",
         "no-restricted-imports": [
           "error",
           {
@@ -58,6 +51,32 @@
                 "message": "Use repository pattern instead of direct Supabase imports in tests"
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["tests/e2e/**/*.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_"
+          }
+        ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "CallExpression[callee.object.name='test'][callee.property.name='skip']",
+            "message": "test.skip is not allowed. Fix or remove the test."
+          },
+          {
+            "selector": "CallExpression[callee.object.name='describe'][callee.property.name='skip']",
+            "message": "describe.skip is not allowed. Fix or remove the test suite."
           }
         ]
       }

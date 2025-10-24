@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 import 'venobox/dist/venobox.min.css';
 
@@ -12,6 +13,9 @@ import { useAppContext } from '@/context/Context';
 import { addToCartAction } from '@/redux/action/CartAction';
 import { CartProduct, CartState } from '@/types/cart';
 import { useCart } from '@/hooks/useCart';
+import { getUserBookmarks } from '@/app/lib/actions/bookmarkActions';
+import { enrollInCourse } from '@/app/lib/actions/enrollmentActions';
+import BookmarkButton from '@/components/Common/BookmarkButton';
 
 interface RoadmapItem {
   text: string;
@@ -25,6 +29,7 @@ interface CourseData extends CartProduct {
   offPrice?: number;
   days?: string;
   roadmap?: RoadmapItem[];
+  is_free?: boolean;
 }
 
 interface Instructor {
@@ -45,11 +50,18 @@ interface RootState {
   CartReducer: CartState;
 }
 
-const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => {
+const Viedo: React.FC<ViedoProps> = ({
+  checkMatchCourses,
+  instructor = {},
+}) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = useSession();
   const { cartToggle, setCart } = useAppContext();
   const [toggle, setToggle] = useState(false);
   const [hideOnScroll, setHideOnScroll] = useState(false);
+  const [isBookmarkedInitial, setIsBookmarkedInitial] = useState(false);
+  const [isEnrolling, setIsEnrolling] = useState(false);
 
   const disableVideo = [
     '/course-detail-2',
@@ -80,11 +92,15 @@ const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => 
       kind: 'course',
       courseId: product.courseId || product.id || '',
       courseTitle: product.courseTitle || product.title || '',
-      productKey: product.productKey || `course:${product.id || product.courseId || (product.title || '').toLowerCase()}`,
+      productKey:
+        product.productKey ||
+        `course:${product.id || product.courseId || (product.title || '').toLowerCase()}`,
     };
 
     // 코스는 항상 수량 1로 카트에 추가
-    dispatch(addToCartAction(normalizedProduct.courseId || id, 1, normalizedProduct));
+    dispatch(
+      addToCartAction(normalizedProduct.courseId || id, 1, normalizedProduct)
+    );
     setCart(!cartToggle);
   };
 
@@ -97,6 +113,55 @@ const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => 
     e.preventDefault();
     // Add single item to cart and go to checkout
     addToCartFun(checkMatchCourses.id || '', 1, checkMatchCourses);
+  };
+
+  // Check bookmark status
+  useEffect(() => {
+    const checkBookmark = async () => {
+      if (session?.user?.id && checkMatchCourses.id) {
+        try {
+          const bookmarks = await getUserBookmarks(session.user.id);
+          const isCurrentlyBookmarked = bookmarks.some(
+            (b: any) => b.course_id === checkMatchCourses.id
+          );
+          setIsBookmarkedInitial(isCurrentlyBookmarked);
+        } catch (error) {
+          console.error('Error checking bookmark:', error);
+        }
+      }
+    };
+    checkBookmark();
+  }, [session?.user?.id, checkMatchCourses.id]);
+
+  const handleEnrollNow = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!session?.user?.id) {
+      router.push('/login');
+      return;
+    }
+
+    if (!checkMatchCourses?.id) {
+      alert('Course information is not available');
+      return;
+    }
+
+    setIsEnrolling(true);
+    try {
+      const result = await enrollInCourse({
+        userId: session.user.id,
+        courseId: checkMatchCourses.id,
+      });
+      if (result.success) {
+        router.push('/dashboard');
+      } else {
+        alert(result.error || 'Failed to enroll in course');
+      }
+    } catch (error) {
+      console.error('Error enrolling:', error);
+      alert('Failed to enroll in course');
+    } finally {
+      setIsEnrolling(false);
+    }
   };
 
   useEffect(() => {
@@ -127,16 +192,21 @@ const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => 
   }, []);
 
   const getVideoUrl = (): string => {
-    return checkMatchCourses.previewVideoUrl || 'https://www.youtube.com/watch?v=nA1Aqp0sPQo';
+    return (
+      checkMatchCourses.previewVideoUrl ||
+      'https://www.youtube.com/watch?v=nA1Aqp0sPQo'
+    );
   };
 
   const getEmbedUrl = (): string => {
     const videoUrl = checkMatchCourses.previewVideoUrl;
     if (videoUrl) {
-      return videoUrl
-        .replace('watch?v=', 'embed/')
-        .replace('youtu.be/', 'youtube.com/embed/') +
-        '?autoplay=0&controls=1&rel=0&modestbranding=1';
+      return (
+        videoUrl
+          .replace('watch?v=', 'embed/')
+          .replace('youtu.be/', 'youtube.com/embed/') +
+        '?autoplay=0&controls=1&rel=0&modestbranding=1'
+      );
     }
     return 'https://www.youtube.com/embed/DR9lxZ8kPYQ?autoplay=0&controls=1&rel=0&modestbranding=1';
   };
@@ -199,42 +269,72 @@ const Viedo: React.FC<ViedoProps> = ({ checkMatchCourses, instructor = {} }) => 
       <div className="content-item-content">
         <div className="rbt-price-wrapper d-flex flex-wrap align-items-center justify-content-between">
           <div className="rbt-price">
-            <span className="current-price">{formatPrice(checkMatchCourses.price)}</span>
-            <span className="off-price">{formatPrice(checkMatchCourses.offPrice)}</span>
-          </div>
-          <div className="discount-time">
-            <span className="rbt-badge color-danger bg-color-danger-opacity">
-              <i className="feather-clock"></i> {checkMatchCourses.days || '3'} days
-              left!
+            <span className="current-price">
+              {formatPrice(checkMatchCourses.price)}
             </span>
+            <span className="off-price">
+              {formatPrice(checkMatchCourses.offPrice)}
+            </span>
+          </div>
+          <div className="d-flex align-items-center gap-3">
+            <BookmarkButton
+              courseId={checkMatchCourses.id || ''}
+              initialBookmarked={isBookmarkedInitial}
+              variant="button"
+            />
+            <div className="discount-time">
+              <span className="rbt-badge color-danger bg-color-danger-opacity">
+                <i className="feather-clock"></i>{' '}
+                {checkMatchCourses.days || '3'} days left!
+              </span>
+            </div>
           </div>
         </div>
 
-        <div className="add-to-card-button mt--15">
-          <Link
-            className="rbt-btn btn-gradient icon-hover w-100 d-block text-center"
-            href="#"
-            onClick={handleAddToCart}
-          >
-            <span className="btn-text">Add to Cart</span>
-            <span className="btn-icon">
-              <i className="feather-arrow-right"></i>
-            </span>
-          </Link>
-        </div>
+        {checkMatchCourses.is_free ? (
+          <div className="add-to-card-button mt--15">
+            <Link
+              className="rbt-btn btn-gradient icon-hover w-100 d-block text-center"
+              href="#"
+              onClick={handleEnrollNow}
+            >
+              <span className="btn-text">
+                {isEnrolling ? 'Enrolling...' : 'Enroll Now'}
+              </span>
+              <span className="btn-icon">
+                <i className="feather-check-circle"></i>
+              </span>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="add-to-card-button mt--15">
+              <Link
+                className="rbt-btn btn-gradient icon-hover w-100 d-block text-center"
+                href="#"
+                onClick={handleAddToCart}
+              >
+                <span className="btn-text">Add to Cart</span>
+                <span className="btn-icon">
+                  <i className="feather-arrow-right"></i>
+                </span>
+              </Link>
+            </div>
 
-        <div className="buy-now-btn mt--15">
-          <Link
-            className="rbt-btn btn-border icon-hover w-100 d-block text-center"
-            href="/checkout"
-            onClick={handleBuyNow}
-          >
-            <span className="btn-text">Buy Now</span>
-            <span className="btn-icon">
-              <i className="feather-arrow-right"></i>
-            </span>
-          </Link>
-        </div>
+            <div className="buy-now-btn mt--15">
+              <Link
+                className="rbt-btn btn-border icon-hover w-100 d-block text-center"
+                href="/checkout"
+                onClick={handleBuyNow}
+              >
+                <span className="btn-text">Buy Now</span>
+                <span className="btn-icon">
+                  <i className="feather-arrow-right"></i>
+                </span>
+              </Link>
+            </div>
+          </>
+        )}
         <span className="subtitle">
           <i className="feather-rotate-ccw"></i> 30-Day Money-Back Guarantee
         </span>

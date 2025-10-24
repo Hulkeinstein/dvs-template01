@@ -60,14 +60,13 @@ const Checkout = (): JSX.Element => {
   const isFreeOrder = grandTotal === 0;
 
   const handlePaymentMethodChange = (method: string) => {
-    setSelectedPaymentMethod(method);
     // Map payment method values to our system
     let mappedMethod: 'stripe' | 'paypal' | 'cash_on_delivery' = 'stripe';
     if (method === 'paypal') mappedMethod = 'paypal';
     else if (method === 'cash' || method === 'check' || method === 'bank')
       mappedMethod = 'cash_on_delivery';
 
-    checkoutFormRef.current?.setPaymentMethod(mappedMethod);
+    setSelectedPaymentMethod(mappedMethod);
   };
 
   const handlePlaceOrder = async () => {
@@ -90,8 +89,8 @@ const Checkout = (): JSX.Element => {
       return;
     }
 
-    // For free orders, set payment method to 'free' and process immediately
-    checkoutFormRef.current.setPaymentMethod('cash_on_delivery'); // Using COD for free orders
+    // For free orders, set payment method to cash_on_delivery and process immediately
+    setSelectedPaymentMethod('cash_on_delivery');
     await checkoutFormRef.current.handlePlaceOrder();
   };
 
@@ -127,7 +126,12 @@ const Checkout = (): JSX.Element => {
     <>
       <div className="container">
         <div className="row g-5 checkout-form">
-          <CheckoutForm ref={checkoutFormRef} />
+          <CheckoutForm
+            ref={checkoutFormRef}
+            paymentMethod={
+              selectedPaymentMethod as 'stripe' | 'paypal' | 'cash_on_delivery'
+            }
+          />
 
           <div className="col-lg-5">
             <div className="row pl--50 pl_md--0 pl_sm--0">
@@ -321,4 +325,8 @@ const Checkout = (): JSX.Element => {
   );
 };
 
+// Named export for testing
+export { Checkout };
+
+// Default export with dynamic loading for SSR optimization
 export default dynamic(() => Promise.resolve(Checkout), { ssr: false });
