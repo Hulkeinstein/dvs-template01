@@ -162,7 +162,7 @@ async function sendOrderConfirmationEmail(data: {
           <div style="padding: 20px;">
             <h2 style="color: #333;">Order Confirmation</h2>
             <p>Dear ${data.name},</p>
-            <p>Thank you for your order! Your order has been received and is being processed.</p>
+            <p>Thank you for your order! Your order has been received and confirmed.</p>
 
             <div style="background: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <h3 style="margin-top: 0; color: #333;">Order Details</h3>
@@ -201,12 +201,12 @@ async function sendOrderConfirmationEmail(data: {
             </table>
 
             <div style="margin-top: 30px; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px;">
-              <h4 style="margin-top: 0; color: #155724;">Next Steps</h4>
-              <p style="color: #155724;">We will process your payment and activate your course access shortly.</p>
-              <p style="color: #155724;">You will receive another email once your payment is confirmed.</p>
+              <h4 style="margin-top: 0; color: #155724;">🎉 Payment Successful!</h4>
+              <p style="color: #155724;">Your payment has been confirmed and your course access is now active.</p>
+              <p style="color: #155724;">You can start learning right away!</p>
               <p style="margin-bottom: 0; color: #155724;">
-                <a href="${process.env.NEXTAUTH_URL}/student/dashboard" style="color: #155724; font-weight: bold;">
-                  Go to your dashboard →
+                <a href="${process.env.NEXTAUTH_URL}/student-enrolled-course" style="color: #155724; font-weight: bold;">
+                  Start Learning →
                 </a>
               </p>
             </div>
@@ -817,20 +817,20 @@ export async function capturePayPalOrderAction(paypalOrderId: string) {
         hasOrderData: !!orderData,
         hasOrderItems: !!orderItems,
         hasUser: !!orderData?.user,
-        userEmail: orderData?.user?.email,
+        userEmail: (orderData?.user as any)?.email,
       });
 
       if (orderData && orderItems && orderData.user) {
         const formattedItems = orderItems.map((item) => ({
-          course_title: item.courses?.title || 'Unknown Course',
+          course_title: (item.courses as any)?.title || 'Unknown Course',
           amount: item.quantity,
           validated_price: parseFloat(item.price || '0'),
           subtotal: parseFloat(item.price || '0') * item.quantity,
         }));
 
         sendOrderConfirmationEmail({
-          email: orderData.user.email,
-          name: orderData.user.name || 'Customer',
+          email: (orderData.user as any).email,
+          name: (orderData.user as any).name || 'Customer',
           orderNumber: orderData.order_number,
           items: formattedItems,
           subtotal: parseFloat(orderData.subtotal || '0'),
