@@ -211,7 +211,8 @@ export async function getEnrolledCoursesRPC(
 
   if (error) {
     console.error('Error in getEnrolledCoursesRPC:', error);
-    return [];
+    // Propagate error to UI instead of silently returning empty array
+    throw new Error(`Failed to fetch enrolled courses: ${error.message}`);
   }
 
   return (data ?? []).map((row: any) => ({

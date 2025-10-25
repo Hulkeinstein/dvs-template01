@@ -30,7 +30,7 @@ const supabase = createClient(
 // Initialize Resend for email
 const resend = new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM =
-  process.env.EMAIL_FROM || 'DVS Education <no-reply@dvs-education.com>';
+  process.env.EMAIL_FROM || 'DVS Education <onboarding@resend.dev>';
 
 // =========================================================================
 // Helper Functions
@@ -741,6 +741,7 @@ export async function capturePayPalOrderAction(paypalOrderId: string) {
         'activate_paid_order',
         {
           p_order_id: referenceId,
+          p_event_id: paypalOrderId, // Idempotency key
         }
       );
 
@@ -763,7 +764,94 @@ export async function capturePayPalOrderAction(paypalOrderId: string) {
         activationResult
       );
 
-      // 8. Log event for idempotency
+      console.log('[CapturePayPal] Starting email process...');
+
+      // 8. Fetch order details for confirmation email
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .select(
+          `
+          id,
+          order_number,
+          subtotal,
+          tax_amount,
+          total_amount,
+          user:user_id (
+            email,
+            name
+          )
+        `
+        )
+        .eq('id', referenceId)
+        .single();
+
+      if (orderError) {
+        console.error('[CapturePayPal] Failed to fetch order:', orderError);
+      }
+
+      // 9. Fetch order items with course details
+      const { data: orderItems, error: itemsError } = await supabase
+        .from('order_items')
+        .select(
+          `
+          id,
+          course_id,
+          quantity,
+          price,
+          courses:course_id (
+            title
+          )
+        `
+        )
+        .eq('order_id', referenceId);
+
+      if (itemsError) {
+        console.error(
+          '[CapturePayPal] Failed to fetch order items:',
+          itemsError
+        );
+      }
+
+      // 10. Send order confirmation email (non-blocking)
+      console.log('[CapturePayPal] Email check:', {
+        hasOrderData: !!orderData,
+        hasOrderItems: !!orderItems,
+        hasUser: !!orderData?.user,
+        userEmail: orderData?.user?.email,
+      });
+
+      if (orderData && orderItems && orderData.user) {
+        const formattedItems = orderItems.map((item) => ({
+          course_title: item.courses?.title || 'Unknown Course',
+          amount: item.quantity,
+          validated_price: parseFloat(item.price || '0'),
+          subtotal: parseFloat(item.price || '0') * item.quantity,
+        }));
+
+        sendOrderConfirmationEmail({
+          email: orderData.user.email,
+          name: orderData.user.name || 'Customer',
+          orderNumber: orderData.order_number,
+          items: formattedItems,
+          subtotal: parseFloat(orderData.subtotal || '0'),
+          tax: parseFloat(orderData.tax_amount || '0'),
+          total: parseFloat(orderData.total_amount || '0'),
+          paymentMethod: 'paypal',
+        }).catch((emailError) => {
+          console.error('[CapturePayPal] Failed to send email:', emailError);
+          // Non-blocking - don't fail the payment
+        });
+
+        console.log('[CapturePayPal] Confirmation email queued');
+      } else {
+        console.log('[CapturePayPal] Email NOT sent - missing data:', {
+          orderData: !!orderData,
+          orderItems: !!orderItems,
+          user: !!orderData?.user,
+        });
+      }
+
+      // 11. Log event for idempotency
       await supabase.from('order_events').insert({
         stripe_event_id: paypalOrderId,
         order_id: referenceId,
