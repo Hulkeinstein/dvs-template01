@@ -62,6 +62,8 @@ const Viedo: React.FC<ViedoProps> = ({
   const [hideOnScroll, setHideOnScroll] = useState(false);
   const [isBookmarkedInitial, setIsBookmarkedInitial] = useState(false);
   const [isEnrolling, setIsEnrolling] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [checkingEnrollment, setCheckingEnrollment] = useState(true);
 
   const disableVideo = [
     '/course-detail-2',
@@ -131,6 +133,31 @@ const Viedo: React.FC<ViedoProps> = ({
       }
     };
     checkBookmark();
+  }, [session?.user?.id, checkMatchCourses.id]);
+
+  // Check enrollment status (Duplicate Payment Prevention - Layer 1: Frontend)
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      if (session?.user?.id && checkMatchCourses.id) {
+        setCheckingEnrollment(true);
+        try {
+          const response = await fetch(
+            `/api/enrollments/check?courseId=${checkMatchCourses.id}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setIsEnrolled(data.isEnrolled);
+          }
+        } catch (error) {
+          console.error('Error checking enrollment:', error);
+        } finally {
+          setCheckingEnrollment(false);
+        }
+      } else {
+        setCheckingEnrollment(false);
+      }
+    };
+    checkEnrollment();
   }, [session?.user?.id, checkMatchCourses.id]);
 
   const handleEnrollNow = async (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -303,6 +330,27 @@ const Viedo: React.FC<ViedoProps> = ({
               </span>
               <span className="btn-icon">
                 <i className="feather-check-circle"></i>
+              </span>
+            </Link>
+          </div>
+        ) : checkingEnrollment ? (
+          <div className="add-to-card-button mt--15">
+            <button
+              className="rbt-btn btn-gradient icon-hover w-100 d-block text-center"
+              disabled
+            >
+              <span className="btn-text">Checking enrollment...</span>
+            </button>
+          </div>
+        ) : isEnrolled ? (
+          <div className="add-to-card-button mt--15">
+            <Link
+              className="rbt-btn btn-gradient icon-hover w-100 d-block text-center"
+              href="/student-enrolled-course"
+            >
+              <span className="btn-text">Go to My Courses</span>
+              <span className="btn-icon">
+                <i className="feather-book-open"></i>
               </span>
             </Link>
           </div>
