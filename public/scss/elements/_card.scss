@@ -1012,3 +1012,51 @@
     }
 
 }
+
+/*-----------------------------
+    Bookmark Button Styles
+    - GPT-5 최적화: :is() 병합, currentColor 상속, .filled 상태 매칭
+-------------------------------*/
+// 기본 상태: 투명 fill, stroke만 표시
+:is(.rbt-bookmark-btn, .rbt-btn-link) i.feather-heart svg {
+    fill: none;
+    stroke: currentColor;
+    transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+// 북마크된 상태: fill 채움
+:is(.rbt-bookmark-btn, .rbt-btn-link) i.feather-heart.filled svg {
+    fill: currentColor;
+    stroke: currentColor;
+}
+
+// 색상은 컨테이너에서 제어 (currentColor 상속)
+.rbt-bookmark-btn button:hover i.feather-heart,
+.rbt-btn-link:hover i.feather-heart {
+    color: var(--color-primary);
+}
+
+.rbt-bookmark-btn i.feather-heart.filled,
+.rbt-btn-link i.feather-heart.filled {
+    color: var(--color-danger);
+}
+
+// Font Awesome 하트 아이콘 빨간색 스타일
+.rbt-bookmark-btn button.bookmark-active i.fa-heart {
+    color: #ff0000;
+}
+
+// rbt-btn-link용 하트 스타일 (course-details 페이지용)
+.rbt-btn-link i.fa-heart {
+    font-size: 20px;
+    color: inherit;
+    transition: color 0.15s ease;
+}
+
+.rbt-btn-link.bookmark-active i.fa-heart {
+    color: #ff0000;
+}
+
+.rbt-btn-link:hover i.fa-heart {
+    color: var(--color-primary);
+}
