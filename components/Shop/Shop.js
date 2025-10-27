@@ -12,6 +12,7 @@ import Pagination from '../Common/Pagination';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCartAction } from '@/redux/action/CartAction';
 import { useAppContext } from '@/context/Context';
+import { useCart } from '@/hooks/useCart';
 
 const Shop = () => {
   const { cartToggle, setCart } = useAppContext();
@@ -21,6 +22,7 @@ const Shop = () => {
   const [qty, setQty] = useState(1);
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.CartReducer);
+  const { saveCart } = useCart();
 
   const startIndex = (page - 1) * 6;
 
@@ -42,8 +44,8 @@ const Shop = () => {
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart]);
+    saveCart(cart);
+  }, [cart, saveCart]);
 
   useEffect(() => {
     setProducts(ShopData.shop);

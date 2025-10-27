@@ -1,22 +1,59 @@
 import { CourseProvider } from './CourseProvider';
 import { getCourseById } from '../actions/courseActions';
+import {
+  DatabaseCourse,
+  TransformedCourse,
+  Course
+} from '@/types/course-provider';
+
+interface Lesson {
+  id?: string;
+  title: string;
+  is_preview?: boolean;
+  video_url?: string;
+  content_type?: string;
+  duration_minutes?: number;
+}
+
+interface CourseSettings {
+  certificate_enabled?: boolean;
+}
+
+interface RawCourseData extends DatabaseCourse {
+  course_id?: string;
+  courseTitle?: string;
+  short_description?: string;
+  what_you_will_learn?: Array<{ listItem: string }>;
+  badges?: any[];
+  course_badges?: any[];
+  lessons?: Lesson[];
+  course_settings?: CourseSettings[];
+}
+
+interface Session {
+  user?: {
+    email?: string;
+  };
+}
 
 /**
  * Database Course Provider
  * Provides course data from Supabase database for real courses
  */
 export class DatabaseCourseProvider extends CourseProvider {
-  constructor(session = null) {
+  private session: Session | null;
+
+  constructor(session: Session | null = null) {
     super();
     this.session = session;
   }
 
   /**
    * Get course by ID from database
-   * @param {string} courseId - The course ID (UUID format)
-   * @returns {Promise<Object>} Course data
+   * @param courseId - The course ID (UUID format)
+   * @returns Course data
    */
-  async getCourseById(courseId) {
+  async getCourseById(courseId: string): Promise<Course | null> {
     try {
       const result = await getCourseById(courseId);
 
@@ -28,14 +65,16 @@ export class DatabaseCourseProvider extends CourseProvider {
         throw new Error(`Course with ID ${courseId} not found`);
       }
 
+      const course = result.course as RawCourseData;
+
       // Check access permissions for draft/pending courses
       if (
         this.session &&
-        (result.course.status === 'draft' || result.course.status === 'pending')
+        (course.status === 'draft' || course.status === 'pending')
       ) {
         const isOwner =
           this.session.user?.email &&
-          result.course.instructor?.email === this.session.user.email;
+          course.instructor?.email === this.session.user.email;
 
         if (!isOwner) {
           throw new Error(
@@ -44,7 +83,7 @@ export class DatabaseCourseProvider extends CourseProvider {
         }
       }
 
-      return this.transformCourse(result.course);
+      return this.transformCourse(course);
     } catch (error) {
       console.error('Error fetching course from database:', error);
       throw error;
@@ -54,11 +93,11 @@ export class DatabaseCourseProvider extends CourseProvider {
   /**
    * Convert various YouTube URL formats to standard format
    */
-  convertYouTubeUrl(url) {
+  private convertYouTubeUrl(url: string | null | undefined): string | null {
     if (!url) return null;
 
     // Remove query parameters after video ID
-    let videoId = null;
+    let videoId: string | null = null;
 
     // Handle youtu.be format
     if (url.includes('youtu.be/')) {
@@ -84,7 +123,7 @@ export class DatabaseCourseProvider extends CourseProvider {
   /**
    * Get preview video URL from course intro video or lessons
    */
-  getPreviewVideoUrl(rawData) {
+  private getPreviewVideoUrl(rawData: RawCourseData): string | null {
     // 1. First priority: Course Intro Video
     if (rawData.intro_video_url) {
       const convertedUrl = this.convertYouTubeUrl(rawData.intro_video_url);
@@ -120,18 +159,30 @@ export class DatabaseCourseProvider extends CourseProvider {
   /**
    * Transform database data to match component structure
    */
-  transformCourse(rawData) {
+  transformCourse(rawData: RawCourseData): TransformedCourse {
     const previewUrl = this.getPreviewVideoUrl(rawData);
 
     return {
       ...rawData,
+      // 명확한 타입 구분
+      kind: 'course' as const,
+
+      // 식별자 정규화
+      courseId: rawData.id || rawData.course_id || rawData.slug || '',
+      productKey: `course:${rawData.id || rawData.slug || (rawData.title || '').toLowerCase()}`,
+
       // Map database fields to component expected fields
-      courseTitle: rawData.title,
+      // 표시용 필드 (둘 다 제공)
+      courseTitle: rawData.title || rawData.courseTitle || '',
+      title: rawData.title || rawData.courseTitle || '',
+
+      // 기타 필드들
       courseImg: rawData.thumbnail_url,
       price: rawData.regular_price || 0,
       offPrice: rawData.discounted_price || rawData.regular_price || 0,
       discount:
         rawData.discounted_price &&
+        rawData.regular_price &&
         rawData.regular_price > rawData.discounted_price
           ? Math.round(
               ((rawData.regular_price - rawData.discounted_price) /
@@ -141,9 +192,9 @@ export class DatabaseCourseProvider extends CourseProvider {
           : 0,
       desc: rawData.short_description,
       sellsType: rawData.is_bestseller ? 'Bestseller' : '',
-      star: '4.8', // TODO: Calculate from actual reviews
-      ratingNumber: '0', // TODO: Get actual review count
-      studentNumber: '0', // TODO: Get actual enrollment count
+      star: '4.8', // TODO(ANY-TODO): Calculate from actual reviews
+      ratingNumber: '0', // TODO(ANY-TODO): Get actual review count
+      studentNumber: '0', // TODO(ANY-TODO): Get actual enrollment count
       userImg: rawData.instructor?.avatar_url || '/images/client/avatar-02.png',
       userName: rawData.instructor?.name,
       userCategory: rawData.instructor?.expertise || 'Instructor',
@@ -151,7 +202,7 @@ export class DatabaseCourseProvider extends CourseProvider {
         ? new Date(rawData.updated_at).toLocaleDateString()
         : '',
       language: rawData.language || 'English',
-      days: '3', // TODO: Calculate from course duration
+      days: '3', // TODO(ANY-TODO): Calculate from course duration
 
       // Include badges data for course details page
       badges: rawData.badges || rawData.course_badges || [],
@@ -278,7 +329,7 @@ export class DatabaseCourseProvider extends CourseProvider {
         },
         {
           text: 'Enrolled',
-          desc: '0', // TODO: Get actual enrollment count
+          desc: '0', // TODO(ANY-TODO): Get actual enrollment count
         },
         {
           text: 'Lectures',
@@ -303,13 +354,19 @@ export class DatabaseCourseProvider extends CourseProvider {
       featuredReview: [],
       relatedCourse: [],
       similarCourse: [],
+
+      // Additional fields for TransformedCourse that don't have defaults
+      lectureCount: rawData.lessons?.length,
+      totalDuration: rawData.total_duration_hours
+        ? `${rawData.total_duration_hours}h ${rawData.total_duration_minutes || 0}m`
+        : undefined,
     };
   }
 
   /**
    * Parse requirements string into array format
    */
-  parseRequirements(requirements) {
+  private parseRequirements(requirements?: string | Array<{ listItem: string }>): Array<{ listItem: string }> {
     // If requirements is already an array, return it
     if (Array.isArray(requirements)) {
       return requirements;
@@ -335,21 +392,21 @@ export class DatabaseCourseProvider extends CourseProvider {
   /**
    * Format difficulty level for display
    */
-  formatDifficultyLevel(level) {
-    const levelMap = {
+  private formatDifficultyLevel(level?: string): string {
+    const levelMap: Record<string, string> = {
       all_levels: 'All Levels',
       beginner: 'Beginner',
       intermediate: 'Intermediate',
       advanced: 'Advanced',
     };
-    return levelMap[level] || 'All Levels';
+    return levelMap[level || ''] || 'All Levels';
   }
 
   /**
    * Check if this provider can handle the given course ID
    * Database provider handles UUID format IDs
    */
-  canHandle(courseId) {
+  canHandle(courseId: string): boolean {
     // UUID v4 format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
     const uuidRegex =
       /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;

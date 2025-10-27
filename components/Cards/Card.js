@@ -18,12 +18,15 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
             <div className="rbt-card variation-01 rbt-hover">
               <div className="rbt-card-img">
                 <Link href={`/course-details/${data.id}`}>
-                  <Image
-                    src={data.courseImg}
-                    width={355}
-                    height={244}
-                    alt="Card image"
-                  />
+                  <div style={{ position: 'relative', aspectRatio: '355 / 244' }}>
+                    <Image
+                      fill
+                      src={data.courseImg}
+                      alt="Card image"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </div>
                   {data.offPrice > 0 ? (
                     <div className="rbt-badge-3 bg-white">
                       <span>-{data.offPrice}%</span>
@@ -76,12 +79,15 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                   <div className="rbt-author-meta mb--10">
                     <div className="rbt-avater">
                       <Link href={`/profile/${data.id}`}>
-                        <Image
-                          src={data.userImg}
-                          width={33}
-                          height={33}
-                          alt="Sophia Jaymes"
-                        />
+                        <div style={{ position: 'relative', width: '33px', height: '33px' }}>
+                          <Image
+                            fill
+                            src={data.userImg}
+                            alt="Sophia Jaymes"
+                            sizes="33px"
+                            style={{ objectFit: 'cover', borderRadius: '50%' }}
+                          />
+                        </div>
                       </Link>
                     </div>
                     <div className="rbt-author-info">

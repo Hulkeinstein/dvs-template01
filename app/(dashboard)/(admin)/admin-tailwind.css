@@ -1,0 +1,168 @@
+/* ============================================
+   Admin Dashboard 전용 Tailwind CSS
+   기존 템플릿과 완전 분리
+   ============================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 10.2%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 10.2%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 0 0% 16.5%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 16.5%;
+    --muted-foreground: 0 0% 63.1%;
+    --accent: 0 0% 16.5%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 16.5%;
+    --input: 0 0% 16.5%;
+    --ring: 217.2 91.2% 59.8%;
+  }
+
+  /* Admin Dashboard 전용 Tweakcn 테마 */
+  .admin-v2 {
+    --radius: 0.375rem; /* Tweakcn minimal radius */
+  }
+
+  .admin-v2.dark {
+    /* Tweakcn 극다크 테마 - 더 어둡고 플랫하게 */
+    --background: 0 0% 3.9%; /* #0a0a0a - 극다크 배경 */
+    --foreground: 0 0% 98%; /* #fafafa - 밝은 텍스트 */
+
+    /* 카드 & 컨테이너 */
+    --card: 0 0% 6.3%; /* #101010 - 카드 배경 */
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6.3%;
+    --popover-foreground: 0 0% 98%;
+
+    /* 보더 & 입력 */
+    --border: 0 0% 11%; /* #1c1c1c - 얇은 보더 */
+    --input: 0 0% 11%;
+
+    /* 색상 시스템 */
+    --primary: 217 91% 60%; /* #5b8def - 블루 */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 9.4%; /* #181818 - 두번째 배경 */
+    --secondary-foreground: 0 0% 98%;
+    --accent: 0 0% 14.9%; /* #262626 - 강조 배경 */
+    --accent-foreground: 0 0% 98%;
+    --muted: 0 0% 9.4%; /* #181818 - 뮤트 배경 */
+    --muted-foreground: 0 0% 45%; /* #737373 - 뮤트 텍스트 */
+    --destructive: 0 62% 30%; /* #7c1f1f - 어두운 빨강 */
+    --destructive-foreground: 0 0% 98%;
+
+    --ring: 217 91% 60%; /* 포커스 링 */
+
+    /* 추가 Tweakcn 색상 */
+    --success: 142 76% 36%; /* #16a34a - 성공 */
+    --warning: 45 93% 47%; /* #eab308 - 경고 */
+    --info: 199 89% 48%; /* #0ea5e9 - 정보 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Modern Admin Dashboard Styles */
+  .modern-table {
+    @apply w-full;
+  }
+
+  .modern-table thead {
+    @apply bg-gradient-to-r from-gray-50 to-gray-100/50 border-b-2 border-gray-200;
+  }
+
+  .modern-table th {
+    @apply py-5 px-6 text-xs font-semibold text-gray-700 uppercase tracking-wider !important;
+  }
+
+  .modern-table td {
+    @apply py-5 px-6 !important;
+  }
+
+  .modern-table tbody tr:hover {
+    @apply bg-gradient-to-r from-indigo-50/50 to-purple-50/50 !important;
+  }
+
+  /* Large Text Styles */
+  .text-4xl-important {
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+  }
+
+  .text-3xl-important {
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
+
+  .text-lg-important {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  /* Large Input */
+  .input-large {
+    height: 3rem !important;
+    font-size: 1rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+
+  /* Large Button */
+  .btn-large {
+    height: 3rem !important;
+    padding: 0.75rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+  }
+
+  /* Stats Card */
+  .stats-card {
+    @apply relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-pointer;
+  }
+
+  .stats-value {
+    font-size: 1.875rem !important;
+    font-weight: bold !important;
+  }
+}

@@ -1,0 +1,162 @@
+/*---------------------------------------
+  Legal Pages (Terms, Refund, Privacy)
+-----------------------------------------*/
+
+.legal-page {
+  /* Table of Contents 스타일 */
+  .toc-list {
+    padding-left: 4rem;
+    line-height: 2;
+
+    .toc-item {
+      margin-bottom: 0.75rem;
+      padding: 0.5rem 1rem;
+
+      .toc-link {
+        text-decoration: none;
+        color: var(--color-body);
+        font-weight: 600;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: var(--color-primary);
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+/* Dark Mode */
+.active-dark-mode,
+html[data-theme="dark"] {
+  .legal-page {
+    // ========================================
+    // 공통: 모든 Legal 페이지 스타일
+    // 라이트 모드와 완전히 동일한 색상 유지
+    // ========================================
+
+    // 초록색 박스 (환불 가능 조건)
+    .alert-success {
+      background-color: #d1e7dd !important;
+      border-color: #badbcc !important;
+      color: #0f5132 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      p, li, a, strong, small,
+      .alert-heading {
+        color: #0f5132 !important;
+      }
+
+      .text-muted {
+        color: #0a3622 !important;  // 약간 더 어두운 초록
+      }
+    }
+
+    // 빨간색 박스 (환불 불가 조건, 위험)
+    .alert-danger {
+      background-color: #f8d7da !important;
+      border-color: #f5c2c7 !important;
+      color: #842029 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      p, li, a, strong, small,
+      .alert-heading {
+        color: #842029 !important;
+      }
+    }
+
+    // 노란색 박스 (주의사항)
+    .alert-warning {
+      background-color: #fff3cd !important;
+      border-color: #ffecb5 !important;
+      color: #997404 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      p, li, a, strong, small,
+      .alert-heading {
+        color: #997404 !important;
+      }
+
+      .text-muted {
+        color: #664d03 !important;  // 약간 더 어두운 노랑
+      }
+    }
+
+    // 파란색 박스 (중립 정보)
+    .alert-info {
+      background-color: #cff4fc !important;
+      border-color: #b6effb !important;
+      color: #055160 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      p, li, a, strong, small,
+      .alert-heading {
+        color: #055160 !important;
+      }
+    }
+
+    // 기본 카드 (절차/연락처)
+    .card:not(.bg-light) {
+      background-color: #fff !important;
+      border-color: #dee2e6 !important;
+      color: #212529 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      p, li, a, strong,
+      .card-title, .card-body {
+        color: #212529 !important;
+      }
+    }
+
+    // 회색 카드 (요약/링크)
+    .card.bg-light,
+    .bg-light {
+      background-color: #f8f9fa !important;
+      color: #212529 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      p, li, a, strong,
+      .card-title, .card-body {
+        color: #212529 !important;
+      }
+    }
+
+    // TOC 링크
+    .toc-list .toc-item {
+      color: var(--color-body) !important;
+
+      .toc-link {
+        color: var(--color-body) !important;
+
+        &:hover {
+          color: var(--color-primary) !important;
+        }
+      }
+    }
+
+    // ========================================
+    // 특수: Terms of Service 페이지만 적용
+    // (alert-info 박스 내부 요소별 색상 구분)
+    // ========================================
+
+    .alert-info {
+      // Daniel Vision School (strong) - cyan 유지
+      strong {
+        color: #055160 !important;
+      }
+
+      // Acknowledgment (h5) - 검정색으로 오버라이드
+      .alert-heading,
+      h5 {
+        color: var(--color-heading) !important;  // #192335 검정색
+      }
+
+      // 본문 텍스트 - 회색
+      p,
+      a {
+        color: var(--color-body) !important;
+      }
+    }
+  }
+}

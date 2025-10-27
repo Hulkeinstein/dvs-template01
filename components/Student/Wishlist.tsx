@@ -14,7 +14,6 @@ interface WishlistProps {
 }
 
 interface BookmarkedCourse {
-  id: string;
   course_id: string;
   created_at: string;
   courses: {
@@ -58,14 +57,14 @@ const Wishlist = ({ userId }: WishlistProps) => {
     loadBookmarks();
   }, [userId]);
 
-  const handleRemoveBookmark = async (bookmarkId: string) => {
+  const handleRemoveBookmark = async (courseId: string) => {
     if (!userId) return;
 
-    setRemovingId(bookmarkId);
+    setRemovingId(courseId);
     try {
-      const result = await removeBookmark(bookmarkId, userId);
+      const result = await removeBookmark(courseId, userId);
       if (result.success) {
-        setBookmarks((prev) => prev.filter((b) => b.id !== bookmarkId));
+        setBookmarks((prev) => prev.filter((b) => b.course_id !== courseId));
       }
     } catch (error) {
       console.error('Error removing bookmark:', error);
@@ -126,7 +125,7 @@ const Wishlist = ({ userId }: WishlistProps) => {
                 </thead>
                 <tbody>
                   {bookmarks.map((bookmark) => (
-                    <tr key={bookmark.id}>
+                    <tr key={bookmark.course_id}>
                       <th>
                         <div className="course-info d-flex align-items-center">
                           <Link
@@ -202,10 +201,12 @@ const Wishlist = ({ userId }: WishlistProps) => {
                           <button
                             className="rbt-btn btn-xs bg-color-danger-opacity radius-round color-danger"
                             title="Remove from Wishlist"
-                            onClick={() => handleRemoveBookmark(bookmark.id)}
-                            disabled={removingId === bookmark.id}
+                            onClick={() =>
+                              handleRemoveBookmark(bookmark.course_id)
+                            }
+                            disabled={removingId === bookmark.course_id}
                           >
-                            {removingId === bookmark.id ? (
+                            {removingId === bookmark.course_id ? (
                               <span
                                 className="spinner-border spinner-border-sm"
                                 role="status"

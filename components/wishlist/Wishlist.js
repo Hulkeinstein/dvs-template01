@@ -10,10 +10,12 @@ import ShopData from '../../data/shop.json';
 
 import { addToCartAction, toggleAmount } from '@/redux/action/CartAction';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCart } from '@/hooks/useCart';
 
 const Wishlist = () => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.CartReducer);
+  const { saveCart } = useCart();
   const [qty, setQty] = useState(1);
 
   const [shopData, setShopData] = useState(ShopData.shop);
@@ -35,8 +37,8 @@ const Wishlist = () => {
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart, dispatch]);
+    saveCart(cart);
+  }, [cart, dispatch, saveCart]);
 
   return (
     <>

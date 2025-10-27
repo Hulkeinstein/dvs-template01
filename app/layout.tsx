@@ -10,6 +10,9 @@ import 'bootstrap/scss/bootstrap.scss';
 // ========= Template Main Styles (Bootstrap 오버라이드) =========
 import '../public/scss/styles.scss';
 
+// ========= Global Custom Styles (Template 오버라이드) =========
+import './globals.css';
+
 // ========= Custom Fonts =========
 import '../public/scss/default/euclid-circulara.scss';
 
@@ -31,7 +34,11 @@ import 'swiper/css/thumbs';
 import Providers from './Providers';
 import BootstrapClient from './bootstrap-client';
 
-export default function RootLayout({ children }) {
+interface RootLayoutProps {
+  children: React.ReactNode;
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   // 서버에서 쿠키를 읽어 테마 결정
   const theme = cookies().get('theme')?.value || 'light';
   const isDark = theme === 'dark';

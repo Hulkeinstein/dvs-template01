@@ -7,18 +7,24 @@ import Link from 'next/link';
 import { useAppContext } from '@/context/Context';
 
 import Pagination from '@/components/Common/Pagination';
+import { CourseCardData } from '@/types/course-ui';
 
-const CourseFilterOneToggle = ({ course, start, end }) => {
+interface CourseFilterOneToggleProps {
+  course: CourseCardData[];
+  start?: number;
+  end?: number;
+}
+
+const CourseFilterOneToggle: React.FC<CourseFilterOneToggleProps> = ({
+  course,
+  start,
+  end,
+}) => {
   const { toggle } = useAppContext();
-  const [courses, setCourse] = useState([]);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(0);
 
-  const startIndex = (page - 1) * 6;
-
-  const getSelectedCourse = courses.slice(startIndex, startIndex + 6);
-
-  const handleClick = (num) => {
+  const handleClick = (num: number): void => {
     setPage(num);
     window.scrollTo({
       top: 0,
@@ -27,7 +33,6 @@ const CourseFilterOneToggle = ({ course, start, end }) => {
   };
 
   useEffect(() => {
-    setCourse(course);
     setTotalPages(Math.ceil(course.length / 6));
   }, [course]);
 
@@ -38,8 +43,8 @@ const CourseFilterOneToggle = ({ course, start, end }) => {
           !toggle ? 'active-list-view' : ''
         }`}
       >
-        {course.slice(start, end).map((data, index) => (
-          <div className="course-grid-3" key={index}>
+        {course.slice(start, end).map((data) => (
+          <div className="course-grid-3" key={data.id || data.courseId}>
             <div
               className={`rbt-card variation-01 rbt-hover ${
                 !toggle ? 'card-list-2' : ''

@@ -2,6 +2,9 @@ import { PropsWithChildren } from 'react';
 import ModernAdminSidebar from '@/components/Admin/ModernAdminSidebar';
 import ThemeToggle from '@/components/ui/theme-toggle';
 
+// Admin Dashboard 전용 Tailwind CSS
+import './admin-tailwind.css';
+
 const AdminLayout: React.FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className="admin-v2 dark flex h-screen bg-background">

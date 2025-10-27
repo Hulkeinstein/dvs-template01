@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useAppContext } from '@/context/Context';
 import { addToCartAction, toggleAmount } from '@/redux/action/CartAction';
 import { useDispatch, useSelector } from 'react-redux';
+import { useCart } from '@/hooks/useCart';
 
 const ProductBody = ({ product }) => {
   const { cartToggle, setCart } = useAppContext();
@@ -13,6 +14,7 @@ const ProductBody = ({ product }) => {
   // =====> Start ADD-To-Cart
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.CartReducer);
+  const { saveCart } = useCart();
 
   const [qty, setQty] = useState(1);
 
@@ -36,8 +38,8 @@ const ProductBody = ({ product }) => {
 
   useEffect(() => {
     dispatch({ type: 'COUNT_CART_TOTALS' });
-    localStorage.setItem('hiStudy', JSON.stringify(cart));
-  }, [cart, product]);
+    saveCart(cart);
+  }, [cart, product, saveCart]);
 
   const getProductForUpdateQty = cart.find((prod) => prod.id === product.id);
 

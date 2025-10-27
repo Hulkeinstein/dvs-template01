@@ -6,6 +6,7 @@
  */
 export interface CourseCardData {
   id: string;
+  courseId?: string; // Fallback ID field (may exist in some data sources)
   courseTitle: string;
   desc: string;
   courseImg: string;
@@ -14,6 +15,7 @@ export interface CourseCardData {
   price: number;
   offPrice?: number;
   name: string;
+  instructor?: string; // Instructor name as string (alternative to name field)
   userImg: string;
   student: string;
   lesson: number;

@@ -1,5 +1,5 @@
 import { DemoCourseProvider } from './DemoCourseProvider';
-import { DatabaseCourseProvider } from './DatabaseCourseProvider';
+import { DatabaseCourseProvider } from './DatabaseCourseProvider.ts';
 
 /**
  * Factory class for creating appropriate course providers

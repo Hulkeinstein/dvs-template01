@@ -2,11 +2,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
+import { clearAllCartKeys } from '@/app/lib/utils/cartKey';
 
 import UserData from '../../../data/user.json';
 
 const User = () => {
   const { data: session, status } = useSession();
+
+  const handleSignOut = async () => {
+    // 모든 카트 관련 키 제거 (보안 강화)
+    clearAllCartKeys();
+    // 서버 세션 종료
+    await signOut({ callbackUrl: '/' });
+  };
   if (!session) return null;
   return (
     <>
@@ -62,7 +70,7 @@ const User = () => {
                 </li>
                 <li>
                   <button
-                    onClick={() => signOut({ callbackUrl: '/' })}
+                    onClick={handleSignOut}
                     className="logout-button"
                   >
                     <i className="feather-log-out" />

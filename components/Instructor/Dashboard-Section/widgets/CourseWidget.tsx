@@ -285,12 +285,15 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
       <div className="rbt-card variation-05 rbt-hover">
         <div className="rbt-card-img">
           <Link href={ROUTES.COURSE.DETAILS(data.id)}>
-            <Image
-              width={330}
-              height={227}
-              src={data.courseThumbnail}
-              alt={data.title}
-            />
+            <div style={{ position: 'relative', aspectRatio: '330 / 227' }}>
+              <Image
+                fill
+                src={data.courseThumbnail}
+                alt={data.title}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
             {/* Status Badge for non-published courses */}
             {data.status &&
               data.status !== 'published' &&
@@ -429,16 +432,19 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
             <div className="rbt-author-meta mb--20">
               <div className="rbt-avater">
                 <Link href="#">
-                  <Image
-                    width={33}
-                    height={33}
-                    src={
-                      data.instructor?.avatar ||
-                      data.instructor?.photo_url ||
-                      '/images/client/avater-01.png'
-                    }
-                    alt={data.instructor?.name || 'Instructor'}
-                  />
+                  <div style={{ position: 'relative', width: '33px', height: '33px' }}>
+                    <Image
+                      fill
+                      src={
+                        data.instructor?.avatar ||
+                        data.instructor?.photo_url ||
+                        '/images/client/avater-01.png'
+                      }
+                      alt={data.instructor?.name || 'Instructor'}
+                      sizes="33px"
+                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                    />
+                  </div>
                 </Link>
               </div>
               <div className="rbt-author-info">

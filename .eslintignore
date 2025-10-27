@@ -11,7 +11,11 @@ scripts/
 
 # Ignore test files temporarily
 tests/polyfills.js
-tests/utils/test-helpers.js
+
+# Ignore test artifacts
+playwright-report/
+test-results/
+coverage/
 
 # Ignore type definitions
 types/

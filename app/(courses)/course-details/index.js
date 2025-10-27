@@ -48,7 +48,6 @@ const SingleCourse = ({ getParams }) => {
           // Fetch review stats for the course
           try {
             const stats = await getCourseReviewStats(courseId);
-            console.log('[Review Stats] Fetched for course:', courseId, stats);
             setReviewStats(
               stats || {
                 averageRating: 0,
@@ -86,7 +85,6 @@ const SingleCourse = ({ getParams }) => {
 
     // For preview mode with database courses, wait for session
     if (isPreview && sessionStatus === 'loading') {
-      console.log('Waiting for session to load...');
       return;
     }
 

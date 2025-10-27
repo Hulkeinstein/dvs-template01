@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 import 'venobox/dist/venobox.min.css';
-import Viedo from './Course-Sections/Viedo';
+import Viedo from './Course-Sections/Viedo.tsx';
 import CourseMenu from './Course-Sections/Course-Menu';
 import Overview from './Course-Sections/Overview';
 import Requirements from './Course-Sections/Requirements';

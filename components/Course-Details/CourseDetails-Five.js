@@ -6,7 +6,7 @@ import Instructor from './Course-Sections/Instructor';
 import Review from './Course-Sections/Review';
 import Featured from './Course-Sections/Featured';
 import RelatedCourse from './Course-Sections/RelatedCourse';
-import Viedo from './Course-Sections/Viedo';
+import Viedo from './Course-Sections/Viedo.tsx';
 import Link from 'next/link';
 import Image from 'next/image';
 

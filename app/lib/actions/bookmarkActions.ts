@@ -1,38 +1,28 @@
 'use server';
 
 import { supabaseServer as supabase } from '@/app/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
 
 export async function toggleBookmark(userId: string, courseId: string) {
   try {
-    // Check if bookmark exists
-    const { data: existingBookmark } = await supabase
-      .from('bookmarks')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('course_id', courseId)
-      .single();
+    // Use RPC function for atomic toggle operation (race condition prevention)
+    // Pass userId as parameter (SERVICE_ROLE_KEY environment doesn't have auth.uid())
+    const { data: isBookmarked, error } = await supabase.rpc(
+      'toggle_bookmark',
+      {
+        p_user_id: userId,
+        p_course_id: courseId,
+      }
+    );
 
-    if (existingBookmark) {
-      // Remove bookmark
-      const { error } = await supabase
-        .from('bookmarks')
-        .delete()
-        .eq('id', existingBookmark.id);
+    if (error) throw error;
 
-      if (error) throw error;
+    // Revalidate pages to update bookmark status
+    revalidatePath('/all-courses');
+    revalidatePath(`/course-details/${courseId}`);
+    revalidatePath('/dashboard');
 
-      return { success: true, bookmarked: false };
-    } else {
-      // Add bookmark
-      const { error } = await supabase.from('bookmarks').insert({
-        user_id: userId,
-        course_id: courseId,
-      });
-
-      if (error) throw error;
-
-      return { success: true, bookmarked: true };
-    }
+    return { success: true, bookmarked: isBookmarked };
   } catch (error) {
     console.error('Error toggling bookmark:', error);
     return { success: false, error };
@@ -43,7 +33,7 @@ export async function checkBookmarkStatus(userId: string, courseId: string) {
   try {
     const { data } = await supabase
       .from('bookmarks')
-      .select('id')
+      .select('course_id')
       .eq('user_id', userId)
       .eq('course_id', courseId)
       .single();
@@ -60,7 +50,6 @@ export async function getUserBookmarks(userId: string) {
       .from('bookmarks')
       .select(
         `
-        id,
         course_id,
         created_at,
         courses (
@@ -69,8 +58,9 @@ export async function getUserBookmarks(userId: string) {
           description,
           thumbnail_url,
           price,
-          level,
-          duration,
+          difficulty_level,
+          total_duration_hours,
+          total_duration_minutes,
           user!courses_instructor_id_fkey (
             id,
             name,
@@ -87,9 +77,10 @@ export async function getUserBookmarks(userId: string) {
     // Transform the data to ensure user is an object
     const transformedData =
       data?.map((bookmark) => {
-        const courseData = bookmark.courses as any; // Test for any type hook
+        const courseData = bookmark.courses as any;
         return {
-          ...bookmark,
+          course_id: bookmark.course_id,
+          created_at: bookmark.created_at,
           courses: {
             ...courseData,
             user: Array.isArray(courseData?.user)
@@ -106,15 +97,20 @@ export async function getUserBookmarks(userId: string) {
   }
 }
 
-export async function removeBookmark(bookmarkId: string, userId: string) {
+export async function removeBookmark(courseId: string, userId: string) {
   try {
     const { error } = await supabase
       .from('bookmarks')
       .delete()
-      .eq('id', bookmarkId)
+      .eq('course_id', courseId)
       .eq('user_id', userId);
 
     if (error) throw error;
+
+    // Revalidate pages to update bookmark status
+    revalidatePath('/all-courses');
+    revalidatePath(`/course-details/${courseId}`);
+    revalidatePath('/dashboard');
 
     return { success: true };
   } catch (error) {
