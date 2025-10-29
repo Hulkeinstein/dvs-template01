@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import CourseWidgets from '../Instructor/Dashboard-Section/widgets/CourseWidget';
 import { getEnrolledCoursesRPC } from '@/app/lib/actions/studentDashboardActions';
+import { getUserBookmarks } from '@/app/lib/actions/bookmarkActions';
 
 interface EnrolledCoursesProps {
   userId?: string;
@@ -13,6 +14,7 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
   const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
   const [activeCourses, setActiveCourses] = useState<any[]>([]);
   const [completedCourses, setCompletedCourses] = useState<any[]>([]);
+  const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -57,6 +59,10 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
         setEnrolledCourses(enrolled);
         setActiveCourses(active);
         setCompletedCourses(completed);
+
+        // Fetch bookmarks
+        const bookmarksData = await getUserBookmarks(userId);
+        setBookmarks(bookmarksData.map((b: any) => b.course_id));
       } catch (error) {
         console.error('Error fetching enrolled courses:', error);
       } finally {
@@ -157,6 +163,7 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
                         isProgress={true}
                         isCompleted={false}
                         isEdit={false}
+                        isBookmarked={bookmarks.includes(course.id)}
                         showDescription={false}
                         showAuthor={false}
                         onStatusChange={async () => {}}
@@ -200,6 +207,7 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
                         isCompleted={false}
                         isProgress={false}
                         isEdit={false}
+                        isBookmarked={bookmarks.includes(course.id)}
                         showDescription={false}
                         showAuthor={false}
                         onStatusChange={async () => {}}
@@ -244,6 +252,7 @@ const EnrolledCoursesTS = ({ userId }: EnrolledCoursesProps) => {
                         isProgress={true}
                         showDescription={false}
                         isEdit={false}
+                        isBookmarked={bookmarks.includes(course.id)}
                         showAuthor={false}
                         onStatusChange={async () => {}}
                         onDeleteCourse={async () => {}}
