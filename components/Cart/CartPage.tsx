@@ -65,7 +65,8 @@ const CartPage = (): JSX.Element => {
                               ></i>
                               <h4>Your cart is empty</h4>
                               <p className="text-muted mb-4">
-                                Looks like you haven't added any courses yet.
+                                Looks like you haven&apos;t added any courses
+                                yet.
                               </p>
                               <Link
                                 href="/course-filter"
@@ -184,7 +185,8 @@ const CartPage = (): JSX.Element => {
                         </p>
                         {ENABLE_SHIPPING && (
                           <p>
-                            Shipping Cost <span>${shipping_fee.toFixed(2)}</span>
+                            Shipping Cost{' '}
+                            <span>${shipping_fee.toFixed(2)}</span>
                           </p>
                         )}
                         <h2>
