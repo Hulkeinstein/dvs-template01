@@ -16,9 +16,13 @@ import { CourseCardData, AllCoursesPageProps } from '@/types/course-ui';
 
 const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
   initialCourses = [],
+  initialBookmarks = [],
 }) => {
   // Ensure initialCourses is always an array
   const coursesArray = Array.isArray(initialCourses) ? initialCourses : [];
+  const bookmarksArray = Array.isArray(initialBookmarks)
+    ? initialBookmarks
+    : [];
 
   const [courses, setCourse] = useState<CourseCardData[]>(coursesArray);
   const [page, setPage] = useState<number>(1);
@@ -62,6 +66,7 @@ const AllCoursesPage: React.FC<AllCoursesPageProps> = ({
               <div className="container">
                 <CourseFilterOneToggle
                   course={getSelectedCourse}
+                  bookmarks={bookmarksArray}
                   start={undefined}
                   end={undefined}
                 />

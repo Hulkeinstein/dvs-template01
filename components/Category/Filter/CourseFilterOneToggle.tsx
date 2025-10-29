@@ -7,16 +7,19 @@ import Link from 'next/link';
 import { useAppContext } from '@/context/Context';
 
 import Pagination from '@/components/Common/Pagination';
+import BookmarkButton from '@/components/Common/BookmarkButton';
 import { CourseCardData } from '@/types/course-ui';
 
 interface CourseFilterOneToggleProps {
   course: CourseCardData[];
+  bookmarks?: string[];
   start?: number;
   end?: number;
 }
 
 const CourseFilterOneToggle: React.FC<CourseFilterOneToggleProps> = ({
   course,
+  bookmarks,
   start,
   end,
 }) => {
@@ -78,11 +81,11 @@ const CourseFilterOneToggle: React.FC<CourseFilterOneToggleProps> = ({
                       ({data.review} Reviews)
                     </span>
                   </div>
-                  <div className="rbt-bookmark-btn">
-                    <Link className="rbt-round-btn" title="Bookmark" href="#">
-                      <i className="feather-bookmark"></i>
-                    </Link>
-                  </div>
+                  <BookmarkButton
+                    courseId={data.id}
+                    initialBookmarked={bookmarks?.includes(data.id) || false}
+                    variant="icon"
+                  />
                 </div>
 
                 <h4 className="rbt-card-title">
