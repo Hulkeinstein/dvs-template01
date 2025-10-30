@@ -10,6 +10,7 @@ import {
 import { submitCourseForReview } from '@/app/lib/actions/courseApprovalActions';
 // @ts-ignore - TODO: Migrate CourseBadges to TypeScript
 import CourseBadges from '@/components/Common/CourseBadges';
+import BookmarkButton from '@/components/Common/BookmarkButton';
 import { ROUTES } from '@/app/lib/constants/routes';
 import type { CourseStatus } from '@/types/course';
 
@@ -64,6 +65,7 @@ interface CourseWidgetProps {
   isCompleted?: boolean;
   isEdit?: boolean;
   userRole?: string;
+  isBookmarked?: boolean;
   onStatusChange?: (courseId: string, newStatus: string) => Promise<void>;
   onDeleteCourse?: (courseId: string) => Promise<void>;
 }
@@ -77,6 +79,7 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
   isCompleted,
   isEdit,
   userRole = 'student',
+  isBookmarked = false,
   onStatusChange,
   onDeleteCourse,
 }) => {
@@ -352,11 +355,11 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
                     </>
                   )}
                 </div>
-                <div className="rbt-bookmark-btn">
-                  <Link className="rbt-round-btn" href="#" title="Bookmark">
-                    <i className="feather-bookmark" />
-                  </Link>
-                </div>
+                <BookmarkButton
+                  courseId={data.id}
+                  initialBookmarked={isBookmarked}
+                  variant="icon"
+                />
               </div>
             </>
           )}
@@ -432,7 +435,13 @@ const CourseWidget: React.FC<CourseWidgetProps> = ({
             <div className="rbt-author-meta mb--20">
               <div className="rbt-avater">
                 <Link href="#">
-                  <div style={{ position: 'relative', width: '33px', height: '33px' }}>
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '33px',
+                      height: '33px',
+                    }}
+                  >
                     <Image
                       fill
                       src={
