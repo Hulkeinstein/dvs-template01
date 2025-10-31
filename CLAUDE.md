@@ -8,9 +8,7 @@
 - @./modules/ui-rules.md
 
 ## 🚀 개발 가이드
-- @./modules/development-guide.md
-- @./modules/git-workflow.md
-- @./modules/task-automation.md
+- @./modules/workflow.md              # 워크플로우 허브
 
 ## 📚 기능 문서
 - @./modules/quiz-system.md
