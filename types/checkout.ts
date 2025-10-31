@@ -41,6 +41,8 @@ export interface CheckoutFormData {
   paymentMethod: 'stripe' | 'paypal' | 'cash_on_delivery';
   orderNotes?: string;
   agreeToTerms: boolean;
+  agreeToPrivacy: boolean;
+  agreeToMarketing: boolean;
 }
 
 export interface OrderData {
