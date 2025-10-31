@@ -8,6 +8,3 @@
 - @./modules/workflow/git-workflow.md
 - @./modules/workflow/task-automation.md
 - @./modules/workflow/development-guide.md
-
-## 🤖 프로젝트 Agents
-- @./.claude/agents/typescript-migration/agent.md
