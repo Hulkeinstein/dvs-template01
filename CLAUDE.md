@@ -1,28 +1,13 @@
 # 프로젝트 메모리
 
-## 📊 프로젝트 관리
-- @./DEVELOPMENT_PLAN.md
-
 ## 🏗️ 프로젝트 구조
 - @./modules/architecture.md
-- @./modules/ui-rules.md
 
 ## 🚀 개발 가이드
-- @./modules/workflow.md              # 워크플로우 허브
-
-## 📚 기능 문서
-- @./modules/quiz-system.md
-
-## 🔧 문제 해결
-- @./modules/common-issues.md
-
-## 🔌 외부 서비스 & 환경
-- @./modules/external-services.md
-- @./modules/authentication-system.md
-- @./modules/environment-setup.md
-
-## 🗄️ 데이터베이스
-- @./modules/database-migration-guide.md
+- @./modules/workflow/hybrid-system.md
+- @./modules/workflow/git-workflow.md
+- @./modules/workflow/task-automation.md
+- @./modules/workflow/development-guide.md
 
 ## 🤖 프로젝트 Agents
 - @./.claude/agents/typescript-migration/agent.md

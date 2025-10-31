@@ -57,10 +57,18 @@ supabase/              # Database files
 ## 핵심 아키텍처 패턴
 
 ### 인증 & 권한
-- **NextAuth.js** Google OAuth 처리
+- **하이브리드 인증**: Google OAuth + Email/Password
+  - Google OAuth: NextAuth.js 처리
+  - Email/Password: Bcrypt 해싱 (saltRounds 10)
+  - SHA-256 토큰 (비밀번호 재설정, 30분 만료)
 - **역할 기반 접근 제어** (instructor/student 역할)
-- 특정 작업에 **전화 인증** 필요
+- **구현 파일**: `app/lib/actions/passwordActions.ts`
+- **마이그레이션**: `supabase/migrations/20250210_add_password_auth_fields.sql`
 - 사용자는 첫 로그인 시 Supabase에 'student' 역할로 자동 생성
+
+### 퀴즈 시스템
+- 8가지 문제 유형 지원
+- 구현: `components/Lesson/Quiz/`, `quizActions.js`
 
 ### 데이터 흐름
 - 데이터 가져오기를 위한 **Server Components**
