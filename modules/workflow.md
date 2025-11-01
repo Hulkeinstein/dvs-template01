@@ -68,29 +68,9 @@ Required checks: `typecheck && lint && build`
 - `.env` files (`.env.example` OK)
 - PII, credentials, SSH keys
 
-### Git Workflow Config
-`.git-workflow.json`:
-```json
-{
-  "autoPush": false,
-  "requirePR": true,
-  "squashMerge": true,
-  "deleteAfterMerge": true,
-  "securityScan": true
-}
-```
-
 ### Quick Branch Decisions
-No branch needed:
-- Doc edits (README, CLAUDE.md)
-- Typo fixes
-- Comment additions
-
-Branch required:
-- Code logic changes
-- New features
-- Bug fixes
-- Schema changes
+No branch: Doc edits, typos, comments
+Branch required: Code logic, features, bugs, schema
 
 ---
 
@@ -132,65 +112,9 @@ Update Work Plan (if exists):
 
 ### Stage 3: Complete Feature
 
-Create Library document (`docs/library/<feature>.md`):
-```yaml
----
-title: Feature Name
-milestone: Phase 1: Core Platform
-date_completed: 2025-10-29
-status: stable
-tags: [tag1, tag2]
-related:
-  - library/other-feature.md
-  - work-plans/next-feature.md
----
-
-# Feature Name
-
-## Overview
-- Purpose
-- Background
-- Release date
-
-## Architecture
-- Database schema
-- Components
-- API endpoints
-
-## Key Decisions (ADR-lite)
-- Decision title → Conclusion
-  - Rationale
-  - Alternatives
-  - Impact
-
-## Implementation Points
-- Core implementation details
-
-## Tests & Validation
-- Test scenarios
-
-## Related Files
-- List of files
-
-## Related PRs
-- #XX - Description
-
-## Related Docs
-- Links to related docs
-```
-
-Delete Work Plan (if exists):
-```bash
-git rm docs/work-plans/<feature>.md
-git commit -m "docs: promote work-plan to library"
-```
-
-Create PR:
-```bash
-gh pr create \
-  --title "feat: feature description - Closes #XX" \
-  --body "Summary + Tests + Docs + Related"
-```
+Library doc: `docs/library/<feature>.md` (front-matter, architecture, ADR, related)
+Delete Work Plan: `git rm docs/work-plans/<feature>.md`
+PR: `gh pr create --title "feat: description - Closes #XX"`
 
 ### Stage 4: After PR Merge
 
@@ -206,137 +130,21 @@ git remote prune origin
 
 ## Scenarios
 
-### Scenario A: Simple (UI bug fix, typo)
-
-Flow: Issue (optional) → Branch → Fix → PR
-Docs: No Work Plan, No Library
-
-Example:
-```bash
-git checkout -b fix/button-alignment
-git commit -m "fix(ui): align buttons"
-gh pr create --title "fix: button alignment - Fixes #XX"
-```
-
-### Scenario B: Standard (New feature, DB/API changes)
-
-Flow: Issue + Milestone → Work Plan → Branch → Develop → Library doc → Delete Work Plan → PR
-Docs: Work Plan (decisions), Library (required)
-
-Example:
-```bash
-gh issue create --title "[Feature] PayPal" --milestone "Phase 1"
-# Create docs/work-plans/paypal.md
-git checkout -b feature/paypal-checkout
-# Develop + update Work Plan
-# Create docs/library/paypal.md
-git rm docs/work-plans/paypal.md
-gh pr create --title "feat: PayPal - Closes #XX"
-```
-
-### Scenario C: Hotfix (Production bug, security)
-
-Flow: Hotfix branch → Minimal fix → Local test → Emergency PR → Deploy → Monitor
-Docs: No Work Plan, Library optional (later)
-
-Example:
-```bash
-git checkout -b hotfix/payment-timeout
-# Minimal fix
-npm run dev  # Test locally
-gh pr create --title "hotfix: fix timeout - Fixes #XX"
-# Monitor deployment
-```
-
----
-
-## Documentation Rules
-
-### Front-matter Standard
-
-All library documents:
-```yaml
----
-title: Feature Name              # Required
-milestone: Phase 1               # GitHub Milestone
-date_completed: 2025-10-29       # Completion date
-status: stable                   # stable | deprecated | experimental
-tags: [tag1, tag2]              # Search/classification
-related:                         # Related documents
-  - library/other.md
-  - work-plans/next.md
----
-```
-
-### Bidirectional Links
-
-Cross-reference documents:
-```markdown
-## Related Docs
-- [Feature A](./feature-a.md) - Connection reason
-- [Feature B Work Plan](../work-plans/feature-b.md) - Usage plan
-```
-
----
+**Simple** (UI fix, typo): Branch → Fix → PR (no docs)
+**Standard** (Feature, DB/API): Issue+Milestone → Work Plan → Branch → Develop → Library → PR
+**Hotfix** (Production, security): Hotfix branch → Minimal fix → Test → Emergency PR → Monitor
 
 ## Progress Tracking
-
-Use GitHub directly for real-time progress:
-
 ```bash
-# View milestones
 gh issue list --milestone "Phase 1: Core Platform"
-
-# View all issues
 gh issue list
-
-# View project board
-gh project list
 ```
-
 Dashboard: https://github.com/Hulkeinstein/dvs-template01/milestones
 
 ---
 
 ## Checklists
-
-### Before Starting
-- [ ] Create GitHub Issue (assign Milestone)
-- [ ] Create feature branch
-- [ ] (Complex only) Create Work Plan
-
-### During Development
-- [ ] Use Conventional Commits
-- [ ] Update Work Plan (if exists)
-- [ ] Regular commits
-
-### On Completion
-- [ ] Create `docs/library/<feature>.md` (front-matter, architecture, ADR, files)
-- [ ] Delete Work Plan (if exists)
-- [ ] Create PR (`Closes #XX`)
-
-### After PR Merge
-- [ ] Clean local branches
-- [ ] Check Milestone progress
-- [ ] Plan next task
-
----
-
-## Directory Structure
-
-```
-docs/
-├── work-plans/                # In-progress (temporary)
-│   └── feature.md             # Complex features only
-│
-├── library/                   # Completed (permanent)
-│   ├── checkout.md
-│   └── bookmark.md
-│
-├── integrations/              # External tools
-├── troubleshooting/
-├── architecture/
-└── testing/
-```
-
-Progress tracking: Use GitHub Milestones directly
+**Before**: Issue (assign Milestone), branch, Work Plan (complex only)
+**During**: Conventional Commits, update Work Plan, regular commits
+**Complete**: Library doc, delete Work Plan, PR (`Closes #XX`)
+**After**: Clean branches, check Milestone, plan next
