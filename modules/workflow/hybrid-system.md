@@ -6,7 +6,6 @@ Components:
 - **GitHub Milestones** - Progress tracking
 - **docs/work-plans/** - Temporary plans (complex features)
 - **docs/library/** - Permanent knowledge (completed features)
-- **DEVELOPMENT_PLAN.md** - Project dashboard (snapshot + links)
 
 ---
 
@@ -95,13 +94,6 @@ related:
 - Links to related docs
 ```
 
-Update DEVELOPMENT_PLAN.md:
-```markdown
-Completed Features:
-- [Feature Name](./docs/library/feature.md) (2025-10-29)
-  - Key highlights
-```
-
 Delete Work Plan (if exists):
 ```bash
 git rm docs/work-plans/<feature>.md
@@ -156,33 +148,22 @@ Cross-reference documents:
 
 ---
 
-## DEVELOPMENT_PLAN.md Management
+## Progress Tracking
 
-Role: **Project dashboard** (snapshot + links only)
+Use GitHub directly for real-time progress:
 
-Structure:
-```markdown
-## Milestones Progress
+```bash
+# View milestones
+gh issue list --milestone "Phase 1: Core Platform"
 
-### Phase 1: Core Platform [████████░░] 80%
-Goal: 2025-08-31 | Progress: 4 closed / 2 open
+# View all issues
+gh issue list
 
-Completed Features:
-- [Feature Name](./docs/library/feature.md) (2025-10-29)
-  - Highlights
-
-In Progress:
-- Feature B (Day 3-4)
-  - Tasks
-
-Pending:
-- Feature C (Day 5)
+# View project board
+gh project list
 ```
 
-Update When:
-- Feature complete + library doc written
-- Milestone progress changes
-- NOT during development (use GitHub Issues)
+Dashboard: https://github.com/Hulkeinstein/dvs-template01/milestones
 
 ---
 
@@ -293,7 +274,6 @@ gh pr create --title "hotfix: fix timeout - Fixes #XX"
   - [ ] ADR-lite decisions
   - [ ] Implementation points
   - [ ] Related files list
-- [ ] Update `DEVELOPMENT_PLAN.md`
 - [ ] Delete Work Plan (if exists)
 - [ ] Create PR (`Closes #XX`)
 
@@ -319,6 +299,6 @@ docs/
 ├── troubleshooting/
 ├── architecture/
 └── testing/
-
-DEVELOPMENT_PLAN.md            # Progress dashboard
 ```
+
+Progress tracking: Use GitHub Milestones directly
