@@ -265,3 +265,21 @@ NEXT_PUBLIC_CERTIFICATE_ENABLED=false
 - Use logical properties: `padding-block` / `padding-inline` (RTL/responsive safe)
 - Never edit compiled CSS (`/public/css/`)
 - Edit SCSS sources only (`/public/scss/`)
+
+## Testing Guidelines
+
+When writing tests for this project:
+
+**Priorities**:
+1. Error handling - Required fields, type validation
+2. Money logic - Pricing, tax, rounding (use decimal.js)
+3. Edge cases - null, empty strings, special characters
+4. Runtime validation - Zod schemas at function entry
+
+**Structure**:
+- Co-locate: `components/__tests__/ComponentName.test.tsx`
+- Use: Jest + React Testing Library
+- Avoid: Snapshot tests (use explicit assertions)
+- Focus: Critical paths over coverage numbers
+
+Full strategy: docs/testing/strategy.md
