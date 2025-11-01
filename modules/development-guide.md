@@ -20,6 +20,12 @@ npm run pr:merge          # Merge PR
 npm run automation:test   # Test automation system
 ```
 
+## Commit Messages
+Use Conventional Commits: `<type>(<scope>): <description>`
+
+Types: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
+Link issues: Add `Closes #123` in message
+
 ## Automation
 
 ### Issue Auto-Close

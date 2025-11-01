@@ -32,25 +32,6 @@ Never: `my-branch`, `test`, `temp`
 - Commit/PR only after user approval
 - Use TodoWrite for task tracking
 
-### Commit Messages
-Use Conventional Commits: `<type>(<scope>): <description>`
-
-Types:
-- `feat` - New feature
-- `fix` - Bug fix
-- `docs` - Documentation
-- `refactor` - Code restructure
-- `test` - Tests
-- `chore` - Maintenance
-
-Link to issues: Add `Closes #123` in message
-
-Example:
-```bash
-git commit -m "feat(auth): add Google OAuth - Closes #10"
-git commit -m "fix(cart): resolve checkout bug - Fixes #11"
-```
-
 ### Milestones
 Current phases:
 - **Phase 1: Core Platform** (2025-08-31) - Student/Teacher core
@@ -80,18 +61,7 @@ git branch -d feature/branch-name
 - Auto-delete branches: ON
 - Force-push: OFF
 
-### CI Checks
-Required passes:
-- `npm run type-check`
-- `npm run lint`
-- `npm run build`
-- `npm test` (if exists)
-
-Trigger: PR to main, push to main
-
-### Troubleshooting
-CI fails: `npm run lint` → `npm run format` → retry
-Branch conflict: Merge main → resolve → commit
+Required checks: `typecheck && lint && build`
 
 ### Security (Never Commit)
 - API keys, tokens, passwords
@@ -236,19 +206,10 @@ git remote prune origin
 
 ## Scenarios
 
-### Scenario A: Simple (UI bug fix)
+### Scenario A: Simple (UI bug fix, typo)
 
-Characteristics: Bug fix, style adjustment, typo
-
-Flow:
-1. Create issue (optional)
-2. Create branch (or direct on main)
-3. Fix and commit
-4. Create PR
-
-Documentation:
-- Work Plan: No
-- Library doc: No
+Flow: Issue (optional) → Branch → Fix → PR
+Docs: No Work Plan, No Library
 
 Example:
 ```bash
@@ -257,62 +218,34 @@ git commit -m "fix(ui): align buttons"
 gh pr create --title "fix: button alignment - Fixes #XX"
 ```
 
-### Scenario B: Standard (Payment system)
+### Scenario B: Standard (New feature, DB/API changes)
 
-Characteristics: New feature, DB changes, external API
-
-Flow:
-1. Issue + Milestone
-2. Work Plan (`docs/work-plans/feature.md`)
-3. Create branch
-4. Develop + update Work Plan
-5. Library doc (`docs/library/feature.md`)
-6. Delete Work Plan
-7. Create PR
-
-Documentation:
-- Work Plan: Yes (technical decisions)
-- Library doc: Yes (required)
+Flow: Issue + Milestone → Work Plan → Branch → Develop → Library doc → Delete Work Plan → PR
+Docs: Work Plan (decisions), Library (required)
 
 Example:
 ```bash
 gh issue create --title "[Feature] PayPal" --milestone "Phase 1"
-# Create Work Plan
+# Create docs/work-plans/paypal.md
 git checkout -b feature/paypal-checkout
-# Coding...
-# Create Library doc
-git rm docs/work-plans/checkout-improvement.md
+# Develop + update Work Plan
+# Create docs/library/paypal.md
+git rm docs/work-plans/paypal.md
 gh pr create --title "feat: PayPal - Closes #XX"
 ```
 
-### Scenario C: Hotfix (Emergency fix)
+### Scenario C: Hotfix (Production bug, security)
 
-Characteristics: Production bug, security issue
-
-Flow:
-1. Create hotfix branch
-2. Minimal fix only
-3. Local test (required)
-4. Emergency PR (review optional)
-5. Merge and deploy immediately
-6. Monitor
-7. (Later) Update library doc (optional)
-
-Documentation:
-- Work Plan: No
-- Library doc: Optional (later)
+Flow: Hotfix branch → Minimal fix → Local test → Emergency PR → Deploy → Monitor
+Docs: No Work Plan, Library optional (later)
 
 Example:
 ```bash
-git checkout main
-git pull origin main
 git checkout -b hotfix/payment-timeout
 # Minimal fix
-npm run dev  # Test
+npm run dev  # Test locally
 gh pr create --title "hotfix: fix timeout - Fixes #XX"
-# Quick merge
 # Monitor deployment
-# (Later) Update docs/library/checkout.md
 ```
 
 ---
@@ -378,12 +311,7 @@ Dashboard: https://github.com/Hulkeinstein/dvs-template01/milestones
 - [ ] Regular commits
 
 ### On Completion
-- [ ] Create `docs/library/<feature>.md`
-  - [ ] Include front-matter
-  - [ ] Architecture description
-  - [ ] ADR-lite decisions
-  - [ ] Implementation points
-  - [ ] Related files list
+- [ ] Create `docs/library/<feature>.md` (front-matter, architecture, ADR, files)
 - [ ] Delete Work Plan (if exists)
 - [ ] Create PR (`Closes #XX`)
 
