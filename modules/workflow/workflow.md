@@ -1,4 +1,4 @@
-# Project Workflow (Hybrid System)
+# Project Workflow
 
 ## Overview
 
@@ -6,6 +6,121 @@ Components:
 - **GitHub Milestones** - Progress tracking
 - **docs/work-plans/** - Temporary plans (complex features)
 - **docs/library/** - Permanent knowledge (completed features)
+
+---
+
+## Git Workflow (GitHub Flow)
+
+### Branch Strategy
+- `main` branch: Always deployable
+- Feature branches: Branch from main, merge back
+- No `develop` branch
+- Short-lived branches (1-3 days max)
+
+### Branch Naming
+- `feature/<name>` - New features
+- `fix/<name>` - Bug fixes
+- `hotfix/<name>` - Production emergencies
+- `chore/<name>` - Maintenance
+- `docs/<name>` - Documentation
+- `refactor/<name>` - Code restructure
+Never: `my-branch`, `test`, `temp`
+
+### Claude Code Rules
+- Always create new branch before work (never on main)
+- After PR merge → prompt user for new branch before next task
+- Commit/PR only after user approval
+- Use TodoWrite for task tracking
+
+### Commit Messages
+Use Conventional Commits: `<type>(<scope>): <description>`
+
+Types:
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation
+- `refactor` - Code restructure
+- `test` - Tests
+- `chore` - Maintenance
+
+Link to issues: Add `Closes #123` in message
+
+Example:
+```bash
+git commit -m "feat(auth): add Google OAuth - Closes #10"
+git commit -m "fix(cart): resolve checkout bug - Fixes #11"
+```
+
+### Milestones
+Current phases:
+- **Phase 1: Core Platform** (2025-08-31) - Student/Teacher core
+- **Phase 2: Admin System** (2025-09-15) - PreSkool integration
+- **Phase 3: Enhancement** (Open) - Performance, AI
+
+Create issue with milestone:
+```bash
+gh issue create --title "[Feature] Name" --milestone "Phase 1: Core Platform"
+gh issue list --milestone "Phase 1: Core Platform"
+```
+
+### PR Merge Cleanup
+```bash
+# GitHub: Delete branch button
+# Local:
+git checkout main
+git pull origin main
+git remote prune origin
+git branch -d feature/branch-name
+```
+
+### Branch Protection (GitHub Settings)
+- Require PR before merge: ON
+- Required checks: type-check, lint, build
+- Squash merge only
+- Auto-delete branches: ON
+- Force-push: OFF
+
+### CI Checks
+Required passes:
+- `npm run type-check`
+- `npm run lint`
+- `npm run build`
+- `npm test` (if exists)
+
+Trigger: PR to main, push to main
+
+### Troubleshooting
+CI fails: `npm run lint` → `npm run format` → retry
+Branch conflict: Merge main → resolve → commit
+
+### Security (Never Commit)
+- API keys, tokens, passwords
+- `.env` files (`.env.example` OK)
+- PII, credentials, SSH keys
+
+### Git Workflow Config
+`.git-workflow.json`:
+```json
+{
+  "autoPush": false,
+  "requirePR": true,
+  "squashMerge": true,
+  "deleteAfterMerge": true,
+  "securityScan": true
+}
+```
+
+### Quick Branch Decisions
+No branch needed:
+- Doc edits (README, CLAUDE.md)
+- Typo fixes
+- Comment additions
+
+Branch required:
+- Code logic changes
+- New features
+- Bug fixes
+- Schema changes
 
 ---
 
@@ -119,6 +234,89 @@ git remote prune origin
 
 ---
 
+## Scenarios
+
+### Scenario A: Simple (UI bug fix)
+
+Characteristics: Bug fix, style adjustment, typo
+
+Flow:
+1. Create issue (optional)
+2. Create branch (or direct on main)
+3. Fix and commit
+4. Create PR
+
+Documentation:
+- Work Plan: No
+- Library doc: No
+
+Example:
+```bash
+git checkout -b fix/button-alignment
+git commit -m "fix(ui): align buttons"
+gh pr create --title "fix: button alignment - Fixes #XX"
+```
+
+### Scenario B: Standard (Payment system)
+
+Characteristics: New feature, DB changes, external API
+
+Flow:
+1. Issue + Milestone
+2. Work Plan (`docs/work-plans/feature.md`)
+3. Create branch
+4. Develop + update Work Plan
+5. Library doc (`docs/library/feature.md`)
+6. Delete Work Plan
+7. Create PR
+
+Documentation:
+- Work Plan: Yes (technical decisions)
+- Library doc: Yes (required)
+
+Example:
+```bash
+gh issue create --title "[Feature] PayPal" --milestone "Phase 1"
+# Create Work Plan
+git checkout -b feature/paypal-checkout
+# Coding...
+# Create Library doc
+git rm docs/work-plans/checkout-improvement.md
+gh pr create --title "feat: PayPal - Closes #XX"
+```
+
+### Scenario C: Hotfix (Emergency fix)
+
+Characteristics: Production bug, security issue
+
+Flow:
+1. Create hotfix branch
+2. Minimal fix only
+3. Local test (required)
+4. Emergency PR (review optional)
+5. Merge and deploy immediately
+6. Monitor
+7. (Later) Update library doc (optional)
+
+Documentation:
+- Work Plan: No
+- Library doc: Optional (later)
+
+Example:
+```bash
+git checkout main
+git pull origin main
+git checkout -b hotfix/payment-timeout
+# Minimal fix
+npm run dev  # Test
+gh pr create --title "hotfix: fix timeout - Fixes #XX"
+# Quick merge
+# Monitor deployment
+# (Later) Update docs/library/checkout.md
+```
+
+---
+
 ## Documentation Rules
 
 ### Front-matter Standard
@@ -164,94 +362,6 @@ gh project list
 ```
 
 Dashboard: https://github.com/Hulkeinstein/dvs-template01/milestones
-
----
-
-## Scenarios
-
-### Scenario A: Simple (UI bug fix)
-
-Characteristics: Bug fix, style adjustment, typo
-
-Flow:
-1. Create issue (optional)
-2. Create branch (or direct on main)
-3. Fix and commit
-4. Create PR
-
-Documentation:
-- Work Plan: No
-- Library doc: No
-- DEVELOPMENT_PLAN.md: No
-
-Example:
-```bash
-git checkout -b fix/button-alignment
-git commit -m "fix(ui): align buttons"
-gh pr create --title "fix: button alignment - Fixes #XX"
-```
-
-### Scenario B: Standard (Payment system)
-
-Characteristics: New feature, DB changes, external API
-
-Flow:
-1. Issue + Milestone
-2. Work Plan (`docs/work-plans/feature.md`)
-3. Create branch
-4. Develop + update Work Plan
-5. Library doc (`docs/library/feature.md`)
-6. Update DEVELOPMENT_PLAN.md
-7. Delete Work Plan
-8. Create PR
-
-Documentation:
-- Work Plan: Yes (technical decisions)
-- Library doc: Yes (required)
-- DEVELOPMENT_PLAN.md: Yes (update)
-
-Example:
-```bash
-gh issue create --title "[Feature] PayPal" --milestone "Phase 1"
-# Create Work Plan
-git checkout -b feature/paypal-checkout
-# Coding...
-# Create Library doc
-# Update DEVELOPMENT_PLAN.md
-git rm docs/work-plans/checkout-improvement.md
-gh pr create --title "feat: PayPal - Closes #XX"
-```
-
-### Scenario C: Hotfix (Emergency fix)
-
-Characteristics: Production bug, security issue
-
-Flow:
-1. Create hotfix branch
-2. Minimal fix only
-3. Local test (required)
-4. Emergency PR (review optional)
-5. Merge and deploy immediately
-6. Monitor
-7. (Later) Update library doc (optional)
-
-Documentation:
-- Work Plan: No
-- Library doc: Optional (later)
-- DEVELOPMENT_PLAN.md: No
-
-Example:
-```bash
-git checkout main
-git pull origin main
-git checkout -b hotfix/payment-timeout
-# Minimal fix
-npm run dev  # Test
-gh pr create --title "hotfix: fix timeout - Fixes #XX"
-# Quick merge
-# Monitor deployment
-# (Later) Update docs/library/checkout.md
-```
 
 ---
 
