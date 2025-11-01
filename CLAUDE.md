@@ -4,5 +4,5 @@
 - @./modules/architecture.md
 
 ## 🚀 개발 가이드
-- @./modules/workflow/workflow.md
-- @./modules/workflow/development-guide.md
+- @./modules/workflow.md
+- @./modules/development-guide.md
