@@ -30,7 +30,7 @@
 
 ### 새 도구 추가 시
 1. 이 Registry에 항목 추가
-2. `integrations/<tool>.md` 문서 생성 (템플릿 사용)
+2. `external-services/<tool>.md` 문서 생성 (템플릿 사용)
 3. PR에 "New Integration: <tool>" 라벨 추가
 
 ### 버전 업데이트 시

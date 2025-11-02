@@ -3,7 +3,7 @@
 ## 📋 개요
 
 이 프로젝트는 GitHub Flow와 완벽하게 호환되는 자동화 시스템을 사용합니다.
-코드 품질 검사와 태스크 아카이빙이 자동으로 수행됩니다.
+코드 품질 검사와 자동 푸시가 수행됩니다.
 
 ## 🔧 시스템 구성
 
@@ -13,11 +13,12 @@
 - **Prettier**: 코드 포맷팅 검사
 - **TypeScript**: 타입 체크 (경고만)
 
-### 2. Post-commit Hook (main 브랜치만)
-main 브랜치에서 커밋 후 자동으로 실행:
-- 커밋 메시지에서 "Closes: Phase X, Task Y" 패턴 감지
-- DEVELOPMENT_PLAN.md에서 해당 태스크를 COMPLETED_TASKS.md로 이동
-- 완료 메타데이터 추가 (날짜, 작업자, 커밋 정보 등)
+### 2. Post-commit Hook (feature 브랜치만)
+feature 브랜치에서 커밋 후 조건부로 자동으로 실행:
+- 변경사항을 자동으로 원격 저장소에 푸시 (코드 파일 변경 시)
+- 문서만 변경 시 자동 푸시 스킵
+- 환경 변수 `AUTO_PUSH=1` 설정 필요
+- 스크립트: `scripts/automation/auto-push.js`
 
 ## 📚 사용법
 
@@ -32,12 +33,15 @@ git commit -m "feat: 새로운 기능 구현"
 # Pre-commit hook이 자동으로 코드 품질 검사
 ```
 
-2. **main 브랜치에 머지 후 태스크 완료**
+2. **feature 브랜치에서 자동 푸시**
 ```bash
-git checkout main
-git merge feature/new-feature
-git commit -m "Closes: Phase 1, Task 2 - 결제 시스템 구현 완료"
-# Post-commit hook이 자동으로 태스크 아카이빙
+# 환경 변수 설정 (한 번만)
+export AUTO_PUSH=1
+
+# 코드 작업 후 커밋
+git add .
+git commit -m "feat: 결제 기능 추가"
+# Post-commit hook이 자동으로 원격 저장소에 푸시
 ```
 
 ### 커밋 메시지 패턴
@@ -53,16 +57,21 @@ test: 테스트 추가
 chore: 기타 작업
 ```
 
-#### 태스크 완료 커밋 (main 브랜치)
-```
-Closes: Phase 1, Task 2 - 설명
+#### GitHub Issue 자동 닫기 (PR 머지 시)
+Pull Request가 main 브랜치에 머지될 때 커밋 메시지 또는 PR 제목에 패턴을 포함하면 자동으로 Issue가 닫힙니다:
+
+```bash
+# 단일 Issue 닫기
+git commit -m "feat: 결제 시스템 구현 - Closes #123"
+
+# 여러 Issue 동시 닫기
+git commit -m "fix: 여러 버그 수정 - Closes #10, #12, #15"
 ```
 
-지원되는 패턴:
-- `Closes: Phase 1, Task 2`
-- `Closes: P1, T2`
-- `완료: Phase 1, Task 2`
-- `Done: Phase 1, Task 2`
+지원되는 키워드:
+- `Closes #123` - Issue 닫기
+- `Fixes #456` - 버그 수정
+- `Resolves #789` - 일반 완료
 
 ## 🛠️ 수동 실행
 
@@ -73,9 +82,13 @@ npm run format:check  # Prettier 체크
 npm run format        # Prettier 자동 포맷팅
 ```
 
-### 태스크 아카이빙 (수동)
+### 자동 푸시 활성화
 ```bash
-npm run task:archive  # 마지막 커밋에서 태스크 아카이빙 실행
+# Windows (PowerShell)
+$env:AUTO_PUSH=1
+
+# macOS/Linux
+export AUTO_PUSH=1
 ```
 
 ## 📁 파일 구조
@@ -83,18 +96,20 @@ npm run task:archive  # 마지막 커밋에서 태스크 아카이빙 실행
 ```
 프로젝트/
 ├── .husky/
-│   ├── pre-commit        # Pre-commit hook
-│   └── post-commit       # Post-commit hook
+│   ├── pre-commit        # Pre-commit hook (코드 품질 검사)
+│   ├── post-commit       # Post-commit hook (자동 푸시)
+│   └── pre-push          # Pre-push hook (최종 검증)
 ├── scripts/
 │   └── automation/
-│       ├── update-development-plan.ts  # 태스크 아카이빙
-│       ├── pre-commit-checks.ts        # 코드 품질 검사
-│       └── lib/
-│           ├── git-utils.ts            # Git 유틸리티
-│           └── file-utils.ts           # 파일 조작 유틸리티
+│       ├── auto-push.js           # 자동 푸시
+│       ├── pre-commit-checks.ts   # 코드 품질 검사
+│       ├── pre-push-guard.js      # Push 전 검증
+│       ├── security-scan.js       # 보안 스캔
+│       └── test-automation.ts     # 테스트 자동화
 ├── .lintstagedrc.json    # lint-staged 설정
-├── DEVELOPMENT_PLAN.md   # 진행 중인 태스크
-└── COMPLETED_TASKS.md    # 완료된 태스크 아카이브
+└── docs/
+    ├── work-plans/       # 진행 중인 작업 계획
+    └── library/          # 완료된 기능 문서
 ```
 
 ## 🔍 문제 해결
@@ -117,16 +132,30 @@ git commit --no-verify -m "emergency: 긴급 수정"
 # 주의: 코드 품질 검사를 건너뜁니다
 ```
 
-### Post-commit이 작동하지 않는 경우
+### Post-commit (자동 푸시)이 작동하지 않는 경우
 
-1. **브랜치 확인**
+1. **환경 변수 확인**
 ```bash
-git branch --show-current  # main 브랜치인지 확인
+# Windows (PowerShell)
+echo $env:AUTO_PUSH
+
+# macOS/Linux
+echo $AUTO_PUSH
 ```
 
-2. **수동 실행**
+2. **브랜치 확인** (main 브랜치에서는 자동 푸시 안 됨)
 ```bash
-npm run task:archive  # 수동으로 아카이빙 실행
+git branch --show-current
+```
+
+3. **수동 푸시**
+```bash
+git push origin feature/your-branch
+```
+
+4. **자동 푸시 스크립트 직접 실행 (디버깅)**
+```bash
+node scripts/automation/auto-push.js
 ```
 
 ## 🎯 팀 협업 가이드
@@ -149,47 +178,97 @@ npm run automation:test
 - `fix/*`: 버그 수정
 - `chore/*`: 유지보수 작업
 
-## 📊 태스크 추적
+## 📊 작업 추적 (GitHub Milestones)
 
-### DEVELOPMENT_PLAN.md 형식
-```markdown
-### Phase 1: Core Platform
-1. **학생 코스 상세 페이지**
-   - 코스 정보 표시
-   - 커리큘럼 보기
-   
-2. **결제 시스템**
-   - Stripe 통합
-   - 주문 확인
+이 프로젝트는 **GitHub Milestones**와 **Issues**를 사용하여 작업을 추적합니다.
+
+### Milestone 기반 워크플로우
+
+#### 1. Issue 생성 및 Milestone 할당
+```bash
+# 새 기능 Issue 생성
+gh issue create \
+  --title "[Feature] 결제 시스템 구현" \
+  --milestone "Phase 1: Core Platform"
+
+# 버그 수정 Issue 생성
+gh issue create \
+  --title "[Bug] 로그인 오류 수정" \
+  --milestone "Phase 1: Core Platform"
 ```
 
-### COMPLETED_TASKS.md 형식
-```markdown
-## Phase 1, Task 2
-**완료일**: 2025-02-07 14:30 KST
-**작업자**: Your Name
-**커밋**: abc1234
+#### 2. 진행 상황 확인
+```bash
+# 특정 Milestone의 모든 Issue 조회
+gh issue list --milestone "Phase 1: Core Platform"
 
-### 설명
-2. **결제 시스템**
-   - Stripe 통합
-   - 주문 확인
+# 열린 Issue만 조회
+gh issue list --milestone "Phase 1: Core Platform" --state open
 
-### 변경된 파일
-- app/payment/page.js
-- lib/stripe.js
+# 닫힌 Issue만 조회
+gh issue list --milestone "Phase 1: Core Platform" --state closed
 ```
+
+#### 3. 커밋 메시지로 Issue 자동 닫기
+Pull Request가 main 브랜치에 머지되면 커밋 메시지의 키워드로 자동으로 Issue가 닫힙니다:
+
+```bash
+# 단일 Issue 닫기
+git commit -m "feat: 결제 시스템 구현 완료 - Closes #123"
+
+# 여러 Issue 동시 닫기
+git commit -m "fix: 여러 버그 수정 - Closes #10, #12, #15"
+
+# PR 제목에 포함
+gh pr create --title "feat: 새 기능 - Closes #67"
+```
+
+**지원 키워드**:
+- `Closes #123` - 일반 완료
+- `Fixes #123` - 버그 수정
+- `Resolves #123` - 일반 해결
+
+### 작업 계획 문서 (Work Plans)
+
+#### 진행 중 작업
+`docs/work-plans/` 폴더에서 관리:
+- 체크리스트 기반 진행 상황 추적
+- 기술 결정 및 리스크 기록
+- 테스트 계획 포함
+
+#### 완료된 기능
+완료 후 `docs/library/`로 승격:
+- 아키텍처 및 구현 가이드
+- 주요 의사결정 기록 (ADR-lite)
+- 테스트 및 검증 방법
+- 관련 파일 경로 및 PR 링크
+
+#### Milestone 진행률 확인
+GitHub 웹 대시보드에서 시각적으로 확인:
+```
+https://github.com/Hulkeinstein/dvs-template01/milestones
+```
+
+### 현재 활성 Milestones
+- **Phase 1: Core Platform** (2025-08-31) - 학생/교사 핵심 기능
+- **Phase 2: Admin System** (2025-09-15) - PreSkool 통합
+- **Phase 3: Enhancement** (Open) - 성능 최적화, AI 기능
 
 ## 🚀 고급 설정
 
 ### 커스텀 검사 추가
 `scripts/automation/pre-commit-checks.ts` 파일을 수정하여 추가 검사를 설정할 수 있습니다.
 
-### 태스크 패턴 커스터마이징
-`scripts/automation/lib/git-utils.ts`의 `parseClosesPattern` 함수를 수정하여 새로운 패턴을 추가할 수 있습니다.
+### 자동 푸시 조건 커스터마이징
+`scripts/automation/auto-push.js` 파일에서 다음을 설정할 수 있습니다:
+- 푸시 대상 파일 확장자 (현재: `.js`, `.jsx`, `.ts`, `.tsx`, `.json`)
+- 제외할 브랜치 (현재: `main`, `master`)
+- 문서 전용 커밋 판단 로직
 
 ## 📝 참고사항
 
-- 모든 hook은 커밋을 차단하지 않도록 설계되었습니다 (ESLint/Prettier 제외)
-- 태스크 아카이빙은 main 브랜치에서만 작동합니다
+- Pre-commit hook은 ESLint/Prettier 오류 시 커밋을 차단합니다
+- Post-commit hook(자동 푸시)은 feature 브랜치에서만 작동합니다
+- 문서만 변경된 경우 자동 푸시가 스킵됩니다
 - 시스템은 Windows/Mac/Linux 모두 호환됩니다
+- GitHub Issue 자동 닫기는 PR이 main에 머지될 때만 작동합니다

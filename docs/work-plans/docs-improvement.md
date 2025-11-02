@@ -87,17 +87,17 @@
 #### 1.2 CLAUDE.md 수정
 
 **현재 문제**:
-- Line 9-11, 37-41: 잘못된 폴더명 `integrations/` 사용
+- Line 9-11, 37-41: 잘못된 폴더명 `integrations/` 사용 ✅ 수정 완료
 - 실제 폴더명: `external-services/`
 
 **수정 내용**:
-- [ ] 전체 파일에서 `integrations/` → `external-services/` 변경
-- [ ] 폴더 구조 섹션 검증
-- [ ] 예시 경로 업데이트
+- [x] 전체 파일에서 `integrations/` → `external-services/` 변경 (13곳)
+- [x] 폴더 구조 섹션 검증
+- [x] 예시 경로 업데이트
 
 **검증 명령**:
 ```bash
-rg "integrations/" docs/CLAUDE.md
+rg "external-services/" docs/CLAUDE.md
 ```
 
 ---
