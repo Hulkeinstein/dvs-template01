@@ -80,6 +80,18 @@ Troubleshooting:
 - SCSS: `/public/scss/` (never edit `/public/css/`)
 - Migrations: `/supabase/migrations/`
 
+## 문서 작성 규칙
+
+### 파일명 (docs/ 폴더)
+- **신규 문서**: kebab-case.md 필수
+  - 예: `payment-integration.md`, `deployment-guide.md`
+  - 금지: PascalCase, camelCase, snake_case, 공백
+- **기존 문서**: "Touch It, Type It" 전략
+  - 수정할 때 kebab-case로 리네임
+  - Git history 보존: `git mv OLD.md new.md`
+- **예외**: README.md, LICENSE, CHANGELOG.md (관례)
+- **코드 파일**: 프로젝트 컨벤션 우선 (PascalCase.tsx, camelCase.ts)
+
 ## Code Reuse (DISCOVER)
 Before creating files: Search → Reuse (80%+) / Extend (50-80%) / New (<50%)
 ```bash
