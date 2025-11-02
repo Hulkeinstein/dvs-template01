@@ -2,7 +2,7 @@
 
 **Status**: Active
 **Created**: 2025-02-11
-**Last Updated**: 2025-02-11 (Phase 0 완료)
+**Last Updated**: 2025-02-11 (Phase 2 완료)
 
 ---
 
@@ -25,8 +25,8 @@
 ## Phases
 
 - [x] **P0: Work Plan 시스템 구축** (완료)
-- [ ] **P1: 메모리 파일 오류 수정** (AUTOMATION_GUIDE.md, CLAUDE.md)
-- [ ] **P2: 파일명 kebab-case 변환** (8개 파일)
+- [x] **P1: 메모리 파일 오류 수정** (완료)
+- [x] **P2: 파일명 규칙 메모리 명시** (완료 - 기존 파일 유지)
 - [ ] **P3: Front-matter 추가** (6개 파일)
 - [ ] **P4: 품질 개선** (README, 중복 제거, 섹션 보완)
 
@@ -102,29 +102,31 @@ rg "external-services/" docs/CLAUDE.md
 
 ---
 
-### Phase 2: 파일명 kebab-case 변환
+### Phase 2: 파일명 규칙 메모리 명시 ✅
 
-**목표**: 8개 파일을 kebab-case로 변환
+**목표**: kebab-case 규칙을 메모리에 명시 (현업 표준 근거 포함)
 
-**파일 목록**:
-1. `ENROLLED_STUDENTS_MIGRATION.md` → `enrolled-students-migration.md`
-2. `GOOGLE_OAUTH_SETUP.md` → `google-oauth-setup.md`
-3. `TEST_QUALITY_GUIDE.md` → `test-quality-guide.md`
-4. `WORKFLOW_EXAMPLES.md` → `workflow-examples.md`
-5. `external-services/REGISTRY.md` → `external-services/registry.md`
-6. `testing/TEST_REPORT.md` → `testing/test-report.md`
-7. (추가 2개 확인 필요)
+**변경된 접근법**:
+- 기존 파일은 유지 (파일명 변경 시 링크 깨짐 리스크)
+- "Touch It, Type It" 전략 채택 (파일 수정 시 리네임)
+- 신규 문서는 kebab-case 필수
 
-**작업 순서**:
-- [ ] Git mv 명령으로 변경
-- [ ] 참조하는 파일에서 링크 업데이트
-- [ ] CLAUDE.md 메모리 파일 업데이트
+**완료 항목**:
+- [x] 현업 표준 조사 (Next.js, React, Vue, Angular, Supabase)
+- [x] Google/Microsoft 스타일 가이드 확인
+- [x] 개인 메모리 업데이트 (`~/.claude/modules/coding-principles.md`)
+  - Lines 98-101: 문서 파일명 규칙 추가
+  - 예외 사항: README.md, LICENSE, CHANGELOG.md
+- [x] 프로젝트 메모리 업데이트 (`modules/development-guide.md`)
+  - Lines 83-93: "문서 작성 규칙" 섹션 추가
+  - Git history 보존 방법: `git mv OLD.md new.md`
 
-**검증**:
-```bash
-# Uppercase 파일명 확인
-find docs -name "*[A-Z]*" -type f
-```
+**현업 근거**:
+- 100% kebab-case 채택 (5개 주요 프로젝트 조사)
+- SEO 최적화, URL 안전, 크로스 플랫폼 호환성
+- Google/Microsoft 공식 권장사항
+
+**커밋**: e80bc28
 
 ---
 
@@ -220,6 +222,21 @@ status: active | deprecated | draft
 - 브랜치 생성: `docs/add-work-plan-system`
 - **Next**: Phase 1 시작 대기 (사용자 승인 필요)
 
+### 2025-02-11 16:20 - Phase 1 Completed ✅
+- AUTOMATION_GUIDE.md 수정 완료 (~85줄 삭제, 실제 기능 문서화)
+- CLAUDE.md 수정 완료 (integrations/ → external-services/, 14개소)
+- 관련 파일 5개 수정 (external-services/REGISTRY.md, architecture/system-design.md)
+- 커밋: 9ebfafc
+
+### 2025-02-11 16:45 - Phase 2 Completed ✅
+- 접근법 변경: 파일 리네임 → 메모리 기반 규칙
+- 현업 표준 조사 (5개 프로젝트 100% kebab-case)
+- 개인 메모리 업데이트 (coding-principles.md)
+- 프로젝트 메모리 업데이트 (development-guide.md)
+- "Touch It, Type It" 전략 채택
+- 커밋: e80bc28
+- **Next**: Phase 3 시작 대기 (사용자 승인 필요)
+
 ---
 
 ## Decisions Log
@@ -257,6 +274,25 @@ status: active | deprecated | draft
 - guides/ = "어떻게 (How-to)"
 - workflows/ = "어떤 순서로 (Process)"
 - 현업 표준 (Microsoft Docs, Atlassian 등)
+
+---
+
+### D4: 메모리 기반 파일명 규칙 (2025-02-11)
+**질문**: 8개 파일을 즉시 kebab-case로 리네임할까?
+
+**결정**: 메모리에 규칙 명시 + "Touch It, Type It" 전략
+
+**이유**:
+- 리스크: 파일명 변경 시 문서 링크 깨짐 (14개소 이상 영향)
+- 기존 파일은 동작 중 (Git history 유지 필요)
+- 점진적 마이그레이션이 더 안전
+- 신규 문서부터 즉시 적용 가능
+- 현업 근거: Next.js, React 등 100% kebab-case
+
+**대안 검토**:
+- A안: 즉시 리네임 (위험, 다수 링크 업데이트 필요)
+- B안: 메모리 규칙 + 점진적 적용 (채택) ✅
+- C안: 방치 (규칙 불일치 지속)
 
 ---
 
