@@ -8,6 +8,7 @@ tags:
 created: 2025-08-28
 updated: 2025-11-03
 status: deprecated
+aliases: [ENROLLED_STUDENTS_MIGRATION, enrolled-students]
 category: library
 ---
 

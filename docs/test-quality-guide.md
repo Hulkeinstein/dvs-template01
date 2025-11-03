@@ -7,6 +7,7 @@ tags:
 created: 2025-08-21
 updated: 2025-11-03
 status: active
+aliases: [TEST_QUALITY_GUIDE, test-quality]
 category: guide
 related:
   - testing/strategy.md

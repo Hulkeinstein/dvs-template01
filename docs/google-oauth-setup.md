@@ -9,6 +9,7 @@ tags:
 created: 2025-09-07
 updated: 2025-11-03
 status: active
+aliases: [GOOGLE_OAUTH_SETUP, google-oauth]
 category: guide
 related:
   - admin-sso-setup.md

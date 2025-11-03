@@ -7,9 +7,10 @@ tags:
 created: 2025-08-08
 updated: 2025-11-03
 status: active
+aliases: [WORKFLOW_EXAMPLES, workflow-examples]
 category: workflow
 related:
-  - AUTOMATION_GUIDE.md
+  - automation-guide.md
   - workflows/work-plan-guide.md
 ---
 
