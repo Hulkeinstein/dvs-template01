@@ -1,3 +1,19 @@
+---
+title: "Admin 앱 SSO 설정 가이드"
+tags:
+  - phase/2
+  - type/docs
+  - component/auth
+  - external/nextauth
+  - status/completed
+created: 2025-09-07
+updated: 2025-11-03
+status: active
+category: guide
+related:
+  - external-services/mcp.md
+---
+
 # Admin 앱 SSO 설정 가이드
 
 이 문서는 별도의 Admin 프로젝트(dvs-admin)를 생성하여 메인 앱과 SSO로 연동하는 방법을 설명합니다.

@@ -1,3 +1,18 @@
+---
+title: "Git 자동화 시스템 가이드"
+tags:
+  - phase/1
+  - type/docs
+  - status/completed
+created: 2025-08-08
+updated: 2025-11-03
+status: active
+category: workflow
+related:
+  - workflows/work-plan-guide.md
+  - WORKFLOW_EXAMPLES.md
+---
+
 # 🚀 Git 자동화 시스템 가이드
 
 ## 📋 개요

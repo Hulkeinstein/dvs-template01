@@ -1,3 +1,16 @@
+---
+title: "Instructor Enrolled Students - TypeScript Migration"
+tags:
+  - phase/1
+  - type/docs
+  - component/ui
+  - status/deprecated
+created: 2025-08-28
+updated: 2025-11-03
+status: deprecated
+category: library
+---
+
 # Instructor Enrolled Students - TypeScript Migration
 
 ## Overview
