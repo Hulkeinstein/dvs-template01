@@ -31,6 +31,8 @@
     "git:workflow": "node scripts/automation/git-workflow-helper.js",
     "git:enable-auto-push": "node -e \"const fs=require('fs');const cfg='.git-workflow.json';const c=JSON.parse(fs.readFileSync(cfg));c.autoPush=true;fs.writeFileSync(cfg,JSON.stringify(c,null,2))\" && echo 'Auto-push enabled'",
     "git:disable-auto-push": "node -e \"const fs=require('fs');const cfg='.git-workflow.json';const c=JSON.parse(fs.readFileSync(cfg));c.autoPush=false;fs.writeFileSync(cfg,JSON.stringify(c,null,2))\" && echo 'Auto-push disabled'",
+    "docs:verify-frontmatter": "node scripts/verify-frontmatter.mjs",
+    "docs:check": "npm run docs:verify-frontmatter",
     "migrate:ts": "node scripts/migrate-js-to-ts.js",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
