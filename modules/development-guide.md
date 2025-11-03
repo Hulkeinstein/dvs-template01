@@ -89,8 +89,48 @@ Troubleshooting:
 - **기존 문서**: "Touch It, Type It" 전략
   - 수정할 때 kebab-case로 리네임
   - Git history 보존: `git mv OLD.md new.md`
+  - aliases 필드에 이전 이름 추가
 - **예외**: README.md, LICENSE, CHANGELOG.md (관례)
 - **코드 파일**: 프로젝트 컨벤션 우선 (PascalCase.tsx, camelCase.ts)
+
+### Front-matter (필수)
+모든 문서에 YAML front-matter 추가:
+```yaml
+---
+title: "문서 제목"                    # 필수
+tags:                                # 필수 (네임스페이스: phase/, type/, component/, external/, status/)
+  - phase/1
+  - type/docs
+  - component/auth
+created: 2025-11-03                  # 필수
+updated: 2025-11-03                  # 필수
+status: active                       # 필수 (active|deprecated|draft)
+aliases: []                          # 선택 (파일명 변경 시)
+---
+```
+
+### 태그 규칙
+- **네임스페이스 필수**: phase/, type/, component/, external/, status/
+- **각 카테고리 1개 태그만** (예외: external/* 다중 허용)
+- **정의된 태그만 사용** (docs/README.md의 태그 카탈로그 참고)
+- 새 태그 추가는 docs/README.md 업데이트 필요
+
+### 파일명 변경 시
+```bash
+# 1. Git으로 리네임 (히스토리 보존)
+git mv docs/OLD_NAME.md docs/new-name.md
+
+# 2. Front-matter에 aliases 추가
+aliases: [OLD_NAME, old-name]
+
+# 3. 참조 링크 검색 및 업데이트
+rg "OLD_NAME" docs/
+```
+
+### 링크
+- 상대 경로만 사용: `[text](../path/file.md)`
+- 절대 경로 금지: `[text](/docs/file.md)`
+- 파일명 변경 후 `npm run build`로 검증
 
 ## Code Reuse (DISCOVER)
 Before creating files: Search → Reuse (80%+) / Extend (50-80%) / New (<50%)
