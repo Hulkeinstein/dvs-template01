@@ -3,10 +3,10 @@ title: "워크플로우 예시"
 tags:
   - phase/1
   - type/docs
-  - status/completed
+  - progress/completed
 created: 2025-08-08
 updated: 2025-11-03
-status: active
+lifecycle: active
 aliases: [WORKFLOW_EXAMPLES, workflow-examples]
 category: workflow
 related:

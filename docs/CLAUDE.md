@@ -112,21 +112,115 @@ docs/
 - `YYYYMMDD_topic.md` — 릴리즈노트/마이그레이션 성격에 활용
 - 예: `20250216_stripe-integration.md`
 
-### Front-matter (선택·권장)
+### Front-matter (필수)
+
+**모든 docs 폴더 내 문서에는 YAML Front-matter가 필수입니다.**
 
 ```yaml
 ---
-title: Stripe Integration
-created: 2025-10-01
-updated: 2025-10-01
-owners: @owner1, @owner2
-status: stable
-related:
+title: "Stripe Integration"                  # 필수: 문서 제목
+tags:                                         # 필수: 네임스페이스 태그 배열
+  - phase/1                                   # phase/1|2|3
+  - type/feature                              # feature|bug|docs|security|performance
+  - component/payment                         # auth|payment|ui|database|api
+  - external/stripe                           # stripe|paypal|supabase|nextauth (다중 허용)
+  - progress/completed                        # completed|in-progress|backlog|blocked
+created: 2025-10-01                           # 필수: Git 최초 작성일 (YYYY-MM-DD)
+updated: 2025-11-03                           # 필수: 최종 수정일 (YYYY-MM-DD)
+lifecycle: active                             # 필수: 문서 생명주기 (active|deprecated|draft)
+aliases: []                                   # 선택: 파일명 변경 시 이전 이름
+category: library                             # 선택: guide|library|reference|workflow
+related:                                      # 선택: 관련 문서 경로 (상대 경로)
   - library/checkout.md
   - external-services/stripe.md
-  - work-plans/payment-refund.md
-tags: [payments, stripe, checkout]
+owners: ["@owner1", "@owner2"]                # 선택: 담당자
 ---
+```
+
+**중요**: `status` 키는 `lifecycle`로, `status/*` 태그는 `progress/*`로 변경되었습니다 (충돌 방지).
+
+### 네임스페이스 태그 시스템 (Obsidian 스타일)
+
+**모든 태그는 네임스페이스 형식(`category/value`)을 사용합니다.**
+
+#### phase/ (프로젝트 단계)
+- `phase/1` - Phase 1: Core Platform
+- `phase/2` - Phase 2: Admin System
+- `phase/3` - Phase 3: Enhancement
+
+#### type/ (문서 유형)
+- `type/feature` - 새 기능 구현
+- `type/bug` - 버그 수정
+- `type/docs` - 문서 작성/개선
+- `type/security` - 보안 관련
+- `type/performance` - 성능 최적화
+
+#### component/ (시스템 컴포넌트)
+- `component/auth` - 인증/권한
+- `component/payment` - 결제 시스템
+- `component/ui` - UI/UX 컴포넌트
+- `component/database` - 데이터베이스
+- `component/api` - API 엔드포인트
+
+#### external/ (외부 서비스, 다중 허용)
+- `external/stripe` - Stripe 결제
+- `external/paypal` - PayPal 결제
+- `external/supabase` - Supabase 데이터베이스
+- `external/nextauth` - NextAuth.js 인증
+
+#### progress/ (작업 진행 상태)
+- `progress/backlog` - 계획됨
+- `progress/in-progress` - 진행 중
+- `progress/completed` - 완료
+- `progress/blocked` - 차단됨
+
+### 필수 Front-matter 필드
+
+**반드시 포함해야 하는 5개 필드:**
+
+1. **title** (string): 문서 제목
+2. **tags** (array): 네임스페이스 태그 배열
+   - 각 네임스페이스에서 최소 1개 이상 선택
+   - `external/*`만 다중 허용 (예: `external/stripe`, `external/supabase`)
+3. **created** (YYYY-MM-DD): Git 최초 작성일
+   - `git log --follow --diff-filter=A --format=%ai -- <file>` 명령으로 확인
+4. **updated** (YYYY-MM-DD): 최종 수정일
+   - 작업한 실제 날짜 사용
+5. **lifecycle** (string): 문서 생명주기
+   - `active` - 현재 사용 중
+   - `deprecated` - 더 이상 사용하지 않음
+   - `draft` - 작성 중
+
+### 태그 검색 예시
+
+```bash
+# 특정 태그로 검색
+rg "phase/1" docs/ --type md
+
+# 여러 태그 조합 검색 (AND 조건)
+rg "phase/1" docs/ --type md | rg "component/payment"
+
+# 특정 컴포넌트의 모든 문서
+rg "component/auth" docs/ --type md
+
+# 진행 중인 작업 찾기
+rg "progress/in-progress" docs/ --type md
+
+# 외부 서비스 사용 문서
+rg "external/stripe" docs/ --type md
+```
+
+### 파일명 변경 시 aliases 활용
+
+```bash
+# 파일명 변경 (Git history 보존)
+git mv docs/OLD_NAME.md docs/new-name.md
+
+# Front-matter에 aliases 추가
+aliases: [OLD_NAME, old-name]
+
+# 기존 참조 확인 및 업데이트
+rg "OLD_NAME" docs/
 ```
 
 ---
@@ -312,6 +406,9 @@ tags: [payments, stripe, checkout]
 - 릴리즈/분기마다 `library/external-services` 최신화(Updated 날짜 갱신)
 - Work Plan은 승격 또는 폐기(방치 금지)
 - 링크는 상대경로, 리네이밍 시 PR에서 동시 수정
+- **Front-matter 필수**: 모든 docs 폴더 문서는 필수 5개 필드 포함 (title, tags, created, updated, lifecycle)
+- 문서 수정 시 Front-matter의 `updated` 날짜 갱신
+- 파일명 변경 시 `aliases` 필드에 이전 이름 추가 및 참조 업데이트
 
 ---
 

@@ -5,10 +5,10 @@ tags:
   - type/docs
   - component/auth
   - external/nextauth
-  - status/completed
+  - progress/completed
 created: 2025-09-07
 updated: 2025-11-03
-status: active
+lifecycle: active
 category: guide
 related:
   - external-services/mcp.md

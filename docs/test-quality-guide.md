@@ -3,10 +3,10 @@ title: "Test Quality Guide"
 tags:
   - phase/1
   - type/docs
-  - status/completed
+  - progress/completed
 created: 2025-08-21
 updated: 2025-11-03
-status: active
+lifecycle: active
 aliases: [TEST_QUALITY_GUIDE, test-quality]
 category: guide
 related:

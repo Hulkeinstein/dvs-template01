@@ -54,10 +54,10 @@ tags:                                # 필수 (네임스페이스 방식)
   - type/docs                        # feature|bug|docs|security|performance
   - component/auth                   # auth|payment|ui|database|api
   - external/stripe                  # stripe|paypal|supabase|nextauth
-  - status/in-progress               # completed|in-progress|backlog|deprecated
+  - progress/completed               # completed|in-progress|backlog|blocked
 created: 2025-11-03                  # 필수 (Git 히스토리에서 확인)
 updated: 2025-11-03                  # 필수 (작업 날짜)
-status: active                       # 필수 (active|deprecated|draft)
+lifecycle: active                    # 필수 (active|deprecated|draft)
 aliases: []                          # 선택 (파일명 변경 시 이전 이름)
 category: guide                      # 선택 (guide|library|reference|workflow)
 related: []                          # 선택 (관련 문서 경로)
@@ -93,11 +93,11 @@ owners: []                           # 선택 (담당자)
 - `external/supabase` - Supabase
 - `external/nextauth` - NextAuth.js
 
-**status/** (진행 상태)
-- `status/completed` - 완료
-- `status/in-progress` - 진행 중
-- `status/backlog` - 백로그
-- `status/deprecated` - 더 이상 사용 안 함
+**progress/** (작업 진행 상태)
+- `progress/completed` - 완료
+- `progress/in-progress` - 진행 중
+- `progress/backlog` - 백로그
+- `progress/blocked` - 차단됨
 
 ### 문서 검색 방법
 ```bash
@@ -108,7 +108,10 @@ rg "tags:.*phase/1" docs/
 rg "tags:.*(component/payment|external/stripe|external/paypal)" docs/
 
 # Deprecated 문서 찾기
-rg "status: deprecated" docs/
+rg "lifecycle: deprecated" docs/
+
+# 진행 중인 작업 찾기
+rg "tags:.*progress/in-progress" docs/
 
 # 특정 컴포넌트 문서 찾기
 rg "tags:.*component/auth" docs/

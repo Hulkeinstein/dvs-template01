@@ -4,10 +4,10 @@ tags:
   - phase/1
   - type/docs
   - component/ui
-  - status/deprecated
+  - progress/completed
 created: 2025-08-28
 updated: 2025-11-03
-status: deprecated
+lifecycle: deprecated
 aliases: [ENROLLED_STUDENTS_MIGRATION, enrolled-students]
 category: library
 ---
