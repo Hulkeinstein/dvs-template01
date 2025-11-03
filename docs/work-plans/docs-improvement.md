@@ -130,34 +130,57 @@ rg "external-services/" docs/CLAUDE.md
 
 ---
 
-### Phase 3: Front-matter 추가
+### Phase 3: Obsidian Basic Alignment ✅
 
-**목표**: 6개 파일에 YAML front-matter 추가
+**목표**: Front-matter 표준 정의 및 적용, Obsidian 스타일 구현
 
-**Front-matter 템플릿**:
+**완료 항목**:
+- [x] P3.1: Front-matter 표준 정의
+  - docs/README.md에 완전한 Front-matter 템플릿 추가
+  - 네임스페이스 태그 시스템 정의 (phase/, type/, component/, external/, progress/)
+  - modules/development-guide.md에 규칙 추가
+- [x] P3.2: 파일 조사 및 분류 (6개 파일 유지)
+  - admin-sso-setup.md
+  - AUTOMATION_GUIDE.md → automation-guide.md
+  - ENROLLED_STUDENTS_MIGRATION.md → enrolled-students-migration.md
+  - GOOGLE_OAUTH_SETUP.md → google-oauth-setup.md
+  - TEST_QUALITY_GUIDE.md → test-quality-guide.md
+  - WORKFLOW_EXAMPLES.md → workflow-examples.md
+- [x] P3.3: Front-matter 추가 + 파일명 변경
+  - 6개 파일에 Front-matter 추가 (네임스페이스 태그 포함)
+  - 5개 UPPERCASE 파일을 kebab-case로 리네임 (git mv)
+  - aliases 필드로 하위 호환성 유지
+- [x] P3.4: status 충돌 해결 + CLAUDE.md 업데이트
+  - docs/CLAUDE.md에 Obsidian 원칙 추가 (네임스페이스 태그 시스템)
+  - status 키 충돌 해결: status → lifecycle, status/* → progress/*
+  - 6개 파일 + CLAUDE.md + README.md 업데이트
+  - 검증: typecheck ✓, build ✓ (170 pages)
+- [x] P3.5: Work Plan 업데이트 (이 작업)
+
+**Front-matter 최종 형식**:
 ```yaml
 ---
 title: "문서 제목"
-category: guide | workflow | reference | architecture
-tags: [tag1, tag2, tag3]
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-status: active | deprecated | draft
+tags:
+  - phase/1                          # phase/1|2|3
+  - type/docs                        # feature|bug|docs|security|performance
+  - component/auth                   # auth|payment|ui|database|api
+  - external/stripe                  # stripe|paypal|supabase|nextauth
+  - progress/completed               # completed|in-progress|backlog|blocked
+created: 2025-11-03
+updated: 2025-11-03
+lifecycle: active                    # active|deprecated|draft
+aliases: []
+category: guide
+related: []
 ---
 ```
 
-**파일 목록**:
-1. `admin-sso-setup.md`
-2. `ENROLLED_STUDENTS_MIGRATION.md` (or delete)
-3. `GOOGLE_OAUTH_SETUP.md`
-4. `external-services/external-services.md`
-5. `TEST_QUALITY_GUIDE.md` (or delete)
-6. `WORKFLOW_EXAMPLES.md` (or delete)
-
-**추가 작업**:
-- [ ] 각 파일별 적절한 category 설정
-- [ ] tags 3-5개 추가
-- [ ] created/updated 날짜 기록
+**커밋**:
+- 73925f5 (P3.1: Front-matter 표준 정의)
+- cb9f00c (P3.3-1: Front-matter 추가)
+- 0c9b116 (P3.3-2: 파일명 변경)
+- 8ae4596 (P3.4: status 충돌 해결 + Obsidian 원칙)
 
 ---
 
@@ -237,6 +260,34 @@ status: active | deprecated | draft
 - 커밋: e80bc28
 - **Next**: Phase 3 시작 대기 (사용자 승인 필요)
 
+### 2025-11-03 11:00 - Phase 3.1 Completed ✅
+- docs/README.md: Front-matter 템플릿 추가 (Lines 46-122)
+- modules/development-guide.md: 문서 작성 규칙 추가 (Lines 83-133)
+- 네임스페이스 태그 시스템 정의 (5개 카테고리)
+- 커밋: 73925f5
+
+### 2025-11-03 11:30 - Phase 3.2 Completed ✅
+- 6개 파일 조사 및 유지 결정
+- 삭제 대상 없음 (모두 유효한 문서)
+
+### 2025-11-03 12:00 - Phase 3.3 Completed ✅
+- 6개 파일에 Front-matter 추가 (네임스페이스 태그)
+- 5개 UPPERCASE 파일 kebab-case로 리네임 (git mv)
+- aliases 필드로 하위 호환성 유지
+- 커밋: cb9f00c, 0c9b116
+
+### 2025-11-03 12:57 - Phase 3.4 Completed ✅
+- docs/CLAUDE.md: Obsidian 원칙 추가 (네임스페이스 태그 시스템)
+- 6개 파일 status 충돌 해결 (lifecycle + progress/*)
+- docs/README.md 태그 카탈로그 업데이트
+- 검증: typecheck ✓, build ✓ (170 pages)
+- 커밋: 8ae4596
+
+### 2025-11-03 13:00 - Phase 3.5 In Progress
+- Work Plan 업데이트 (Decision D5 추가)
+- Phase 3 완료 체크
+- **Next**: Phase 4 or 완료 결정
+
 ---
 
 ## Decisions Log
@@ -293,6 +344,30 @@ status: active | deprecated | draft
 - A안: 즉시 리네임 (위험, 다수 링크 업데이트 필요)
 - B안: 메모리 규칙 + 점진적 적용 (채택) ✅
 - C안: 방치 (규칙 불일치 지속)
+
+---
+
+### D5: Status Field Conflict Resolution (2025-11-03)
+**문제**: `status` 키와 `status/*` 태그의 의미론적 충돌
+- `status: active` - 문서 생명주기
+- `status/completed` - 작업 진행 상태
+
+**결정**: 분리하여 명확화
+- `status` (key) → `lifecycle` (active|deprecated|draft)
+- `status/*` (tags) → `progress/*` (completed|in-progress|backlog|blocked)
+
+**근거**:
+- GPT-5 제안 반영
+- 의미론적 충돌 제거 (문서 상태 vs 작업 상태)
+- Obsidian 커뮤니티 Best Practice 참고
+- 검색 쿼리 명확성 향상
+
+**영향**:
+- 6개 파일 업데이트 (admin-sso-setup, automation-guide, enrolled-students-migration, google-oauth-setup, test-quality-guide, workflow-examples)
+- docs/CLAUDE.md 업데이트 (Obsidian 원칙 추가)
+- docs/README.md 태그 카탈로그 업데이트
+
+**커밋**: 8ae4596
 
 ---
 
