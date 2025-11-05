@@ -1,3 +1,13 @@
+---
+title: "Stripe Integration Guide"
+tags:
+  - type/docs
+  - external/stripe
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # Stripe Integration Guide
 
 ## Purpose & Scope

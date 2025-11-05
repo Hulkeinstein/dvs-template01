@@ -1,3 +1,13 @@
+---
+title: "System Architecture Design"
+tags:
+  - type/docs
+  - component/api
+created: 2025-11-02
+updated: 2025-11-05
+lifecycle: active
+---
+
 # DVS 시스템 아키텍처 설계
 
 ## 📋 개요

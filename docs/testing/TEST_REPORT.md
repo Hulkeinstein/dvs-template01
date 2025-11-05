@@ -1,3 +1,13 @@
+---
+title: "Automation Test Report"
+tags:
+  - type/docs
+  - progress/completed
+created: 2025-11-02
+updated: 2025-11-05
+lifecycle: active
+---
+
 # 자동화 테스트 리포트
 
 ## 📊 테스트 실행 결과

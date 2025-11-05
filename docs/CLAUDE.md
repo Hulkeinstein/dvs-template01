@@ -1,3 +1,12 @@
+---
+title: "CLAUDE.md - Docs Memory & Workflow Guide"
+tags:
+  - type/docs
+created: 2025-11-02
+updated: 2025-11-05
+lifecycle: active
+---
+
 # CLAUDE.md — Docs 메모리 & 워크플로우 가이드 (Final / Library + Integrations)
 
 **목적**: 진행 중 Work Plan은 민첩하게, 완료된 지식은 **Library(영구 기능 문서)**로 승격·보존하고, **Integrations(외부 도구/MCP 등)**를 별도 체계로 관리하여 팀/AI가 반복 없이 재사용하는 단일 지식 체계를 유지한다. (Docs-as-Code 표준)

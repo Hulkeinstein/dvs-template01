@@ -1,3 +1,13 @@
+---
+title: "MCP Integration Guide"
+tags:
+  - type/docs
+  - external/supabase
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # MCP (Model Context Protocol) Integration Guide
 
 ## Purpose & Scope

@@ -1,3 +1,12 @@
+---
+title: "Integrations Registry"
+tags:
+  - type/docs
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # Integrations Registry
 
 **목적**: 프로젝트에서 사용 중인 모든 외부 도구/서비스의 버전, 오너, 상태를 한눈에 파악

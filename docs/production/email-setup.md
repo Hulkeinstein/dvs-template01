@@ -1,3 +1,12 @@
+---
+title: "Production Email Setup Guide"
+tags:
+  - type/docs
+created: 2025-10-27
+updated: 2025-11-05
+lifecycle: active
+---
+
 # 프로덕션 이메일 설정 가이드
 
 ## 📋 현재 상태 (개발/임시)

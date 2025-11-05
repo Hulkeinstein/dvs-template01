@@ -1,9 +1,13 @@
 ---
-title: Bookmark System
+title: "Bookmark System"
+tags:
+  - type/feature
+  - component/ui
 milestone: Phase 1: Core Platform
 date_completed: 2025-10-29
-status: stable
-tags: [bookmark, ui, student, courses]
+created: 2025-10-29
+updated: 2025-11-05
+lifecycle: active
 ---
 
 # Bookmark System

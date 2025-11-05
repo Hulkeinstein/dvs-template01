@@ -1,9 +1,14 @@
 ---
-title: PayPal Checkout Integration
+title: "PayPal Checkout Integration"
+tags:
+  - type/feature
+  - component/payment
+  - external/paypal
 milestone: Phase 1: Core Platform
 date_completed: 2025-02-13
-status: stable
-tags: [payments, paypal, checkout, enrollment]
+created: 2025-02-13
+updated: 2025-11-05
+lifecycle: active
 ---
 
 # PayPal Checkout Integration

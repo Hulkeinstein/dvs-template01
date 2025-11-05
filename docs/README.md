@@ -1,3 +1,12 @@
+---
+title: "Documentation Index"
+tags:
+  - type/docs
+created: 2025-11-02
+updated: 2025-11-05
+lifecycle: active
+---
+
 # Documentation Index
 
 이 프로젝트의 모든 문서는 이 디렉토리에서 관리됩니다.

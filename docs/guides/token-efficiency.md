@@ -1,3 +1,12 @@
+---
+title: "Token Efficiency Guide"
+tags:
+  - type/docs
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # Claude Code 토큰 효율성 가이드
 
 ## 📋 목차
