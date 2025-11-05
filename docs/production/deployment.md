@@ -1,3 +1,12 @@
+---
+title: "Production Deployment Guide"
+tags:
+  - type/docs
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # 프로덕션 배포 가이드
 
 ## 📋 목차

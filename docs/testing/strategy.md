@@ -1,7 +1,10 @@
 ---
-title: 테스트 전략 가이드
-status: reference
+title: "Testing Strategy Guide"
+tags:
+  - type/docs
 created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
 applies_when: writing_tests
 ---
 

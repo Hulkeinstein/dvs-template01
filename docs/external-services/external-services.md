@@ -1,3 +1,12 @@
+---
+title: "External Services Integration"
+tags:
+  - type/docs
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # 외부 서비스 통합
 
 ## 🔐 인증 서비스

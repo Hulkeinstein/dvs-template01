@@ -1,3 +1,19 @@
+---
+title: "워크플로우 예시"
+tags:
+  - phase/1
+  - type/docs
+  - progress/completed
+created: 2025-08-08
+updated: 2025-11-03
+lifecycle: active
+aliases: [WORKFLOW_EXAMPLES, workflow-examples]
+category: workflow
+related:
+  - automation-guide.md
+  - workflows/work-plan-guide.md
+---
+
 # 🎯 워크플로우 예시
 
 실제 개발 시나리오별 자동화 시스템 사용 예시입니다.

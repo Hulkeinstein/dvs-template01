@@ -1,3 +1,13 @@
+---
+title: "Database Schema Reference"
+tags:
+  - type/docs
+  - component/database
+created: 2025-09-16
+updated: 2025-11-05
+lifecycle: active
+---
+
 # 📚 데이터베이스 스키마 참고 문서
 
 > ## ⚠️ 경고: 참고용 문서입니다!

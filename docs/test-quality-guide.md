@@ -1,3 +1,18 @@
+---
+title: "Test Quality Guide"
+tags:
+  - phase/1
+  - type/docs
+  - progress/completed
+created: 2025-08-21
+updated: 2025-11-03
+lifecycle: active
+aliases: [TEST_QUALITY_GUIDE, test-quality]
+category: guide
+related:
+  - testing/strategy.md
+---
+
 # Test Quality Guide
 
 ## 🎯 목표

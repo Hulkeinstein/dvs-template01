@@ -1,3 +1,12 @@
+---
+title: "Integrations Registry"
+tags:
+  - type/docs
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # Integrations Registry
 
 **목적**: 프로젝트에서 사용 중인 모든 외부 도구/서비스의 버전, 오너, 상태를 한눈에 파악
@@ -30,7 +39,7 @@
 
 ### 새 도구 추가 시
 1. 이 Registry에 항목 추가
-2. `integrations/<tool>.md` 문서 생성 (템플릿 사용)
+2. `external-services/<tool>.md` 문서 생성 (템플릿 사용)
 3. PR에 "New Integration: <tool>" 라벨 추가
 
 ### 버전 업데이트 시

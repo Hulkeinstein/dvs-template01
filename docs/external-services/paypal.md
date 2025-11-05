@@ -1,3 +1,13 @@
+---
+title: "PayPal Integration Guide"
+tags:
+  - type/docs
+  - external/paypal
+created: 2025-11-01
+updated: 2025-11-05
+lifecycle: active
+---
+
 # PayPal Integration Guide
 
 ## Purpose & Scope
@@ -427,7 +437,6 @@ Sandbox 키로 결제했는데 실제 등록됨
 ### 내부 문서
 - 체크아웃 기능: [../library/checkout.md](../library/checkout.md)
 - Stripe 통합: [./stripe.md](./stripe.md)
-- 보안 원칙: [../modules/security-principles.md](../../modules/security-principles.md)
 
 ---
 

@@ -1,3 +1,21 @@
+---
+title: "Google OAuth 설정 가이드"
+tags:
+  - phase/1
+  - type/docs
+  - component/auth
+  - external/nextauth
+  - progress/completed
+created: 2025-09-07
+updated: 2025-11-03
+lifecycle: active
+aliases: [GOOGLE_OAUTH_SETUP, google-oauth]
+category: guide
+related:
+  - admin-sso-setup.md
+  - external-services/mcp.md
+---
+
 # Google OAuth 설정 가이드
 
 ## 1. Google Cloud Console 설정
