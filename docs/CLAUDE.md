@@ -409,6 +409,10 @@ rg "OLD_NAME" docs/
 - **Front-matter 필수**: 모든 docs 폴더 문서는 필수 5개 필드 포함 (title, tags, created, updated, lifecycle)
 - 문서 수정 시 Front-matter의 `updated` 날짜 갱신
 - 파일명 변경 시 `aliases` 필드에 이전 이름 추가 및 참조 업데이트
+- **문서 검증**: 작성/수정 후 `npm run docs:check` 실행 필수
+  - Front-matter: `npm run docs:verify-frontmatter`
+  - Markdown 포맷: `npm run docs:lint`
+  - 링크 유효성: `npm run docs:links`
 
 ---
 
