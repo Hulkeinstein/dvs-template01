@@ -222,8 +222,6 @@ Error: permission denied for table orders
 
 ### 내부 문서
 - Supabase 설정: [supabase.md](./supabase.md)
-- 데이터베이스 가이드: [../modules/database-migration-guide.md](../../modules/database-migration-guide.md)
-- 보안 원칙: [../modules/security-principles.md](../../modules/security-principles.md)
 
 ---
 

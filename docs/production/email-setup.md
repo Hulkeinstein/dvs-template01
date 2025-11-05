@@ -275,8 +275,7 @@ const EMAIL_FROM =
 - [DMARC 설정](https://www.dmarcanalyzer.com/dmarc/)
 
 ### 관련 문서
-- [프로덕션 배포 가이드](../../modules/production-deployment.md)
-- [환경 설정 가이드](../../modules/environment-setup.md)
+- [프로덕션 배포 가이드](./deployment.md)
 
 ---
 

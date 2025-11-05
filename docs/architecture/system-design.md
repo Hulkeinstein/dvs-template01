@@ -726,7 +726,6 @@ const { data } = await supabase
 - Work Plan: [../work-plans/checkout-improvement.md](../work-plans/checkout-improvement.md)
 - MCP 통합: [../external-services/mcp.md](../external-services/mcp.md)
 - Stripe 통합: [../external-services/stripe.md](../external-services/stripe.md)
-- 보안 원칙: [../../modules/security-principles.md](../../modules/security-principles.md)
 
 ### 외부 문서
 - [Next.js App Router](https://nextjs.org/docs/app)

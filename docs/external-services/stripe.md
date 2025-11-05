@@ -374,9 +374,8 @@ ZIP: 임의 5자리 (예: 12345)
 - [Testing Guide](https://stripe.com/docs/testing)
 
 ### 내부 문서
-- 체크아웃 기능: [../library/checkout.md](../library/checkout.md) (생성 예정)
+- 체크아웃 기능: [../library/checkout.md](../library/checkout.md)
 - MCP 통합: [./mcp.md](./mcp.md)
-- 보안 원칙: [../modules/security-principles.md](../../modules/security-principles.md)
 
 ---
 
