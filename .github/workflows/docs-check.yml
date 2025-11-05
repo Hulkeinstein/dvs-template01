@@ -31,7 +31,7 @@ jobs:
 
       - name: Verify Front-matter
         id: frontmatter
-        continue-on-error: true
+        continue-on-error: false
         run: |
           echo "::group::Front-matter Validation"
           npm run docs:verify-frontmatter
@@ -39,7 +39,7 @@ jobs:
 
       - name: Check Markdown format
         id: markdown-lint
-        continue-on-error: true
+        continue-on-error: false
         run: |
           echo "::group::Markdown Linting"
           npm run docs:lint
@@ -47,7 +47,7 @@ jobs:
 
       - name: Validate links
         id: link-check
-        continue-on-error: true
+        continue-on-error: false
         run: |
           echo "::group::Link Validation"
           npm run docs:links
@@ -64,8 +64,8 @@ jobs:
           echo "| Markdown Lint | ${{ steps.markdown-lint.outcome }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Link Check | ${{ steps.link-check.outcome }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "⚠️ **Warning Mode Active**: Validation errors do not fail CI" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Strict Mode Active**: All validation checks must pass" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "📝 **Next Steps**:" >> $GITHUB_STEP_SUMMARY
-          echo "- Phase 5: Add Front-matter to remaining 18 files" >> $GITHUB_STEP_SUMMARY
-          echo "- After Phase 5: Enable strict mode (remove continue-on-error)" >> $GITHUB_STEP_SUMMARY
+          echo "📝 **Status**:" >> $GITHUB_STEP_SUMMARY
+          echo "- Phase 5 complete: All 24 files have valid Front-matter" >> $GITHUB_STEP_SUMMARY
+          echo "- Strict mode enabled: Validation failures will block merges" >> $GITHUB_STEP_SUMMARY
