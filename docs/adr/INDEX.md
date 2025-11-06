@@ -124,9 +124,11 @@ _None yet_
 
 - **Template**: [TEMPLATE.md](./TEMPLATE.md)
 - **First ADR**: [0001 - Record Architecture Decisions](./0001-record-architecture-decisions.md)
+- **Relationship Guide**: [../workflows/milestone-workplan-adr-relationship.md](../workflows/milestone-workplan-adr-relationship.md)
+- **Examples**: [../workflows/examples.md](../workflows/examples.md)
 - **Library Docs**: [../library/](../library/) (How features work)
 - **Work Plans**: [../work-plans/](../work-plans/) (Temporary planning)
-- **Workflows**: [../workflows/](../workflows/) (Process guides)
+- **Work Plan Guide**: [../workflows/work-plan-guide.md](../workflows/work-plan-guide.md)
 
 ---
 

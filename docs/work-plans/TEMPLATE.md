@@ -204,11 +204,13 @@ npm run build
 
 ## Reference
 
-- Issue: #XX
-- Related Work Plans: [link]
-- Related Library Docs: [link]
-- Related ADRs: [link]
-- External Resources: [link]
+- **Issue**: #XX
+- **Work Plan Guide**: [../workflows/work-plan-guide.md](../workflows/work-plan-guide.md)
+- **Relationship Guide**: [../workflows/milestone-workplan-adr-relationship.md](../workflows/milestone-workplan-adr-relationship.md)
+- **Examples**: [../workflows/examples.md](../workflows/examples.md)
+- **Related Library Docs**: [../library/](../library/)
+- **Related ADRs**: [../adr/INDEX.md](../adr/INDEX.md)
+- **Project Workflow**: [../../modules/workflow.md](../../modules/workflow.md)
 
 ---
 

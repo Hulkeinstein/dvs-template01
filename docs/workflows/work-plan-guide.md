@@ -237,6 +237,10 @@ AI: ??? (원래 계획을 잊음)
 
 ## Related Files
 
-- AI Protocol: `~/.claude/modules/work-plan-protocol.md`
-- Project Workflow: `modules/workflow.md`
-- Development Guide: `modules/development-guide.md`
+- **AI Protocol**: `~/.claude/modules/work-plan-protocol.md`
+- **Documentation System**: `~/.claude/modules/documentation-system.md`
+- **Relationship Guide**: [milestone-workplan-adr-relationship.md](./milestone-workplan-adr-relationship.md)
+- **Examples**: [examples.md](./examples.md)
+- **Project Workflow**: `../../modules/workflow.md`
+- **Development Guide**: `../../modules/development-guide.md`
+- **ADR Index**: [../adr/INDEX.md](../adr/INDEX.md)

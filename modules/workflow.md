@@ -2,10 +2,13 @@
 
 ## Overview
 
-Components:
-- **GitHub Milestones** - Progress tracking
-- **docs/work-plans/** - Temporary plans (complex features)
-- **docs/library/** - Permanent knowledge (completed features)
+### Documentation System
+- **Milestone**: Progress tracking (Active, Backlog)
+- **Work Plan**: Execution plan (`docs/work-plans/`, temporary)
+- **ADR**: Decision record (`docs/adr/`, permanent)
+- **Library**: Feature docs (`docs/library/`, permanent)
+
+관계 상세: [docs/workflows/milestone-workplan-adr-relationship.md](../docs/workflows/milestone-workplan-adr-relationship.md)
 
 ---
 

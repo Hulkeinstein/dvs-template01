@@ -28,6 +28,75 @@ lifecycle: active
   - **references/**: 링크/자료 모음이 커질 때(카탈로그 성격).
     ※ 도구 사용법은 `external-services/`로, 레퍼런스 링크 모음은 `references/`로.
 
+### 세 가지 문서 시스템
+
+**Milestone (진행 추적)**:
+- 범위: 여러 Issue 그룹화 (weeks~months)
+- 위치: GitHub
+- 생명주기: 장기간 (Phase 완료 시 닫기)
+- DVS 현재: Active, Backlog
+
+**Work Plan (실행 계획)**:
+- 범위: 단일 Issue/Feature (days~weeks)
+- 위치: `docs/work-plans/<feature>.md`
+- 생명주기: **임시** (완료 후 삭제)
+- 템플릿: `docs/work-plans/TEMPLATE.md`
+
+**ADR (결정 기록)**:
+- 범위: 아키텍처 결정 (프로젝트 전체 영향)
+- 위치: `docs/adr/XXXX-decision-name.md`
+- 생명주기: **영구** (불변, supersede 방식)
+- 템플릿: `docs/adr/TEMPLATE.md` (MADR 형식)
+
+### 사용 기준
+
+| 작업 복잡도 | Milestone | Work Plan | ADR | Library |
+|------------|-----------|-----------|-----|---------|
+| Simple (<1h, 단순 수정) | ✅ | ❌ | ❌ | ❌ |
+| Standard (2-4h, 기능 개발) | ✅ | ✅ | ❌ | ✅ |
+| Complex (1주+, 아키텍처) | ✅ | ✅ | ✅ | ✅ |
+
+### 수명주기
+
+```
+Milestone: Active
+  └─ Issue #10: Assignment Template
+       └─ Branch: feature/assignment-template
+            └─ Work Plan (임시)
+                 ├─ Phase 0-3 실행
+                 └─ 중요 결정 발생? → ADR 작성 (아키텍처만)
+                      └─ Library 작성 (영구, HOW 구현)
+                           └─ Work Plan 삭제
+                                └─ PR & Merge (Closes #10)
+```
+
+### 문서 간 참조 패턴
+
+**Work Plan → ADR**:
+```markdown
+## Decisions Log
+### D1: 템플릿 엔진 선택
+**결정**: Handlebars 사용
+**상세**: [ADR-0004](../adr/0004-template-engine.md) 참조
+```
+
+**Library → ADR**:
+```markdown
+## 아키텍처
+하이브리드 인증 시스템
+
+**설계 결정**: [ADR-0003: Hybrid Authentication](../adr/0003-hybrid-auth.md)
+```
+
+**ADR → Library**:
+```markdown
+## Links
+- Implementation: [library/authentication.md](../library/authentication.md)
+- Issue: #25
+```
+
+**상세 가이드**: [workflows/milestone-workplan-adr-relationship.md](./workflows/milestone-workplan-adr-relationship.md)
+
 ---
 
 ## 2) 디렉토리 표준 구조
