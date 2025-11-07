@@ -36,15 +36,23 @@ Never: `my-branch`, `test`, `temp`
 - Use TodoWrite for task tracking
 
 ### Milestones
-Current phases:
-- **Phase 1: Core Platform** (2025-08-31) - Student/Teacher core
-- **Phase 2: Admin System** (2025-09-15) - PreSkool integration
-- **Phase 3: Enhancement** (Open) - Performance, AI
+
+**Current structure**:
+- **Active** (no due date): Quick tasks (<=2h), docs, hotfixes
+- **Phase 1: Core Platform** (2025-11-30): Student/Teacher core
+- **Phase 2: Admin System** (2025-12-15): PreSkool integration
+
+**Exit Criteria**: All issues closed → Milestone closed → (Optional) Release note
+
+**Routing Rules**:
+- Quick tasks/docs/hotfixes → Active
+- Feature work → Phase 1 or Phase 2
+- Future ideas (no milestone) → Backlog
 
 Create issue with milestone:
 ```bash
 gh issue create --title "[Feature] Name" --milestone "Phase 1: Core Platform"
-gh issue list --milestone "Phase 1: Core Platform"
+gh issue list --milestone "Active"
 ```
 
 ### PR Merge Cleanup

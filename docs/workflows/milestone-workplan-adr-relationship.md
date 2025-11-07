@@ -23,14 +23,18 @@ related:
 ## DVS Project Specifics
 
 ### Current Milestones
-**After Phase 4 completion** (Option A 선택 시):
-- **Active** (무기한): 현재 진행 중 작업
-- **Backlog** (무기한): 미래 작업
 
-**Before Phase 4** (구조):
-- Phase 1: Core Platform (2025-08-31)
-- Phase 2: Admin System (2025-09-15)
-- Phase 3: Enhancement (2025-10-31)
+- **Active** (no due date): Quick tasks (<=2h), docs, hotfixes
+- **Phase 1: Core Platform** (2025-11-30): Student/Teacher core features
+- **Phase 2: Admin System** (2025-12-15): PreSkool integration
+
+**Closed Milestones** (2025-11-07):
+- Phase 3: Enhancement & Optimization (unused, closed per best practice)
+
+**Routing Rules**:
+- <=2h, docs, hotfixes → Active
+- Feature development → Phase 1/2
+- No milestone → Future backlog
 
 ### Work Plan Template
 **Location**: `docs/work-plans/TEMPLATE.md`
