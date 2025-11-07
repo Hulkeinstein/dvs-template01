@@ -132,6 +132,32 @@ rg "OLD_NAME" docs/
 - 절대 경로 금지: `[text](/docs/file.md)`
 - 파일명 변경 후 `npm run build`로 검증
 
+### ADR (Architecture Decision Records)
+
+**언제 작성하나**:
+- ✅ 데이터베이스/백엔드 서비스 선택 (예: Supabase vs Firebase)
+- ✅ 프레임워크/라이브러리 선택 (예: Next.js App Router vs Pages)
+- ✅ 인증/보안 방식 결정 (예: OAuth + Email 하이브리드)
+- ✅ 아키텍처 패턴 채택 (예: Server Actions vs API Routes)
+- ✅ 기술 스택 변경 (예: Bootstrap → Tailwind)
+- ❌ 단순 구현 세부사항 (컴포넌트 분리, 함수 이름)
+- ❌ 버그 수정, 리팩토링
+
+**작성 프로세스**:
+1. `docs/adr/TEMPLATE.md` 복사
+2. 순차 번호 부여 (0001, 0002, ...)
+3. Context, Decision Drivers, Considered Options 작성
+4. Decision Outcome 및 Pros/Cons 비교
+5. Front-matter 추가 (tags, dates, lifecycle)
+6. `docs/adr/INDEX.md`에 추가
+
+**ADR vs Library**:
+- **ADR**: WHY 결정 (불변, 아키텍처만, Supersede 방식)
+- **Library**: HOW 구현 (변경 가능, 기능 전반)
+- **Work Plan**: 진행 중 (임시, 완료 후 삭제)
+
+**참고**: [docs/adr/INDEX.md](../docs/adr/INDEX.md), [docs/adr/TEMPLATE.md](../docs/adr/TEMPLATE.md)
+
 ## Code Reuse (DISCOVER)
 Before creating files: Search → Reuse (80%+) / Extend (50-80%) / New (<50%)
 ```bash

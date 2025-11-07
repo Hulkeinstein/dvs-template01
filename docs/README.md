@@ -20,7 +20,14 @@ lifecycle: active
 
 ### 🔄 작업 문서
 - **[work-plans/](./work-plans/)** - 진행 중 작업 (임시)
+  - [TEMPLATE.md](./work-plans/TEMPLATE.md) - Work Plan 템플릿
 - **[library/](./library/)** - 완료된 기능 문서 (영구)
+
+### 🏛️ 아키텍처 결정
+- **[adr/](./adr/)** - Architecture Decision Records (ADR)
+  - [INDEX.md](./adr/INDEX.md) - 모든 ADR 목록
+  - [TEMPLATE.md](./adr/TEMPLATE.md) - ADR 작성 템플릿
+  - [0001-record-architecture-decisions.md](./adr/0001-record-architecture-decisions.md) - 메타 ADR
 
 ### 🛠️ 기술 문서
 - **[architecture/](./architecture/)** - 시스템 설계
@@ -38,6 +45,11 @@ lifecycle: active
 1. [CLAUDE.md](./CLAUDE.md) - 전체 워크플로우 확인
 2. [workflows/work-plan-guide.md](./workflows/work-plan-guide.md) - Work Plan 템플릿 확인
 3. `work-plans/` 폴더에 새 Work Plan 생성
+
+### 아키텍처 결정 기록
+- [adr/INDEX.md](./adr/INDEX.md) - 모든 아키텍처 결정 보기
+- [adr/TEMPLATE.md](./adr/TEMPLATE.md) - 새 ADR 작성하기
+- 중요 결정 시 ADR 작성 (DB 선택, 인증 방식, 프레임워크 등)
 
 ### 완료된 기능 참고
 - [library/](./library/) - 구현된 기능 아키텍처 & 결정사항
