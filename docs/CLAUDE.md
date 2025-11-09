@@ -3,7 +3,7 @@ title: "CLAUDE.md - Docs Memory & Workflow Guide"
 tags:
   - type/docs
 created: 2025-11-02
-updated: 2025-11-05
+updated: 2025-11-08
 lifecycle: active
 ---
 
@@ -16,6 +16,10 @@ lifecycle: active
 ## 1) 운영 원칙 (Single Source of Truth)
 
 - **임시(진행 중)**: `docs/work-plans/` — 실행 체크리스트·기술 메모·리스크/의사결정 초안.
+- **임시 메모 (TEMP)**: `docs/work-plans/temp-<제목>.md` — 맥락 유지용 임시 메모
+  - 작업 진행 중 필요한 분석/요구사항 정리
+  - 새 TEMP 파일 생성 시 이전 TEMP 파일 삭제 여부 확인 후 삭제
+  - 작업 완료 시 반드시 삭제
 - **영구(완료 기능)**: `docs/library/` — 구현 가이드(아키텍처·주요 결정·테스트·파일 경로·참고 PR).
 - **아키텍처 결정**: `docs/adr/` — ADR (Architecture Decision Records) - WHY 결정을 했는지 기록 (불변, 버전 관리).
 - **외부 연동/도구**: `docs/external-services/` — MCP/Stripe/Supabase/Canva 등 무엇을/어떻게/보안/런북.
@@ -34,7 +38,7 @@ lifecycle: active
 - 범위: 여러 Issue 그룹화 (weeks~months)
 - 위치: GitHub
 - 생명주기: 장기간 (Phase 완료 시 닫기)
-- DVS 현재: Active, Backlog
+- DVS 현재: Active, Phase 0 (Tech Debt), Phase 1 (MVP), Phase 2 (Enhancement), Phase 3 (Scale)
 
 **Work Plan (실행 계획)**:
 - 범위: 단일 Issue/Feature (days~weeks)
@@ -230,9 +234,11 @@ owners: ["@owner1", "@owner2"]                # 선택: 담당자
 **모든 태그는 네임스페이스 형식(`category/value`)을 사용합니다.**
 
 #### phase/ (프로젝트 단계)
-- `phase/1` - Phase 1: Core Platform
-- `phase/2` - Phase 2: Admin System
-- `phase/3` - Phase 3: Enhancement
+- `phase/0` - Phase 0: Tech Debt
+- `phase/1` - Phase 1: MVP (YouTube Curation)
+- `phase/2` - Phase 2: Enhancement
+- `phase/3` - Phase 3: Scale
+- `phase/planning` - Planning Documents (Vision, Roadmap)
 
 #### type/ (문서 유형)
 - `type/feature` - 새 기능 구현

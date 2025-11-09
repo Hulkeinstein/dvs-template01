@@ -24,17 +24,29 @@ related:
 
 ### Current Milestones
 
-- **Active** (no due date): Quick tasks (<=2h), docs, hotfixes
-- **Phase 1: Core Platform** (2025-11-30): Student/Teacher core features
-- **Phase 2: Admin System** (2025-12-15): PreSkool integration
+- **Active** (no due date): Quick Wins (<2h tasks, docs, hotfixes)
+- **Phase 0: Tech Debt** (2025-11-22): TypeScript 마이그레이션, Assignment 템플릿
+- **Phase 1: MVP** (2025-12-14): YouTube 큐레이션 핵심 (API, 좋아요, Quality Control)
+- **Phase 2: Enhancement** (2025-12-28): 다중 배지, 신고 시스템, 광고 연동
+- **Phase 3: Scale** (2026-01-25): 검색 최적화, 추천 알고리즘, ML 품질 분석
 
-**Closed Milestones** (2025-11-07):
-- Phase 3: Enhancement & Optimization (unused, closed per best practice)
+**GitHub Milestone 매핑**:
+| GitHub Milestone | Docs Milestone | 상태 |
+|------------------|---------------|------|
+| Active | Active | 활성 |
+| Phase 1: Core Platform | Phase 0: Tech Debt | 이름 변경 예정 |
+| Phase 2: Admin System | Phase 2: Enhancement | 이름 변경 예정 |
+| (신규 생성 필요) | Phase 1: MVP | 생성 예정 |
+| (신규 생성 필요) | Phase 3: Scale | 생성 예정 |
 
 **Routing Rules**:
-- <=2h, docs, hotfixes → Active
-- Feature development → Phase 1/2
-- No milestone → Future backlog
+- <2h tasks (docs, hotfix, lint, config) → **Active**
+- Tech Debt (#19 TypeScript, #10 Assignment) → **Phase 0**
+- Vision features (YouTube API, 좋아요, Quality Control, Premium Domain) → **Phase 1**
+- Enhancement (배지 #12, 신고, 광고, 금지어, 완료율) → **Phase 2**
+- Future (검색, 추천, ML, 조작 방지) → **Phase 3**
+
+**Milestone 정의 문서**: `docs/milestones/*.md` 참조
 
 ### Work Plan Template
 **Location**: `docs/work-plans/TEMPLATE.md`
@@ -58,8 +70,12 @@ related:
 ```
 작업 시작
   ↓
-Q1: Milestone 확인
-  └─ DVS: Active or Backlog?
+Q1: Milestone 선택
+  ├─ <2h (docs, hotfix, lint) → Active
+  ├─ Tech Debt (#19, #10) → Phase 0
+  ├─ Vision features (YouTube API, 좋아요) → Phase 1
+  ├─ Enhancement (배지, 신고, 광고) → Phase 2
+  └─ Future (검색, 추천, ML) → Phase 3
   ↓
 Q2: 복잡도 판단
   ├─ Simple (<1h)
@@ -97,10 +113,10 @@ Milestone: Active
 
 ### Example 2: Assignment Template (Standard)
 **Complexity**: 2-4시간
-**Milestone**: Active
+**Milestone**: Phase 0: Tech Debt
 
 ```
-Milestone: Active
+Milestone: Phase 0: Tech Debt
   └─ Issue #10: Assignment 템플릿 시스템
        └─ Work Plan: assignment-template.md
             ├─ Phase 0: 설계
@@ -120,10 +136,10 @@ Milestone: Active
 
 ### Example 3: Authentication Improvement (Complex)
 **Complexity**: 1주+
-**Milestone**: Active
+**Milestone**: Phase 1: MVP
 
 ```
-Milestone: Active
+Milestone: Phase 1: MVP
   └─ Issue #25: 인증 시스템 개선
        └─ Work Plan: auth-improvement.md
             ├─ Phase 0: 현황 분석

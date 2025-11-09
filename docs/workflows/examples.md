@@ -71,7 +71,7 @@ git checkout main && git pull && git branch -d fix/button-alignment
 ```bash
 gh issue create \
   --title "[Feature] Bookmark system" \
-  --milestone "Active"
+  --milestone "Phase 2: Enhancement"
 # Created: Issue #30
 ```
 
@@ -161,7 +161,7 @@ gh pr create --title "feat: bookmark system - Closes #30"
 ```bash
 gh issue create \
   --title "[Feature] Hybrid authentication" \
-  --milestone "Active"
+  --milestone "Phase 1: MVP"
 # Created: Issue #25
 ```
 
