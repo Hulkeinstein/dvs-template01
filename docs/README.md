@@ -3,7 +3,7 @@ title: "Documentation Index"
 tags:
   - type/docs
 created: 2025-11-02
-updated: 2025-11-05
+updated: 2025-11-09
 lifecycle: active
 ---
 
@@ -17,6 +17,18 @@ lifecycle: active
 - **[CLAUDE.md](./CLAUDE.md)** - 워크플로우 & 문서 가이드 (AI/개발자 협업 규칙)
 - **[workflows/](./workflows/)** - 워크플로우 상세 가이드
   - [work-plan-guide.md](./workflows/work-plan-guide.md) - Work Plan 작성법
+
+### 📋 프로젝트 계획
+- **[PROJECT_VISION.md](./PROJECT_VISION.md)** - 제품 비전 (문제, 솔루션, 목표, 성공 지표)
+- **[ROADMAP.md](./ROADMAP.md)** - 로드맵 (Phase 0-3 실행 계획)
+
+### 📍 마일스톤
+- **[milestones/](./milestones/)** - Phase별 Milestone 정의 (영구)
+  - [active.md](./milestones/active.md) - Active Milestone: Quick Wins
+  - [phase-0.md](./milestones/phase-0.md) - Phase 0: Tech Debt
+  - [phase-1.md](./milestones/phase-1.md) - Phase 1: MVP (YouTube Curation)
+  - [phase-2.md](./milestones/phase-2.md) - Phase 2: Enhancement
+  - [phase-3.md](./milestones/phase-3.md) - Phase 3: Scale
 
 ### 🔄 작업 문서
 - **[work-plans/](./work-plans/)** - 진행 중 작업 (임시)
@@ -90,9 +102,11 @@ owners: []                           # 선택 (담당자)
 모든 태그는 다음 5개 카테고리 중 하나를 사용합니다:
 
 **phase/** (프로젝트 단계)
-- `phase/1` - Phase 1: Core Platform
-- `phase/2` - Phase 2: Admin System
-- `phase/3` - Phase 3: Enhancement
+- `phase/0` - Phase 0: Tech Debt
+- `phase/1` - Phase 1: MVP (YouTube Curation)
+- `phase/2` - Phase 2: Enhancement
+- `phase/3` - Phase 3: Scale
+- `phase/planning` - Planning Documents (Vision, Roadmap)
 
 **type/** (문서 유형)
 - `type/feature` - 새 기능
@@ -107,6 +121,9 @@ owners: []                           # 선택 (담당자)
 - `component/ui` - UI/UX
 - `component/database` - 데이터베이스
 - `component/api` - API
+- `component/workflow` - 워크플로우/프로세스
+- `component/admin` - 관리자 기능
+- `component/ml` - 머신러닝/AI
 
 **external/** (외부 서비스, 다중 허용)
 - `external/stripe` - Stripe 결제

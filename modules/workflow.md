@@ -38,21 +38,28 @@ Never: `my-branch`, `test`, `temp`
 ### Milestones
 
 **Current structure**:
-- **Active** (no due date): Quick tasks (<=2h), docs, hotfixes
-- **Phase 1: Core Platform** (2025-11-30): Student/Teacher core
-- **Phase 2: Admin System** (2025-12-15): PreSkool integration
+- **Active** (no due date): Quick Wins (<2h tasks, docs, hotfixes)
+- **Phase 0: Tech Debt** (2025-11-22): TypeScript 마이그레이션, Assignment 템플릿
+- **Phase 1: MVP** (2025-12-14): YouTube 큐레이션 핵심 (API, 좋아요, Quality Control)
+- **Phase 2: Enhancement** (2025-12-28): 다중 배지, 신고 시스템, 광고 연동
+- **Phase 3: Scale** (2026-01-25): 검색 최적화, 추천 알고리즘, ML 품질 분석
 
 **Exit Criteria**: All issues closed → Milestone closed → (Optional) Release note
 
 **Routing Rules**:
-- Quick tasks/docs/hotfixes → Active
-- Feature work → Phase 1 or Phase 2
-- Future ideas (no milestone) → Backlog
+- <2h tasks (docs, hotfix, lint, config) → **Active**
+- Tech Debt (#19 TypeScript, #10 Assignment) → **Phase 0**
+- Vision features (YouTube API, 좋아요, Quality Control, Premium Domain) → **Phase 1**
+- Enhancement (배지 #12, 신고, 광고, 금지어, 완료율) → **Phase 2**
+- Future (검색, 추천, ML, 조작 방지) → **Phase 3**
+
+**Milestone 정의 문서**: `docs/milestones/*.md` 참조
 
 Create issue with milestone:
 ```bash
-gh issue create --title "[Feature] Name" --milestone "Phase 1: Core Platform"
+gh issue create --title "[Feature] Name" --milestone "Phase 1: MVP"
 gh issue list --milestone "Active"
+gh issue list --milestone "Phase 0: Tech Debt"
 ```
 
 ### PR Merge Cleanup
@@ -93,7 +100,7 @@ Create issue:
 ```bash
 gh issue create \
   --title "[Feature] Name" \
-  --milestone "Phase 1: Core Platform"
+  --milestone "Phase 1: MVP"
 ```
 
 Create branch:
@@ -147,7 +154,9 @@ git remote prune origin
 
 ## Progress Tracking
 ```bash
-gh issue list --milestone "Phase 1: Core Platform"
+gh issue list --milestone "Phase 0: Tech Debt"
+gh issue list --milestone "Phase 1: MVP"
+gh issue list --milestone "Active"
 gh issue list
 ```
 Dashboard: https://github.com/Hulkeinstein/dvs-template01/milestones
