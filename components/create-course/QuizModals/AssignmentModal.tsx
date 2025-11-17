@@ -8,7 +8,13 @@ import {
   type TimeLimit,
 } from '@/constants/sampleAssignmentData';
 import TextEditorWrapper from '../TextEditorWrapper';
-import { saveAsTemplate } from '@/app/lib/actions/assignmentTemplateActions';
+import {
+  saveAsTemplate,
+  getMyTemplates,
+  deleteTemplate,
+  incrementTemplateUsage,
+} from '@/app/lib/actions/assignmentTemplateActions';
+import type { TemplateRow } from '@/app/lib/actions/assignmentTemplateActions';
 import { toast } from '@/hooks/use-toast';
 
 // Props interface
@@ -45,6 +51,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
   });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [isSavingTemplate, setIsSavingTemplate] = useState<boolean>(false);
+  const [myTemplates, setMyTemplates] = useState<TemplateRow[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Local validateFile function (avoiding import issues)
@@ -143,6 +150,58 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
     });
   };
 
+  // Load template handler
+  const handleLoadTemplate = async (template: TemplateRow): Promise<void> => {
+    const content = template.template_data;
+
+    setAssignmentData({
+      ...assignmentData,
+      title: '', // 새 과제이므로 사용자가 직접 입력
+      summary: content.instructions || '',
+      attachments: content.attachments || [],
+      timeLimit: content.timeLimit || { value: 0, unit: 'weeks' },
+      totalPoints: content.totalPoints || 100,
+      passingPoints: content.passingPoints || 70,
+      maxUploads: content.maxUploads || 1,
+      maxFileSize: content.maxFileSize || 10,
+    });
+
+    setShowDropdown(false);
+
+    // 사용 횟수 증가
+    await incrementTemplateUsage(template.id);
+
+    toast({
+      title: 'Success',
+      description: `Template "${template.name}" loaded`,
+    });
+  };
+
+  // Delete template handler
+  const handleDeleteTemplate = async (
+    templateId: string,
+    e: React.MouseEvent
+  ): Promise<void> => {
+    e.stopPropagation(); // 드롭다운 닫힘 방지
+
+    if (!confirm('Delete this template?')) return;
+
+    const result = await deleteTemplate(templateId);
+
+    if (result.success) {
+      setMyTemplates(myTemplates.filter((t) => t.id !== templateId));
+      toast({
+        description: 'Template deleted',
+      });
+    } else {
+      toast({
+        title: 'Error',
+        description: result.message || 'Failed to delete template',
+        variant: 'destructive',
+      });
+    }
+  };
+
   // Save as template handler
   const handleSaveAsTemplate = async (): Promise<void> => {
     const templateName = prompt('Enter template name:');
@@ -218,6 +277,19 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
     }
   }, [editingAssignment]);
 
+  // Load my templates on mount
+  React.useEffect(() => {
+    const loadTemplates = async (): Promise<void> => {
+      const result = await getMyTemplates();
+      if (result.success) {
+        setMyTemplates(result.data || []);
+      }
+      // 에러는 조용히 무시 (instructor 아니면 빈 배열)
+    };
+
+    loadTemplates();
+  }, []);
+
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent): void => {
@@ -290,6 +362,54 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                   zIndex: 1051,
                                 }}
                               >
+                                {/* My Templates Section */}
+                                {myTemplates.length > 0 && (
+                                  <>
+                                    <li>
+                                      <h6 className="dropdown-header">
+                                        My Templates
+                                      </h6>
+                                    </li>
+                                    {myTemplates.map((template) => (
+                                      <li key={template.id}>
+                                        <a
+                                          className="dropdown-item d-flex justify-content-between align-items-center"
+                                          href="#"
+                                          onClick={(
+                                            e: React.MouseEvent<HTMLAnchorElement>
+                                          ) => {
+                                            e.preventDefault();
+                                            handleLoadTemplate(template);
+                                          }}
+                                        >
+                                          <span>{template.name}</span>
+                                          <button
+                                            className="btn btn-sm btn-link text-danger p-0"
+                                            onClick={(e: React.MouseEvent) =>
+                                              handleDeleteTemplate(
+                                                template.id,
+                                                e
+                                              )
+                                            }
+                                            aria-label="Delete template"
+                                          >
+                                            <i className="feather-trash-2"></i>
+                                          </button>
+                                        </a>
+                                      </li>
+                                    ))}
+                                    <li>
+                                      <hr className="dropdown-divider" />
+                                    </li>
+                                  </>
+                                )}
+
+                                {/* Sample Data Section */}
+                                <li>
+                                  <h6 className="dropdown-header">
+                                    Sample Data
+                                  </h6>
+                                </li>
                                 <li>
                                   <a
                                     className="dropdown-item"

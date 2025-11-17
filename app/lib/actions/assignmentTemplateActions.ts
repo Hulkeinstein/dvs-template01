@@ -72,7 +72,7 @@ export type SaveTemplateInput = z.infer<typeof SaveTemplateSchema>;
 export type TemplateContent = z.infer<typeof TemplateContentSchema>;
 
 // Database row type
-interface TemplateRow {
+export interface TemplateRow {
   id: string;
   instructor_id: string;
   name: string;
