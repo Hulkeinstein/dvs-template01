@@ -154,7 +154,6 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
         maxUploads: editingAssignment.maxUploads || 1,
         maxFileSize: editingAssignment.maxFileSize || 10,
       });
-      setContent(editingAssignment.summary || '');
     }
   }, [editingAssignment]);
 
@@ -631,7 +630,6 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                         maxUploads: 1,
                         maxFileSize: 10,
                       });
-                      setContent('');
 
                       // Close modal using Bootstrap's data-bs-dismiss
                       const closeButton = document.querySelector(
