@@ -8,6 +8,8 @@ import {
   type TimeLimit,
 } from '@/constants/sampleAssignmentData';
 import TextEditorWrapper from '../TextEditorWrapper';
+import { saveAsTemplate } from '@/app/lib/actions/assignmentTemplateActions';
+import { toast } from '@/hooks/use-toast';
 
 // Props interface
 interface AssignmentModalProps {
@@ -42,6 +44,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
     maxFileSize: 10,
   });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const [isSavingTemplate, setIsSavingTemplate] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Local validateFile function (avoiding import issues)
@@ -138,6 +141,64 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
       ...assignmentData,
       attachments: newAttachments,
     });
+  };
+
+  // Save as template handler
+  const handleSaveAsTemplate = async (): Promise<void> => {
+    const templateName = prompt('Enter template name:');
+    if (!templateName) return;
+
+    if (templateName.length > 100) {
+      toast({
+        title: 'Error',
+        description: 'Template name must be less than 100 characters',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsSavingTemplate(true);
+    try {
+      const result = await saveAsTemplate({
+        name: templateName,
+        description: '',
+        template_data: {
+          instructions: assignmentData.summary,
+          attachments: [], // Phase 3-4: Implement actual file upload
+          timeLimit: assignmentData.timeLimit,
+          totalPoints: assignmentData.totalPoints,
+          passingPoints: assignmentData.passingPoints,
+          maxUploads: assignmentData.maxUploads,
+          maxFileSize: assignmentData.maxFileSize,
+        },
+      });
+
+      if (result.success) {
+        toast({
+          title: 'Success',
+          description: `Template "${templateName}" saved successfully`,
+        });
+      } else {
+        const errorMessage =
+          result.code === 'DUPLICATE_TEMPLATE_NAME'
+            ? 'A template with this name already exists'
+            : result.message || 'Failed to save template';
+
+        toast({
+          title: 'Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      }
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Unexpected error occurred',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSavingTemplate(false);
+    }
   };
 
   // Load editing data when editingAssignment changes
@@ -605,74 +666,91 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                className="rbt-btn btn-gradient btn-md"
-                onClick={() => {
-                  if (assignmentData.title.trim() && onAddAssignment) {
-                    const result = onAddAssignment(assignmentData);
+              <div className="d-flex gap-2">
+                {!editingAssignment && (
+                  <button
+                    type="button"
+                    className="rbt-btn btn-border btn-md radius-round-10"
+                    onClick={handleSaveAsTemplate}
+                    disabled={isSavingTemplate || !assignmentData.title.trim()}
+                  >
+                    <i className="feather-save me-2"></i>
+                    {isSavingTemplate ? 'Saving...' : 'Save as Template'}
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="rbt-btn btn-gradient btn-md"
+                  onClick={() => {
+                    if (assignmentData.title.trim() && onAddAssignment) {
+                      const result = onAddAssignment(assignmentData);
 
-                    // Check if assignment was successfully added
-                    if (result && result.success) {
-                      // If editing, call onEditComplete
-                      if (editingAssignment && onEditComplete) {
-                        onEditComplete();
-                      }
+                      // Check if assignment was successfully added
+                      if (result && result.success) {
+                        // If editing, call onEditComplete
+                        if (editingAssignment && onEditComplete) {
+                          onEditComplete();
+                        }
 
-                      // Reset form
-                      setAssignmentData({
-                        title: '',
-                        summary: '',
-                        attachments: [],
-                        timeLimit: { value: 0, unit: 'weeks' },
-                        totalPoints: 100,
-                        passingPoints: 70,
-                        maxUploads: 1,
-                        maxFileSize: 10,
-                      });
+                        // Reset form
+                        setAssignmentData({
+                          title: '',
+                          summary: '',
+                          attachments: [],
+                          timeLimit: { value: 0, unit: 'weeks' },
+                          totalPoints: 100,
+                          passingPoints: 70,
+                          maxUploads: 1,
+                          maxFileSize: 10,
+                        });
 
-                      // Close modal using Bootstrap's data-bs-dismiss
-                      const closeButton = document.querySelector(
-                        `#${modalId} [data-bs-dismiss="modal"]`
-                      );
-                      if (closeButton) {
-                        (closeButton as HTMLButtonElement).click();
-                      } else {
-                        // Fallback: Try to get modal instance
-                        const modal = document.getElementById(modalId);
-                        if (modal && window.bootstrap?.Modal) {
-                          const modalInstance =
-                            window.bootstrap.Modal.getInstance(modal) ||
-                            new window.bootstrap.Modal(modal);
-                          if (modalInstance) {
-                            modalInstance.hide();
+                        // Close modal using Bootstrap's data-bs-dismiss
+                        const closeButton = document.querySelector(
+                          `#${modalId} [data-bs-dismiss="modal"]`
+                        );
+                        if (closeButton) {
+                          (closeButton as HTMLButtonElement).click();
+                        } else {
+                          // Fallback: Try to get modal instance
+                          const modal = document.getElementById(modalId);
+                          if (modal && window.bootstrap?.Modal) {
+                            const modalInstance =
+                              window.bootstrap.Modal.getInstance(modal) ||
+                              new window.bootstrap.Modal(modal);
+                            if (modalInstance) {
+                              modalInstance.hide();
+                            }
                           }
                         }
-                      }
 
-                      // Open Course Builder accordion after modal closes
-                      setTimeout(() => {
-                        const courseBuilderAccordion =
-                          document.querySelector('#headingTwo button');
-                        if (
-                          courseBuilderAccordion &&
-                          courseBuilderAccordion.classList.contains('collapsed')
-                        ) {
-                          (courseBuilderAccordion as HTMLButtonElement).click();
-                        }
-                      }, 300);
-                    } else {
-                      // Show error message if assignment save failed
-                      alert(
-                        result?.error ||
-                          '과제 저장에 실패했습니다. 다시 시도해주세요.'
-                      );
+                        // Open Course Builder accordion after modal closes
+                        setTimeout(() => {
+                          const courseBuilderAccordion =
+                            document.querySelector('#headingTwo button');
+                          if (
+                            courseBuilderAccordion &&
+                            courseBuilderAccordion.classList.contains(
+                              'collapsed'
+                            )
+                          ) {
+                            (
+                              courseBuilderAccordion as HTMLButtonElement
+                            ).click();
+                          }
+                        }, 300);
+                      } else {
+                        // Show error message if assignment save failed
+                        alert(
+                          result?.error ||
+                            '과제 저장에 실패했습니다. 다시 시도해주세요.'
+                        );
+                      }
                     }
-                  }
-                }}
-              >
-                {editingAssignment ? 'Update Assignment' : 'Add Assignment'}
-              </button>
+                  }}
+                >
+                  {editingAssignment ? 'Update Assignment' : 'Add Assignment'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
