@@ -1,18 +1,19 @@
 // Sample Assignment Data for Testing
 
-interface TimeLimit {
+export interface TimeLimit {
   value: number;
-  unit: 'hours' | 'days' | 'weeks' | 'months';
+  unit: 'minutes' | 'hours' | 'days' | 'weeks' | 'months';
 }
 
-interface Attachment {
+export interface Attachment {
   name: string;
   size: number;
   type: string;
   url: string;
 }
 
-interface AssignmentData {
+export interface AssignmentData {
+  id?: string;
   title: string;
   summary: string;
   timeLimit: TimeLimit;

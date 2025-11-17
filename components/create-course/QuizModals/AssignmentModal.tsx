@@ -1,17 +1,37 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { sampleAssignmentData } from '@/constants/sampleAssignmentData';
+import {
+  sampleAssignmentData,
+  type AssignmentData,
+  type Attachment,
+  type TimeLimit,
+} from '@/constants/sampleAssignmentData';
 import TextEditorWrapper from '../TextEditorWrapper';
 
-const AssignmentModal = ({
+// Props interface
+interface AssignmentModalProps {
+  modalId?: string;
+  onAddAssignment?: (
+    data: AssignmentData
+  ) => { success: boolean; error?: string } | void;
+  editingAssignment?: AssignmentData | null;
+  onEditComplete?: () => void;
+}
+
+// File validation result
+interface FileValidation {
+  valid: boolean;
+  error?: string;
+}
+
+const AssignmentModal: React.FC<AssignmentModalProps> = ({
   modalId = 'Assignment',
   onAddAssignment,
   editingAssignment,
   onEditComplete,
 }) => {
-  const [content, setContent] = useState('');
-  const [assignmentData, setAssignmentData] = useState({
+  const [assignmentData, setAssignmentData] = useState<AssignmentData>({
     title: '',
     summary: '',
     attachments: [],
@@ -21,12 +41,11 @@ const AssignmentModal = ({
     maxUploads: 1,
     maxFileSize: 10,
   });
-  const [showDropdown, setShowDropdown] = useState(false);
-  const editorRef = useRef(null);
-  const fileInputRef = useRef(null);
+  const [showDropdown, setShowDropdown] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Local validateFile function (avoiding import issues)
-  const validateFile = (file, maxSizeMB = 10) => {
+  const validateFile = (file: File, maxSizeMB: number = 10): FileValidation => {
     const maxSizeBytes = maxSizeMB * 1024 * 1024;
 
     if (file.size > maxSizeBytes) {
@@ -54,7 +73,7 @@ const AssignmentModal = ({
       'csv',
     ];
 
-    if (!allowedExtensions.includes(fileExtension)) {
+    if (!allowedExtensions.includes(fileExtension || '')) {
       return {
         valid: false,
         error:
@@ -66,7 +85,9 @@ const AssignmentModal = ({
   };
 
   // File upload handlers
-  const handleFileChange = async (e) => {
+  const handleFileChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     const files = Array.from(e.target.files || []);
 
     // Validate file count
@@ -79,7 +100,7 @@ const AssignmentModal = ({
     }
 
     // Validate and process files
-    const uploadedFiles = [];
+    const uploadedFiles: Attachment[] = [];
     for (const file of files) {
       // Validate file
       const validation = validateFile(file, assignmentData.maxFileSize);
@@ -110,7 +131,7 @@ const AssignmentModal = ({
     e.target.value = '';
   };
 
-  const removeFile = (index) => {
+  const removeFile = (index: number): void => {
     const newAttachments = [...assignmentData.attachments];
     newAttachments.splice(index, 1);
     setAssignmentData({
@@ -125,8 +146,7 @@ const AssignmentModal = ({
       setAssignmentData({
         id: editingAssignment.id,
         title: editingAssignment.title || '',
-        summary:
-          editingAssignment.summary || editingAssignment.description || '',
+        summary: editingAssignment.summary || '',
         attachments: editingAssignment.attachments || [],
         timeLimit: editingAssignment.timeLimit || { value: 0, unit: 'weeks' },
         totalPoints: editingAssignment.totalPoints || 100,
@@ -134,16 +154,14 @@ const AssignmentModal = ({
         maxUploads: editingAssignment.maxUploads || 1,
         maxFileSize: editingAssignment.maxFileSize || 10,
       });
-      setContent(
-        editingAssignment.summary || editingAssignment.description || ''
-      );
+      setContent(editingAssignment.summary || '');
     }
   }, [editingAssignment]);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (showDropdown && !event.target.closest('.dropdown')) {
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (showDropdown && !(event.target as HTMLElement).closest('.dropdown')) {
         setShowDropdown(false);
       }
     };
@@ -159,7 +177,7 @@ const AssignmentModal = ({
       <div
         className="rbt-default-modal modal fade"
         id={modalId}
-        tabIndex="-1"
+        tabIndex={-1}
         aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
       >
@@ -216,7 +234,9 @@ const AssignmentModal = ({
                                   <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={(e) => {
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLAnchorElement>
+                                    ) => {
                                       e.preventDefault();
                                       const sample = sampleAssignmentData.basic;
                                       setAssignmentData({
@@ -233,7 +253,9 @@ const AssignmentModal = ({
                                   <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={(e) => {
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLAnchorElement>
+                                    ) => {
                                       e.preventDefault();
                                       const sample =
                                         sampleAssignmentData.advanced;
@@ -251,7 +273,9 @@ const AssignmentModal = ({
                                   <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={(e) => {
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLAnchorElement>
+                                    ) => {
                                       e.preventDefault();
                                       const sample = sampleAssignmentData.quiz;
                                       setAssignmentData({
@@ -268,7 +292,9 @@ const AssignmentModal = ({
                                   <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={(e) => {
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLAnchorElement>
+                                    ) => {
                                       e.preventDefault();
                                       const sample =
                                         sampleAssignmentData.report;
@@ -286,7 +312,9 @@ const AssignmentModal = ({
                                   <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={(e) => {
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLAnchorElement>
+                                    ) => {
                                       e.preventDefault();
                                       const sample = sampleAssignmentData.group;
                                       setAssignmentData({
@@ -303,7 +331,9 @@ const AssignmentModal = ({
                                   <a
                                     className="dropdown-item"
                                     href="#"
-                                    onClick={(e) => {
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLAnchorElement>
+                                    ) => {
                                       e.preventDefault();
                                       const sample =
                                         sampleAssignmentData.practice;
@@ -331,7 +361,7 @@ const AssignmentModal = ({
                           type="text"
                           placeholder="Assignments"
                           value={assignmentData.title}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setAssignmentData({
                               ...assignmentData,
                               title: e.target.value,
@@ -342,9 +372,8 @@ const AssignmentModal = ({
                       <div className="course-field mb--30">
                         <label htmlFor="modal-field-3">Summary</label>
                         <TextEditorWrapper
-                          ref={editorRef}
                           value={assignmentData.summary}
-                          onChange={(newContent) =>
+                          onChange={(newContent: string) =>
                             setAssignmentData({
                               ...assignmentData,
                               summary: newContent,
@@ -413,7 +442,9 @@ const AssignmentModal = ({
                               type="number"
                               placeholder="00"
                               value={assignmentData.timeLimit.value}
-                              onChange={(e) =>
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   timeLimit: {
@@ -431,12 +462,14 @@ const AssignmentModal = ({
                               className="w-75"
                               style={{ height: '50px' }}
                               value={assignmentData.timeLimit.unit}
-                              onChange={(e) =>
+                              onChange={(
+                                e: React.ChangeEvent<HTMLSelectElement>
+                              ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   timeLimit: {
                                     ...assignmentData.timeLimit,
-                                    unit: e.target.value,
+                                    unit: e.target.value as TimeLimit['unit'],
                                   },
                                 })
                               }
@@ -459,7 +492,9 @@ const AssignmentModal = ({
                               type="number"
                               placeholder="0"
                               value={assignmentData.totalPoints}
-                              onChange={(e) =>
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   totalPoints: parseInt(e.target.value) || 0,
@@ -484,7 +519,9 @@ const AssignmentModal = ({
                               type="number"
                               placeholder="0"
                               value={assignmentData.passingPoints}
-                              onChange={(e) =>
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   passingPoints: parseInt(e.target.value) || 0,
@@ -510,7 +547,9 @@ const AssignmentModal = ({
                               type="number"
                               placeholder="0"
                               value={assignmentData.maxUploads}
-                              onChange={(e) =>
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   maxUploads: parseInt(e.target.value) || 0,
@@ -537,7 +576,9 @@ const AssignmentModal = ({
                               type="number"
                               placeholder="0"
                               value={assignmentData.maxFileSize}
-                              onChange={(e) =>
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   maxFileSize: parseInt(e.target.value) || 0,
@@ -597,7 +638,7 @@ const AssignmentModal = ({
                         `#${modalId} [data-bs-dismiss="modal"]`
                       );
                       if (closeButton) {
-                        closeButton.click();
+                        (closeButton as HTMLButtonElement).click();
                       } else {
                         // Fallback: Try to get modal instance
                         const modal = document.getElementById(modalId);
@@ -619,7 +660,7 @@ const AssignmentModal = ({
                           courseBuilderAccordion &&
                           courseBuilderAccordion.classList.contains('collapsed')
                         ) {
-                          courseBuilderAccordion.click();
+                          (courseBuilderAccordion as HTMLButtonElement).click();
                         }
                       }, 300);
                     } else {
