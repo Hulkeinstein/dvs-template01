@@ -233,6 +233,12 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
       });
 
       if (result.success) {
+        // 템플릿 목록 새로고침
+        const updatedTemplates = await getMyTemplates();
+        if (updatedTemplates.success) {
+          setMyTemplates(updatedTemplates.data || []);
+        }
+
         toast({
           title: 'Success',
           description: `Template "${templateName}" saved successfully`,
