@@ -3180,10 +3180,9 @@ html[data-theme="dark"] {
         background: var(--color-white);
     }
 
-    // Select dropdown 배경색 및 화살표
+    // Select dropdown 배경색
     select {
         background-color: var(--color-bodyest);
-        background-image: url(../../images/icons/arrow-white.png);
         color: var(--color-white-off);
         border-color: var(--dark-color-border);
 
