@@ -1,39 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import type { TopicModalProps } from '@/types/create-course';
 
-const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
+const TopicModal: React.FC<TopicModalProps> = ({ onAddTopic }) => {
   const [formData, setFormData] = useState({
     name: '',
     summary: '',
   });
 
-  useEffect(() => {
-    if (topicData) {
-      setFormData({
-        name: topicData.name || '',
-        summary: topicData.summary || '',
-      });
-    }
-  }, [topicData]);
-
   const handleSubmit = () => {
-    if (formData.name.trim() && onUpdateTopic) {
-      onUpdateTopic(formData);
-
+    if (formData.name.trim()) {
+      onAddTopic(formData);
+      // Reset form
+      setFormData({ name: '', summary: '' });
       // Close modal
-      const modal = document.getElementById(modalId);
-      const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
-      if (modalInstance) {
-        modalInstance.hide();
+      const modal = document.getElementById('topicModal');
+      if (modal) {
+        const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }
     }
   };
+
   return (
     <>
       <div
         className="rbt-default-modal modal fade"
-        id={modalId}
-        tabIndex="-1"
-        aria-labelledby={`${modalId}Label`}
+        id="topicModal"
+        tabIndex={-1}
+        aria-labelledby="topicModalLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog modal-dialog-centered">
@@ -52,13 +48,14 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
               <div className="inner rbt-default-form">
                 <div className="row">
                   <div className="col-lg-12">
-                    <h5 className="modal-title mb--20" id={`${modalId}Label`}>
-                      Update Topic
+                    <h5 className="modal-title mb--20" id="topicModalLabel">
+                      Add Topic
                     </h5>
                     <div className="course-field mb--20">
-                      <label htmlFor="updateModalTopicName">Topic Name</label>
+                      <label htmlFor="modal-field-1">Topic Name</label>
                       <input
-                        id="updateModalTopicName"
+                        id="modal-field-1"
+                        name="topicName"
                         type="text"
                         value={formData.name}
                         onChange={(e) =>
@@ -72,11 +69,10 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
                       </small>
                     </div>
                     <div className="course-field mb--20">
-                      <label htmlFor="updateModalTopicSummary">
-                        Topic Summary
-                      </label>
+                      <label htmlFor="modal-field-2">Topic Summary</label>
                       <textarea
-                        id="updateModalTopicSummary"
+                        id="modal-field-2"
+                        name="topicSummary"
                         value={formData.summary}
                         onChange={(e) =>
                           setFormData({ ...formData, summary: e.target.value })
@@ -94,7 +90,7 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
               </div>
             </div>
             <div className="top-circle-shape"></div>
-            <div className="modal-footer pt--30 justify-content-between">
+            <div className="modal-footer pt--30">
               <button
                 type="button"
                 className="rbt-btn btn-border btn-md radius-round-10"
@@ -102,16 +98,13 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
               >
                 Cancel
               </button>
-              <div className="content">
-                <button
-                  type="button"
-                  className="rbt-btn btn-gradient btn-md"
-                  onClick={handleSubmit}
-                  data-bs-dismiss="modal"
-                >
-                  Update Topic
-                </button>
-              </div>
+              <button
+                type="button"
+                className="rbt-btn btn-gradient btn-md"
+                onClick={handleSubmit}
+              >
+                Add Topic
+              </button>
             </div>
           </div>
         </div>
@@ -120,4 +113,4 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
   );
 };
 
-export default UpdateModal;
+export default TopicModal;

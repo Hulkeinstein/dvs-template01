@@ -3154,6 +3154,85 @@ html[data-theme="dark"] {
         color: var(--color-white-off);
     }
 
+    // ============================================
+    // Create-Course 페이지 폼 요소 다크모드 수정
+    // ============================================
+
+    // Checkbox/Radio 배경색 및 체크 표시
+    input[type="checkbox"]~label::before,
+    input[type="radio"]~label::before {
+        background-color: var(--color-bodyest);
+        border-color: var(--dark-color-border);
+    }
+
+    input[type="checkbox"]:checked~label::before,
+    input[type="radio"]:checked~label::before {
+        background-color: var(--color-primary);
+        border-color: var(--color-primary);
+    }
+
+    input[type="checkbox"]~label::after,
+    input[type="radio"]~label::after {
+        border-color: var(--color-white);
+    }
+
+    input[type="radio"]:checked~label::after {
+        background: var(--color-white);
+    }
+
+    // Select dropdown 배경색 및 화살표
+    select {
+        background-color: var(--color-bodyest);
+        background-image: url(../../images/icons/arrow-white.png);
+        color: var(--color-white-off);
+        border-color: var(--dark-color-border);
+
+        option {
+            background-color: var(--color-bodyest);
+            color: var(--color-white-off);
+        }
+    }
+
+    // Modal 헤더/푸터 텍스트 색상
+    .modal-header {
+        border-color: var(--dark-color-border-2);
+        color: var(--color-white);
+
+        .modal-title {
+            color: var(--color-white);
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+    }
+
+    .modal-body {
+        color: var(--color-white-off);
+    }
+
+    // Jodit Editor 추가 UI 요소
+    .jodit-ui-button {
+        color: var(--color-white-off);
+
+        &:hover {
+            background-color: var(--color-bodyest);
+        }
+    }
+
+    .jodit-toolbar-button {
+        color: var(--color-white-off);
+
+        &.jodit-toolbar-button_active {
+            background-color: var(--color-primary);
+        }
+    }
+
+    .jodit-popup__content {
+        background-color: var(--color-darker);
+        border-color: var(--dark-color-border);
+    }
+
     .rbt-banner-17 {
         .banner-wrap {
             .feature {

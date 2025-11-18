@@ -1,8 +1,6 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState, useRef } from "react";
-
-import CourseData from "../../../data/course-details/courseData.json";
+import React, { useEffect, useState } from 'react';
 
 import {
   DndContext,
@@ -12,32 +10,49 @@ import {
   closestCenter,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
+} from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import SingleLesson from "./SingleLesson";
-import { contentHelpers } from "@/app/lib/utils/contentHelpers";
-import { logger } from "@/app/lib/utils/logger";
-import LessonModal from "../QuizModals/LessonModal";
-import QuizModal from "../QuizModals/QuizModal";
-import AssignmentModal from "../QuizModals/AssignmentModal";
-import UpdateModal from "../QuizModals/UpdateModal";
+import SingleLesson from './SingleLesson';
+import { contentHelpers } from '@/app/lib/utils/contentHelpers';
+import { logger } from '@/app/lib/utils/logger';
+import LessonModal from '../QuizModals/LessonModal';
+import QuizModal from '../QuizModals/QuizModal';
+import AssignmentModal from '../QuizModals/AssignmentModal';
+import UpdateModal from '../QuizModals/UpdateModal';
 
-const Lesson = ({
+import type {
+  LessonComponentProps,
+  LessonData,
+  VideoLesson,
+  QuizLesson,
+  AssignmentLesson,
+} from '@/types/create-course';
+
+// ContentItem type from contentHelpers - union of lesson types with optional fields
+type ContentItem = (VideoLesson | QuizLesson | AssignmentLesson) & {
+  type?: string;
+  order?: number;
+  sort_order?: number;
+};
+
+const Lesson: React.FC<LessonComponentProps> = ({
   handleFileChange,
   handleImportClick,
   fileInputRef,
   target,
   expanded,
   text,
-  start,
-  end,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  start: _start,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  end: _end,
   id,
   topicId,
   topicData,
@@ -51,27 +66,23 @@ const Lesson = ({
   onEditLesson,
   onUploadLesson,
 }) => {
-  const [courseList, setCourseList] = useState([]);
+  const [courseList, setCourseList] = useState<ContentItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
   const [toggle, setToggle] = useState(expanded || false);
-  const [editingLesson, setEditingLesson] = useState(null);
-  const [editingQuiz, setEditingQuiz] = useState(null);
-  const [editingAssignment, setEditingAssignment] = useState(null);
-  
+  const [editingLesson, setEditingLesson] = useState<VideoLesson | null>(null);
+  const [editingQuiz, setEditingQuiz] = useState<QuizLesson | null>(null);
+  const [editingAssignment, setEditingAssignment] =
+    useState<AssignmentLesson | null>(null);
+
   // Update courseList when topicData changes - combine lessons and quizzes
   useEffect(() => {
     // Use contentHelpers to combine all content types
-    const combinedContents = contentHelpers.combineContents(topicData || {});
-    
-    logger.log('[Lesson.js] Setting combined courseList:', {
-      accordionId: id,
-      actualTopicId: topicId,
-      lessonsCount: topicData?.lessons?.length || 0,
-      quizzesCount: topicData?.quizzes?.length || 0,
-      assignmentsCount: topicData?.assignments?.length || 0,
-      totalCount: combinedContents.length
-    });
-    
+    const combinedContents = contentHelpers.combineContents(
+      topicData || {}
+    ) as ContentItem[];
+
+    logger.log();
+
     setCourseList(combinedContents);
   }, [topicData, id, topicId]);
 
@@ -86,7 +97,7 @@ const Lesson = ({
     })
   );
 
-  function handleDragEnd(event) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -126,7 +137,7 @@ const Lesson = ({
             data-bs-toggle="modal"
             data-bs-target={`#UpdateTopic${id}`}
           ></span>
-          <span 
+          <span
             className="rbt-course-icon rbt-course-del"
             onClick={onDeleteTopic}
             style={{ cursor: 'pointer' }}
@@ -134,7 +145,7 @@ const Lesson = ({
         </h2>
         <div
           id={target}
-          className={`accordion-collapse collapse ${toggle ? "show" : ""}`}
+          className={`accordion-collapse collapse ${toggle ? 'show' : ''}`}
           aria-labelledby={id}
           data-bs-parent="#tutionaccordionExamplea12"
         >
@@ -145,11 +156,12 @@ const Lesson = ({
                 <hr />
               </div>
             )}
-            
+
             {courseList.length === 0 ? (
               <div className="text-center py-3 mb-3">
                 <p className="text-muted">
-                  <i className="feather-info"></i> No lessons added yet. Click the &quot;Lesson&quot; button below to add your first lesson.
+                  <i className="feather-info"></i> No lessons added yet. Click
+                  the &quot;Lesson&quot; button below to add your first lesson.
                 </p>
               </div>
             ) : (
@@ -164,49 +176,44 @@ const Lesson = ({
                   strategy={verticalListSortingStrategy}
                 >
                   {courseList.map((course) => (
-                    <SingleLesson 
-                      key={course.id} 
-                      course={course}
+                    <SingleLesson
+                      key={course.id}
+                      course={
+                        course as Parameters<typeof SingleLesson>[0]['course']
+                      }
                       topicId={id}
-                      onDelete={(lessonId) => {
+                      onDelete={(lessonId: string | number) => {
                         if (onDeleteContent) {
                           // course 객체 전체를 전달
-                          const contentToDelete = courseList.find(c => c.id === lessonId);
+                          const contentToDelete = courseList.find(
+                            (c) => c.id === lessonId
+                          );
                           if (contentToDelete) {
                             onDeleteContent(topicData.id, lessonId);
                           }
                         }
                       }}
-                      onEdit={(lesson) => {
-                        logger.log('[Lesson.js] onEdit called with lesson:', {
-                          id: lesson.id,
-                          title: lesson.title,
-                          content_type: lesson.content_type,
-                          isQuiz: lesson.content_type === 'quiz',
-                          isAssignment: lesson.content_type === 'assignment',
-                          hasThumbnail: !!lesson.thumbnail,
-                          thumbnailValue: lesson.thumbnail,
-                          hasAttachments: !!lesson.attachments,
-                          attachmentsCount: lesson.attachments?.length || 0,
-                          attachments: lesson.attachments
-                        });
-                        
-                        if (lesson.content_type === 'quiz') {
-                          setEditingQuiz(lesson);
-                        } else if (lesson.content_type === 'assignment') {
-                          setEditingAssignment(lesson);
+                      onEdit={(lesson: ContentItem) => {
+                        logger.log();
+
+                        const contentType = lesson.content_type;
+
+                        if (contentType === 'quiz') {
+                          setEditingQuiz(lesson as QuizLesson);
+                        } else if (contentType === 'assignment') {
+                          setEditingAssignment(lesson as AssignmentLesson);
                         } else {
-                          setEditingLesson(lesson);
+                          setEditingLesson(lesson as VideoLesson);
                           if (onEditLesson) {
-                            onEditLesson(id, lesson);
+                            onEditLesson(id, lesson as LessonData);
                           }
                         }
                       }}
-                      onUpload={(lessonId) => {
+                      onUpload={(lessonId: string | number) => {
                         if (onUploadLesson) {
                           onUploadLesson(id, lessonId);
                         } else {
-  // console.log('레슨 업로드:', lessonId);
+                          // console.log('레슨 업로드:', lessonId);
                           // 업로드 기능 구현
                         }
                       }}
@@ -285,7 +292,7 @@ const Lesson = ({
                 <input
                   type="file"
                   ref={fileInputRef}
-                  style={{ display: "none" }}
+                  style={{ display: 'none' }}
                   onChange={handleFileChange}
                 />
               </div>
@@ -293,17 +300,17 @@ const Lesson = ({
           </div>
         </div>
       </div>
-      
+
       {/* Lesson Modal for this topic */}
-      <LessonModal 
+      <LessonModal
         modalId={`LessonModal${id}`}
         onAddLesson={onAddLesson}
         editingLesson={editingLesson}
         onEditComplete={() => setEditingLesson(null)}
       />
-      
+
       {/* Quiz Modal for this topic */}
-      <QuizModal 
+      <QuizModal
         modalId={`QuizModal${id}`}
         topicId={id}
         onAddQuiz={onAddQuiz}
@@ -311,17 +318,17 @@ const Lesson = ({
         editingQuiz={editingQuiz}
         onEditComplete={() => setEditingQuiz(null)}
       />
-      
+
       {/* Assignment Modal for this topic */}
-      <AssignmentModal 
+      <AssignmentModal
         modalId={`AssignmentModal${id}`}
-        onAddAssignment={onAddAssignment}
-        editingAssignment={editingAssignment}
+        onAddAssignment={onAddAssignment as any} // TODO(ANY-TODO #19): AssignmentModal uses different AssignmentData type from sampleAssignmentData
+        editingAssignment={editingAssignment as any} // TODO(ANY-TODO #19): Type mismatch between AssignmentLesson and AssignmentData
         onEditComplete={() => setEditingAssignment(null)}
       />
-      
+
       {/* Update Modal for this topic */}
-      <UpdateModal 
+      <UpdateModal
         modalId={`UpdateTopic${id}`}
         topicData={topicData}
         onUpdateTopic={onUpdateTopic}
