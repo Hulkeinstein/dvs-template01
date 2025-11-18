@@ -3138,6 +3138,22 @@ html[data-theme="dark"] {
         background-color: #273041;
     }
 
+    // Jodit Editor 콘텐츠 영역 텍스트 색상
+    .jodit-wysiwyg {
+        color: var(--color-white-dark) !important;
+    }
+
+    .jodit-wysiwyg p,
+    .jodit-wysiwyg div,
+    .jodit-wysiwyg span {
+        color: var(--color-white-dark) !important;
+    }
+
+    // 드롭다운 헤더
+    .dropdown-header {
+        color: var(--color-white-off);
+    }
+
     .rbt-banner-17 {
         .banner-wrap {
             .feature {
