@@ -117,11 +117,11 @@ async function getInstructorSession(): Promise<
     };
   }
 
-  if (userData.role !== 'instructor') {
+  if (userData.role !== 'instructor' && userData.role !== 'admin') {
     return {
       success: false,
       code: 'INSTRUCTOR_ONLY',
-      message: 'Only instructors can manage templates',
+      message: 'Only instructors and admins can manage templates',
     };
   }
 
