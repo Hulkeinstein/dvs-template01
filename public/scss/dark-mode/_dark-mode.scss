@@ -2396,6 +2396,20 @@ html[data-theme="dark"] {
         }
     }
 
+    // ============================================
+    // Calendar icon visibility in dark mode
+    // ============================================
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); // Makes black icon white
+        cursor: pointer;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
     .form-group {
 
         input,
