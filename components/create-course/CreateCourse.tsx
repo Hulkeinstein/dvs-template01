@@ -153,7 +153,7 @@ const CreateCourse = ({
   const autoSaveResult = useAutoSave(formData, setFormData, {
     storageKey: storageKey || '', // null일 때 빈 문자열
     debounceMs: 3000,
-    intervalMs: 30000,
+    // intervalMs는 기본값 15000ms 사용 (이전: 30000ms)
     schemaVersion: 'v2', // 버전 업데이트
     excludeFields: ['thumbnailPreview', 'thumbnailFile'], // 큰 데이터는 제외
     enabled: !!storageKey, // storageKey가 있을 때만 활성화
@@ -165,6 +165,8 @@ const CreateCourse = ({
   const recover = (autoSaveResult as any).recover;
   const getRecoverable = (autoSaveResult as any).getRecoverable;
   const clearDraft = (autoSaveResult as any).clearDraft;
+  const isLocked = (autoSaveResult as any).isLocked; // 다른 탭에서 편집 중인지
+  const acquireLock = (autoSaveResult as any).acquireLock; // 락 강제 획득
 
   const loadCourseData = useCallback(async () => {
     try {
@@ -747,6 +749,41 @@ const CreateCourse = ({
   };
   return (
     <>
+      {/* Lock 경고 (다른 탭에서 편집 중) */}
+      {isLocked && (
+        <div className="row mb-3">
+          <div className="col-12">
+            <div className="alert alert-warning d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center">
+                <i className="feather-alert-triangle me-2"></i>
+                <span>
+                  <strong>다른 탭에서 편집 중입니다.</strong>
+                  <br />
+                  <small>
+                    데이터 손실을 방지하기 위해 현재 탭은 읽기 전용 모드입니다.
+                  </small>
+                </span>
+              </div>
+              <button
+                type="button"
+                className="btn btn-sm btn-warning"
+                onClick={() => {
+                  if (
+                    confirm(
+                      '이 탭에서 편집을 계속하시겠습니까?\n다른 탭의 변경사항이 손실될 수 있습니다.'
+                    )
+                  ) {
+                    acquireLock();
+                  }
+                }}
+              >
+                이 탭에서 편집하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 자동 저장 상태 표시 */}
       <div className="row mb-3">
         <div className="col-12 text-end">
