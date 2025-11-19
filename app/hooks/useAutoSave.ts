@@ -71,7 +71,16 @@ export function useAutoSave<T = unknown>(
 
   // 탭 ID 생성 (마운트 시 한 번만)
   if (isClient && !tabIdRef.current) {
-    tabIdRef.current = `tab_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // sessionStorage에서 기존 tabId 복구 (페이지 새로고침 시 동일 ID 유지)
+    const sessionTabId = window.sessionStorage.getItem('current_tab_id');
+    if (sessionTabId) {
+      tabIdRef.current = sessionTabId;
+    } else {
+      // 없으면 새로 생성하고 저장
+      const newTabId = `tab_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      tabIdRef.current = newTabId;
+      window.sessionStorage.setItem('current_tab_id', newTabId);
+    }
   }
 
   // 스키마 버전이 포함된 전체 키
