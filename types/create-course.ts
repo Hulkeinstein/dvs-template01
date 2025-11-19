@@ -249,6 +249,11 @@ export interface CourseFormData {
   enrollmentDeadline: string;
   language: string;
   duration: number;
+  requirements?: string;
+  totalDurationHours?: string | number;
+  totalDurationMinutes?: string | number;
+  courseTags?: string;
+  targetedAudience?: string;
 
   // Certificate
   certificateEnabled: boolean;

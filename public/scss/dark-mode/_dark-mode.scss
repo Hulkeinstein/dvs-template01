@@ -366,6 +366,22 @@ html[data-theme="dark"] {
         }
     }
 
+    // ============================================
+    // Step 1: Helper text (small tags) in dark mode
+    // ============================================
+    .rbt-default-form small,
+    .course-field small,
+    .accordion-body small {
+        color: var(--color-white-off) !important;
+    }
+
+    // ============================================
+    // Step 2: text-muted 클래스 dark mode override
+    // ============================================
+    .text-muted {
+        color: var(--color-white-dark) !important;
+    }
+
     .pro-quantity .pro-qty {
         border: 1px solid var(--dark-color-border);
 
@@ -2789,6 +2805,26 @@ html[data-theme="dark"] {
     .react-select .react-select__menu-list {
         background-color: var(--color-bodyest);
         box-shadow: var(--dark-shadow-2);
+    }
+
+    // React Select text colors in dark mode
+    .react-select .react-select__single-value {
+        color: var(--color-white-off) !important;
+    }
+
+    .react-select .react-select__option {
+        color: var(--color-white-off);
+
+        &--is-selected,
+        &--is-focused {
+            background-color: var(--black-opacity);
+            color: var(--color-primary);
+        }
+    }
+
+    .react-select .react-select__placeholder {
+        color: var(--color-white-off);
+        opacity: 0.6;
     }
 
     #formElements {
