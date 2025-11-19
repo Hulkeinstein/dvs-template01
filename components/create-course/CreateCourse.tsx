@@ -554,10 +554,12 @@ const CreateCourse = ({
   };
 
   const handleFormDataChange = (newData: CourseFormData) => {
-    console.log('📝 FormData updating:', {
-      certificateEnabled: newData.certificateEnabled,
-      lifetimeAccess: newData.lifetimeAccess,
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📝 FormData updating:', {
+        certificateEnabled: newData.certificateEnabled,
+        lifetimeAccess: newData.lifetimeAccess,
+      });
+    }
     setFormData({ ...newData }); // 새 객체로 생성하여 React 리렌더링 보장
   };
 
