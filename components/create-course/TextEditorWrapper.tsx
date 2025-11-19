@@ -36,6 +36,10 @@ const defaultConfig = {
   iframe: false, // iframe 비활성화
   iframeStyle: '',
   iframeCSSLinks: [],
+  // ace.js 차단: textarea 사용 (ace.js CDN 로드 방지)
+  sourceEditor: 'area' as const,
+  // Source 플러그인 완전 비활성화 (이중 보호)
+  disablePlugins: ['source'],
 };
 
 const TextEditorWrapper = forwardRef<IJodit, TextEditorWrapperProps>(
