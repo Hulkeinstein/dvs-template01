@@ -770,7 +770,7 @@ const CreateCourse = ({
               </div>
               <button
                 type="button"
-                className="btn btn-md btn-warning ms-3"
+                className="btn btn-lg btn-warning ms-3"
                 onClick={() => {
                   if (
                     confirm(
