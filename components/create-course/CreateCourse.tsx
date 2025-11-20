@@ -755,20 +755,22 @@ const CreateCourse = ({
       {isLocked && (
         <div className="row mb-3">
           <div className="col-12">
-            <div className="alert alert-warning d-flex align-items-center justify-content-between">
-              <div className="d-flex align-items-center">
-                <i className="feather-alert-triangle me-2"></i>
-                <span>
+            <div className="alert alert-warning d-flex align-items-start justify-content-between">
+              <div>
+                <div className="d-flex align-items-center mb-1">
+                  <i
+                    className="feather-alert-triangle me-2"
+                    style={{ fontSize: '1.1em' }}
+                  ></i>
                   <strong>다른 탭에서 편집 중입니다.</strong>
-                  <br />
-                  <small>
-                    데이터 손실을 방지하기 위해 현재 탭은 읽기 전용 모드입니다.
-                  </small>
-                </span>
+                </div>
+                <small className="d-block ms-4">
+                  데이터 손실을 방지하기 위해 현재 탭은 읽기 전용 모드입니다.
+                </small>
               </div>
               <button
                 type="button"
-                className="btn btn-sm btn-warning"
+                className="btn btn-md btn-warning ms-3"
                 onClick={() => {
                   if (
                     confirm(
