@@ -153,8 +153,10 @@ export function useAutoSave<T = unknown>(
         if (Date.now() - lockData.timestamp < TIMEOUT_MS) {
           // 다른 탭의 락이 아직 유효함
           if (lockData.tabId !== tabIdRef.current) {
-            setIsLocked(true);
-            return false;
+            // 버튼 클릭 = 강제 획득 의도이므로 경고만 출력하고 계속 진행
+            console.warn(
+              '[AutoSave] Forcefully acquiring lock from another tab'
+            );
           }
         }
       }
