@@ -296,10 +296,12 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
     loadTemplates();
   }, []);
 
-  // Close dropdown when clicking outside
+  // Close dropdown when clicking outside (only when dropdown is open)
   React.useEffect(() => {
+    if (!showDropdown) return; // 드롭다운이 열려있지 않으면 리스너 불필요
+
     const handleClickOutside = (event: MouseEvent): void => {
-      if (showDropdown && !(event.target as HTMLElement).closest('.dropdown')) {
+      if (!(event.target as HTMLElement).closest('.dropdown')) {
         setShowDropdown(false);
       }
     };
