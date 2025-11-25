@@ -8,11 +8,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 type AutoSaveStatus = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';
 
-interface LockData {
-  tabId: string;
-  timestamp: number;
-}
-
 interface SaveData<T> {
   __meta: {
     schemaVersion: string;
@@ -38,8 +33,6 @@ interface UseAutoSaveReturn {
   recover: () => void;
   getRecoverable: () => { data: unknown | null; timestamp: number | null };
   clearDraft: () => void;
-  isLocked: boolean;
-  acquireLock: () => boolean;
 }
 
 // ============================================================================
@@ -63,34 +56,15 @@ export function useAutoSave<T = unknown>(
 ): UseAutoSaveReturn {
   const [status, setStatus] = useState<AutoSaveStatus>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
-  const [isLocked, setIsLocked] = useState(false); // 다른 탭에서 편집 중인지
   const timerRef = useRef<number | null>(null);
   const intervalRef = useRef<number | null>(null);
-  const tabIdRef = useRef<string | null>(null); // 현재 탭 고유 ID
   const isClient = typeof window !== 'undefined';
-
-  // 탭 ID 생성 (마운트 시 한 번만)
-  if (isClient && !tabIdRef.current) {
-    // sessionStorage에서 기존 tabId 복구 (페이지 새로고침 시 동일 ID 유지)
-    const sessionTabId = window.sessionStorage.getItem('current_tab_id');
-    if (sessionTabId) {
-      tabIdRef.current = sessionTabId;
-    } else {
-      // 없으면 새로 생성하고 저장
-      const newTabId = `tab_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      tabIdRef.current = newTabId;
-      window.sessionStorage.setItem('current_tab_id', newTabId);
-    }
-  }
 
   // 스키마 버전이 포함된 전체 키
   const fullKey = useMemo(
     () => `${storageKey}::${schemaVersion}`,
     [storageKey, schemaVersion]
   );
-
-  // Lock 키
-  const lockKey = useMemo(() => `${storageKey}::lock`, [storageKey]);
 
   // 저장할 데이터 정리 (큰 필드 제외)
   const cleanDataForSave = useCallback(
@@ -138,91 +112,6 @@ export function useAutoSave<T = unknown>(
     },
     []
   );
-
-  // Lock 획득
-  const acquireLock = useCallback((): boolean => {
-    if (!isClient || !storageKey) return false;
-
-    try {
-      const existingLock = window.localStorage.getItem(lockKey);
-      if (existingLock) {
-        const lockData: LockData = JSON.parse(existingLock);
-        const TIMEOUT_MS = 10 * 60 * 1000; // 10분
-
-        // 10분 이상 된 락은 무시 (타임아웃)
-        if (Date.now() - lockData.timestamp < TIMEOUT_MS) {
-          // 다른 탭의 락이 아직 유효함
-          if (lockData.tabId !== tabIdRef.current) {
-            // 버튼 클릭 = 강제 획득 의도이므로 경고만 출력하고 계속 진행
-            console.warn(
-              '[AutoSave] Forcefully acquiring lock from another tab'
-            );
-          }
-        }
-      }
-
-      // 락 획득
-      window.localStorage.setItem(
-        lockKey,
-        JSON.stringify({
-          tabId: tabIdRef.current,
-          timestamp: Date.now(),
-        } as LockData)
-      );
-      setIsLocked(false);
-      return true;
-    } catch (error) {
-      console.error('[AutoSave] Lock acquisition error:', error);
-      return false;
-    }
-  }, [isClient, lockKey, storageKey]);
-
-  // Lock 해제
-  const releaseLock = useCallback((): void => {
-    if (!isClient || !storageKey) return;
-
-    try {
-      const existingLock = window.localStorage.getItem(lockKey);
-      if (existingLock) {
-        const lockData: LockData = JSON.parse(existingLock);
-        // 자신의 락만 해제
-        if (lockData.tabId === tabIdRef.current) {
-          window.localStorage.removeItem(lockKey);
-          setIsLocked(false);
-        }
-      }
-    } catch (error) {
-      console.error('[AutoSave] Lock release error:', error);
-    }
-  }, [isClient, lockKey, storageKey]);
-
-  // Lock 상태 체크
-  const checkLock = useCallback((): void => {
-    if (!isClient || !storageKey) return;
-
-    try {
-      const existingLock = window.localStorage.getItem(lockKey);
-      if (!existingLock) {
-        setIsLocked(false);
-        return;
-      }
-
-      const lockData: LockData = JSON.parse(existingLock);
-      const TIMEOUT_MS = 10 * 60 * 1000; // 10분
-
-      // 타임아웃 체크
-      if (Date.now() - lockData.timestamp >= TIMEOUT_MS) {
-        setIsLocked(false);
-        return;
-      }
-
-      // 다른 탭의 락인지 체크
-      setIsLocked(lockData.tabId !== tabIdRef.current);
-    } catch (error) {
-      console.error('[AutoSave] Lock check error:', error);
-      setIsLocked(false);
-    }
-  }, [isClient, lockKey, storageKey]);
 
   // 즉시 저장 함수
   const saveNow = useCallback(
@@ -448,37 +337,6 @@ export function useAutoSave<T = unknown>(
     }
   }, [fullKey, isClient, storageKey]);
 
-  // Lock 생명주기 관리
-  useEffect(() => {
-    if (!isClient || !enabled || !storageKey) return;
-
-    // 마운트 시 lock 획득 시도
-    acquireLock();
-
-    // storage 이벤트 리스너 (다른 탭의 lock 변경 감지)
-    const handleStorageChange = (e: StorageEvent): void => {
-      if (e.key === lockKey) {
-        checkLock();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    // 언마운트 시 lock 해제
-    return () => {
-      releaseLock();
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [
-    isClient,
-    enabled,
-    storageKey,
-    acquireLock,
-    releaseLock,
-    checkLock,
-    lockKey,
-  ]);
-
   return {
     status,
     lastSavedAt,
@@ -486,8 +344,6 @@ export function useAutoSave<T = unknown>(
     recover,
     getRecoverable,
     clearDraft,
-    isLocked, // 다른 탭에서 편집 중인지
-    acquireLock, // 락 강제 획득 (읽기 전용 → 편집 전환)
   };
 }
 
