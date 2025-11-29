@@ -18,7 +18,7 @@ import {
 } from '@/app/lib/actions/courseActions';
 import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
 import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
-import { useAutoSave, getRelativeTime } from '@/app/hooks/useAutoSave';
+import { useAutoSave } from '@/app/hooks/useAutoSave';
 import {
   CreateCourseProps,
   CourseFormData,
@@ -160,7 +160,6 @@ const CreateCourse = ({
   });
 
   const saveStatus = (autoSaveResult as any).status;
-  const lastSavedAt = (autoSaveResult as any).lastSavedAt;
   const saveNow = (autoSaveResult as any).saveNow;
   const recover = (autoSaveResult as any).recover;
   const getRecoverable = (autoSaveResult as any).getRecoverable;
@@ -750,23 +749,13 @@ const CreateCourse = ({
   return (
     <>
       {/* 자동 저장 상태 표시 */}
-      <div className="row mb-3">
-        <div className="col-12 text-end">
-          <div className="d-inline-flex align-items-center gap-2">
-            {/* 저장 상태 배지 */}
-            {saveStatus === 'saving' && (
-              <span className="badge bg-info">
-                <i className="feather-loader me-1"></i>저장 중...
-              </span>
-            )}
+      {/* 자동저장 표시 - 미니멀 */}
+      {(saveStatus === 'saved' || saveStatus === 'error') && (
+        <div className="row mb-3">
+          <div className="col-12 text-end">
             {saveStatus === 'saved' && (
-              <span className="badge bg-success">
-                <i className="feather-check me-1"></i>자동 저장됨
-              </span>
-            )}
-            {saveStatus === 'dirty' && (
-              <span className="badge bg-warning">
-                <i className="feather-edit me-1"></i>변경사항 있음
+              <span className="text-success">
+                <i className="feather-check"></i>
               </span>
             )}
             {saveStatus === 'error' && (
@@ -774,21 +763,9 @@ const CreateCourse = ({
                 <i className="feather-alert-circle me-1"></i>저장 실패
               </span>
             )}
-
-            {/* 마지막 저장 시간 */}
-            {lastSavedAt && saveStatus !== 'saving' && (
-              <small className="text-muted">
-                ({getRelativeTime(lastSavedAt)})
-              </small>
-            )}
-
-            {/* 수동 저장 힌트 */}
-            <small className="text-muted">
-              <kbd>Ctrl</kbd>+<kbd>S</kbd> 수동 저장
-            </small>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="row g-5">
         <div className="col-lg-8">

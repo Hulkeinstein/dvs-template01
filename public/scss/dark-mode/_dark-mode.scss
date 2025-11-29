@@ -3969,4 +3969,72 @@ html[data-theme="dark"] {
         background-color: transparent;
         border-color: var(--dark-color-border);
     }
+
+    // React Quill Editor Dark Mode
+    .quill {
+        .ql-toolbar {
+            background-color: var(--color-darker);
+            border-color: var(--dark-color-border);
+
+            .ql-stroke {
+                stroke: var(--color-white-off);
+            }
+
+            .ql-fill {
+                fill: var(--color-white-off);
+            }
+
+            .ql-picker {
+                color: var(--color-white-off);
+            }
+
+            .ql-picker-label {
+                color: var(--color-white-off);
+
+                &:hover {
+                    color: var(--color-primary);
+                }
+            }
+
+            .ql-picker-options {
+                background-color: var(--color-darker);
+                border-color: var(--dark-color-border);
+            }
+
+            button:hover,
+            button:focus {
+                .ql-stroke {
+                    stroke: var(--color-primary);
+                }
+
+                .ql-fill {
+                    fill: var(--color-primary);
+                }
+            }
+
+            button.ql-active {
+                .ql-stroke {
+                    stroke: var(--color-primary);
+                }
+
+                .ql-fill {
+                    fill: var(--color-primary);
+                }
+            }
+        }
+
+        .ql-container {
+            background-color: var(--color-darker);
+            border-color: var(--dark-color-border);
+            color: var(--color-white);
+        }
+
+        .ql-editor {
+            color: var(--color-white);
+
+            &.ql-blank::before {
+                color: var(--color-white-off);
+            }
+        }
+    }
 }

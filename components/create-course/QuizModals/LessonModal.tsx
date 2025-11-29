@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import QuillWrapper from '../QuillWrapper';
 import { debugLog, trackError } from '@/app/lib/utils/debugHelper';
 import { uploadLessonAttachmentDirect } from '@/app/lib/actions/uploadActions';
 import type {
@@ -596,17 +597,16 @@ const LessonModal = ({
                     </div>
                     <div className="course-field mb--20">
                       <label htmlFor="lessonModalSummary">Lesson Summary</label>
-                      <textarea
-                        id="lessonModalSummary"
-                        name="lessonModalSummary"
+                      <QuillWrapper
                         value={lessonData.description}
-                        onChange={(e) =>
+                        onChange={(content) =>
                           setLessonData((prev) => ({
                             ...prev,
-                            description: e.target.value,
+                            description: content,
                           }))
                         }
-                      ></textarea>
+                        placeholder="Add a summary for this lesson..."
+                      />
                       <small>
                         <i className="feather-info"></i> Add a summary of short
                         text to prepare students for the activities for the
@@ -966,76 +966,6 @@ const LessonModal = ({
           </div>
         </div>
       </div>
-
-      {/* 개발 모드 디버그 패널 */}
-      {process.env.NODE_ENV === 'development' && (
-        <div
-          className="position-fixed bottom-0 end-0 m-3 p-3 bg-dark text-white rounded shadow"
-          style={{
-            fontSize: '12px',
-            maxWidth: '300px',
-            zIndex: 9999,
-            opacity: 0.9,
-          }}
-        >
-          <h6 className="text-warning mb-2 d-flex justify-content-between align-items-center">
-            🔍 Attachment Debug
-            <button
-              className="btn btn-sm btn-link text-white p-0"
-              onClick={() => {
-                const logs = JSON.parse(
-                  localStorage.getItem('attachmentDebugLogs') || '[]'
-                );
-                console.table(
-                  logs.filter((log: any) => log.component === 'LessonModal')
-                );
-                alert('LessonModal logs printed to console');
-              }}
-            >
-              <i className="feather-terminal"></i>
-            </button>
-          </h6>
-          <div className="small">
-            <div>📎 Attachments: {attachments.length}</div>
-            <div>⏳ Uploading: {uploadingAttachment ? 'Yes' : 'No'}</div>
-            <div>❌ Errors: {attachmentErrors.length}</div>
-            <div>🆔 Modal ID: {modalId}</div>
-          </div>
-          {attachments.length > 0 && (
-            <div className="mt-2">
-              <small className="text-muted">Files:</small>
-              {attachments.map((file, idx) => (
-                <div
-                  key={idx}
-                  className="text-truncate"
-                  style={{ fontSize: '10px' }}
-                >
-                  • {file.name}
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="mt-2 d-flex gap-1">
-            <button
-              className="btn btn-warning btn-sm py-0 px-1"
-              onClick={() => (window as any).attachmentDebug?.print()}
-              style={{ fontSize: '10px' }}
-            >
-              All Logs
-            </button>
-            <button
-              className="btn btn-danger btn-sm py-0 px-1"
-              onClick={() => {
-                (window as any).attachmentDebug?.clearLogs();
-                alert('Debug logs cleared');
-              }}
-              style={{ fontSize: '10px' }}
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

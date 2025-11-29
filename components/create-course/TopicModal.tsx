@@ -31,6 +31,8 @@ const TopicModal: React.FC<TopicModalProps> = ({ onAddTopic }) => {
         tabIndex={-1}
         aria-labelledby="topicModalLabel"
         aria-hidden="true"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">

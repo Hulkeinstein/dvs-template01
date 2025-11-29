@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import QuillWrapper from '../QuillWrapper';
 import {
   sampleAssignmentData,
   type AssignmentData,
   type Attachment,
   type TimeLimit,
 } from '@/constants/sampleAssignmentData';
-import TextEditorWrapper from '../TextEditorWrapper';
 import {
   saveAsTemplate,
   getMyTemplates,
@@ -320,6 +320,9 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
         tabIndex={-1}
         aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
+        data-bs-focus="false"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
       >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
@@ -558,15 +561,16 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                         />
                       </div>
                       <div className="course-field mb--30">
-                        <label htmlFor="modal-field-3">Summary</label>
-                        <TextEditorWrapper
+                        <label htmlFor="assignmentSummary">Summary</label>
+                        <QuillWrapper
                           value={assignmentData.summary}
-                          onChange={(newContent: string) =>
+                          onChange={(content) =>
                             setAssignmentData({
                               ...assignmentData,
-                              summary: newContent,
+                              summary: content,
                             })
                           }
+                          placeholder="Enter assignment instructions..."
                         />
                       </div>
                       <div className="course-field mb--20">
