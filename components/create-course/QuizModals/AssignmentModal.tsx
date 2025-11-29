@@ -2,12 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import QuillWrapper from '../QuillWrapper';
-import {
-  sampleAssignmentData,
-  type AssignmentData,
-  type Attachment,
-  type TimeLimit,
-} from '@/constants/sampleAssignmentData';
+import { sampleAssignmentData } from '@/constants/sampleAssignmentData';
 import {
   saveAsTemplate,
   getMyTemplates,
@@ -16,14 +11,19 @@ import {
 } from '@/app/lib/actions/assignmentTemplateActions';
 import type { TemplateRow } from '@/app/lib/actions/assignmentTemplateActions';
 import { toast } from '@/hooks/use-toast';
+import type {
+  AssignmentLesson,
+  AttachmentData,
+  TimeLimitData,
+} from '@/types/create-course';
 
 // Props interface
 interface AssignmentModalProps {
   modalId?: string;
   onAddAssignment?: (
-    data: AssignmentData
+    data: AssignmentLesson
   ) => { success: boolean; error?: string } | void;
-  editingAssignment?: AssignmentData | null;
+  editingAssignment?: AssignmentLesson | null;
   onEditComplete?: () => void;
 }
 
@@ -39,15 +39,19 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
   editingAssignment,
   onEditComplete,
 }) => {
-  const [assignmentData, setAssignmentData] = useState<AssignmentData>({
+  const [assignmentData, setAssignmentData] = useState<
+    Partial<AssignmentLesson>
+  >({
     title: '',
     summary: '',
+    instructions: '',
     attachments: [],
     timeLimit: { value: 0, unit: 'weeks' },
     totalPoints: 100,
     passingPoints: 70,
     maxUploads: 1,
     maxFileSize: 10,
+    content_type: 'assignment',
   });
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [isSavingTemplate, setIsSavingTemplate] = useState<boolean>(false);
@@ -102,39 +106,35 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
     // Validate file count
     if (
-      assignmentData.attachments.length + files.length >
-      assignmentData.maxUploads
+      (assignmentData.attachments || []).length + files.length >
+      (assignmentData.maxUploads || 1)
     ) {
-      alert(`Maximum ${assignmentData.maxUploads} files allowed`);
+      alert(`Maximum ${assignmentData.maxUploads || 1} files allowed`);
       return;
     }
 
     // Validate and process files
-    const uploadedFiles: Attachment[] = [];
     for (const file of files) {
       // Validate file
-      const validation = validateFile(file, assignmentData.maxFileSize);
+      const validation = validateFile(file, assignmentData.maxFileSize || 10);
       if (!validation.valid) {
         alert(`${file.name}: ${validation.error}`);
         continue;
       }
 
-      // For now, store file info locally with preview URL
-      // TODO: In production, implement actual upload to Supabase using Server Actions
-      uploadedFiles.push({
+      // Create attachment object matching AttachmentData interface
+      const newAttachment: AttachmentData = {
+        id: Date.now() + Math.random(), // Temporary ID
         name: file.name,
         size: file.size,
         type: file.type,
-        url: URL.createObjectURL(file), // Temporary URL for preview
-      });
-    }
+        url: URL.createObjectURL(file),
+      };
 
-    // Update state with new files
-    if (uploadedFiles.length > 0) {
-      setAssignmentData({
-        ...assignmentData,
-        attachments: [...assignmentData.attachments, ...uploadedFiles],
-      });
+      setAssignmentData((prev) => ({
+        ...prev,
+        attachments: [...(prev.attachments || []), newAttachment],
+      }));
     }
 
     // Reset input
@@ -142,7 +142,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
   };
 
   const removeFile = (index: number): void => {
-    const newAttachments = [...assignmentData.attachments];
+    const newAttachments = [...(assignmentData.attachments || [])];
     newAttachments.splice(index, 1);
     setAssignmentData({
       ...assignmentData,
@@ -152,18 +152,37 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
   // Load template handler
   const handleLoadTemplate = async (template: TemplateRow): Promise<void> => {
-    const content = template.template_data;
+    const templateAttachments = (template.template_data?.attachments || []).map(
+      (att: any) => ({
+        ...att,
+        id: att.id || Date.now() + Math.random(),
+      })
+    );
+
+    const templateTimeLimit = template.template_data?.timeLimit || {
+      value: 0,
+      unit: 'weeks',
+    };
+    const validUnit = ['hours', 'days', 'weeks'].includes(
+      templateTimeLimit.unit
+    )
+      ? templateTimeLimit.unit
+      : 'weeks';
 
     setAssignmentData({
-      ...assignmentData,
-      title: '', // 새 과제이므로 사용자가 직접 입력
-      summary: content.instructions || '',
-      attachments: content.attachments || [],
-      timeLimit: content.timeLimit || { value: 0, unit: 'weeks' },
-      totalPoints: content.totalPoints || 100,
-      passingPoints: content.passingPoints || 70,
-      maxUploads: content.maxUploads || 1,
-      maxFileSize: content.maxFileSize || 10,
+      title: template.name || '',
+      summary: template.description || '',
+      instructions: template.template_data?.instructions || '',
+      timeLimit: {
+        value: templateTimeLimit.value,
+        unit: validUnit as 'hours' | 'days' | 'weeks',
+      },
+      totalPoints: template.template_data?.totalPoints || 100,
+      passingPoints: template.template_data?.passingPoints || 70,
+      maxUploads: template.template_data?.maxUploads || 1,
+      maxFileSize: template.template_data?.maxFileSize || 10,
+      attachments: templateAttachments,
+      content_type: 'assignment',
     });
 
     setShowDropdown(false);
@@ -218,19 +237,29 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
     setIsSavingTemplate(true);
     try {
-      const result = await saveAsTemplate({
+      const templateData = {
         name: templateName,
-        description: '',
+        description: assignmentData.summary || '',
         template_data: {
-          instructions: assignmentData.summary,
-          attachments: [], // Phase 3-4: Implement actual file upload
-          timeLimit: assignmentData.timeLimit,
-          totalPoints: assignmentData.totalPoints,
-          passingPoints: assignmentData.passingPoints,
-          maxUploads: assignmentData.maxUploads,
-          maxFileSize: assignmentData.maxFileSize,
+          instructions: assignmentData.instructions || '',
+          timeLimit: {
+            value: assignmentData.timeLimit?.value || 0,
+            unit: (assignmentData.timeLimit?.unit || 'weeks') as any,
+          },
+          totalPoints: assignmentData.totalPoints || 100,
+          passingPoints: assignmentData.passingPoints || 70,
+          maxUploads: assignmentData.maxUploads || 1,
+          maxFileSize: assignmentData.maxFileSize || 10,
+          attachments: (assignmentData.attachments || []).map((att) => ({
+            name: att.name,
+            url: att.url,
+            size: att.size,
+            type: att.type,
+          })),
         },
-      });
+      };
+
+      const result = await saveAsTemplate(templateData);
 
       if (result.success) {
         // 템플릿 목록 새로고침
@@ -270,15 +299,31 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
   React.useEffect(() => {
     if (editingAssignment) {
       setAssignmentData({
-        id: editingAssignment.id,
-        title: editingAssignment.title || '',
-        summary: editingAssignment.summary || '',
+        ...editingAssignment,
+        // Ensure timeLimit has valid unit
+        timeLimit: {
+          value: editingAssignment.timeLimit.value,
+          unit: (['hours', 'days', 'weeks'].includes(
+            editingAssignment.timeLimit.unit
+          )
+            ? editingAssignment.timeLimit.unit
+            : 'weeks') as 'hours' | 'days' | 'weeks',
+        },
         attachments: editingAssignment.attachments || [],
-        timeLimit: editingAssignment.timeLimit || { value: 0, unit: 'weeks' },
-        totalPoints: editingAssignment.totalPoints || 100,
-        passingPoints: editingAssignment.passingPoints || 70,
-        maxUploads: editingAssignment.maxUploads || 1,
-        maxFileSize: editingAssignment.maxFileSize || 10,
+      });
+    } else {
+      // Reset to initial state
+      setAssignmentData({
+        title: '',
+        summary: '',
+        instructions: '',
+        attachments: [],
+        timeLimit: { value: 0, unit: 'weeks' },
+        totalPoints: 100,
+        passingPoints: 70,
+        maxUploads: 1,
+        maxFileSize: 10,
+        content_type: 'assignment',
       });
     }
   }, [editingAssignment]);
@@ -311,6 +356,88 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showDropdown]);
+
+  const handleSubmit = async (): Promise<void> => {
+    if (!assignmentData.title?.trim()) {
+      alert('Please enter assignment title');
+      return;
+    }
+
+    if (onAddAssignment) {
+      // Ensure all required fields for AssignmentLesson are present
+      const finalData: AssignmentLesson = {
+        id: editingAssignment?.id || Date.now(), // Generate temp ID if new
+        title: assignmentData.title || '',
+        content_type: 'assignment',
+        summary: assignmentData.summary || '',
+        instructions: assignmentData.instructions || '',
+        totalPoints: assignmentData.totalPoints || 100,
+        passingPoints: assignmentData.passingPoints || 70,
+        maxUploads: assignmentData.maxUploads || 1,
+        maxFileSize: assignmentData.maxFileSize || 10,
+        attachments: assignmentData.attachments || [],
+        timeLimit: assignmentData.timeLimit || { value: 0, unit: 'weeks' },
+      };
+
+      const result = onAddAssignment(finalData);
+
+      // Check if assignment was successfully added
+      if (result && result.success) {
+        // If editing, call onEditComplete
+        if (editingAssignment && onEditComplete) {
+          onEditComplete();
+        }
+
+        // Reset form
+        setAssignmentData({
+          title: '',
+          summary: '',
+          instructions: '',
+          attachments: [],
+          timeLimit: { value: 0, unit: 'weeks' },
+          totalPoints: 100,
+          passingPoints: 70,
+          maxUploads: 1,
+          maxFileSize: 10,
+          content_type: 'assignment',
+        });
+
+        // Close modal using Bootstrap's data-bs-dismiss
+        const closeButton = document.querySelector(
+          `#${modalId} [data-bs-dismiss="modal"]`
+        );
+        if (closeButton) {
+          (closeButton as HTMLButtonElement).click();
+        } else {
+          // Fallback: Try to get modal instance
+          const modal = document.getElementById(modalId);
+          if (modal && window.bootstrap?.Modal) {
+            const modalInstance =
+              window.bootstrap.Modal.getInstance(modal) ||
+              new window.bootstrap.Modal(modal);
+            if (modalInstance) {
+              modalInstance.hide();
+            }
+          }
+        }
+
+        // Open Course Builder accordion after modal closes
+        setTimeout(() => {
+          const courseBuilderAccordion =
+            document.querySelector('#headingTwo button');
+          if (
+            courseBuilderAccordion &&
+            courseBuilderAccordion.classList.contains('collapsed')
+          ) {
+            (courseBuilderAccordion as HTMLButtonElement).click();
+          }
+        }, 300);
+      } else {
+        // Show error message if assignment save failed
+        alert(result?.error || '과제 저장에 실패했습니다. 다시 시도해주세요.');
+      }
+    }
+  };
 
   return (
     <>
@@ -432,7 +559,26 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                       const sample = sampleAssignmentData.basic;
                                       setAssignmentData({
                                         ...assignmentData,
-                                        ...sample,
+                                        title: sample.title,
+                                        summary: sample.summary,
+                                        timeLimit: {
+                                          value: sample.timeLimit.value,
+                                          unit: ([
+                                            'hours',
+                                            'days',
+                                            'weeks',
+                                          ].includes(sample.timeLimit.unit)
+                                            ? sample.timeLimit.unit
+                                            : 'weeks') as
+                                            | 'hours'
+                                            | 'days'
+                                            | 'weeks',
+                                        },
+                                        totalPoints: sample.totalPoints,
+                                        passingPoints: sample.passingPoints,
+                                        maxUploads: sample.maxUploads,
+                                        maxFileSize: sample.maxFileSize,
+                                        attachments: [],
                                       });
                                       setShowDropdown(false);
                                     }}
@@ -452,7 +598,26 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                         sampleAssignmentData.advanced;
                                       setAssignmentData({
                                         ...assignmentData,
-                                        ...sample,
+                                        title: sample.title,
+                                        summary: sample.summary,
+                                        timeLimit: {
+                                          value: sample.timeLimit.value,
+                                          unit: ([
+                                            'hours',
+                                            'days',
+                                            'weeks',
+                                          ].includes(sample.timeLimit.unit)
+                                            ? sample.timeLimit.unit
+                                            : 'weeks') as
+                                            | 'hours'
+                                            | 'days'
+                                            | 'weeks',
+                                        },
+                                        totalPoints: sample.totalPoints,
+                                        passingPoints: sample.passingPoints,
+                                        maxUploads: sample.maxUploads,
+                                        maxFileSize: sample.maxFileSize,
+                                        attachments: [],
                                       });
                                       setShowDropdown(false);
                                     }}
@@ -471,7 +636,26 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                       const sample = sampleAssignmentData.quiz;
                                       setAssignmentData({
                                         ...assignmentData,
-                                        ...sample,
+                                        title: sample.title,
+                                        summary: sample.summary,
+                                        timeLimit: {
+                                          value: sample.timeLimit.value,
+                                          unit: ([
+                                            'hours',
+                                            'days',
+                                            'weeks',
+                                          ].includes(sample.timeLimit.unit)
+                                            ? sample.timeLimit.unit
+                                            : 'weeks') as
+                                            | 'hours'
+                                            | 'days'
+                                            | 'weeks',
+                                        },
+                                        totalPoints: sample.totalPoints,
+                                        passingPoints: sample.passingPoints,
+                                        maxUploads: sample.maxUploads,
+                                        maxFileSize: sample.maxFileSize,
+                                        attachments: [],
                                       });
                                       setShowDropdown(false);
                                     }}
@@ -491,7 +675,26 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                         sampleAssignmentData.report;
                                       setAssignmentData({
                                         ...assignmentData,
-                                        ...sample,
+                                        title: sample.title,
+                                        summary: sample.summary,
+                                        timeLimit: {
+                                          value: sample.timeLimit.value,
+                                          unit: ([
+                                            'hours',
+                                            'days',
+                                            'weeks',
+                                          ].includes(sample.timeLimit.unit)
+                                            ? sample.timeLimit.unit
+                                            : 'weeks') as
+                                            | 'hours'
+                                            | 'days'
+                                            | 'weeks',
+                                        },
+                                        totalPoints: sample.totalPoints,
+                                        passingPoints: sample.passingPoints,
+                                        maxUploads: sample.maxUploads,
+                                        maxFileSize: sample.maxFileSize,
+                                        attachments: [],
                                       });
                                       setShowDropdown(false);
                                     }}
@@ -510,7 +713,26 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                       const sample = sampleAssignmentData.group;
                                       setAssignmentData({
                                         ...assignmentData,
-                                        ...sample,
+                                        title: sample.title,
+                                        summary: sample.summary,
+                                        timeLimit: {
+                                          value: sample.timeLimit.value,
+                                          unit: ([
+                                            'hours',
+                                            'days',
+                                            'weeks',
+                                          ].includes(sample.timeLimit.unit)
+                                            ? sample.timeLimit.unit
+                                            : 'weeks') as
+                                            | 'hours'
+                                            | 'days'
+                                            | 'weeks',
+                                        },
+                                        totalPoints: sample.totalPoints,
+                                        passingPoints: sample.passingPoints,
+                                        maxUploads: sample.maxUploads,
+                                        maxFileSize: sample.maxFileSize,
+                                        attachments: [],
                                       });
                                       setShowDropdown(false);
                                     }}
@@ -530,7 +752,26 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                         sampleAssignmentData.practice;
                                       setAssignmentData({
                                         ...assignmentData,
-                                        ...sample,
+                                        title: sample.title,
+                                        summary: sample.summary,
+                                        timeLimit: {
+                                          value: sample.timeLimit.value,
+                                          unit: ([
+                                            'hours',
+                                            'days',
+                                            'weeks',
+                                          ].includes(sample.timeLimit.unit)
+                                            ? sample.timeLimit.unit
+                                            : 'weeks') as
+                                            | 'hours'
+                                            | 'days'
+                                            | 'weeks',
+                                        },
+                                        totalPoints: sample.totalPoints,
+                                        passingPoints: sample.passingPoints,
+                                        maxUploads: sample.maxUploads,
+                                        maxFileSize: sample.maxFileSize,
+                                        attachments: [],
                                       });
                                       setShowDropdown(false);
                                     }}
@@ -551,7 +792,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                           id="assignmentModalTitle"
                           type="text"
                           placeholder="Assignments"
-                          value={assignmentData.title}
+                          value={assignmentData.title || ''}
                           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -563,7 +804,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                       <div className="course-field mb--30">
                         <label htmlFor="assignmentSummary">Summary</label>
                         <QuillWrapper
-                          value={assignmentData.summary}
+                          value={assignmentData.summary || ''}
                           onChange={(content) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -595,30 +836,32 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                             accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.jpg,.jpeg,.png"
                           />
                         </div>
-                        {assignmentData.attachments.length > 0 && (
+                        {(assignmentData.attachments || []).length > 0 && (
                           <div className="mt-3">
                             <small className="text-muted">
                               Uploaded Files:
                             </small>
                             <ul className="list-unstyled mt-2">
-                              {assignmentData.attachments.map((file, index) => (
-                                <li
-                                  key={index}
-                                  className="d-flex align-items-center mb-2"
-                                >
-                                  <i className="feather-file mr-2"></i>
-                                  <span className="flex-grow-1">
-                                    {file.name}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    className="btn btn-sm"
-                                    onClick={() => removeFile(index)}
+                              {(assignmentData.attachments || []).map(
+                                (file, index) => (
+                                  <li
+                                    key={index}
+                                    className="d-flex align-items-center mb-2"
                                   >
-                                    <i className="feather-x text-danger"></i>
-                                  </button>
-                                </li>
-                              ))}
+                                    <i className="feather-file mr-2"></i>
+                                    <span className="flex-grow-1">
+                                      {file.name}
+                                    </span>
+                                    <button
+                                      type="button"
+                                      className="btn btn-sm"
+                                      onClick={() => removeFile(index)}
+                                    >
+                                      <i className="feather-x text-danger"></i>
+                                    </button>
+                                  </li>
+                                )
+                              )}
                             </ul>
                           </div>
                         )}
@@ -633,15 +876,16 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               className="shadow-none"
                               type="number"
                               placeholder="00"
-                              value={assignmentData.timeLimit.value}
+                              value={assignmentData.timeLimit?.value || 0}
                               onChange={(
                                 e: React.ChangeEvent<HTMLInputElement>
                               ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   timeLimit: {
-                                    ...assignmentData.timeLimit,
                                     value: parseInt(e.target.value) || 0,
+                                    unit:
+                                      assignmentData.timeLimit?.unit || 'weeks',
                                   },
                                 })
                               }
@@ -653,15 +897,16 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               name="assignmentTimeLimitUnit"
                               className="w-75"
                               style={{ height: '50px' }}
-                              value={assignmentData.timeLimit.unit}
+                              value={assignmentData.timeLimit?.unit || 'weeks'}
                               onChange={(
                                 e: React.ChangeEvent<HTMLSelectElement>
                               ) =>
                                 setAssignmentData({
                                   ...assignmentData,
                                   timeLimit: {
-                                    ...assignmentData.timeLimit,
-                                    unit: e.target.value as TimeLimit['unit'],
+                                    value: assignmentData.timeLimit?.value || 0,
+                                    unit: e.target
+                                      .value as TimeLimitData['unit'],
                                   },
                                 })
                               }
@@ -683,7 +928,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               className="shadow-none"
                               type="number"
                               placeholder="0"
-                              value={assignmentData.totalPoints}
+                              value={assignmentData.totalPoints || 0}
                               onChange={(
                                 e: React.ChangeEvent<HTMLInputElement>
                               ) =>
@@ -693,15 +938,11 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                 })
                               }
                             />
-                            <small>
-                              <i className="feather-info pr--5"></i>
-                              Maximum points a student can score
-                            </small>
                           </div>
                         </div>
                       </div>
                       <div className="course-field mb--15">
-                        <label>Minimum Pass Points</label>
+                        <label>Passing Points</label>
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
@@ -710,7 +951,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               className="shadow-none"
                               type="number"
                               placeholder="0"
-                              value={assignmentData.passingPoints}
+                              value={assignmentData.passingPoints || 0}
                               onChange={(
                                 e: React.ChangeEvent<HTMLInputElement>
                               ) =>
@@ -721,15 +962,10 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               }
                             />
                           </div>
-                          <small>
-                            <i className="feather-info pr--5"></i>
-                            Minimum points required for the student to pass this
-                            assignment.
-                          </small>
                         </div>
                       </div>
                       <div className="course-field mb--15">
-                        <label>Allow to upload files</label>
+                        <label>Max Uploads</label>
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
@@ -737,28 +973,22 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               name="assignmentMaxUploads"
                               className="shadow-none"
                               type="number"
-                              placeholder="0"
-                              value={assignmentData.maxUploads}
+                              placeholder="1"
+                              value={assignmentData.maxUploads || 1}
                               onChange={(
                                 e: React.ChangeEvent<HTMLInputElement>
                               ) =>
                                 setAssignmentData({
                                   ...assignmentData,
-                                  maxUploads: parseInt(e.target.value) || 0,
+                                  maxUploads: parseInt(e.target.value) || 1,
                                 })
                               }
                             />
                           </div>
-                          <small>
-                            <i className="feather-info pr--5"></i>
-                            Define the number of files that a student can upload
-                            in this assignment. Input 0 to disable the option to
-                            upload.
-                          </small>
                         </div>
                       </div>
                       <div className="course-field mb--15">
-                        <label>Maximum file size limit</label>
+                        <label>Max File Size (MB)</label>
                         <div className="row row--15">
                           <div className="col-lg-4">
                             <input
@@ -766,22 +996,18 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               name="assignmentMaxFileSize"
                               className="shadow-none"
                               type="number"
-                              placeholder="0"
-                              value={assignmentData.maxFileSize}
+                              placeholder="10"
+                              value={assignmentData.maxFileSize || 10}
                               onChange={(
                                 e: React.ChangeEvent<HTMLInputElement>
                               ) =>
                                 setAssignmentData({
                                   ...assignmentData,
-                                  maxFileSize: parseInt(e.target.value) || 0,
+                                  maxFileSize: parseInt(e.target.value) || 10,
                                 })
                               }
                             />
                           </div>
-                          <small>
-                            <i className="feather-info pr--5"></i>
-                            Define maximum file size attachment in MB
-                          </small>
                         </div>
                       </div>
                     </form>
@@ -789,8 +1015,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 </div>
               </div>
             </div>
-            <div className="top-circle-shape"></div>
-            <div className="modal-footer pt--30 justify-content-between">
+            <div className="modal-footer pt--20 pb--20 border-top-light">
               <button
                 type="button"
                 className="rbt-btn btn-border btn-md radius-round-10"
@@ -804,7 +1029,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                     type="button"
                     className="rbt-btn btn-border btn-md radius-round-10"
                     onClick={handleSaveAsTemplate}
-                    disabled={isSavingTemplate || !assignmentData.title.trim()}
+                    disabled={isSavingTemplate || !assignmentData.title?.trim()}
                   >
                     <i className="feather-save me-2"></i>
                     {isSavingTemplate ? 'Saving...' : 'Save as Template'}
@@ -813,72 +1038,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 <button
                   type="button"
                   className="rbt-btn btn-gradient btn-md"
-                  onClick={() => {
-                    if (assignmentData.title.trim() && onAddAssignment) {
-                      const result = onAddAssignment(assignmentData);
-
-                      // Check if assignment was successfully added
-                      if (result && result.success) {
-                        // If editing, call onEditComplete
-                        if (editingAssignment && onEditComplete) {
-                          onEditComplete();
-                        }
-
-                        // Reset form
-                        setAssignmentData({
-                          title: '',
-                          summary: '',
-                          attachments: [],
-                          timeLimit: { value: 0, unit: 'weeks' },
-                          totalPoints: 100,
-                          passingPoints: 70,
-                          maxUploads: 1,
-                          maxFileSize: 10,
-                        });
-
-                        // Close modal using Bootstrap's data-bs-dismiss
-                        const closeButton = document.querySelector(
-                          `#${modalId} [data-bs-dismiss="modal"]`
-                        );
-                        if (closeButton) {
-                          (closeButton as HTMLButtonElement).click();
-                        } else {
-                          // Fallback: Try to get modal instance
-                          const modal = document.getElementById(modalId);
-                          if (modal && window.bootstrap?.Modal) {
-                            const modalInstance =
-                              window.bootstrap.Modal.getInstance(modal) ||
-                              new window.bootstrap.Modal(modal);
-                            if (modalInstance) {
-                              modalInstance.hide();
-                            }
-                          }
-                        }
-
-                        // Open Course Builder accordion after modal closes
-                        setTimeout(() => {
-                          const courseBuilderAccordion =
-                            document.querySelector('#headingTwo button');
-                          if (
-                            courseBuilderAccordion &&
-                            courseBuilderAccordion.classList.contains(
-                              'collapsed'
-                            )
-                          ) {
-                            (
-                              courseBuilderAccordion as HTMLButtonElement
-                            ).click();
-                          }
-                        }, 300);
-                      } else {
-                        // Show error message if assignment save failed
-                        alert(
-                          result?.error ||
-                            '과제 저장에 실패했습니다. 다시 시도해주세요.'
-                        );
-                      }
-                    }
-                  }}
+                  onClick={handleSubmit}
                 >
                   {editingAssignment ? 'Update Assignment' : 'Add Assignment'}
                 </button>

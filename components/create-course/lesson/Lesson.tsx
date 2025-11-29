@@ -322,8 +322,8 @@ const Lesson: React.FC<LessonComponentProps> = ({
       {/* Assignment Modal for this topic */}
       <AssignmentModal
         modalId={`AssignmentModal${id}`}
-        onAddAssignment={onAddAssignment as any} // TODO(ANY-TODO #19): AssignmentModal uses different AssignmentData type from sampleAssignmentData
-        editingAssignment={editingAssignment as any} // TODO(ANY-TODO #19): Type mismatch between AssignmentLesson and AssignmentData
+        onAddAssignment={onAddAssignment}
+        editingAssignment={editingAssignment}
         onEditComplete={() => setEditingAssignment(null)}
       />
 

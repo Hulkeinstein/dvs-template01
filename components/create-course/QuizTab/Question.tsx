@@ -13,7 +13,6 @@ import QuillWrapper from '../QuillWrapper';
 import img from '../../../public/images/others/thumbnail-placeholder.svg';
 
 import type {
-  QuizQuestion,
   QuestionOption,
   BlankAnswer,
   SortItem,
@@ -23,7 +22,9 @@ import type {
 } from '@/types/create-course';
 
 // Extended question type for internal state management
-interface InternalQuestion extends Partial<QuizQuestion> {
+// Extended question type for internal state management
+export type InternalQuestion = {
+  id?: string;
   question?: string;
   questionImage?: string | null;
   type?: QuestionType;
@@ -39,6 +40,7 @@ interface InternalQuestion extends Partial<QuizQuestion> {
     | number
     | (string | number)[]
     | Record<string, string[]>
+    | Record<string, string>
     | Record<number, string[]>
     | null;
   blanks?: BlankAnswer[];
@@ -47,7 +49,7 @@ interface InternalQuestion extends Partial<QuizQuestion> {
   imageMatchingImage?: string | null;
   imageMatchingText?: string;
   imageMatchingPairs?: ImageMatchingPair[];
-}
+};
 
 interface QuestionProps {
   selectedOption: QuestionType | string;

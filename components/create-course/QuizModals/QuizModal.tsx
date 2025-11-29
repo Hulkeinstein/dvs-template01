@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Settings from '../QuizTab/Settings';
-import Question from '../QuizTab/Question';
+import Question, { InternalQuestion } from '../QuizTab/Question';
 import QuestionType from '../QuizTab/QuestionType';
 import { convertPlaceholdersToIframes } from '@/app/lib/utils/videoUtils';
 import { updateQuizLesson } from '@/app/lib/actions/quizActions';
@@ -15,10 +15,6 @@ import type {
   QuizSettings,
   QuestionType as QuestionTypeEnum,
   QuestionOption,
-  BlankAnswer,
-  SortItem,
-  MatchingPairs,
-  ImageMatchingPair,
 } from '@/types/create-course';
 
 // ============================================================================
@@ -30,32 +26,6 @@ interface QuizData {
   summary: string;
   questions: QuizQuestion[];
   settings: QuizSettings;
-}
-
-interface CurrentQuestionState {
-  question: string;
-  questionImage: string | null;
-  type: QuestionTypeEnum;
-  points: number;
-  required: boolean;
-  randomize: boolean;
-  description: string;
-  correctAnswer:
-    | boolean
-    | string
-    | number
-    | (string | number)[]
-    | Record<number, string[]>
-    | Record<string, string>
-    | null;
-  options: QuestionOption[];
-  explanation: string;
-  blanks: BlankAnswer[];
-  sortItems: SortItem[];
-  imageMatchingImage: string | null;
-  imageMatchingText: string;
-  imageMatchingPairs: ImageMatchingPair[];
-  matchingPairs: MatchingPairs | null;
 }
 
 interface QuizActionResult {
@@ -92,7 +62,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [settingsKey, setSettingsKey] = useState<number>(0);
 
-  const [currentQuestion, setCurrentQuestion] = useState<CurrentQuestionState>({
+  const [currentQuestion, setCurrentQuestion] = useState<InternalQuestion>({
     question: '',
     questionImage: null,
     type: 'True/False',
@@ -108,7 +78,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
     imageMatchingImage: null,
     imageMatchingText: '',
     imageMatchingPairs: [],
-    matchingPairs: null,
+    matchingPairs: undefined,
   });
 
   const [quizData, setQuizData] = useState<QuizData>({
@@ -177,7 +147,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
       imageMatchingImage: null,
       imageMatchingText: '',
       imageMatchingPairs: [],
-      matchingPairs: null,
+      matchingPairs: undefined,
     });
     setSelectedOption('True/False');
   };
@@ -329,7 +299,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
   };
 
   const handleAddQuestion = (): void => {
-    if (!currentQuestion.question.trim()) {
+    if (!currentQuestion.question?.trim()) {
       alert('Please enter a question');
       return;
     }
@@ -367,7 +337,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
       imageMatchingImage: null,
       imageMatchingText: '',
       imageMatchingPairs: [],
-      matchingPairs: null,
+      matchingPairs: undefined,
     });
     setToggle(true);
   };
