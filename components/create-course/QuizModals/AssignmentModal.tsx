@@ -381,8 +381,10 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
       const result = onAddAssignment(finalData);
 
-      // Check if assignment was successfully added
-      if (result && result.success) {
+      // Check if assignment was successfully added (void return is considered success)
+      const isSuccess =
+        result === undefined || (result && result.success !== false);
+      if (isSuccess) {
         // If editing, call onEditComplete
         if (editingAssignment && onEditComplete) {
           onEditComplete();
