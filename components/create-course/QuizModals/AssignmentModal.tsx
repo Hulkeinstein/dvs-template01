@@ -56,6 +56,8 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const [isSavingTemplate, setIsSavingTemplate] = useState<boolean>(false);
   const [myTemplates, setMyTemplates] = useState<TemplateRow[]>([]);
+  const [showTemplateInput, setShowTemplateInput] = useState<boolean>(false);
+  const [templateName, setTemplateName] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Local validateFile function (avoiding import issues)
@@ -223,8 +225,14 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
 
   // Save as template handler
   const handleSaveAsTemplate = async (): Promise<void> => {
-    const templateName = prompt('Enter template name:');
-    if (!templateName) return;
+    if (!templateName.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Template name is required',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     if (templateName.length > 100) {
       toast({
@@ -272,6 +280,10 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
           title: 'Success',
           description: `Template "${templateName}" saved successfully`,
         });
+
+        // Reset state
+        setShowTemplateInput(false);
+        setTemplateName('');
       } else {
         const errorMessage =
           result.code === 'DUPLICATE_TEMPLATE_NAME'
@@ -491,7 +503,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                             style={{ display: 'inline-block' }}
                           >
                             <button
-                              className="btn btn-sm btn-primary"
+                              className="rbt-btn btn-border btn-md radius-round-10"
                               type="button"
                               onClick={() => setShowDropdown(!showDropdown)}
                             >
@@ -502,15 +514,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                               ></i>
                             </button>
                             {showDropdown && (
-                              <ul
-                                className="dropdown-menu show"
-                                style={{
-                                  position: 'absolute',
-                                  top: '100%',
-                                  left: 0,
-                                  zIndex: 1051,
-                                }}
-                              >
+                              <ul className="dropdown-menu show template-dropdown-menu">
                                 {/* My Templates Section */}
                                 {myTemplates.length > 0 && (
                                   <>
@@ -522,7 +526,8 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                     {myTemplates.map((template) => (
                                       <li key={template.id}>
                                         <a
-                                          className="dropdown-item d-flex justify-content-between align-items-center"
+                                          className="dropdown-item template-item"
+                                          title={template.name}
                                           href="#"
                                           onClick={(
                                             e: React.MouseEvent<HTMLAnchorElement>
@@ -531,9 +536,11 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                                             handleLoadTemplate(template);
                                           }}
                                         >
-                                          <span>{template.name}</span>
+                                          <span className="template-name">
+                                            {template.name}
+                                          </span>
                                           <button
-                                            className="btn btn-sm btn-link text-danger p-0"
+                                            className="btn btn-link text-danger p-0"
                                             onClick={(e: React.MouseEvent) =>
                                               handleDeleteTemplate(
                                                 template.id,
@@ -1026,7 +1033,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 </div>
               </div>
             </div>
-            <div className="modal-footer pt--20 pb--20 border-top-light">
+            <div className="modal-footer pt--20 pb--20 border-top-light d-flex justify-content-between align-items-center">
               <button
                 type="button"
                 className="rbt-btn btn-border btn-md radius-round-10"
@@ -1035,20 +1042,51 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
                 Cancel
               </button>
               <div className="d-flex gap-2">
-                {!editingAssignment && (
-                  <button
-                    type="button"
-                    className="rbt-btn btn-border btn-md radius-round-10"
-                    onClick={handleSaveAsTemplate}
-                    disabled={isSavingTemplate || !assignmentData.title?.trim()}
-                  >
-                    <i className="feather-save me-2"></i>
-                    {isSavingTemplate ? 'Saving...' : 'Save as Template'}
-                  </button>
-                )}
+                {!editingAssignment &&
+                  (showTemplateInput ? (
+                    <div className="d-flex gap-2 align-items-center">
+                      <input
+                        type="text"
+                        className="form-control form-control-sm template-name-input"
+                        placeholder="Template name"
+                        value={templateName}
+                        onChange={(e) => setTemplateName(e.target.value)}
+                        maxLength={100}
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        className="rbt-btn btn-gradient btn-sm"
+                        onClick={handleSaveAsTemplate}
+                        disabled={isSavingTemplate || !templateName.trim()}
+                      >
+                        {isSavingTemplate ? 'Saving...' : 'Save'}
+                      </button>
+                      <button
+                        type="button"
+                        className="rbt-btn btn-border btn-sm"
+                        onClick={() => {
+                          setShowTemplateInput(false);
+                          setTemplateName('');
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="rbt-btn btn-border btn-md radius-round-10"
+                      onClick={() => setShowTemplateInput(true)}
+                      disabled={!assignmentData.title?.trim()}
+                    >
+                      <i className="feather-save me-2"></i>
+                      Save as Template
+                    </button>
+                  ))}
                 <button
                   type="button"
-                  className="rbt-btn btn-gradient btn-md"
+                  className="rbt-btn btn-gradient btn-md radius-round-10"
                   onClick={handleSubmit}
                 >
                   {editingAssignment ? 'Update Assignment' : 'Add Assignment'}
