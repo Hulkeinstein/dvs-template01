@@ -21,28 +21,26 @@
 - [x] 자동저장 UI 미니멀화
 - [x] LessonModal 디버그 패널 삭제
 
-### P1: Static Backdrop 적용 (HIGH)
-- [ ] AssignmentModal.tsx - `data-bs-backdrop="static"` 추가
-- [ ] LessonModal.tsx - `data-bs-backdrop="static"` 추가
-- [ ] QuizModal.tsx - `data-bs-backdrop="static"` 추가
-- [ ] TopicModal.tsx - `data-bs-backdrop="static"` 추가
+### P1: Static Backdrop 적용 ✅
+- [x] AssignmentModal.tsx - `data-bs-backdrop="static"` 추가
+- [x] LessonModal.tsx - `data-bs-backdrop="static"` 추가
+- [x] QuizModal.tsx - `data-bs-backdrop="static"` 추가
+- [x] TopicModal.tsx - `data-bs-backdrop="static"` 추가
 
-### P2: Assignment 수정 기능 (HIGH)
-- [ ] CreateCourse.tsx에서 `editingAssignment` prop 연결
-- [ ] 저장된 Assignment 클릭 시 편집 모드로 열기
+### P2: Assignment 타입 통일 & 수정 기능 ✅
+- [x] `AssignmentLesson` 타입으로 통일
+- [x] `as any` 제거 (Lesson.tsx)
+- [x] Question.js → Question.tsx 변환
+- [x] 저장 버그 수정 (handleSubmit result 체크)
 
-### P3: 템플릿 팝업 개선 (MEDIUM)
+### P3: 템플릿 팝업 개선 (MEDIUM) ⏳
 - [ ] `prompt()` 제거
-- [ ] 커스텀 모달 컴포넌트 생성
-- [ ] 템플릿 이름 입력 UI 개선
+- [ ] 인라인 템플릿 이름 입력 UI
+- 별도 브랜치로 분리 가능
 
-### P4: Time Limit 개선 (MEDIUM, 옵션)
-- [ ] Date picker 추가 검토
-- [ ] 기존 숫자+단위 방식 유지 또는 교체
-
-### P5: Supabase 파일 업로드 (LOW, 추후)
-- [ ] `URL.createObjectURL()` → Supabase Storage
-- [ ] uploadActions.js 연동
+### 🟢 LOW - 추후 (다른 브랜치)
+- [ ] Time Limit: Date picker 추가 검토
+- [ ] Supabase Storage 파일 업로드 연동
 
 ---
 
@@ -78,8 +76,14 @@ gh pr create --title "feat: Assignment 모달 개선 - Closes #10"
 
 ## Progress Log
 
+### 2025-11-30 - P1, P2 완료
+- Static Backdrop 모든 모달에 적용
+- AssignmentLesson 타입 통일, `as any` 제거
+- Question.js → Question.tsx 변환
+- 저장 버그 수정 (handleSubmit void return 처리)
+- 다음: P3 또는 PR 생성
+
 ### 2025-11-29 - P0 완료
 - QuillWrapper 적용 완료
 - 자동저장 UI 미니멀화 완료
 - 디버그 패널 삭제 완료
-- 다음: P1 Static Backdrop 적용
