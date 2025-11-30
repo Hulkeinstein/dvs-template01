@@ -230,6 +230,7 @@ const Lesson: React.FC<LessonComponentProps> = ({
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target={`#LessonModal${id}`}
+                  onClick={() => setEditingLesson(null)}
                 >
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">Lesson</span>
@@ -246,6 +247,7 @@ const Lesson: React.FC<LessonComponentProps> = ({
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target={`#QuizModal${id}`}
+                  onClick={() => setEditingQuiz(null)}
                 >
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">Quiz</span>
@@ -262,6 +264,7 @@ const Lesson: React.FC<LessonComponentProps> = ({
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target={`#AssignmentModal${id}`}
+                  onClick={() => setEditingAssignment(null)}
                 >
                   <span className="icon-reverse-wrapper">
                     <span className="btn-text">Assignments </span>

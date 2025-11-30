@@ -41,7 +41,6 @@ import TopicModal from './QuizModals/TopicModal';
 import AdditionalForm from './AdditionalForm';
 import LessonModal from './QuizModals/LessonModal';
 import QuizModal from './QuizModals/QuizModal';
-import AssignmentModal from './QuizModals/AssignmentModal';
 import UpdateModal from './QuizModals/UpdateModal';
 import Lesson from './lesson/Lesson';
 
@@ -131,9 +130,6 @@ const CreateCourse = ({
   // 자동 저장 키 생성 (userId가 준비된 후에만)
   const storageKey = useMemo(() => {
     if (!userId) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[AutoSave] userId not ready, storageKey is null');
-      }
       return null;
     }
 
@@ -141,10 +137,6 @@ const CreateCourse = ({
     const courseIdentifier =
       editMode && courseId ? courseId : tempIdRef.current;
     const key = `course_draft_${userId}_${courseIdentifier}`;
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[AutoSave] storageKey generated:', key);
-    }
 
     return key;
   }, [userId, editMode, courseId]);
@@ -170,11 +162,6 @@ const CreateCourse = ({
       setLoading(true);
       const result = (await getCourseById(courseId!)) as any;
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Loading course with ID:', courseId);
-        console.log('getCourseById result:', result);
-      }
-
       if (result.error) {
         console.error('Error from getCourseById:', result.error);
         setError(result.error);
@@ -184,15 +171,6 @@ const CreateCourse = ({
 
       if (result.course) {
         const course = result.course as any;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Course data loaded:', {
-            id: course.id,
-            title: course.title,
-            thumbnail_url: course.thumbnail_url,
-            hasThumbnail: !!course.thumbnail_url,
-          });
-          console.log('Full thumbnail URL:', course.thumbnail_url);
-        }
 
         // Map database fields to form fields using centralized mapper
         const mappedData = mapDBToFormData(course);
@@ -286,12 +264,6 @@ const CreateCourse = ({
           );
 
           if (lessonsWithoutTopic.length > 0) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log(
-                'Found lessons without topics:',
-                lessonsWithoutTopic.length
-              );
-            }
             // Create a "General" topic for lessons without topic_id
             const generalTopic: TopicData = {
               id: 'general-topic',
@@ -365,9 +337,6 @@ const CreateCourse = ({
 
   // Load course data in edit mode
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('useEffect triggered:', { editMode, courseId });
-    }
     if (editMode && courseId) {
       loadCourseData();
     }
@@ -381,12 +350,6 @@ const CreateCourse = ({
       setTimeout(() => {
         const { data, timestamp } = getRecoverable();
         if (data && timestamp) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[AutoSave] Recovery data found:', {
-              timestamp,
-              hasData: !!data,
-            });
-          }
           setDraftTimestamp(timestamp);
           setShowRecoveryModal(true);
         }
@@ -468,48 +431,23 @@ const CreateCourse = ({
       // Case 1: Keep existing thumbnail (edit mode, no new file selected)
       if (!thumbnailFile && formData.thumbnailPreview) {
         thumbnailUrl = formData.thumbnailPreview;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Keeping existing thumbnail:', thumbnailUrl);
-        }
       }
       // Case 2: Upload new thumbnail
       else if (thumbnailBase64 && thumbnailFile) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Uploading new thumbnail:', {
-            hasBase64: !!thumbnailBase64,
-            fileName: thumbnailFile.name,
-            base64Length: thumbnailBase64?.length,
-          });
-        }
-
         const uploadResult = await uploadCourseThumbnail(
           thumbnailBase64,
           thumbnailFile.name
         );
 
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Thumbnail upload result:', uploadResult);
-        }
-
         if (uploadResult.success) {
           thumbnailUrl = uploadResult.url!;
-          if (process.env.NODE_ENV === 'development') {
-            console.log('New thumbnail uploaded successfully:', thumbnailUrl);
-          }
         } else {
           console.error('Failed to upload thumbnail:', uploadResult.error);
           // If we have an existing thumbnail, keep it
           if (formData.thumbnailPreview) {
             thumbnailUrl = formData.thumbnailPreview;
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Upload failed, keeping existing thumbnail');
-            }
           }
         }
-      }
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Final thumbnail URL:', thumbnailUrl);
       }
 
       // Include thumbnail URL and status in formData
@@ -522,7 +460,7 @@ const CreateCourse = ({
       let result: any;
       if (editMode && courseId) {
         // Update existing course
-        result = await updateCourse(courseId, courseData as any);
+        result = await updateCourse(courseId, formData);
       } else {
         // Create new course
         result = await createCourse(courseData as any);
@@ -669,42 +607,60 @@ const CreateCourse = ({
     topicId: string | number,
     assignmentData: AssignmentLesson
   ): { success: boolean } => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      topics: prevFormData.topics.map((topic) => {
-        if (topic.id === topicId) {
-          const newAssignment: AssignmentLesson = {
-            ...assignmentData,
-            id: assignmentData.id || Date.now(),
-            content_type: 'assignment',
-          };
+    console.log('[CreateCourse] handleAddAssignment called');
+    console.log('[CreateCourse] topicId:', topicId);
+    console.log('[CreateCourse] assignmentData:', assignmentData);
 
-          // 통합 lessons 배열에서 관리
-          const existingLessonIndex = topic.lessons.findIndex(
-            (lesson) => lesson.id === assignmentData.id
-          );
+    setFormData((prevFormData) => {
+      console.log('[CreateCourse] prevFormData.topics:', prevFormData.topics);
+      const matchingTopic = prevFormData.topics.find((t) => t.id === topicId);
+      console.log('[CreateCourse] matchingTopic:', matchingTopic);
 
-          if (existingLessonIndex !== -1) {
-            // 기존 assignment 수정
-            const updatedLessons = [...topic.lessons];
-            updatedLessons[existingLessonIndex] = newAssignment;
-            return {
-              ...topic,
-              lessons: updatedLessons,
+      return {
+        ...prevFormData,
+        topics: prevFormData.topics.map((topic) => {
+          if (topic.id === topicId) {
+            const newAssignment: AssignmentLesson = {
+              ...assignmentData,
+              id: assignmentData.id || Date.now(),
+              content_type: 'assignment',
             };
-          } else {
-            // 새 assignment 추가
-            return {
-              ...topic,
-              lessons: [...topic.lessons, newAssignment],
-            };
+
+            // 통합 lessons 배열에서 관리
+            const existingLessonIndex = topic.lessons.findIndex(
+              (lesson) => lesson.id === assignmentData.id
+            );
+
+            console.log(
+              '[CreateCourse] existingLessonIndex:',
+              existingLessonIndex
+            );
+
+            if (existingLessonIndex !== -1) {
+              // 기존 assignment 수정
+              const updatedLessons = [...topic.lessons];
+              updatedLessons[existingLessonIndex] = newAssignment;
+              console.log('[CreateCourse] Updated existing assignment');
+              return {
+                ...topic,
+                lessons: updatedLessons,
+              };
+            } else {
+              // 새 assignment 추가
+              console.log('[CreateCourse] Adding new assignment');
+              return {
+                ...topic,
+                lessons: [...topic.lessons, newAssignment],
+              };
+            }
           }
-        }
-        return topic;
-      }),
-    }));
+          return topic;
+        }),
+      };
+    });
 
     // Return success for AssignmentModal
+    console.log('[CreateCourse] Returning success: true');
     return { success: true };
   };
 
@@ -1340,7 +1296,6 @@ const CreateCourse = ({
       <UpdateModal />
       <LessonModal />
       <QuizModal />
-      <AssignmentModal />
 
       {/* Phone Verification Modal */}
       <PhoneVerificationModal

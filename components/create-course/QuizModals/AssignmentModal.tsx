@@ -358,6 +358,9 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
   }, [showDropdown]);
 
   const handleSubmit = async (): Promise<void> => {
+    console.log('[AssignmentModal] handleSubmit called');
+    console.log('[AssignmentModal] assignmentData:', assignmentData);
+
     if (!assignmentData.title?.trim()) {
       alert('Please enter assignment title');
       return;
@@ -379,12 +382,17 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
         timeLimit: assignmentData.timeLimit || { value: 0, unit: 'weeks' },
       };
 
+      console.log('[AssignmentModal] finalData:', finalData);
       const result = onAddAssignment(finalData);
+      console.log('[AssignmentModal] onAddAssignment result:', result);
 
       // Check if assignment was successfully added (void return is considered success)
       const isSuccess =
         result === undefined || (result && result.success !== false);
+      console.log('[AssignmentModal] isSuccess:', isSuccess);
+
       if (isSuccess) {
+        console.log('[AssignmentModal] Success! Closing modal...');
         // If editing, call onEditComplete
         if (editingAssignment && onEditComplete) {
           onEditComplete();
@@ -405,22 +413,23 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({
         });
 
         // Close modal using Bootstrap's data-bs-dismiss
-        const closeButton = document.querySelector(
-          `#${modalId} [data-bs-dismiss="modal"]`
-        );
-        if (closeButton) {
-          (closeButton as HTMLButtonElement).click();
-        } else {
-          // Fallback: Try to get modal instance
-          const modal = document.getElementById(modalId);
-          if (modal && window.bootstrap?.Modal) {
-            const modalInstance =
-              window.bootstrap.Modal.getInstance(modal) ||
-              new window.bootstrap.Modal(modal);
-            if (modalInstance) {
-              modalInstance.hide();
-            }
+        const modalElement = document.getElementById(modalId);
+        if (modalElement) {
+          const closeButton = modalElement.querySelector(
+            '[data-bs-dismiss="modal"]'
+          );
+          if (closeButton) {
+            (closeButton as HTMLButtonElement).click();
           }
+
+          // Simple cleanup
+          document.body.classList.remove('modal-open');
+          const backdrops = document.querySelectorAll('.modal-backdrop');
+          backdrops.forEach((b) => b.remove());
+        } else {
+          console.error(
+            `[AssignmentModal] Modal element not found: ${modalId}`
+          );
         }
 
         // Open Course Builder accordion after modal closes

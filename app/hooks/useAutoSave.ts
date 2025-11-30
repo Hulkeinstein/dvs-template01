@@ -285,12 +285,6 @@ export function useAutoSave<T = unknown>(
 
       // 스키마 버전 체크 및 자동 마이그레이션
       if (dataVersion !== schemaVersion) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(
-            `[AutoSave] Schema version mismatch: ${dataVersion} → ${schemaVersion}`
-          );
-        }
-
         // 자동 마이그레이션 시도
         const migrated = migrate(parsed.data, dataVersion, schemaVersion);
         if (migrated) {
