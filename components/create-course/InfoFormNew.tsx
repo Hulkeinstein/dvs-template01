@@ -529,7 +529,7 @@ const InfoFormNew: React.FC<InfoFormNewProps> = ({
                   width={797}
                   height={262}
                   alt="file image"
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', width: '100%', height: '262px' }}
                   priority={!thumbnailPreview}
                 />
 

@@ -482,7 +482,7 @@ const Question: React.FC<QuestionProps> = ({
                   width={797}
                   height={262}
                   alt="file image"
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', width: '100%', height: '262px' }}
                 />
                 {questionImagePreview && (
                   <button

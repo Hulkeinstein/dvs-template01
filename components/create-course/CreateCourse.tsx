@@ -680,13 +680,17 @@ const CreateCourse = ({
           };
 
           // 통합 lessons 배열에서 관리
-          if (assignmentData.id) {
+          const existingLessonIndex = topic.lessons.findIndex(
+            (lesson) => lesson.id === assignmentData.id
+          );
+
+          if (existingLessonIndex !== -1) {
             // 기존 assignment 수정
+            const updatedLessons = [...topic.lessons];
+            updatedLessons[existingLessonIndex] = newAssignment;
             return {
               ...topic,
-              lessons: topic.lessons.map((lesson) =>
-                lesson.id === assignmentData.id ? newAssignment : lesson
-              ),
+              lessons: updatedLessons,
             };
           } else {
             // 새 assignment 추가
