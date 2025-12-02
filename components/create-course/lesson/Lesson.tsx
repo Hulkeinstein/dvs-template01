@@ -26,6 +26,7 @@ import LessonModal from '../QuizModals/LessonModal';
 import QuizModal from '../QuizModals/QuizModal';
 import AssignmentModal from '../QuizModals/AssignmentModal';
 import UpdateModal from '../QuizModals/UpdateModal';
+import ConfirmDeleteModal from '@/components/ui/ConfirmDeleteModal';
 
 import type {
   LessonComponentProps,
@@ -74,6 +75,26 @@ const Lesson: React.FC<LessonComponentProps> = ({
   const [editingAssignment, setEditingAssignment] =
     useState<AssignmentLesson | null>(null);
 
+  // Delete Modal State
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showTopicDeleteModal, setShowTopicDeleteModal] = useState(false);
+  const [deletingLessonId, setDeletingLessonId] = useState<
+    string | number | null
+  >(null);
+
+  const handleRequestDelete = (lessonId: string | number) => {
+    setDeletingLessonId(lessonId);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deletingLessonId && onDeleteContent) {
+      onDeleteContent(topicData.id, deletingLessonId);
+    }
+    setShowDeleteModal(false);
+    setDeletingLessonId(null);
+  };
+
   // Update courseList when topicData changes - combine lessons and quizzes
   useEffect(() => {
     // Use contentHelpers to combine all content types
@@ -91,7 +112,11 @@ const Lesson: React.FC<LessonComponentProps> = ({
   }, []);
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -139,8 +164,7 @@ const Lesson: React.FC<LessonComponentProps> = ({
           ></span>
           <span
             className="rbt-course-icon rbt-course-del"
-            onClick={onDeleteTopic}
-            style={{ cursor: 'pointer' }}
+            onClick={() => setShowTopicDeleteModal(true)}
           ></span>
         </h2>
         <div
@@ -182,17 +206,7 @@ const Lesson: React.FC<LessonComponentProps> = ({
                         course as Parameters<typeof SingleLesson>[0]['course']
                       }
                       topicId={id}
-                      onDelete={(lessonId: string | number) => {
-                        if (onDeleteContent) {
-                          // course 객체 전체를 전달
-                          const contentToDelete = courseList.find(
-                            (c) => c.id === lessonId
-                          );
-                          if (contentToDelete) {
-                            onDeleteContent(topicData.id, lessonId);
-                          }
-                        }
-                      }}
+                      onDelete={handleRequestDelete}
                       onEdit={(lesson: ContentItem) => {
                         logger.log();
 
@@ -335,6 +349,42 @@ const Lesson: React.FC<LessonComponentProps> = ({
         modalId={`UpdateTopic${id}`}
         topicData={topicData}
         onUpdateTopic={onUpdateTopic}
+      />
+
+      <ConfirmDeleteModal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Lesson"
+        message={
+          <>
+            Are you sure you want to delete this lesson?
+            <br />
+            This action cannot be undone.
+          </>
+        }
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+      />
+
+      <ConfirmDeleteModal
+        show={showTopicDeleteModal}
+        onHide={() => setShowTopicDeleteModal(false)}
+        onConfirm={() => {
+          onDeleteTopic();
+          setShowTopicDeleteModal(false);
+        }}
+        title="Delete Topic"
+        message={
+          <>
+            Are you sure you want to delete the topic &quot;{topicData?.name}
+            &quot;?
+            <br />
+            (All lessons, assignments, and quizzes within it will be deleted)
+          </>
+        }
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
       />
     </>
   );
