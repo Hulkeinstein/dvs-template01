@@ -2,28 +2,76 @@
 
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import QuillWrapper from '../QuillWrapper';
 import { debugLog, trackError } from '@/app/lib/utils/debugHelper';
 import { uploadLessonAttachmentDirect } from '@/app/lib/actions/uploadActions';
+import type {
+  LessonModalProps,
+  VideoLesson,
+  AttachmentData,
+} from '@/types/create-course';
 
 import img from '../../../public/images/others/thumbnail-placeholder.svg';
+
+// Internal state type for the lesson form
+interface LessonFormData {
+  title: string;
+  description: string;
+  videoUrl: string;
+  videoSource: 'youtube' | 'vimeo' | 'external' | 'facebook' | 'twitter';
+  hours: number;
+  minutes: number;
+  seconds: number;
+  enablePreview: boolean;
+  thumbnail: string | null;
+}
+
+// Error info for attachment uploads
+interface AttachmentError {
+  fileName: string;
+  error: string;
+  timestamp: string;
+}
+
+// Upload result type
+interface UploadResult {
+  success: boolean;
+  url?: string;
+  error?: string;
+}
+
+// Extended VideoLesson for submission (includes is_preview)
+interface LessonSubmitData extends Omit<VideoLesson, 'content_type' | 'id'> {
+  is_preview: boolean;
+  enablePreview?: boolean;
+  id?: string | number;
+}
 
 const LessonModal = ({
   modalId = 'Lesson',
   onAddLesson,
   editingLesson,
   onEditComplete,
-}) => {
-  const fileInputRef = useRef(null);
-  const attachmentInputRef = useRef(null);
-  const lastPickIdRef = useRef(0); // Race condition 방지용 추가
-  const [featureImagePreview, setFeatureImagePreview] = useState(null);
-  const [featureImageUrl, setFeatureImageUrl] = useState(null);
-  const [uploadingFeatureImage, setUploadingFeatureImage] = useState(false);
-  const [featureImageError, setFeatureImageError] = useState(null);
-  const [attachments, setAttachments] = useState([]);
-  const [uploadingAttachment, setUploadingAttachment] = useState(false);
-  const [attachmentErrors, setAttachmentErrors] = useState([]);
-  const [lessonData, setLessonData] = useState({
+}: LessonModalProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const attachmentInputRef = useRef<HTMLInputElement>(null);
+  const lastPickIdRef = useRef<number>(0); // Race condition 방지용 추가
+  const [featureImagePreview, setFeatureImagePreview] = useState<string | null>(
+    null
+  );
+  const [featureImageUrl, setFeatureImageUrl] = useState<string | null>(null);
+  const [uploadingFeatureImage, setUploadingFeatureImage] =
+    useState<boolean>(false);
+  const [featureImageError, setFeatureImageError] = useState<string | null>(
+    null
+  );
+  const [attachments, setAttachments] = useState<AttachmentData[]>([]);
+  const [uploadingAttachment, setUploadingAttachment] =
+    useState<boolean>(false);
+  const [attachmentErrors, setAttachmentErrors] = useState<AttachmentError[]>(
+    []
+  );
+  const [lessonData, setLessonData] = useState<LessonFormData>({
     title: '',
     description: '',
     videoUrl: '',
@@ -97,7 +145,7 @@ const LessonModal = ({
         lessonData.hours * 3600 + lessonData.minutes * 60 + lessonData.seconds;
 
       // Prepare lesson data with calculated duration
-      const lessonToSubmit = {
+      const lessonToSubmit: LessonSubmitData = {
         ...lessonData,
         duration: totalDuration,
         thumbnail: featureImageUrl || null,
@@ -132,14 +180,17 @@ const LessonModal = ({
         '      Thumbnail:',
         lessonToSubmit.thumbnail ? 'Present' : 'None'
       );
-      console.log('      Attachments:', lessonToSubmit.attachments.length);
+      console.log(
+        '      Attachments:',
+        lessonToSubmit.attachments?.length || 0
+      );
 
       if (editingLesson) {
         // 편집 모드: 기존 레슨 업데이트
-        onAddLesson({ ...lessonToSubmit, id: editingLesson.id });
+        onAddLesson({ ...lessonToSubmit, id: editingLesson.id } as VideoLesson);
       } else {
         // 추가 모드: 새 레슨 추가
-        onAddLesson(lessonToSubmit);
+        onAddLesson(lessonToSubmit as VideoLesson);
       }
 
       // Reset form
@@ -167,14 +218,16 @@ const LessonModal = ({
 
       // Close modal
       const modal = document.getElementById(modalId);
-      const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
+      const modalInstance = (window as any).bootstrap?.Modal?.getInstance(
+        modal
+      );
       if (modalInstance) {
         modalInstance.hide();
       }
     }
   };
 
-  const handleFeatureImageClick = (e) => {
+  const handleFeatureImageClick = (e: React.MouseEvent<HTMLLabelElement>) => {
     e.preventDefault();
     console.log('🔥 handleFeatureImageClick called!', fileInputRef.current);
     debugLog('LessonModal', 'handleFeatureImageClick', {
@@ -189,17 +242,21 @@ const LessonModal = ({
     }
   };
 
-  const handleAttachmentClick = (e) => {
+  const handleAttachmentClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     debugLog('LessonModal', 'handleAttachmentClick', {
       action: 'Opening file picker for attachments',
       modalId: modalId,
     });
-    attachmentInputRef.current.click();
+    if (attachmentInputRef.current) {
+      attachmentInputRef.current.click();
+    }
   };
 
-  const handleAttachmentChange = async (event) => {
-    const files = Array.from(event.target.files);
+  const handleAttachmentChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = Array.from(event.target.files || []);
 
     debugLog('LessonModal', 'handleAttachmentChange:start', {
       fileCount: files.length,
@@ -230,10 +287,12 @@ const LessonModal = ({
         formData.append('file', file);
         formData.append('fileName', file.name);
 
-        const result = await uploadLessonAttachmentDirect(formData);
+        const result = (await uploadLessonAttachmentDirect(
+          formData
+        )) as UploadResult;
 
-        if (result.success) {
-          const newAttachment = {
+        if (result.success && result.url) {
+          const newAttachment: AttachmentData = {
             id: Date.now() + Math.random(),
             name: file.name,
             url: result.url,
@@ -252,14 +311,20 @@ const LessonModal = ({
           throw new Error(result.error || '업로드에 실패했습니다.');
         }
       } catch (error) {
-        const errorInfo = {
+        const errorMessage =
+          error instanceof Error ? error.message : '알 수 없는 오류';
+        const errorInfo: AttachmentError = {
           fileName: file.name,
-          error: error.message,
+          error: errorMessage,
           timestamp: new Date().toISOString(),
         };
 
         setAttachmentErrors((prev) => [...prev, errorInfo]);
-        trackError('LessonModal.handleAttachmentChange', error, { file });
+        trackError(
+          'LessonModal',
+          error instanceof Error ? error : new Error(errorMessage),
+          { fileName: file.name }
+        );
       }
     }
 
@@ -268,7 +333,9 @@ const LessonModal = ({
     event.target.value = '';
   };
 
-  const handleFileChange = async (event) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     console.log('🎯 handleFileChange triggered!', event.target.files); // 디버깅용 추가
 
     const file = event.target.files?.[0];
@@ -327,7 +394,7 @@ const LessonModal = ({
         return;
       }
 
-      const dataUrl = reader.result; // data:image/... 형식
+      const dataUrl = reader.result as string; // data:image/... 형식
       setFeatureImagePreview(dataUrl);
 
       debugLog('LessonModal', 'featureImagePreview:set', {
@@ -349,7 +416,9 @@ const LessonModal = ({
         formData.append('file', file);
         formData.append('fileName', file.name);
 
-        const result = await uploadLessonAttachmentDirect(formData);
+        const result = (await uploadLessonAttachmentDirect(
+          formData
+        )) as UploadResult;
 
         // 결과 검증
         if (!result?.success || !result?.url) {
@@ -377,14 +446,22 @@ const LessonModal = ({
       } catch (uploadError) {
         // 여전히 최신 선택인지 확인
         if (pickId === lastPickIdRef.current) {
-          trackError('LessonModal.handleFileChange:upload', uploadError, {
-            file,
-            pickId: pickId,
-          });
-          setFeatureImageError(
-            uploadError.message ||
-              '이미지 업로드에 실패했습니다. 다시 시도해주세요.'
+          const errorMessage =
+            uploadError instanceof Error
+              ? uploadError.message
+              : '이미지 업로드에 실패했습니다. 다시 시도해주세요.';
+          trackError(
+            'LessonModal',
+            uploadError instanceof Error
+              ? uploadError
+              : new Error(errorMessage),
+            {
+              action: 'handleFileChange:upload',
+              fileName: file.name,
+              pickId: pickId,
+            }
           );
+          setFeatureImageError(errorMessage);
         }
       } finally {
         // 최신 선택일 때만 로딩 상태 해제
@@ -407,7 +484,7 @@ const LessonModal = ({
 
   // Modal 초기화 함수
   const resetModal = useCallback(() => {
-    debugLog('LessonModal', 'resetModal:start');
+    debugLog('LessonModal', 'resetModal:start', {});
 
     // data URL은 자동으로 메모리 관리되므로 추가 cleanup 불필요
 
@@ -415,13 +492,13 @@ const LessonModal = ({
     setLessonData({
       title: '',
       description: '',
-      contentType: 'video',
-      videoSource: 'YouTube',
       videoUrl: '',
+      videoSource: 'youtube',
       hours: 0,
       minutes: 0,
       seconds: 0,
       enablePreview: false, // enablePreview 초기화 추가
+      thumbnail: null,
     });
     setFeatureImagePreview(null);
     setFeatureImageUrl(null);
@@ -440,7 +517,7 @@ const LessonModal = ({
       attachmentInputRef.current.value = '';
     }
 
-    debugLog('LessonModal', 'resetModal:complete');
+    debugLog('LessonModal', 'resetModal:complete', {});
   }, []);
 
   // Modal이 닫힐 때 cleanup
@@ -448,7 +525,7 @@ const LessonModal = ({
     const modalElement = document.getElementById(modalId);
 
     const handleModalHidden = () => {
-      debugLog('LessonModal', 'modal:hidden');
+      debugLog('LessonModal', 'modal:hidden', {});
       // 편집 모드가 아닐 때만 초기화
       if (!editingLesson) {
         resetModal();
@@ -473,7 +550,7 @@ const LessonModal = ({
       <div
         className="rbt-default-modal modal fade"
         id={modalId}
-        tabIndex="-1"
+        tabIndex={-1}
         aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
         data-bs-backdrop="static"
@@ -520,17 +597,16 @@ const LessonModal = ({
                     </div>
                     <div className="course-field mb--20">
                       <label htmlFor="lessonModalSummary">Lesson Summary</label>
-                      <textarea
-                        id="lessonModalSummary"
-                        name="lessonModalSummary"
+                      <QuillWrapper
                         value={lessonData.description}
-                        onChange={(e) =>
+                        onChange={(content) =>
                           setLessonData((prev) => ({
                             ...prev,
-                            description: e.target.value,
+                            description: content,
                           }))
                         }
-                      ></textarea>
+                        placeholder="Add a summary for this lesson..."
+                      />
                       <small>
                         <i className="feather-info"></i> Add a summary of short
                         text to prepare students for the activities for the
@@ -629,7 +705,8 @@ const LessonModal = ({
                           onChange={(e) =>
                             setLessonData((prev) => ({
                               ...prev,
-                              videoSource: e.target.value,
+                              videoSource: e.target
+                                .value as LessonFormData['videoSource'],
                             }))
                           }
                         >
@@ -889,76 +966,6 @@ const LessonModal = ({
           </div>
         </div>
       </div>
-
-      {/* 개발 모드 디버그 패널 */}
-      {process.env.NODE_ENV === 'development' && (
-        <div
-          className="position-fixed bottom-0 end-0 m-3 p-3 bg-dark text-white rounded shadow"
-          style={{
-            fontSize: '12px',
-            maxWidth: '300px',
-            zIndex: 9999,
-            opacity: 0.9,
-          }}
-        >
-          <h6 className="text-warning mb-2 d-flex justify-content-between align-items-center">
-            🔍 Attachment Debug
-            <button
-              className="btn btn-sm btn-link text-white p-0"
-              onClick={() => {
-                const logs = JSON.parse(
-                  localStorage.getItem('attachmentDebugLogs') || '[]'
-                );
-                console.table(
-                  logs.filter((log) => log.component === 'LessonModal')
-                );
-                alert('LessonModal logs printed to console');
-              }}
-            >
-              <i className="feather-terminal"></i>
-            </button>
-          </h6>
-          <div className="small">
-            <div>📎 Attachments: {attachments.length}</div>
-            <div>⏳ Uploading: {uploadingAttachment ? 'Yes' : 'No'}</div>
-            <div>❌ Errors: {attachmentErrors.length}</div>
-            <div>🆔 Modal ID: {modalId}</div>
-          </div>
-          {attachments.length > 0 && (
-            <div className="mt-2">
-              <small className="text-muted">Files:</small>
-              {attachments.map((file, idx) => (
-                <div
-                  key={idx}
-                  className="text-truncate"
-                  style={{ fontSize: '10px' }}
-                >
-                  • {file.name}
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="mt-2 d-flex gap-1">
-            <button
-              className="btn btn-warning btn-sm py-0 px-1"
-              onClick={() => window.attachmentDebug?.print()}
-              style={{ fontSize: '10px' }}
-            >
-              All Logs
-            </button>
-            <button
-              className="btn btn-danger btn-sm py-0 px-1"
-              onClick={() => {
-                window.attachmentDebug?.clearLogs();
-                alert('Debug logs cleared');
-              }}
-              style={{ fontSize: '10px' }}
-            >
-              Clear
-            </button>
-          </div>
-        </div>
-      )}
     </>
   );
 };

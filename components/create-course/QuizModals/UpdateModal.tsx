@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import type { UpdateModalProps } from '@/types/create-course';
 
-const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
-  const [formData, setFormData] = useState({
+interface FormData {
+  name: string;
+  summary: string;
+}
+
+const UpdateModal: React.FC<UpdateModalProps> = ({
+  modalId = 'UpdateTopic',
+  topicData,
+  onUpdateTopic,
+}) => {
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     summary: '',
   });
@@ -15,24 +25,37 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
     }
   }, [topicData]);
 
-  const handleSubmit = () => {
+  const handleSubmit = (): void => {
     if (formData.name.trim() && onUpdateTopic) {
       onUpdateTopic(formData);
 
       // Close modal
       const modal = document.getElementById(modalId);
-      const modalInstance = window.bootstrap?.Modal?.getInstance(modal);
-      if (modalInstance) {
-        modalInstance.hide();
+      if (modal && window.bootstrap?.Modal) {
+        const modalInstance = window.bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
       }
     }
   };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setFormData({ ...formData, name: e.target.value });
+  };
+
+  const handleSummaryChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ): void => {
+    setFormData({ ...formData, summary: e.target.value });
+  };
+
   return (
     <>
       <div
         className="rbt-default-modal modal fade"
         id={modalId}
-        tabIndex="-1"
+        tabIndex={-1}
         aria-labelledby={`${modalId}Label`}
         aria-hidden="true"
       >
@@ -61,9 +84,7 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
                         id="updateModalTopicName"
                         type="text"
                         value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
+                        onChange={handleNameChange}
                       />
                       <small>
                         <i className="feather-info"></i> Topic titles are
@@ -78,9 +99,7 @@ const UpdateModal = ({ modalId = 'UpdateTopic', topicData, onUpdateTopic }) => {
                       <textarea
                         id="updateModalTopicSummary"
                         value={formData.summary}
-                        onChange={(e) =>
-                          setFormData({ ...formData, summary: e.target.value })
-                        }
+                        onChange={handleSummaryChange}
                       ></textarea>
                       <small>
                         <i className="feather-info"></i> Add a summary of short

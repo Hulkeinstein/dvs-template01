@@ -11,11 +11,10 @@ import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
 import Separator from '@/components/Common/Separator';
 import FooterOne from '@/components/Footer/Footer-One';
-import { capturePayPalOrderAction } from '@/app/lib/actions/orderActions';
 import {
-  getOrderByOrderNumber,
-  generateReceiptPDF,
-} from '@/app/lib/actions/receiptActions';
+  capturePayPalOrderAction,
+  getOrderByNumber,
+} from '@/app/lib/actions/orderActions';
 
 interface PayPalDetails {
   transactionId: string;
@@ -78,9 +77,9 @@ const OrderSuccessPage = (): JSX.Element => {
       setOrderNumber(orderNumberParam);
       // Try to get order ID from database using order number
       if (orderNumberParam) {
-        getOrderByOrderNumber(orderNumberParam).then((result) => {
-          if (result.success && result.order) {
-            setOrderId(result.order.id);
+        getOrderByNumber(orderNumberParam).then((result) => {
+          if (result.success && result.orders && result.orders.length > 0) {
+            setOrderId(result.orders[0].id);
           }
         });
       }
@@ -104,22 +103,7 @@ const OrderSuccessPage = (): JSX.Element => {
     setReceiptError(null);
 
     try {
-      console.log(
-        '[ReceiptDownload] Checking permission for orderId:',
-        orderId
-      );
-      // Check permission first
-      const permissionCheck = await generateReceiptPDF(orderId);
-      console.log(
-        '[ReceiptDownload] Permission check result:',
-        permissionCheck
-      );
-
-      if (!permissionCheck.success) {
-        setReceiptError(permissionCheck.error || 'Failed to generate receipt');
-        setIsDownloadingReceipt(false);
-        return;
-      }
+      console.log('[ReceiptDownload] Generating PDF for orderId:', orderId);
 
       // Make API call to generate PDF (GET request)
       const response = await fetch(`/api/receipts/generate?orderId=${orderId}`);

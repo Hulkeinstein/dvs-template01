@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import Select from 'react-select';
+import Select, { SingleValue } from 'react-select';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import PhoneVerificationModal from '@/components/Common/PhoneVerificationModal';
@@ -16,10 +16,19 @@ import {
   updateCourse,
   getCourseById,
 } from '@/app/lib/actions/courseActions';
-import { getLessonsByCourse } from '@/app/lib/actions/lessonActions';
 import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
 import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
-import { useAutoSave, getRelativeTime } from '@/app/hooks/useAutoSave';
+import { useAutoSave } from '@/app/hooks/useAutoSave';
+import {
+  CreateCourseProps,
+  CourseFormData,
+  ThumbnailData,
+  TopicData,
+  LessonData,
+  VideoLesson,
+  QuizLesson,
+  AssignmentLesson,
+} from '@/types/create-course';
 
 // import CourseData from "../../data/course-details/courseData.json";
 import CreateCourseData from '../../data/createCourse.json';
@@ -32,15 +41,28 @@ import TopicModal from './QuizModals/TopicModal';
 import AdditionalForm from './AdditionalForm';
 import LessonModal from './QuizModals/LessonModal';
 import QuizModal from './QuizModals/QuizModal';
-import AssignmentModal from './QuizModals/AssignmentModal';
 import UpdateModal from './QuizModals/UpdateModal';
 import Lesson from './lesson/Lesson';
 
-const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
+interface PreviewImage {
+  type: string;
+  img: string;
+}
+
+const CreateCourse = ({
+  userProfile,
+  editMode = false,
+  courseId = null,
+}: CreateCourseProps) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const fileInputRef = useRef(null);
-  const [sortVideo, setSortByVideo] = useState({
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [sortVideo, setSortByVideo] = useState<SelectOption>({
     value: 'Select Video Sources',
     label: 'Select Video Sources',
   });
@@ -48,21 +70,21 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     useState(false);
   const [showVerificationAlert, setShowVerificationAlert] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
-  const [thumbnailFile, setThumbnailFile] = useState(null);
-  const [thumbnailBase64, setThumbnailBase64] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [thumbnailBase64, setThumbnailBase64] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showRecoveryModal, setShowRecoveryModal] = useState(false);
-  const [draftTimestamp, setDraftTimestamp] = useState(null);
+  const [draftTimestamp, setDraftTimestamp] = useState<number | null>(null);
 
   // tempId를 useRef로 고정 (새로고침 전까지 유지)
-  const tempIdRef = useRef(null);
+  const tempIdRef = useRef<string | null>(null);
   if (!tempIdRef.current) {
     tempIdRef.current = Math.random().toString(36).slice(2, 11);
   }
 
   // Form data state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CourseFormData>({
     // Basic info
     title: '',
     slug: '', // URL slug 추가
@@ -108,9 +130,6 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   // 자동 저장 키 생성 (userId가 준비된 후에만)
   const storageKey = useMemo(() => {
     if (!userId) {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[AutoSave] userId not ready, storageKey is null');
-      }
       return null;
     }
 
@@ -119,39 +138,29 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       editMode && courseId ? courseId : tempIdRef.current;
     const key = `course_draft_${userId}_${courseIdentifier}`;
 
-    if (process.env.NODE_ENV === 'development') {
-      console.log('[AutoSave] storageKey generated:', key);
-    }
-
     return key;
   }, [userId, editMode, courseId]);
 
   // 자동 저장 훅 사용 (storageKey가 있을 때만 활성화)
-  const {
-    status: saveStatus,
-    lastSavedAt,
-    saveNow,
-    recover,
-    getRecoverable,
-    clearDraft,
-  } = useAutoSave(formData, setFormData, {
+  const autoSaveResult = useAutoSave(formData, setFormData, {
     storageKey: storageKey || '', // null일 때 빈 문자열
     debounceMs: 3000,
-    intervalMs: 30000,
+    // intervalMs는 기본값 15000ms 사용 (이전: 30000ms)
     schemaVersion: 'v2', // 버전 업데이트
     excludeFields: ['thumbnailPreview', 'thumbnailFile'], // 큰 데이터는 제외
     enabled: !!storageKey, // storageKey가 있을 때만 활성화
   });
 
+  const saveStatus = (autoSaveResult as any).status;
+  const saveNow = (autoSaveResult as any).saveNow;
+  const recover = (autoSaveResult as any).recover;
+  const getRecoverable = (autoSaveResult as any).getRecoverable;
+  const clearDraft = (autoSaveResult as any).clearDraft;
+
   const loadCourseData = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await getCourseById(courseId);
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Loading course with ID:', courseId);
-        console.log('getCourseById result:', result);
-      }
+      const result = (await getCourseById(courseId!)) as any;
 
       if (result.error) {
         console.error('Error from getCourseById:', result.error);
@@ -161,22 +170,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       }
 
       if (result.course) {
-        const course = result.course;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Course data loaded:', {
-            id: course.id,
-            title: course.title,
-            thumbnail_url: course.thumbnail_url,
-            hasThumbnail: !!course.thumbnail_url,
-          });
-          console.log('Full thumbnail URL:', course.thumbnail_url);
-        }
+        const course = result.course as any;
 
         // Map database fields to form fields using centralized mapper
         const mappedData = mapDBToFormData(course);
 
         // Add additional fields that might not be in the mapper
-        const formDataWithExtras = {
+        const formDataWithExtras: CourseFormData = {
           ...mappedData,
           thumbnailPreview: course.thumbnail_url || null, // 썸네일 미리보기 추가
           slug: course.slug || '', // slug 추가
@@ -193,62 +193,64 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
         // Load topics from server response
         // 통합 lessons 배열 사용 - content_type으로 구분 (서버는 통합 배열만 제공)
-        const topics = [];
+        const topics: TopicData[] = [];
 
         if (course.topics && course.topics.length > 0) {
           // Convert server topics to UI format
           for (const topicData of course.topics) {
-            const topic = {
+            const topic: TopicData = {
               id: topicData.id,
               name: topicData.title,
               summary: topicData.description || '',
               // 모든 콘텐츠를 통합 lessons 배열로 관리
-              lessons: (topicData.lessons || []).map((lesson) => {
-                // content_type에 따라 적절한 데이터 매핑
-                if (lesson.content_type === 'quiz') {
-                  return {
-                    id: lesson.id,
-                    title: lesson.title,
-                    content_type: 'quiz',
-                    questions: lesson.content_data?.questions || [],
-                    settings: lesson.content_data?.settings || {},
-                    summary: lesson.description || '',
-                  };
-                } else if (lesson.content_type === 'assignment') {
-                  return {
-                    id: lesson.id,
-                    title: lesson.title,
-                    content_type: 'assignment',
-                    summary:
-                      lesson.content_data?.instructions ||
-                      lesson.description ||
-                      '',
-                    totalPoints: lesson.content_data?.totalPoints || 100,
-                    passingPoints: lesson.content_data?.passingPoints || 70,
-                    maxUploads: lesson.content_data?.maxUploads || 1,
-                    maxFileSize: lesson.content_data?.maxFileSize || 10,
-                    attachments: lesson.content_data?.attachments || [],
-                    timeLimit: lesson.content_data?.timeLimit || {
-                      value: 0,
-                      unit: 'weeks',
-                    },
-                  };
-                } else {
-                  // video or other content types
-                  return {
-                    id: lesson.id,
-                    title: lesson.title,
-                    content_type: lesson.content_type || 'video',
-                    description: lesson.description || '',
-                    videoUrl: lesson.video_url || '',
-                    videoSource: lesson.video_source || 'youtube',
-                    duration: lesson.duration_minutes || 0,
-                    enablePreview: lesson.is_preview || false,
-                    thumbnail: lesson.thumbnail_url || null,
-                    attachments: lesson.attachments || [],
-                  };
+              lessons: (topicData.lessons || []).map(
+                (lesson: any): LessonData => {
+                  // content_type에 따라 적절한 데이터 매핑
+                  if (lesson.content_type === 'quiz') {
+                    return {
+                      id: lesson.id,
+                      title: lesson.title,
+                      content_type: 'quiz',
+                      questions: lesson.content_data?.questions || [],
+                      settings: lesson.content_data?.settings || {},
+                      summary: lesson.description || '',
+                    } as QuizLesson;
+                  } else if (lesson.content_type === 'assignment') {
+                    return {
+                      id: lesson.id,
+                      title: lesson.title,
+                      content_type: 'assignment',
+                      summary:
+                        lesson.content_data?.instructions ||
+                        lesson.description ||
+                        '',
+                      totalPoints: lesson.content_data?.totalPoints || 100,
+                      passingPoints: lesson.content_data?.passingPoints || 70,
+                      maxUploads: lesson.content_data?.maxUploads || 1,
+                      maxFileSize: lesson.content_data?.maxFileSize || 10,
+                      attachments: lesson.content_data?.attachments || [],
+                      timeLimit: lesson.content_data?.timeLimit || {
+                        value: 0,
+                        unit: 'weeks',
+                      },
+                    } as AssignmentLesson;
+                  } else {
+                    // video or other content types
+                    return {
+                      id: lesson.id,
+                      title: lesson.title,
+                      content_type: lesson.content_type || 'video',
+                      description: lesson.description || '',
+                      videoUrl: lesson.video_url || '',
+                      videoSource: lesson.video_source || 'youtube',
+                      duration: lesson.duration_minutes || 0,
+                      enablePreview: lesson.is_preview || false,
+                      thumbnail: lesson.thumbnail_url || null,
+                      attachments: lesson.attachments || [],
+                    } as VideoLesson;
+                  }
                 }
-              }),
+              ),
             };
 
             topics.push(topic);
@@ -258,22 +260,16 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
         // Also check for lessons without topics (from course.lessons)
         if (course.lessons && course.lessons.length > 0) {
           const lessonsWithoutTopic = course.lessons.filter(
-            (lesson) => !lesson.topic_id
+            (lesson: any) => !lesson.topic_id
           );
 
           if (lessonsWithoutTopic.length > 0) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log(
-                'Found lessons without topics:',
-                lessonsWithoutTopic.length
-              );
-            }
             // Create a "General" topic for lessons without topic_id
-            const generalTopic = {
+            const generalTopic: TopicData = {
               id: 'general-topic',
               name: 'Course Content',
               summary: 'Main course content',
-              lessons: lessonsWithoutTopic.map((lesson) => {
+              lessons: lessonsWithoutTopic.map((lesson: any): LessonData => {
                 // content_type에 따라 적절한 데이터 매핑
                 if (lesson.content_type === 'quiz') {
                   return {
@@ -283,7 +279,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                     questions: lesson.content_data?.questions || [],
                     settings: lesson.content_data?.settings || {},
                     summary: lesson.description || '',
-                  };
+                  } as QuizLesson;
                 } else if (lesson.content_type === 'assignment') {
                   return {
                     id: lesson.id,
@@ -302,7 +298,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                       value: 0,
                       unit: 'weeks',
                     },
-                  };
+                  } as AssignmentLesson;
                 } else {
                   return {
                     id: lesson.id,
@@ -315,7 +311,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                     enablePreview: lesson.is_preview || false,
                     thumbnail: lesson.thumbnail_url || null,
                     attachments: lesson.attachments || [],
-                  };
+                  } as VideoLesson;
                 }
               }),
             };
@@ -341,9 +337,6 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   // Load course data in edit mode
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('useEffect triggered:', { editMode, courseId });
-    }
     if (editMode && courseId) {
       loadCourseData();
     }
@@ -357,12 +350,6 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       setTimeout(() => {
         const { data, timestamp } = getRecoverable();
         if (data && timestamp) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[AutoSave] Recovery data found:', {
-              timestamp,
-              hasData: !!data,
-            });
-          }
           setDraftTimestamp(timestamp);
           setShowRecoveryModal(true);
         }
@@ -372,7 +359,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
   // Ctrl+S 단축키로 수동 저장
   useEffect(() => {
-    const handleKeyPress = (e) => {
+    const handleKeyPress = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         saveNow();
@@ -383,29 +370,38 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [saveNow]);
 
-  const previewImages = CreateCourseData.createCourse[0].landscape.filter(
-    (item) => item.type === 'preview'
-  );
-  const portImages = CreateCourseData.createCourse[0].landscape.filter(
-    (item) => item.type === 'port'
-  );
+  const previewImages: PreviewImage[] =
+    CreateCourseData.createCourse[0].landscape.filter(
+      (item: any) => item.type === 'preview'
+    );
+  const portImages: PreviewImage[] =
+    CreateCourseData.createCourse[0].landscape.filter(
+      (item: any) => item.type === 'port'
+    );
 
-  const sortByVideoOptions = [
+  const sortByVideoOptions: SelectOption[] = [
     { value: 'Youtube', label: 'Youtube' },
     { value: 'Vimeo', label: 'Vimeo' },
     { value: 'Local', label: 'Local' },
   ];
 
-  const handleImportClick = (e) => {
+  const handleImportClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    fileInputRef.current.click();
+    fileInputRef.current?.click();
   };
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _file = event.target.files?.[0];
+    // TODO: Implement file handling logic
   };
 
-  const handleCreateCourse = async (e, saveAsDraft = false) => {
-    e.preventDefault();
+  const handleCreateCourse = async (
+    e: React.MouseEvent<HTMLButtonElement> | Event,
+    saveAsDraft = false
+  ) => {
+    if ('preventDefault' in e) {
+      e.preventDefault();
+    }
 
     // Check if phone is verified
     if (!isPhoneVerified(userProfile)) {
@@ -420,7 +416,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       return;
     }
 
-    if (formData.price === '' || formData.price < 0) {
+    if (formData.price === null || formData.price < 0) {
       setError('Please set a valid price (0 for free courses)');
       return;
     }
@@ -430,69 +426,44 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
 
     try {
       // Handle thumbnail
-      let thumbnailUrl = null;
+      let thumbnailUrl: string | null = null;
 
       // Case 1: Keep existing thumbnail (edit mode, no new file selected)
       if (!thumbnailFile && formData.thumbnailPreview) {
         thumbnailUrl = formData.thumbnailPreview;
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Keeping existing thumbnail:', thumbnailUrl);
-        }
       }
       // Case 2: Upload new thumbnail
       else if (thumbnailBase64 && thumbnailFile) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Uploading new thumbnail:', {
-            hasBase64: !!thumbnailBase64,
-            fileName: thumbnailFile.name,
-            base64Length: thumbnailBase64?.length,
-          });
-        }
-
         const uploadResult = await uploadCourseThumbnail(
           thumbnailBase64,
           thumbnailFile.name
         );
 
-        if (process.env.NODE_ENV === 'development') {
-          console.log('Thumbnail upload result:', uploadResult);
-        }
-
         if (uploadResult.success) {
-          thumbnailUrl = uploadResult.url;
-          if (process.env.NODE_ENV === 'development') {
-            console.log('New thumbnail uploaded successfully:', thumbnailUrl);
-          }
+          thumbnailUrl = uploadResult.url!;
         } else {
           console.error('Failed to upload thumbnail:', uploadResult.error);
           // If we have an existing thumbnail, keep it
           if (formData.thumbnailPreview) {
             thumbnailUrl = formData.thumbnailPreview;
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Upload failed, keeping existing thumbnail');
-            }
           }
         }
-      }
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Final thumbnail URL:', thumbnailUrl);
       }
 
       // Include thumbnail URL and status in formData
       const courseData = {
         ...formData,
-        thumbnail_url: thumbnailUrl,
+        thumbnail_url: thumbnailUrl || undefined,
         status: saveAsDraft ? 'draft' : formData.status || 'draft',
       };
 
-      let result;
+      let result: any;
       if (editMode && courseId) {
         // Update existing course
-        result = await updateCourse(courseId, courseData);
+        result = await updateCourse(courseId, formData);
       } else {
         // Create new course
-        result = await createCourse(courseData);
+        result = await createCourse(courseData as any);
       }
 
       if (result.success) {
@@ -517,15 +488,17 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     }
   };
 
-  const handleFormDataChange = (newData) => {
-    console.log('📝 FormData updating:', {
-      certificateEnabled: newData.certificateEnabled,
-      lifetimeAccess: newData.lifetimeAccess,
-    });
+  const handleFormDataChange = (newData: CourseFormData) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📝 FormData updating:', {
+        certificateEnabled: newData.certificateEnabled,
+        lifetimeAccess: newData.lifetimeAccess,
+      });
+    }
     setFormData({ ...newData }); // 새 객체로 생성하여 React 리렌더링 보장
   };
 
-  const handleThumbnailChange = (data) => {
+  const handleThumbnailChange = (data: ThumbnailData | null) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('handleThumbnailChange called:', {
         hasData: !!data,
@@ -544,14 +517,12 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     }
   };
 
-  const handleAddTopic = (topicData) => {
-    const newTopic = {
+  const handleAddTopic = (topicData: { name: string; summary: string }) => {
+    const newTopic: TopicData = {
       id: Date.now(), // Simple ID generation
       name: topicData.name,
       summary: topicData.summary,
       lessons: [],
-      quizzes: [],
-      assignments: [],
     };
 
     setFormData({
@@ -560,14 +531,17 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     });
   };
 
-  const handleDeleteTopic = (topicId) => {
+  const handleDeleteTopic = (topicId: string | number) => {
     setFormData({
       ...formData,
       topics: formData.topics.filter((topic) => topic.id !== topicId),
     });
   };
 
-  const handleUpdateTopic = (topicId, updatedData) => {
+  const handleUpdateTopic = (
+    topicId: string | number,
+    updatedData: { name: string; summary: string }
+  ) => {
     setFormData({
       ...formData,
       topics: formData.topics.map((topic) =>
@@ -576,7 +550,10 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     });
   };
 
-  const handleAddLesson = (topicId, lessonData) => {
+  const handleAddLesson = (
+    topicId: string | number,
+    lessonData: VideoLesson
+  ) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
       topics: prevFormData.topics.map((topic) => {
@@ -591,9 +568,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
             };
           } else {
             // 새 레슨 추가
-            const newLesson = {
-              id: Date.now(),
+            const newLesson: VideoLesson = {
               ...lessonData,
+              id: Date.now(),
             };
             return { ...topic, lessons: [...topic.lessons, newLesson] };
           }
@@ -603,10 +580,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     }));
   };
 
-  const handleAddQuiz = (topicId, quizData) => {
-    const newQuiz = {
-      id: quizData.id || Date.now(),
+  const handleAddQuiz = (
+    topicId: string | number,
+    quizData: QuizLesson
+  ): { success: boolean } => {
+    const newQuiz: QuizLesson = {
       ...quizData,
+      id: quizData.id || Date.now(),
       content_type: 'quiz',
     };
 
@@ -623,44 +603,72 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
     return { success: true };
   };
 
-  const handleAddAssignment = (topicId, assignmentData) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      topics: prevFormData.topics.map((topic) => {
-        if (topic.id === topicId) {
-          const newAssignment = {
-            id: assignmentData.id || Date.now(),
-            ...assignmentData,
-            content_type: 'assignment',
-          };
+  const handleAddAssignment = (
+    topicId: string | number,
+    assignmentData: AssignmentLesson
+  ): { success: boolean } => {
+    console.log('[CreateCourse] handleAddAssignment called');
+    console.log('[CreateCourse] topicId:', topicId);
+    console.log('[CreateCourse] assignmentData:', assignmentData);
 
-          // 통합 lessons 배열에서 관리
-          if (assignmentData.id) {
-            // 기존 assignment 수정
-            return {
-              ...topic,
-              lessons: topic.lessons.map((lesson) =>
-                lesson.id === assignmentData.id ? newAssignment : lesson
-              ),
+    setFormData((prevFormData) => {
+      console.log('[CreateCourse] prevFormData.topics:', prevFormData.topics);
+      const matchingTopic = prevFormData.topics.find((t) => t.id === topicId);
+      console.log('[CreateCourse] matchingTopic:', matchingTopic);
+
+      return {
+        ...prevFormData,
+        topics: prevFormData.topics.map((topic) => {
+          if (topic.id === topicId) {
+            const newAssignment: AssignmentLesson = {
+              ...assignmentData,
+              id: assignmentData.id || Date.now(),
+              content_type: 'assignment',
             };
-          } else {
-            // 새 assignment 추가
-            return {
-              ...topic,
-              lessons: [...topic.lessons, newAssignment],
-            };
+
+            // 통합 lessons 배열에서 관리
+            const existingLessonIndex = topic.lessons.findIndex(
+              (lesson) => lesson.id === assignmentData.id
+            );
+
+            console.log(
+              '[CreateCourse] existingLessonIndex:',
+              existingLessonIndex
+            );
+
+            if (existingLessonIndex !== -1) {
+              // 기존 assignment 수정
+              const updatedLessons = [...topic.lessons];
+              updatedLessons[existingLessonIndex] = newAssignment;
+              console.log('[CreateCourse] Updated existing assignment');
+              return {
+                ...topic,
+                lessons: updatedLessons,
+              };
+            } else {
+              // 새 assignment 추가
+              console.log('[CreateCourse] Adding new assignment');
+              return {
+                ...topic,
+                lessons: [...topic.lessons, newAssignment],
+              };
+            }
           }
-        }
-        return topic;
-      }),
-    }));
+          return topic;
+        }),
+      };
+    });
 
     // Return success for AssignmentModal
+    console.log('[CreateCourse] Returning success: true');
     return { success: true };
   };
 
   // 통합 lessons 배열에서 모든 content_type(video, quiz, assignment) 삭제 처리
-  const handleDeleteContent = (topicId, contentId) => {
+  const handleDeleteContent = (
+    topicId: string | number,
+    contentId: string | number
+  ) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('콘텐츠 삭제:', topicId, contentId);
     }
@@ -682,14 +690,17 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   // 기존 함수명 유지 (하위 호환성)
   const handleDeleteLesson = handleDeleteContent;
 
-  const handleEditLesson = (topicId, lesson) => {
+  const handleEditLesson = (topicId: string | number, lesson: LessonData) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('레슨 편집:', topicId, lesson);
     }
     // 편집 모달 열기 로직 추가 필요
   };
 
-  const handleUploadLesson = (topicId, lessonId) => {
+  const handleUploadLesson = (
+    topicId: string | number,
+    lessonId: string | number
+  ) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('레슨 업로드:', topicId, lessonId);
     }
@@ -698,23 +709,13 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
   return (
     <>
       {/* 자동 저장 상태 표시 */}
-      <div className="row mb-3">
-        <div className="col-12 text-end">
-          <div className="d-inline-flex align-items-center gap-2">
-            {/* 저장 상태 배지 */}
-            {saveStatus === 'saving' && (
-              <span className="badge bg-info">
-                <i className="feather-loader me-1"></i>저장 중...
-              </span>
-            )}
+      {/* 자동저장 표시 - 미니멀 */}
+      {(saveStatus === 'saved' || saveStatus === 'error') && (
+        <div className="row mb-3">
+          <div className="col-12 text-end">
             {saveStatus === 'saved' && (
-              <span className="badge bg-success">
-                <i className="feather-check me-1"></i>자동 저장됨
-              </span>
-            )}
-            {saveStatus === 'dirty' && (
-              <span className="badge bg-warning">
-                <i className="feather-edit me-1"></i>변경사항 있음
+              <span className="text-success">
+                <i className="feather-check"></i>
               </span>
             )}
             {saveStatus === 'error' && (
@@ -722,21 +723,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                 <i className="feather-alert-circle me-1"></i>저장 실패
               </span>
             )}
-
-            {/* 마지막 저장 시간 */}
-            {lastSavedAt && saveStatus !== 'saving' && (
-              <small className="text-muted">
-                ({getRelativeTime(lastSavedAt)})
-              </small>
-            )}
-
-            {/* 수동 저장 힌트 */}
-            <small className="text-muted">
-              <kbd>Ctrl</kbd>+<kbd>S</kbd> 수동 저장
-            </small>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="row g-5">
         <div className="col-lg-8">
@@ -798,7 +787,9 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                           className="react-select"
                           classNamePrefix="react-select"
                           value={sortVideo}
-                          onChange={setSortByVideo}
+                          onChange={(newValue: SingleValue<SelectOption>) =>
+                            setSortByVideo(newValue!)
+                          }
                           options={sortByVideoOptions}
                         />
                       </div>
@@ -857,7 +848,7 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
                         </p>
                       </div>
                     ) : (
-                      formData.topics.map((topic, index) => (
+                      formData.topics.map((topic) => (
                         <Lesson
                           key={topic.id}
                           handleFileChange={handleFileChange}
@@ -1305,7 +1296,6 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
       <UpdateModal />
       <LessonModal />
       <QuizModal />
-      <AssignmentModal />
 
       {/* Phone Verification Modal */}
       <PhoneVerificationModal
@@ -1443,15 +1433,23 @@ const CreateCourse = ({ userProfile, editMode = false, courseId = null }) => {
           gap: 10px;
         }
 
-        @media (prefers-color-scheme: dark) {
-          .rbt-modal-content {
-            background: #1a1a1a;
-          }
+        /* Dark mode - 프로젝트 테마 시스템 사용 */
+        :global(html[data-theme='dark']) .rbt-modal-content {
+          background: #1a1a1a;
+          color: #e5e5e5;
+        }
 
-          .modal-header,
-          .modal-footer {
-            border-color: #333;
-          }
+        :global(html[data-theme='dark']) .modal-header {
+          border-color: #333;
+          color: #ffffff;
+        }
+
+        :global(html[data-theme='dark']) .modal-body {
+          color: #e5e5e5;
+        }
+
+        :global(html[data-theme='dark']) .modal-footer {
+          border-color: #333;
         }
       `}</style>
     </>

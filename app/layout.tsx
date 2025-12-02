@@ -44,7 +44,13 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const isDark = theme === 'dark';
 
   return (
-    <html lang="en" dir="ltr" data-theme={theme} className={fontClassNames}>
+    <html
+      lang="en"
+      dir="ltr"
+      data-theme={theme}
+      className={fontClassNames}
+      suppressHydrationWarning={true}
+    >
       <body
         className={isDark ? 'active-dark-mode' : ''}
         suppressHydrationWarning={true}

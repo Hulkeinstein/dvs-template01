@@ -3,17 +3,33 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { debounce } from '@/app/lib/utils/debounce';
+import { CourseFormData } from '@/types/create-course';
 
 import img from '../../public/images/others/thumbnail-placeholder.svg';
 
-const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
-  const [thumbnailPreview, setThumbnailPreview] = useState(
+interface ThumbnailData {
+  file: File;
+  base64: string;
+}
+
+interface InfoFormNewProps {
+  formData: CourseFormData;
+  onFormDataChange: (data: CourseFormData) => void;
+  onThumbnailChange: (data: ThumbnailData | null) => void;
+}
+
+const InfoFormNew: React.FC<InfoFormNewProps> = ({
+  formData,
+  onFormDataChange,
+  onThumbnailChange,
+}) => {
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(
     formData.thumbnailPreview || null
   );
-  const [slugAvailable, setSlugAvailable] = useState(null);
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [slugSuggestion, setSlugSuggestion] = useState('');
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Edit 모드에서 formData.thumbnailPreview 동기화
   useEffect(() => {
@@ -29,10 +45,10 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
         );
       }
     }
-  }, [formData.thumbnailPreview]);
+  }, [formData.thumbnailPreview, thumbnailPreview]);
 
   // 슬러그 생성 함수
-  const generateSlugFromTitle = (title) => {
+  const generateSlugFromTitle = (title: string): string => {
     return title
       .toLowerCase()
       .trim()
@@ -43,7 +59,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
 
   // 슬러그 중복 체크 함수
   const checkSlugAvailability = useCallback(
-    debounce(async (slug) => {
+    debounce(async (slug: string) => {
       if (!slug || slug.length < 3) {
         setSlugAvailable(null);
         return;
@@ -70,16 +86,21 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
     []
   );
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleInputChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
 
     // 체크박스 클릭 디버깅
-    if (type === 'checkbox') {
+    if (type === 'checkbox' && process.env.NODE_ENV === 'development') {
       console.log('🔄 Checkbox clicked:', {
         name,
         type,
         checked,
-        currentValue: formData[name],
+        currentValue: formData[name as keyof CourseFormData],
       });
     }
 
@@ -112,7 +133,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
     });
   };
 
-  const handleNumberInputChange = (e) => {
+  const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     onFormDataChange({
       ...formData,
@@ -120,8 +141,8 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
     });
   };
 
-  const handleThumbnailChange = (e) => {
-    const file = e.target.files[0];
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
       // Validate file type
       if (!file.type.match(/^image\/(jpg|jpeg|png|gif|webp)$/i)) {
@@ -132,12 +153,12 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setThumbnailPreview(reader.result);
+        setThumbnailPreview(reader.result as string);
 
         // Pass both file and base64 data to parent component
         onThumbnailChange({
           file: file,
-          base64: reader.result,
+          base64: reader.result as string,
         });
       };
       reader.readAsDataURL(file);
@@ -247,7 +268,7 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
           <textarea
             id="description"
             name="description"
-            rows="10"
+            rows={10}
             value={formData.description || ''}
             onChange={handleInputChange}
             placeholder="Describe what students will learn in this course..."
@@ -452,7 +473,6 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     id="certificateEnabled"
                     name="certificateEnabled"
                     checked={formData.certificateEnabled || false}
-                    value={formData.certificateEnabled || false}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -478,7 +498,6 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                     id="lifetimeAccess"
                     name="lifetimeAccess"
                     checked={formData.lifetimeAccess !== false}
-                    value={formData.lifetimeAccess !== false}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -510,7 +529,8 @@ const InfoFormNew = ({ formData, onFormDataChange, onThumbnailChange }) => {
                   width={797}
                   height={262}
                   alt="file image"
-                  style={{ objectFit: 'cover' }}
+                  style={{ objectFit: 'cover', width: '100%', height: '262px' }}
+                  priority={!thumbnailPreview}
                 />
 
                 <label

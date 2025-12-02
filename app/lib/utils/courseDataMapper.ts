@@ -7,8 +7,6 @@
  * 이 파일을 수정하여 새로운 필드를 추가하거나 매핑 로직을 변경할 수 있습니다.
  */
 
-const DEBUG_MODE = process.env.NODE_ENV === 'development';
-
 interface FormData {
   title?: string;
   shortDescription?: string;
@@ -182,11 +180,6 @@ export function mapFormDataToDB(formData: FormData): DBData {
  * @returns {FormData} UI 폼에서 사용할 데이터
  */
 export function mapDBToFormData(courseData: DBData): FormData {
-  if (DEBUG_MODE) {
-    console.group('🔄 [CourseDataMapper] DB → FormData Conversion');
-    // console.log('Input DB Data:', courseData);
-  }
-
   const formData: FormData = {
     // 기본 정보
     title: courseData.title || '',
@@ -239,11 +232,6 @@ export function mapDBToFormData(courseData: DBData): FormData {
     // Topics는 별도로 처리
     topics: [],
   };
-
-  if (DEBUG_MODE) {
-    // console.log('Output FormData:', formData);
-    console.groupEnd();
-  }
 
   return formData;
 }

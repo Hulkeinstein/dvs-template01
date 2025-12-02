@@ -148,7 +148,63 @@ declare module '@/redux/action/CartAction' {
   import { ThunkDispatch } from 'redux-thunk';
   import { AnyAction } from 'redux';
 
-  export const addToCartAction: (id: string, amount: number, product: any) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
-  export const toggleAmount: (id: string, value: 'inc' | 'dec') => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
-  export const deleteProduct: (id: string) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+  export const addToCartAction: (
+    id: string,
+    amount: number,
+    product: any
+  ) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+  export const toggleAmount: (
+    id: string,
+    value: 'inc' | 'dec'
+  ) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+  export const deleteProduct: (
+    id: string
+  ) => (dispatch: ThunkDispatch<any, any, AnyAction>) => Promise<void>;
+}
+
+// 11) Bootstrap 5 Type Declarations
+interface BootstrapModal {
+  show(): void;
+  hide(): void;
+  toggle(): void;
+  dispose(): void;
+  handleUpdate(): void;
+}
+
+interface BootstrapModalStatic {
+  new (element: Element, options?: BootstrapModalOptions): BootstrapModal;
+  getInstance(element: Element): BootstrapModal | null;
+  getOrCreateInstance(element: Element): BootstrapModal;
+}
+
+interface BootstrapModalOptions {
+  backdrop?: boolean | 'static';
+  keyboard?: boolean;
+  focus?: boolean;
+}
+
+interface BootstrapTooltip {
+  show(): void;
+  hide(): void;
+  toggle(): void;
+  dispose(): void;
+}
+
+interface BootstrapTooltipStatic {
+  new (element: Element, options?: BootstrapTooltipOptions): BootstrapTooltip;
+}
+
+interface BootstrapTooltipOptions {
+  title?: string;
+  placement?: 'top' | 'bottom' | 'left' | 'right';
+  trigger?: string;
+}
+
+interface Bootstrap {
+  Modal: BootstrapModalStatic;
+  Tooltip: BootstrapTooltipStatic;
+}
+
+interface Window {
+  bootstrap: Bootstrap;
 }

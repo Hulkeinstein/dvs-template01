@@ -366,6 +366,22 @@ html[data-theme="dark"] {
         }
     }
 
+    // ============================================
+    // Step 1: Helper text (small tags) in dark mode
+    // ============================================
+    .rbt-default-form small,
+    .course-field small,
+    .accordion-body small {
+        color: var(--color-white-off) !important;
+    }
+
+    // ============================================
+    // Step 2: text-muted 클래스 dark mode override
+    // ============================================
+    .text-muted {
+        color: var(--color-white-dark) !important;
+    }
+
     .pro-quantity .pro-qty {
         border: 1px solid var(--dark-color-border);
 
@@ -2380,6 +2396,20 @@ html[data-theme="dark"] {
         }
     }
 
+    // ============================================
+    // Calendar icon visibility in dark mode
+    // ============================================
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); // Makes black icon white
+        cursor: pointer;
+        opacity: 0.8;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
     .form-group {
 
         input,
@@ -2791,6 +2821,26 @@ html[data-theme="dark"] {
         box-shadow: var(--dark-shadow-2);
     }
 
+    // React Select text colors in dark mode
+    .react-select .react-select__single-value {
+        color: var(--color-white-off) !important;
+    }
+
+    .react-select .react-select__option {
+        color: var(--color-white-off);
+
+        &--is-selected,
+        &--is-focused {
+            background-color: var(--black-opacity);
+            color: var(--color-primary);
+        }
+    }
+
+    .react-select .react-select__placeholder {
+        color: var(--color-white-off);
+        opacity: 0.6;
+    }
+
     #formElements {
         overflow: visible;
     }
@@ -3136,6 +3186,100 @@ html[data-theme="dark"] {
 
     .jodit-status-bar {
         background-color: #273041;
+    }
+
+    // Jodit Editor 콘텐츠 영역 텍스트 색상
+    .jodit-wysiwyg {
+        color: var(--color-white-dark) !important;
+    }
+
+    .jodit-wysiwyg p,
+    .jodit-wysiwyg div,
+    .jodit-wysiwyg span {
+        color: var(--color-white-dark) !important;
+    }
+
+    // 드롭다운 헤더
+    .dropdown-header {
+        color: var(--color-white-off);
+    }
+
+    // ============================================
+    // Create-Course 페이지 폼 요소 다크모드 수정
+    // ============================================
+
+    // Checkbox/Radio 배경색 및 체크 표시
+    input[type="checkbox"]~label::before,
+    input[type="radio"]~label::before {
+        background-color: var(--color-bodyest);
+        border-color: var(--dark-color-border);
+    }
+
+    input[type="checkbox"]:checked~label::before,
+    input[type="radio"]:checked~label::before {
+        background-color: var(--color-primary);
+        border-color: var(--color-primary);
+    }
+
+    input[type="checkbox"]~label::after,
+    input[type="radio"]~label::after {
+        border-color: var(--color-white);
+    }
+
+    input[type="radio"]:checked~label::after {
+        background: var(--color-white);
+    }
+
+    // Select dropdown 배경색
+    select {
+        background-color: var(--color-bodyest);
+        color: var(--color-white-off);
+        border-color: var(--dark-color-border);
+
+        option {
+            background-color: var(--color-bodyest);
+            color: var(--color-white-off);
+        }
+    }
+
+    // Modal 헤더/푸터 텍스트 색상
+    .modal-header {
+        border-color: var(--dark-color-border-2);
+        color: var(--color-white);
+
+        .modal-title {
+            color: var(--color-white);
+        }
+
+        .btn-close {
+            filter: invert(1);
+        }
+    }
+
+    .modal-body {
+        color: var(--color-white-off);
+    }
+
+    // Jodit Editor 추가 UI 요소
+    .jodit-ui-button {
+        color: var(--color-white-off);
+
+        &:hover {
+            background-color: var(--color-bodyest);
+        }
+    }
+
+    .jodit-toolbar-button {
+        color: var(--color-white-off);
+
+        &.jodit-toolbar-button_active {
+            background-color: var(--color-primary);
+        }
+    }
+
+    .jodit-popup__content {
+        background-color: var(--color-darker);
+        border-color: var(--dark-color-border);
     }
 
     .rbt-banner-17 {
@@ -3824,5 +3968,73 @@ html[data-theme="dark"] {
     .service-select {
         background-color: transparent;
         border-color: var(--dark-color-border);
+    }
+
+    // React Quill Editor Dark Mode
+    .quill {
+        .ql-toolbar {
+            background-color: var(--color-darker);
+            border-color: var(--dark-color-border);
+
+            .ql-stroke {
+                stroke: var(--color-white-off);
+            }
+
+            .ql-fill {
+                fill: var(--color-white-off);
+            }
+
+            .ql-picker {
+                color: var(--color-white-off);
+            }
+
+            .ql-picker-label {
+                color: var(--color-white-off);
+
+                &:hover {
+                    color: var(--color-primary);
+                }
+            }
+
+            .ql-picker-options {
+                background-color: var(--color-darker);
+                border-color: var(--dark-color-border);
+            }
+
+            button:hover,
+            button:focus {
+                .ql-stroke {
+                    stroke: var(--color-primary);
+                }
+
+                .ql-fill {
+                    fill: var(--color-primary);
+                }
+            }
+
+            button.ql-active {
+                .ql-stroke {
+                    stroke: var(--color-primary);
+                }
+
+                .ql-fill {
+                    fill: var(--color-primary);
+                }
+            }
+        }
+
+        .ql-container {
+            background-color: var(--color-darker);
+            border-color: var(--dark-color-border);
+            color: var(--color-white);
+        }
+
+        .ql-editor {
+            color: var(--color-white);
+
+            &.ql-blank::before {
+                color: var(--color-white-off);
+            }
+        }
     }
 }

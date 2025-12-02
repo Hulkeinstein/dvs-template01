@@ -155,14 +155,13 @@ export async function generateUniqueSlug(
 export async function createCourse(
   formData: CourseFormData
 ): Promise<CreateCourseResult> {
+  console.log('!!! ENTERING createCourse !!!', formData.title);
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
       return { error: 'You must be logged in to create a course' };
     }
-
-    // Remove debug table schema check
 
     // Get user ID from Supabase
     const { data: userData, error: userError } = await supabase
@@ -322,6 +321,20 @@ export async function updateCourse(
   courseId: string,
   formData: any
 ): Promise<ActionResult<void>> {
+  console.log(
+    '!!! ENTERING updateCourse !!!',
+    courseId,
+    'Topics:',
+    formData.topics?.length
+  );
+  if (formData.topics?.[0]?.lessons) {
+    console.log('First topic lessons:', formData.topics[0].lessons.length);
+    console.log(
+      'First lesson type:',
+      formData.topics[0].lessons[0]?.content_type
+    );
+  }
+
   try {
     const session = await getServerSession(authOptions);
 
@@ -455,6 +468,7 @@ export async function updateCourse(
       }
 
       // Create new topics and lessons
+      const errors: string[] = [];
       for (
         let topicIndex = 0;
         topicIndex < formData.topics.length;
@@ -532,10 +546,11 @@ export async function updateCourse(
                 .single();
 
               if (lessonError) {
-                if (process.env.NODE_ENV === 'development') {
-                  console.error('Lesson creation error:', lessonError);
-                  console.error('Failed lesson data:', lessonData);
-                }
+                console.error('Lesson creation error:', lessonError);
+                console.error('Failed lesson data:', lessonData);
+                errors.push(
+                  `Lesson "${lesson.title}" failed: ${lessonError.message}`
+                );
               } else if (process.env.NODE_ENV === 'development') {
                 console.log('Lesson created successfully:', lessonResult.id);
               }
@@ -557,9 +572,8 @@ export async function updateCourse(
           .single();
 
         if (topicError) {
-          if (process.env.NODE_ENV === 'development') {
-            console.error('Topic creation error:', topicError);
-          }
+          console.error('Topic creation error:', topicError);
+          errors.push(`Topic "${topic.name}" failed: ${topicError.message}`);
           continue;
         }
 
@@ -635,6 +649,9 @@ export async function updateCourse(
             if (lessonError) {
               console.error('Lesson creation error:', lessonError);
               console.error('Failed lesson data:', lessonData);
+              errors.push(
+                `Lesson "${lesson.title}" failed: ${lessonError.message}`
+              );
             } else {
               console.log('Lesson created successfully:', lessonResult.id);
             }
@@ -643,6 +660,10 @@ export async function updateCourse(
       }
 
       console.log('Topics and lessons update completed');
+
+      if (errors.length > 0) {
+        return { error: `Some content failed to save: ${errors.join(', ')}` };
+      }
     }
 
     revalidatePath(`/courses/${courseId}`);
