@@ -41,6 +41,11 @@ lifecycle: active
   - [TEMPLATE.md](./adr/TEMPLATE.md) - ADR 작성 템플릿
   - [0001-record-architecture-decisions.md](./adr/0001-record-architecture-decisions.md) - 메타 ADR
 
+### 📖 사용자 가이드
+- **[user-guides/](./user-guides/)** - 웹사이트 사용 가이드
+  - [instructor/](./user-guides/instructor/) - 교사용
+  - [student/](./user-guides/student/) - 학생용
+
 ### 🛠️ 기술 문서
 - **[architecture/](./architecture/)** - 시스템 설계
 - **[testing/](./testing/)** - 테스트 전략 & 가이드
