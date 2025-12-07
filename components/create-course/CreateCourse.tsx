@@ -16,6 +16,7 @@ import {
   updateCourse,
   getCourseById,
 } from '@/app/lib/actions/courseActions';
+import { createQuizLesson } from '@/app/lib/actions/quizActions';
 import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
 import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
 import { useAutoSave } from '@/app/hooks/useAutoSave';
@@ -580,27 +581,57 @@ const CreateCourse = ({
     }));
   };
 
-  const handleAddQuiz = (
+  const handleAddQuiz = async (
     topicId: string | number,
     quizData: QuizLesson
-  ): { success: boolean } => {
+  ): Promise<{ success: boolean; data?: QuizLesson; error?: string }> => {
+    // Edit mode: Save to DB immediately to get UUID
+    if (editMode && courseId) {
+      try {
+        const result = await createQuizLesson(courseId, topicId, quizData);
+
+        if (result.success && result.data) {
+          const savedQuiz: QuizLesson = {
+            ...result.data,
+            content_type: 'quiz',
+          };
+
+          setFormData((prev) => ({
+            ...prev,
+            topics: prev.topics.map((topic) =>
+              topic.id === topicId
+                ? { ...topic, lessons: [...topic.lessons, savedQuiz] }
+                : topic
+            ),
+          }));
+
+          return { success: true, data: savedQuiz };
+        } else {
+          return { success: false, error: result.error || '퀴즈 저장 실패' };
+        }
+      } catch (error) {
+        console.error('Error saving quiz:', error);
+        return { success: false, error: '퀴즈 저장 중 오류 발생' };
+      }
+    }
+
+    // Create mode: Use temporary ID (will be saved when course is created)
     const newQuiz: QuizLesson = {
       ...quizData,
       id: quizData.id || Date.now(),
       content_type: 'quiz',
     };
 
-    setFormData({
-      ...formData,
-      topics: formData.topics.map((topic) =>
+    setFormData((prev) => ({
+      ...prev,
+      topics: prev.topics.map((topic) =>
         topic.id === topicId
           ? { ...topic, lessons: [...topic.lessons, newQuiz] }
           : topic
       ),
-    });
+    }));
 
-    // Return success for QuizModal
-    return { success: true };
+    return { success: true, data: newQuiz };
   };
 
   const handleAddAssignment = (

@@ -670,7 +670,7 @@ const QuizModal: React.FC<QuizModalProps> = ({
             cleanedQuizData as any
           );
         } else {
-          const addResult = onAddQuiz(cleanedQuizData as any);
+          const addResult = await onAddQuiz(cleanedQuizData as any);
           result =
             addResult && typeof addResult === 'object'
               ? addResult
