@@ -278,7 +278,7 @@ const MyCourses: React.FC = () => {
                       <CourseWidget
                         data={formatCourseData(course)}
                         courseStyle="two"
-                        isEdit={true}
+                        isEdit={false}
                         isCompleted={false}
                         isProgress={false}
                         showDescription={false}
@@ -319,7 +319,7 @@ const MyCourses: React.FC = () => {
                       <CourseWidget
                         data={formatCourseData(course)}
                         courseStyle="two"
-                        isEdit={true}
+                        isEdit={false}
                         isCompleted={false}
                         isProgress={false}
                         showDescription={false}

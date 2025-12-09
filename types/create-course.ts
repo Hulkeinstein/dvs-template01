@@ -291,7 +291,11 @@ export interface LessonModalProps {
 export interface QuizModalProps {
   modalId?: string;
   topicId?: string | number;
-  onAddQuiz?: (quizData: QuizLesson) => { success: boolean };
+  onAddQuiz?: (
+    quizData: QuizLesson
+  ) =>
+    | { success: boolean; data?: QuizLesson; error?: string }
+    | Promise<{ success: boolean; data?: QuizLesson; error?: string }>;
   onUpdateQuiz?: (quizId: string | number, quizData: QuizLesson) => void;
   editingQuiz?: QuizLesson | null;
   onEditComplete?: () => void;
@@ -329,7 +333,11 @@ export interface LessonComponentProps {
   onDeleteTopic: () => void;
   onUpdateTopic: (data: { name: string; summary: string }) => void;
   onAddLesson: (lessonData: VideoLesson) => void;
-  onAddQuiz: (quizData: QuizLesson) => { success: boolean };
+  onAddQuiz: (
+    quizData: QuizLesson
+  ) =>
+    | { success: boolean; data?: QuizLesson; error?: string }
+    | Promise<{ success: boolean; data?: QuizLesson; error?: string }>;
   onUpdateQuiz?: (quizId: string | number, quizData: QuizLesson) => void;
   onAddAssignment: (assignmentData: AssignmentLesson) => { success: boolean };
   onDeleteContent: (
