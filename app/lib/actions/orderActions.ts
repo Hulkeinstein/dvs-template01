@@ -874,3 +874,145 @@ export async function capturePayPalOrderAction(paypalOrderId: string) {
     };
   }
 }
+
+// =========================================================================
+// Instructor Order Functions
+// =========================================================================
+
+/**
+ * Instructor order with course sales details
+ */
+export interface InstructorOrder {
+  id: string;
+  order_number: string;
+  status: string;
+  payment_status: string;
+  payment_method: string;
+  total_amount: number;
+  created_at: string;
+  buyer: {
+    name: string;
+    email: string;
+  } | null;
+  order_items: Array<{
+    course_id: string;
+    quantity: number;
+    price: string;
+    course: {
+      id: string;
+      title: string;
+      thumbnail_url: string | null;
+    };
+  }>;
+}
+
+/**
+ * Get orders for courses owned by the instructor
+ * Shows sales history for instructor's courses
+ */
+export async function getInstructorOrders(
+  instructorId: string
+): Promise<InstructorOrder[]> {
+  try {
+    // First get all courses by this instructor
+    const { data: instructorCourses, error: coursesError } = await supabase
+      .from('courses')
+      .select('id')
+      .eq('instructor_id', instructorId);
+
+    if (coursesError) {
+      console.error('Error fetching instructor courses:', coursesError);
+      return [];
+    }
+
+    if (!instructorCourses || instructorCourses.length === 0) {
+      return [];
+    }
+
+    const courseIds = instructorCourses.map((c) => c.id);
+
+    // Get order_items for these courses, then join with orders
+    const { data: orderItems, error: itemsError } = await supabase
+      .from('order_items')
+      .select(
+        `
+        order_id,
+        course_id,
+        quantity,
+        price,
+        course:courses (
+          id,
+          title,
+          thumbnail_url
+        ),
+        order:orders (
+          id,
+          order_number,
+          status,
+          payment_status,
+          payment_method,
+          total_amount,
+          created_at,
+          buyer:user_id (
+            name,
+            email
+          )
+        )
+      `
+      )
+      .in('course_id', courseIds)
+      .order('created_at', { ascending: false, referencedTable: 'orders' });
+
+    if (itemsError) {
+      console.error('Error fetching order items:', itemsError);
+      return [];
+    }
+
+    if (!orderItems || orderItems.length === 0) {
+      return [];
+    }
+
+    // Group by order and transform data
+    const ordersMap = new Map<string, InstructorOrder>();
+
+    for (const item of orderItems) {
+      const order = item.order as any;
+      if (!order) continue;
+
+      const orderId = order.id;
+
+      if (!ordersMap.has(orderId)) {
+        ordersMap.set(orderId, {
+          id: order.id,
+          order_number: order.order_number,
+          status: order.status || 'pending',
+          payment_status: order.payment_status || 'pending',
+          payment_method: order.payment_method || 'unknown',
+          total_amount: parseFloat(order.total_amount) || 0,
+          created_at: order.created_at,
+          buyer: order.buyer,
+          order_items: [],
+        });
+      }
+
+      const existingOrder = ordersMap.get(orderId)!;
+      existingOrder.order_items.push({
+        course_id: item.course_id,
+        quantity: item.quantity,
+        price: item.price,
+        course: item.course as any,
+      });
+    }
+
+    // Convert to array and sort by date
+    const orders = Array.from(ordersMap.values()).sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    return orders;
+  } catch (error) {
+    console.error('Error in getInstructorOrders:', error);
+    return [];
+  }
+}

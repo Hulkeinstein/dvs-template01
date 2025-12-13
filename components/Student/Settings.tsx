@@ -931,10 +931,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
                       value={userProfile?.email || ''}
                       placeholder="example@gmail.com"
                       readOnly
-                      style={{
-                        backgroundColor: '#f8f9fa',
-                        cursor: 'not-allowed',
-                      }}
+                      className="form-control-readonly"
                     />
                   </div>
                 </div>

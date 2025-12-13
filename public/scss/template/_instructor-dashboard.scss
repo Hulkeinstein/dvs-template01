@@ -560,3 +560,41 @@ html[data-theme="dark"] {
     }
   }
 }
+
+/*-----------------------------------
+    Form Control Readonly Style
+    - Readonly 입력필드 스타일 (라이트/다크 모드)
+----------------------------------*/
+.form-control-readonly {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+/*-----------------------------------
+    Instructor Settings Dark Mode Fix
+    - Settings 페이지 배경색 개선
+----------------------------------*/
+.active-dark-mode,
+html[data-theme="dark"] {
+  .rbt-dashboard-content.bg-color-white.rbt-shadow-box {
+    background: var(--color-dark) !important;
+  }
+
+  // Profile row 다크모드 - 배경색 통일, 호버 제거
+  .rbt-dashboard-content .rbt-profile-row {
+    &:nth-child(even) {
+      background-color: transparent !important;
+    }
+
+    &:hover {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Readonly input 다크모드
+  .form-control-readonly {
+    background-color: var(--color-darker);
+    color: var(--color-white);
+  }
+}

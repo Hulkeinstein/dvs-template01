@@ -7,18 +7,24 @@ import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
 import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
-import Wishlist from '@/components/Instructor/Wishlist';
+import OrderHistory from '@/components/Instructor/OrderHistory';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
+import type { InstructorOrder } from '@/app/lib/actions/orderActions';
 
-const WishlistPage = () => {
+interface OrderHistoryPageProps {
+  orders: InstructorOrder[];
+  error?: string | null;
+}
+
+const OrderHistoryPage = ({ orders, error }: OrderHistoryPageProps) => {
   return (
     <>
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -36,7 +42,7 @@ const WishlistPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <Wishlist />
+                      <OrderHistory orders={orders || []} error={error} />
                     </div>
                   </div>
                 </div>
@@ -45,11 +51,16 @@ const WishlistPage = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox=""
+            bgColor=""
+            newsletterBorder={undefined}
+            islamic={undefined}
+          />
         </Context>
       </Provider>
     </>
   );
 };
 
-export default WishlistPage;
+export default OrderHistoryPage;

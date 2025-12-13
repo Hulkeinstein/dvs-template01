@@ -5,20 +5,23 @@ import FooterOne from '@/components/Footer/Footer-One';
 import HeaderStyleTen from '@/components/Header/HeaderStyle-Ten';
 import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
-import StudentDashboardHeader from '@/components/Student/StudentDashboardHeader';
-import StudentDashboardSidebar from '@/components/Student/StudentDashboardSidebar';
+import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
+import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
 import Wishlist from '@/components/Student/Wishlist';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
+import { useSession } from 'next-auth/react';
 
-const StudentWishlist = () => {
+const WishlistPage = () => {
+  const { data: session } = useSession();
+
   return (
     <>
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -28,15 +31,15 @@ const StudentWishlist = () => {
             <div className="container">
               <div className="row">
                 <div className="col-lg-12">
-                  <StudentDashboardHeader />
+                  <InstructorDashboardHeader />
 
                   <div className="row g-5">
                     <div className="col-lg-3">
-                      <StudentDashboardSidebar />
+                      <InstructorDashboardSidebar />
                     </div>
 
                     <div className="col-lg-9">
-                      <Wishlist />
+                      <Wishlist userId={session?.user?.id} />
                     </div>
                   </div>
                 </div>
@@ -45,11 +48,16 @@ const StudentWishlist = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox=""
+            bgColor=""
+            newsletterBorder={undefined}
+            islamic={undefined}
+          />
         </Context>
       </Provider>
     </>
   );
 };
 
-export default StudentWishlist;
+export default WishlistPage;

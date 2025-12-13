@@ -11,14 +11,20 @@ import QuizAttempts from '@/components/Instructor/QuizAttempts';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
+import type { QuizAttemptWithRelations } from '@/types/quiz';
 
-const QuizAttemptsPage = ({ quizAttempts, error }) => {
+interface QuizAttemptsPageProps {
+  quizAttempts: QuizAttemptWithRelations[];
+  error?: string | null;
+}
+
+const QuizAttemptsPage = ({ quizAttempts, error }: QuizAttemptsPageProps) => {
   return (
     <>
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -36,11 +42,7 @@ const QuizAttemptsPage = ({ quizAttempts, error }) => {
                     </div>
 
                     <div className="col-lg-9">
-                      <QuizAttempts
-                        quizAttempts={quizAttempts}
-                        error={error}
-                        useDevData={true} // 개발 모드에서 샘플 데이터 사용
-                      />
+                      <QuizAttempts quizAttempts={quizAttempts} error={error} />
                     </div>
                   </div>
                 </div>
@@ -49,7 +51,12 @@ const QuizAttemptsPage = ({ quizAttempts, error }) => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox=""
+            bgColor=""
+            newsletterBorder={undefined}
+            islamic={undefined}
+          />
         </Context>
       </Provider>
     </>
