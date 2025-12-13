@@ -44,16 +44,32 @@ export async function POST(req: NextRequest) {
 
     const supabase = getServerClient();
 
-    // 3. 코스 정보 조회 (제목만 필요)
+    // 3. 코스 정보 조회 (제목 + 가격)
     const { data: course, error: courseError } = await supabase
       .from('courses')
-      .select('id, title')
+      .select('id, title, price')
       .eq('id', courseId)
       .single();
 
     if (courseError || !course) {
       console.error('Course not found:', courseError);
       return NextResponse.json({ error: 'Course not found' }, { status: 404 });
+    }
+
+    // 3.1 가격 검증: 클라이언트 amount와 DB price 비교 (보안)
+    const dbPrice = Number(course.price);
+    const clientAmount = Number(amount);
+    if (Math.abs(clientAmount - dbPrice) > 0.01) {
+      console.error('[PayPal] Price mismatch detected:', {
+        clientAmount,
+        dbPrice,
+        courseId,
+        userId: session.user.id,
+      });
+      return NextResponse.json(
+        { error: 'Price mismatch', code: 'PRICE_TAMPERED' },
+        { status: 400 }
+      );
     }
 
     // 4. 중복 등록 확인 (Duplicate Enrollment Prevention - Layer 3)
@@ -117,7 +133,7 @@ export async function POST(req: NextRequest) {
           description: course.title,
           amount: {
             currency_code: 'USD',
-            value: Number(amount).toFixed(2), // 파라미터로 받은 amount 사용
+            value: dbPrice.toFixed(2), // DB 가격 사용 (보안)
           },
         },
       ],
@@ -145,7 +161,7 @@ export async function POST(req: NextRequest) {
     console.log('[PayPal] Order created:', {
       orderId: order.id,
       paypalOrderId: response.result.id,
-      amount: amount.toFixed(2),
+      amount: dbPrice.toFixed(2),
       approveUrl,
     });
 

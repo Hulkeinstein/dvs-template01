@@ -29,7 +29,7 @@ export async function getPendingPaidOrders() {
       .eq('id', session.user.id)
       .single();
 
-    if (userError || userData?.role !== 'instructor') {
+    if (userError || !['instructor', 'admin'].includes(userData?.role ?? '')) {
       return { success: false, error: 'Admin access required' };
     }
 
@@ -44,7 +44,7 @@ export async function getPendingPaidOrders() {
     return {
       success: true,
       orders: data || [],
-      message: `Found ${data?.length || 0} pending orders`
+      message: `Found ${data?.length || 0} pending orders`,
     };
   } catch (error) {
     console.error('Unexpected error in getPendingPaidOrders:', error);
@@ -71,14 +71,14 @@ export async function activatePaidOrder(orderId: string) {
       .eq('id', session.user.id)
       .single();
 
-    if (userError || userData?.role !== 'instructor') {
+    if (userError || !['instructor', 'admin'].includes(userData?.role ?? '')) {
       return { success: false, error: 'Admin access required' };
     }
 
     // Call the SQL function to activate the order
     const { data, error } = await supabase.rpc('activate_paid_order', {
       p_order_id: orderId,
-      p_admin_id: session.user.id
+      p_admin_id: session.user.id,
     });
 
     if (error) {
@@ -94,12 +94,12 @@ export async function activatePaidOrder(orderId: string) {
           message: data.message || 'Order activated successfully',
           enrollments_created: data.enrollments_created || 0,
           order_id: data.order_id,
-          user_id: data.user_id
+          user_id: data.user_id,
         };
       } else {
         return {
           success: false,
-          error: data.error || 'Failed to activate order'
+          error: data.error || 'Failed to activate order',
         };
       }
     }
@@ -130,21 +130,23 @@ export async function getOrderDetails(orderId: string) {
       .eq('id', session.user.id)
       .single();
 
-    if (userError || userData?.role !== 'instructor') {
+    if (userError || !['instructor', 'admin'].includes(userData?.role ?? '')) {
       return { success: false, error: 'Admin access required' };
     }
 
     // Get order details
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .select(`
+      .select(
+        `
         *,
         user:user_id (
           id,
           email,
           name
         )
-      `)
+      `
+      )
       .eq('id', orderId)
       .single();
 
@@ -155,13 +157,14 @@ export async function getOrderDetails(orderId: string) {
     // Check if order_items table exists and get items
     let orderItems = [];
     const { data: tableExists } = await supabase.rpc('to_regclass', {
-      p_table: 'public.order_items'
+      p_table: 'public.order_items',
     });
 
     if (tableExists) {
       const { data: items, error: itemsError } = await supabase
         .from('order_items')
-        .select(`
+        .select(
+          `
           *,
           course:course_id (
             id,
@@ -169,7 +172,8 @@ export async function getOrderDetails(orderId: string) {
             regular_price,
             discounted_price
           )
-        `)
+        `
+        )
         .eq('order_id', orderId);
 
       if (!itemsError && items) {
@@ -185,12 +189,14 @@ export async function getOrderDetails(orderId: string) {
           .single();
 
         if (course) {
-          orderItems = [{
-            course_id: course.id,
-            course: course,
-            quantity: 1,
-            price: order.total_amount
-          }];
+          orderItems = [
+            {
+              course_id: course.id,
+              course: course,
+              quantity: 1,
+              price: order.total_amount,
+            },
+          ];
         }
       }
     }
@@ -198,7 +204,7 @@ export async function getOrderDetails(orderId: string) {
     return {
       success: true,
       order: order,
-      items: orderItems
+      items: orderItems,
     };
   } catch (error) {
     console.error('Unexpected error in getOrderDetails:', error);
@@ -228,7 +234,7 @@ export async function updateOrderPaymentStatus(
       .eq('id', session.user.id)
       .single();
 
-    if (userError || userData?.role !== 'instructor') {
+    if (userError || !['instructor', 'admin'].includes(userData?.role ?? '')) {
       return { success: false, error: 'Admin access required' };
     }
 
@@ -238,7 +244,7 @@ export async function updateOrderPaymentStatus(
       .update({
         payment_status: status,
         status: status === 'succeeded' ? 'completed' : 'pending',
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
       .eq('id', orderId)
       .select()
@@ -252,7 +258,7 @@ export async function updateOrderPaymentStatus(
     return {
       success: true,
       message: `Order payment status updated to ${status}`,
-      order: data
+      order: data,
     };
   } catch (error) {
     console.error('Unexpected error in updateOrderPaymentStatus:', error);
