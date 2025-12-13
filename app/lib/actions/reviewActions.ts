@@ -19,6 +19,30 @@ export interface Review {
   };
 }
 
+// Review with course info (for user's given reviews)
+export interface ReviewWithCourse extends Review {
+  course?: {
+    id: string;
+    title: string;
+    slug: string;
+    thumbnail_url?: string;
+  };
+}
+
+// Review with user and course info (for instructor's received reviews)
+export interface ReviewWithDetails extends Review {
+  user?: {
+    name: string;
+    avatar_url?: string;
+  };
+  course?: {
+    id: string;
+    title: string;
+    slug: string;
+    instructor_id: string;
+  };
+}
+
 export interface ReviewStats {
   averageRating: number;
   totalReviews: number;
@@ -342,5 +366,81 @@ export async function voteReviewHelpfulness(
       success: false,
       error: 'An unexpected error occurred',
     };
+  }
+}
+
+/**
+ * Get all reviews written by a user (Given reviews)
+ * Used in: Student/Instructor Reviews page (Main section)
+ */
+export async function getReviewsByUser(
+  userId: string
+): Promise<ReviewWithCourse[]> {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(
+        `
+        *,
+        course:course_id (
+          id,
+          title,
+          slug,
+          thumbnail_url
+        )
+      `
+      )
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user reviews:', error);
+      return [];
+    }
+
+    return (data as ReviewWithCourse[]) || [];
+  } catch (error) {
+    console.error('Error in getReviewsByUser:', error);
+    return [];
+  }
+}
+
+/**
+ * Get all reviews received on instructor's courses (Received reviews)
+ * Used in: Instructor Course Reviews page (Instructor section)
+ */
+export async function getReviewsForInstructor(
+  instructorId: string
+): Promise<ReviewWithDetails[]> {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select(
+        `
+        *,
+        user:user_id (
+          name,
+          avatar_url
+        ),
+        course:course_id!inner (
+          id,
+          title,
+          slug,
+          instructor_id
+        )
+      `
+      )
+      .eq('course.instructor_id', instructorId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching instructor reviews:', error);
+      return [];
+    }
+
+    return (data as ReviewWithDetails[]) || [];
+  } catch (error) {
+    console.error('Error in getReviewsForInstructor:', error);
+    return [];
   }
 }

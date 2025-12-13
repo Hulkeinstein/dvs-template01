@@ -425,3 +425,176 @@ html[data-theme="dark"] {
     }
   }
 }
+
+/*-----------------------------------
+    Instructor Students Table Dark Mode Fix
+    - 학생 목록 테이블 다크모드 텍스트 가시성
+----------------------------------*/
+.active-dark-mode,
+html[data-theme="dark"] {
+  .rbt-dashboard-table {
+    .rbt-student-profile {
+      .rbt-student-info {
+        h6 {
+          color: var(--color-white) !important;
+        }
+
+        small,
+        .text-muted {
+          color: var(--color-gray-light, #a0a0a0) !important;
+          opacity: 0.9;
+        }
+      }
+    }
+
+    // 테이블 내 기타 텍스트
+    .rbt-course-list span,
+    .rbt-date,
+    .rbt-contact-info span {
+      color: var(--color-body, #c4cfde) !important;
+    }
+  }
+}
+
+/*-----------------------------------
+    Announcement Modal Dark Mode Fix
+    - 공지사항 모달 다크모드 스타일
+----------------------------------*/
+.active-dark-mode,
+html[data-theme="dark"] {
+  .modal-content {
+    background-color: var(--color-darker, #1a1a2e) !important;
+    border-color: var(--color-border-dark, #2d2d44) !important;
+
+    .modal-header {
+      border-bottom-color: var(--color-border-dark, #2d2d44) !important;
+
+      .modal-title {
+        color: var(--color-white) !important;
+      }
+
+      .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%);
+      }
+    }
+
+    .modal-body {
+      .form-label {
+        color: var(--color-white) !important;
+      }
+
+      .form-control,
+      .form-select {
+        background-color: var(--color-dark, #0f0f1a) !important;
+        border-color: var(--color-border-dark, #2d2d44) !important;
+        color: var(--color-white) !important;
+
+        &::placeholder {
+          color: var(--color-gray-light, #a0a0a0) !important;
+        }
+
+        option {
+          background-color: var(--color-dark, #0f0f1a);
+          color: var(--color-white);
+        }
+      }
+
+      .text-muted {
+        color: var(--color-gray-light, #a0a0a0) !important;
+      }
+
+      .form-check-label {
+        color: var(--color-body, #c4cfde) !important;
+      }
+
+      // Quill Editor Dark Mode
+      .quill {
+        .ql-toolbar {
+          background-color: var(--color-dark, #0f0f1a) !important;
+          border-color: var(--color-border-dark, #2d2d44) !important;
+
+          .ql-stroke {
+            stroke: var(--color-body, #c4cfde) !important;
+          }
+
+          .ql-fill {
+            fill: var(--color-body, #c4cfde) !important;
+          }
+
+          .ql-picker {
+            color: var(--color-body, #c4cfde) !important;
+          }
+
+          .ql-picker-options {
+            background-color: var(--color-darker, #1a1a2e) !important;
+          }
+
+          button:hover,
+          .ql-picker-label:hover {
+            .ql-stroke {
+              stroke: var(--color-primary) !important;
+            }
+            .ql-fill {
+              fill: var(--color-primary) !important;
+            }
+          }
+        }
+
+        .ql-container {
+          background-color: var(--color-dark, #0f0f1a) !important;
+          border-color: var(--color-border-dark, #2d2d44) !important;
+
+          .ql-editor {
+            color: var(--color-white) !important;
+
+            &.ql-blank::before {
+              color: var(--color-gray-light, #a0a0a0) !important;
+            }
+          }
+        }
+      }
+    }
+
+    .modal-footer {
+      border-top-color: var(--color-border-dark, #2d2d44) !important;
+    }
+  }
+}
+
+/*-----------------------------------
+    Form Control Readonly Style
+    - Readonly 입력필드 스타일 (라이트/다크 모드)
+----------------------------------*/
+.form-control-readonly {
+  background-color: #f8f9fa;
+  cursor: not-allowed;
+}
+
+/*-----------------------------------
+    Instructor Settings Dark Mode Fix
+    - Settings 페이지 배경색 개선
+----------------------------------*/
+.active-dark-mode,
+html[data-theme="dark"] {
+  .rbt-dashboard-content.bg-color-white.rbt-shadow-box {
+    background: var(--color-dark) !important;
+  }
+
+  // Profile row 다크모드 - 배경색 통일, 호버 제거
+  .rbt-dashboard-content .rbt-profile-row {
+    &:nth-child(even) {
+      background-color: transparent !important;
+    }
+
+    &:hover {
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Readonly input 다크모드
+  .form-control-readonly {
+    background-color: var(--color-darker);
+    color: var(--color-white);
+  }
+}

@@ -173,6 +173,16 @@ export function getAssignmentsUrl(role: UserRole | null | undefined): string {
 }
 
 /**
+ * Get course reviews URL (instructor only - reviews received from students)
+ */
+export function getCourseReviewsUrl(role: UserRole | null | undefined): string {
+  if (role === 'instructor' || role === 'admin') {
+    return '/instructor-course-reviews';
+  }
+  return '/instructor-dashboard'; // Students don't have this
+}
+
+/**
  * Resolve URL based on sidebar key and role
  */
 export function resolveUrl(
@@ -204,6 +214,8 @@ export function resolveUrl(
       return getAnnouncementsUrl(role);
     case 'assignments':
       return getAssignmentsUrl(role);
+    case 'course-reviews':
+      return getCourseReviewsUrl(role);
     default:
       return '/'; // Fallback to home
   }

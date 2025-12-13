@@ -23,7 +23,7 @@ export const ROUTES = {
   STUDENT: {
     DASHBOARD: '/student-dashboard',
     ENROLLED_COURSES: '/student-enrolled-course',
-    COURSE_BROWSER: '/course-filter-one-toggle',
+    COURSE_BROWSER: '/all-courses',
     WISHLIST: '/student-wishlist',
     PROFILE: '/student-profile',
     SETTINGS: '/student-settings',

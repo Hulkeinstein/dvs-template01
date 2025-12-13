@@ -63,6 +63,11 @@
           "key": "assignments",
           "label": "Assignments",
           "icon": "feather-list"
+        },
+        {
+          "key": "course-reviews",
+          "label": "Course Reviews",
+          "icon": "feather-message-square"
         }
       ]
     },

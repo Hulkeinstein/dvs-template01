@@ -7,17 +7,21 @@ import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
 import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
-import OrderHistory from '@/components/Instructor/OrderHistory';
+import CourseReviews from '@/components/Instructor/CourseReviews';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
+import { useSession } from 'next-auth/react';
 
-const OrderHistoryPage = () => {
+const CourseReviewsPage = () => {
+  const { data: session } = useSession();
+
   return (
     <>
       <Provider store={Store}>
         <Context>
           <MobileMenu />
+          {/* @ts-expect-error - HeaderStyleTen has loose typing from JS template */}
           <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
           <Cart />
 
@@ -36,7 +40,7 @@ const OrderHistoryPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <OrderHistory />
+                      <CourseReviews instructorId={session?.user?.id} />
                     </div>
                   </div>
                 </div>
@@ -45,6 +49,7 @@ const OrderHistoryPage = () => {
           </div>
 
           <Separator />
+          {/* @ts-expect-error - FooterOne has loose typing from JS template */}
           <FooterOne />
         </Context>
       </Provider>
@@ -52,4 +57,4 @@ const OrderHistoryPage = () => {
   );
 };
 
-export default OrderHistoryPage;
+export default CourseReviewsPage;

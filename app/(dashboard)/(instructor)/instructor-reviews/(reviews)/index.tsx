@@ -7,18 +7,21 @@ import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
 import InstructorDashboardHeader from '@/components/Instructor/InstructorDashboardHeader';
 import InstructorDashboardSidebar from '@/components/Instructor/InstructorDashboardSidebar';
-import Reviews from '@/components/Instructor/Reviews';
+import Reviews from '@/components/Student/Reviews';
 import Context from '@/context/Context';
 import Store from '@/redux/store';
 import { Provider } from 'react-redux';
+import { useSession } from 'next-auth/react';
 
 const ReviewPage = () => {
+  const { data: session } = useSession();
+
   return (
     <>
       <Provider store={Store}>
         <Context>
           <MobileMenu />
-          <HeaderStyleTen headerSticky="rbt-sticky" headerType="" />
+          <HeaderStyleTen headerSticky="rbt-sticky" />
           <Cart />
 
           <div className="rbt-page-banner-wrapper">
@@ -36,7 +39,7 @@ const ReviewPage = () => {
                     </div>
 
                     <div className="col-lg-9">
-                      <Reviews />
+                      <Reviews userId={session?.user?.id} />
                     </div>
                   </div>
                 </div>
@@ -45,7 +48,12 @@ const ReviewPage = () => {
           </div>
 
           <Separator />
-          <FooterOne />
+          <FooterOne
+            isBox=""
+            bgColor=""
+            newsletterBorder={undefined}
+            islamic={undefined}
+          />
         </Context>
       </Provider>
     </>

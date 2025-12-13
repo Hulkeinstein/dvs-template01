@@ -279,3 +279,50 @@
     padding-right: 30px !important;
   }
 }
+
+// Dark Mode - Phone Input
+// 네스팅 3단계 이하 유지
+.active-dark-mode,
+html[data-theme="dark"] {
+  // 국기 버튼 호버 (2단계)
+  .react-tel-input .flag-dropdown:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .react-tel-input .selected-flag:hover,
+  .react-tel-input .selected-flag.open {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  // 드롭다운 배경 (2단계)
+  .react-tel-input .country-list {
+    background: var(--color-darker);
+    border-color: var(--color-border-dark, #2d2d44);
+  }
+
+  // 검색 영역 (3단계)
+  .react-tel-input .country-list .search {
+    background: var(--color-dark);
+    border-bottom-color: var(--color-border-dark, #2d2d44);
+  }
+
+  .react-tel-input .country-list .search-box {
+    background: var(--color-darker);
+    border-color: var(--color-border-dark, #2d2d44);
+    color: var(--color-white);
+  }
+
+  // 국가 목록 (3단계)
+  .react-tel-input .country-list .country {
+    color: var(--color-white);
+  }
+
+  .react-tel-input .country-list .country:hover,
+  .react-tel-input .country-list .country.highlight {
+    background-color: var(--color-dark);
+  }
+
+  .react-tel-input .country-list .dial-code {
+    color: var(--color-gray-light, #a0a0a0);
+  }
+}
