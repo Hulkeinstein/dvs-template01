@@ -7,12 +7,12 @@ import Store from '@/redux/store';
 import Context from '@/context/Context';
 import CartProvider from '@/context/CartProvider';
 
-export default function Providers({ children }) {
+export default function Providers({ children, initialTheme }) {
   return (
     <SessionProvider>
       <Provider store={Store}>
         <CartProvider>
-          <Context>{children}</Context>
+          <Context initialTheme={initialTheme}>{children}</Context>
         </CartProvider>
       </Provider>
     </SessionProvider>

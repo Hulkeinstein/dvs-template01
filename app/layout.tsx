@@ -56,7 +56,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         suppressHydrationWarning={true}
       >
         <BootstrapClient />
-        <Providers>{children}</Providers>
+        <Providers initialTheme={theme}>{children}</Providers>
       </body>
     </html>
   );
