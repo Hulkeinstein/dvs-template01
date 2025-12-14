@@ -25,7 +25,7 @@ const getCookie = (name) => {
   return null;
 };
 
-const Context = ({ children }) => {
+const Context = ({ children, initialTheme }) => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state) => state.CartReducer);
 
@@ -38,7 +38,8 @@ const Context = ({ children }) => {
   const [pricingTwo, setPricingTwo] = useState(true);
   const [pricingThree, setPricingThree] = useState(true);
   const [pricingFour, setPricingFour] = useState(true);
-  const [isLightTheme, setLightTheme] = useState(true);
+  // initialTheme이 'dark'이면 false, 그 외(undefined/light)면 true
+  const [isLightTheme, setLightTheme] = useState(initialTheme !== 'dark');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const Context = ({ children }) => {
   }, [cart, dispatch]);
 
   useEffect(() => {
-    if (!mounted) return;
+    // mounted 체크 제거 - 초기값이 정확하므로 바로 실행 가능
 
     if (isLightTheme) {
       document.body.classList.remove('active-dark-mode');
