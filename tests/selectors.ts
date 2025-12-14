@@ -5,16 +5,26 @@
 
 export const SELECTORS = {
   // Course page
-  courseCard: '[data-testid="course-card"]',
-  addToCartButton: '[data-testid="add-to-cart"]',
+  courseCard: '.rbt-card',
+  addToCartButton: '.rbt-btn-link:has-text("Add To Cart")',
 
   // Cart
-  cartIcon: '[data-testid="cart-icon"]',
-  cartItem: '[data-testid="cart-item"]',
+  cartIcon: '.cart-icon', // Placeholder, verify if needed
+  cartItem: '.minicart-item, .cart-item', // Adjust based on cart component
 
   // Checkout
-  checkoutButton: '[data-testid="checkout-button"]',
-  checkoutForm: '[data-testid="checkout-form"]',
+  checkoutButton: '.rbt-btn:has-text("Proceed to Checkout")',
+  checkoutForm: 'form', // Generic for now
+  
+  CHECKOUT_FORM: {
+     FIRST_NAME: '#billing_first_name',
+     LAST_NAME: '#billing_last_name',
+     EMAIL: '#billing_email',
+     PHONE: '#billing_phone',
+     ADDRESS: '#billing_address_1',
+     CITY: '#billing_city',
+     ZIP: '#billing_postcode',
+  }
 };
 
 export const TIMEOUTS = {
