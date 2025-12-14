@@ -18,15 +18,6 @@ export async function POST(req: NextRequest) {
     // 2. 인증 확인
     // NextAuth in App Router: getServerSession reads cookies automatically
     const session = await getServerSession(authOptions);
-    console.log('[PayPal API] Session Debug:', {
-      hasSession: !!session,
-      hasUser: !!session?.user,
-      hasUserId: !!session?.user?.id,
-      userId: session?.user?.id,
-      userEmail: session?.user?.email,
-      userRole: session?.user?.role,
-      fullUser: session?.user,
-    });
 
     if (!session?.user?.id) {
       console.error('[PayPal API] Unauthorized - session.user.id is missing');
@@ -150,7 +141,7 @@ export async function POST(req: NextRequest) {
 
     // PayPal 승인 URL 추출
     const approveUrl = response.result.links?.find(
-      (link: any) => link.rel === 'approve'
+      (link: { rel: string; href: string }) => link.rel === 'approve'
     )?.href;
 
     if (!approveUrl) {

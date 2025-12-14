@@ -78,3 +78,5 @@ tsconfig.tsbuildinfo
 # SCSS compiled files and source maps
 public/css/
 !public/css/.gitkeep
+test_output*.txt
+test-results/
