@@ -12,10 +12,6 @@ import Cart from '@/components/Header/Offcanvas/Cart';
 import Separator from '@/components/Common/Separator';
 import FooterOne from '@/components/Footer/Footer-One';
 import { useAppContext } from '@/context/Context';
-import {
-  capturePayPalOrderAction,
-  getOrderByNumber,
-} from '@/app/lib/actions/orderActions';
 
 interface PayPalDetails {
   transactionId: string;
@@ -40,7 +36,6 @@ const OrderSuccessPage = (): JSX.Element => {
 
   // ... (useEffect hook content remains same) ...
 
-
   useEffect(() => {
     // Get order details from URL params
     const orderIdParam = searchParams.get('orderId');
@@ -52,43 +47,56 @@ const OrderSuccessPage = (): JSX.Element => {
       setCaptureAttempted(true); // Mark as attempted immediately
       setIsProcessingPayPal(true);
 
-      // Process PayPal capture
-      capturePayPalOrderAction(paypalToken)
-        .then((result) => {
-          if (result.success) {
-            const data = result as any;
-            setPaypalDetails({
-              transactionId: data.transactionId || '',
-              amount: data.amount || '0',
-              currency: data.currency || 'USD',
-            });
-            // Use PayPal order ID as order number if not provided
-            setOrderNumber(data.orderId || paypalToken.slice(0, 10));
-            if (data.orderId) {
-               setOrderId(data.orderId); // Store the database order ID (UUID)
+      // Process PayPal capture via API route
+      fetch('/api/payment/paypal/capture-redirect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paypalOrderId: paypalToken }),
+      })
+        .then((res) => res.json())
+        .then(
+          (data: {
+            success: boolean;
+            orderId?: string;
+            transactionId?: string;
+            amount?: string;
+            currency?: string;
+            error?: string;
+          }) => {
+            if (data.success) {
+              setPaypalDetails({
+                transactionId: data.transactionId || '',
+                amount: data.amount || '0',
+                currency: data.currency || 'USD',
+              });
+              // Use PayPal order ID as order number if not provided
+              setOrderNumber(data.orderId || paypalToken.slice(0, 10));
+              if (data.orderId) {
+                setOrderId(data.orderId); // Store the database order ID (UUID)
+              }
+            } else {
+              setPaypalError(data.error || 'Payment processing failed');
             }
-          } else {
-            setPaypalError(
-              'error' in result ? result.error : 'Payment processing failed'
-            );
+            setIsProcessingPayPal(false);
           }
-          setIsProcessingPayPal(false);
-        })
-        .catch((error) => {
+        )
+        .catch((error: Error) => {
           console.error('PayPal capture error:', error);
           setPaypalError('An unexpected error occurred');
           setIsProcessingPayPal(false);
         });
     } else if (orderNumberParam) {
       setOrderNumber(orderNumberParam);
-      // Try to get order ID from database using order number
-      if (orderNumberParam) {
-        getOrderByNumber(orderNumberParam).then((result) => {
-          if (result.success && result.orders && result.orders.length > 0) {
-            setOrderId(result.orders[0].id);
+      // Try to get order ID from database using order number via API route
+      fetch(
+        `/api/orders/by-number?orderNumber=${encodeURIComponent(orderNumberParam)}`
+      )
+        .then((res) => res.json())
+        .then((data: { success: boolean; orders?: Array<{ id: string }> }) => {
+          if (data.success && data.orders && data.orders.length > 0) {
+            setOrderId(data.orders[0].id);
           }
         });
-      }
     } else if (orderIdParam) {
       setOrderNumber(orderIdParam.slice(0, 10));
       setOrderId(orderIdParam);
@@ -261,57 +269,84 @@ const OrderSuccessPage = (): JSX.Element => {
                       {paypalDetails && (
                         <div className="paypal-details mb-4">
                           <div className="row">
-                              <div className="col-md-12">
-                                <div 
-                                  className="card"
-                                  style={{
-                                    background: isLightTheme ? '#fff' : '#1f2937',
-                                    border: isLightTheme ? '1px solid rgba(0,0,0,.125)' : '1px solid #374151',
-                                  }}
-                                >
-                                  <div className="card-body">
-                                    <h5 className={`mb-3 ${!isLightTheme ? 'text-white' : ''}`}>Payment Details</h5>
-                                    <div className="row">
-                                      <div className="col-6 text-start">
-                                        <p className={`mb-2 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`} style={{ color: isLightTheme ? '' : '#9ca3af' }}>
-                                          Transaction ID:
-                                        </p>
-                                      </div>
-                                      <div className="col-6 text-end">
-                                        <p className={`fw-bold text-break ${!isLightTheme ? 'text-white' : ''}`}>
-                                          {paypalDetails.transactionId}
-                                        </p>
-                                      </div>
+                            <div className="col-md-12">
+                              <div
+                                className="card"
+                                style={{
+                                  background: isLightTheme ? '#fff' : '#1f2937',
+                                  border: isLightTheme
+                                    ? '1px solid rgba(0,0,0,.125)'
+                                    : '1px solid #374151',
+                                }}
+                              >
+                                <div className="card-body">
+                                  <h5
+                                    className={`mb-3 ${!isLightTheme ? 'text-white' : ''}`}
+                                  >
+                                    Payment Details
+                                  </h5>
+                                  <div className="row">
+                                    <div className="col-6 text-start">
+                                      <p
+                                        className={`mb-2 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`}
+                                        style={{
+                                          color: isLightTheme ? '' : '#9ca3af',
+                                        }}
+                                      >
+                                        Transaction ID:
+                                      </p>
                                     </div>
-                                    <div className="row">
-                                      <div className="col-6 text-start">
-                                        <p className={`mb-2 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`} style={{ color: isLightTheme ? '' : '#9ca3af' }}>
-                                          Amount Paid:
-                                        </p>
-                                      </div>
-                                      <div className="col-6 text-end">
-                                        <p className={`fw-bold ${!isLightTheme ? 'text-white' : ''}`}>
-                                          {paypalDetails.currency} $
-                                          {paypalDetails.amount}
-                                        </p>
-                                      </div>
+                                    <div className="col-6 text-end">
+                                      <p
+                                        className={`fw-bold text-break ${!isLightTheme ? 'text-white' : ''}`}
+                                      >
+                                        {paypalDetails.transactionId}
+                                      </p>
                                     </div>
-                                    <div className="row">
-                                      <div className="col-6 text-start">
-                                        <p className={`mb-0 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`} style={{ color: isLightTheme ? '' : '#9ca3af' }}>
-                                          Payment Method:
-                                        </p>
-                                      </div>
-                                      <div className="col-6 text-end">
-                                        <p className={`fw-bold mb-0 ${!isLightTheme ? 'text-white' : ''}`}>
-                                          <i className="feather-check-circle text-success me-1"></i>
-                                          PayPal
-                                        </p>
-                                      </div>
+                                  </div>
+                                  <div className="row">
+                                    <div className="col-6 text-start">
+                                      <p
+                                        className={`mb-2 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`}
+                                        style={{
+                                          color: isLightTheme ? '' : '#9ca3af',
+                                        }}
+                                      >
+                                        Amount Paid:
+                                      </p>
+                                    </div>
+                                    <div className="col-6 text-end">
+                                      <p
+                                        className={`fw-bold ${!isLightTheme ? 'text-white' : ''}`}
+                                      >
+                                        {paypalDetails.currency} $
+                                        {paypalDetails.amount}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="row">
+                                    <div className="col-6 text-start">
+                                      <p
+                                        className={`mb-0 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`}
+                                        style={{
+                                          color: isLightTheme ? '' : '#9ca3af',
+                                        }}
+                                      >
+                                        Payment Method:
+                                      </p>
+                                    </div>
+                                    <div className="col-6 text-end">
+                                      <p
+                                        className={`fw-bold mb-0 ${!isLightTheme ? 'text-white' : ''}`}
+                                      >
+                                        <i className="feather-check-circle text-success me-1"></i>
+                                        PayPal
+                                      </p>
                                     </div>
                                   </div>
                                 </div>
                               </div>
+                            </div>
                           </div>
                         </div>
                       )}

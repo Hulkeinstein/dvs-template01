@@ -6,6 +6,20 @@ const nextConfig = {
       bodySizeLimit: '5mb', // 기본 1mb에서 5mb로 증가
     },
   },
+  // Exclude server-only packages from client bundle
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Don't resolve server-only modules on client side
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {
