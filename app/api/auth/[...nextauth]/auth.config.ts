@@ -8,7 +8,7 @@ import { JWT } from 'next-auth/jwt';
 const getSupabaseClient = () => {
   try {
     return getServerClient();
-  } catch (error) {
+  } catch {
     console.warn('Supabase 환경 변수가 설정되지 않았습니다.');
     return null;
   }
@@ -69,7 +69,13 @@ export const authOptions: NextAuthOptions = {
   },
   debug: process.env.NODE_ENV === 'development', // 개발 환경에서 디버깅 활성화
   callbacks: {
-    async signIn({ user, account, profile }: { user: User; account: Account | null; profile?: Profile }) {
+    async signIn({
+      user,
+    }: {
+      user: User;
+      account: Account | null;
+      profile?: Profile;
+    }) {
       const supabase = getSupabaseClient();
       if (!supabase) {
         console.error('Supabase 클라이언트가 초기화되지 않았습니다.');
@@ -81,7 +87,9 @@ export const authOptions: NextAuthOptions = {
 
         // Supabase에서 사용자 조회
         // Note: Using any for supabase response to avoid strict typing issues with the client instance for now
-        const { data: existingUser, error: selectError } = await (supabase as any)
+        const { data: existingUser, error: selectError } = await (
+          supabase as any
+        )
           .from('user')
           .select('id')
           .eq('email', user.email)
