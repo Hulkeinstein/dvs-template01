@@ -14,7 +14,9 @@ import paypal from '@paypal/checkout-server-sdk';
  * @returns true if PayPal credentials are configured
  */
 export function isPayPalEnabled(): boolean {
-  return !!(process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET);
+  const clientId = process.env.PAYPAL_CLIENT_ID || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+  return !!(clientId && clientSecret);
 }
 
 /**
@@ -23,7 +25,10 @@ export function isPayPalEnabled(): boolean {
 function getPayPalEnvironment():
   | paypal.core.SandboxEnvironment
   | paypal.core.LiveEnvironment {
-  const clientId = process.env.PAYPAL_CLIENT_ID || '';
+  const clientId =
+    process.env.PAYPAL_CLIENT_ID ||
+    process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ||
+    '';
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET || '';
 
   if (process.env.NODE_ENV === 'production') {

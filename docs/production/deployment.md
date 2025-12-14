@@ -172,7 +172,28 @@ CREATE INDEX idx_lessons_course ON lessons(course_id);
 - [ ] 수신거부 링크 포함
 - [ ] 발신자 정보 명확히 표시
 
-### 4. Vercel
+### 4. PayPal
+#### 프로덕션 전환
+1. **Live 설정을 위한 앱 생성**:
+   - [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/) 접속
+   - **Apps & Credentials** > **Live** 모드 선택 > **Create App**
+2. **Webhook 설정** (필수):
+   - **Add Webhook** 클릭
+   - URL: `https://yourdomain.com/api/webhooks/paypal`
+   - **Event Types** (필수 선택):
+     - `Checkout order approved`
+     - `Payment capture completed`
+3. **Webhook ID 확인**:
+   - 생성된 Webhook의 ID를 복사하여 `PAYPAL_WEBHOOK_ID` 환경변수에 설정
+
+#### 환경변수 설정
+```bash
+✅ PAYPAL_CLIENT_ID=<Live Client ID>
+✅ PAYPAL_CLIENT_SECRET=<Live Secret>
+✅ PAYPAL_WEBHOOK_ID=<Webhook ID>
+```
+
+### 5. Vercel
 #### 환경변수 설정
 1. **Vercel Dashboard** → Project Settings → Environment Variables
 2. **Production** 환경 선택
@@ -199,7 +220,7 @@ CNAME www    cname.vercel-dns.com
 - [ ] Analytics 활성화
 - [ ] Speed Insights 활성화
 
-### 5. NextAuth
+### 6. NextAuth
 #### 프로덕션 설정
 ```javascript
 // app/api/auth/[...nextauth]/route.ts

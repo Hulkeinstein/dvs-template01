@@ -125,6 +125,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 7.1 캡처된 금액 검증 (보안)
+    const capturedAmount = parseFloat(
+      capture.result.purchase_units?.[0]?.payments?.captures?.[0]?.amount
+        ?.value || '0'
+    );
+    const expectedAmount = Number(order.amount);
+    if (Math.abs(capturedAmount - expectedAmount) > 0.01) {
+      console.error('[PayPal] Amount mismatch detected:', {
+        capturedAmount,
+        expectedAmount,
+        orderId,
+        paypalOrderId,
+      });
+      return NextResponse.json(
+        { error: 'Amount mismatch', code: 'AMOUNT_VERIFICATION_FAILED' },
+        { status: 400 }
+      );
+    }
+
     // 8. 트랜잭션 ID 추출
     const transactionId =
       capture.result.purchase_units[0]?.payments?.captures?.[0]?.id ||

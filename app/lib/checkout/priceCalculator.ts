@@ -3,6 +3,8 @@
  * 서버 사이드에서만 사용 - 가격의 진실 원천 (Single Source of Truth)
  */
 
+import { createHash } from 'crypto';
+
 export interface CartLine {
   id: string;
   qty: number;
@@ -56,7 +58,7 @@ export function calculateTotals(
     discount: Math.round(discount * 100) / 100,
     tax,
     total: Math.round(total * 100) / 100,
-    currency: 'USD'
+    currency: 'USD',
   };
 }
 
@@ -75,23 +77,17 @@ export function generateIdempotencyKey(
 
 /**
  * 카트 해시 생성
- * 카트 내용의 고유 식별자
+ * 카트 내용의 고유 식별자 (SHA-256)
  */
 export function generateCartHash(lines: CartLine[]): string {
   // 카트 아이템을 정렬하여 순서 무관하게 만듦
   const sorted = [...lines].sort((a, b) => a.id.localeCompare(b.id));
   const cartString = sorted
-    .map(line => `${line.id}:${line.qty}:${line.unit}`)
+    .map((line) => `${line.id}:${line.qty}:${line.unit}`)
     .join('|');
 
-  // 간단한 해시 (실제로는 crypto 사용 권장)
-  let hash = 0;
-  for (let i = 0; i < cartString.length; i++) {
-    const char = cartString.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return Math.abs(hash).toString(36);
+  // SHA-256 해시 사용 (보안)
+  return createHash('sha256').update(cartString).digest('hex').substring(0, 16);
 }
 
 /**
@@ -126,7 +122,7 @@ export function formatCurrency(
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(amount);
 }
 
@@ -144,16 +140,14 @@ export function fromCents(cents: number): number {
 /**
  * 세율 조회 (추후 지역별 세율 적용)
  */
-export function getTaxRate(
-  country: string = 'US'
-): number {
+export function getTaxRate(country: string = 'US'): number {
   // 현재는 고정 5% VAT
   // 추후 지역별 세율 테이블 구현
   const TAX_RATES: Record<string, number> = {
-    'US': 0.05,
-    'CA': 0.13, // Canada
-    'UK': 0.20, // UK VAT
-    'EU': 0.21, // EU average VAT
+    US: 0.05,
+    CA: 0.13, // Canada
+    UK: 0.2, // UK VAT
+    EU: 0.21, // EU average VAT
   };
 
   return TAX_RATES[country] || 0.05;
@@ -183,9 +177,9 @@ export function calculatePaymentFee(
   paymentMethod: string
 ): number {
   const PAYMENT_FEES: Record<string, { fixed: number; percentage: number }> = {
-    'stripe': { fixed: 0.30, percentage: 0.029 },     // 2.9% + $0.30
-    'paypal': { fixed: 0.49, percentage: 0.0349 },    // 3.49% + $0.49
-    'cash_on_delivery': { fixed: 0, percentage: 0 },  // No fee
+    stripe: { fixed: 0.3, percentage: 0.029 }, // 2.9% + $0.30
+    paypal: { fixed: 0.49, percentage: 0.0349 }, // 3.49% + $0.49
+    cash_on_delivery: { fixed: 0, percentage: 0 }, // No fee
   };
 
   const fee = PAYMENT_FEES[paymentMethod];
@@ -213,10 +207,11 @@ export async function validateDiscountCode(
 ): Promise<{ valid: boolean; discount: number; message?: string }> {
   // TODO: 데이터베이스에서 할인 코드 조회
   // 임시 구현
-  const MOCK_CODES: Record<string, { discount: number; minPurchase: number }> = {
-    'WELCOME10': { discount: 10, minPurchase: 50 },
-    'SAVE20': { discount: 20, minPurchase: 100 },
-  };
+  const MOCK_CODES: Record<string, { discount: number; minPurchase: number }> =
+    {
+      WELCOME10: { discount: 10, minPurchase: 50 },
+      SAVE20: { discount: 20, minPurchase: 100 },
+    };
 
   const discountData = MOCK_CODES[code.toUpperCase()];
 
@@ -228,7 +223,7 @@ export async function validateDiscountCode(
     return {
       valid: false,
       discount: 0,
-      message: `Minimum purchase of $${discountData.minPurchase} required`
+      message: `Minimum purchase of $${discountData.minPurchase} required`,
     };
   }
 

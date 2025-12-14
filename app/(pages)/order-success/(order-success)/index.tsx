@@ -11,6 +11,7 @@ import MobileMenu from '@/components/Header/MobileMenu';
 import Cart from '@/components/Header/Offcanvas/Cart';
 import Separator from '@/components/Common/Separator';
 import FooterOne from '@/components/Footer/Footer-One';
+import { useAppContext } from '@/context/Context';
 import {
   capturePayPalOrderAction,
   getOrderByNumber,
@@ -23,7 +24,9 @@ interface PayPalDetails {
 }
 
 const OrderSuccessPage = (): JSX.Element => {
+  const { isLightTheme } = useAppContext();
   const searchParams = useSearchParams();
+  // ... state declarations match original ...
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [isProcessingPayPal, setIsProcessingPayPal] = useState(false);
   const [paypalError, setPaypalError] = useState<string | null>(null);
@@ -34,6 +37,9 @@ const OrderSuccessPage = (): JSX.Element => {
   const [isDownloadingReceipt, setIsDownloadingReceipt] = useState(false);
   const [receiptError, setReceiptError] = useState<string | null>(null);
   const [orderId, setOrderId] = useState<string | null>(null);
+
+  // ... (useEffect hook content remains same) ...
+
 
   useEffect(() => {
     // Get order details from URL params
@@ -49,18 +55,18 @@ const OrderSuccessPage = (): JSX.Element => {
       // Process PayPal capture
       capturePayPalOrderAction(paypalToken)
         .then((result) => {
-          console.log('[OrderSuccess] PayPal capture result:', result);
-          if (result.success && 'transactionId' in result) {
-            // Type guard ensures we have all required PayPalDetails fields
+          if (result.success) {
+            const data = result as any;
             setPaypalDetails({
-              transactionId: result.transactionId,
-              amount: result.amount,
-              currency: result.currency,
+              transactionId: data.transactionId || '',
+              amount: data.amount || '0',
+              currency: data.currency || 'USD',
             });
             // Use PayPal order ID as order number if not provided
-            setOrderNumber(result.orderId || paypalToken.slice(0, 10));
-            setOrderId(result.orderId); // Store the database order ID (UUID)
-            console.log('[OrderSuccess] Set orderId to:', result.orderId);
+            setOrderNumber(data.orderId || paypalToken.slice(0, 10));
+            if (data.orderId) {
+               setOrderId(data.orderId); // Store the database order ID (UUID)
+            }
           } else {
             setPaypalError(
               'error' in result ? result.error : 'Payment processing failed'
@@ -91,10 +97,7 @@ const OrderSuccessPage = (): JSX.Element => {
 
   // Function to handle receipt download
   const handleDownloadReceipt = async () => {
-    console.log('[ReceiptDownload] Starting download, orderId:', orderId);
-
     if (!orderId) {
-      console.log('[ReceiptDownload] No orderId available');
       setReceiptError('Order ID not found');
       return;
     }
@@ -103,8 +106,6 @@ const OrderSuccessPage = (): JSX.Element => {
     setReceiptError(null);
 
     try {
-      console.log('[ReceiptDownload] Generating PDF for orderId:', orderId);
-
       // Make API call to generate PDF (GET request)
       const response = await fetch(`/api/receipts/generate?orderId=${orderId}`);
 
@@ -218,7 +219,7 @@ const OrderSuccessPage = (): JSX.Element => {
                           <div
                             className="order-number-box"
                             style={{
-                              background: '#f5f5f5',
+                              background: isLightTheme ? '#f5f5f5' : '#1f2937',
                               padding: '20px',
                               borderRadius: '8px',
                               border: '2px solid #22c55e',
@@ -227,7 +228,7 @@ const OrderSuccessPage = (): JSX.Element => {
                             <p
                               style={{
                                 fontSize: '14px',
-                                color: '#666',
+                                color: isLightTheme ? '#666' : '#9ca3af',
                                 margin: '0',
                               }}
                             >
@@ -237,7 +238,7 @@ const OrderSuccessPage = (): JSX.Element => {
                               style={{
                                 fontSize: '28px',
                                 fontWeight: 'bold',
-                                color: '#333',
+                                color: isLightTheme ? '#333' : '#ffffff',
                                 margin: '5px 0',
                               }}
                             >
@@ -246,7 +247,7 @@ const OrderSuccessPage = (): JSX.Element => {
                             <p
                               style={{
                                 fontSize: '12px',
-                                color: '#999',
+                                color: isLightTheme ? '#999' : '#6b7280',
                                 margin: '0',
                               }}
                             >
@@ -260,51 +261,57 @@ const OrderSuccessPage = (): JSX.Element => {
                       {paypalDetails && (
                         <div className="paypal-details mb-4">
                           <div className="row">
-                            <div className="col-md-12">
-                              <div className="card">
-                                <div className="card-body">
-                                  <h5 className="mb-3">Payment Details</h5>
-                                  <div className="row">
-                                    <div className="col-6 text-start">
-                                      <p className="text-muted mb-2">
-                                        Transaction ID:
-                                      </p>
+                              <div className="col-md-12">
+                                <div 
+                                  className="card"
+                                  style={{
+                                    background: isLightTheme ? '#fff' : '#1f2937',
+                                    border: isLightTheme ? '1px solid rgba(0,0,0,.125)' : '1px solid #374151',
+                                  }}
+                                >
+                                  <div className="card-body">
+                                    <h5 className={`mb-3 ${!isLightTheme ? 'text-white' : ''}`}>Payment Details</h5>
+                                    <div className="row">
+                                      <div className="col-6 text-start">
+                                        <p className={`mb-2 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`} style={{ color: isLightTheme ? '' : '#9ca3af' }}>
+                                          Transaction ID:
+                                        </p>
+                                      </div>
+                                      <div className="col-6 text-end">
+                                        <p className={`fw-bold text-break ${!isLightTheme ? 'text-white' : ''}`}>
+                                          {paypalDetails.transactionId}
+                                        </p>
+                                      </div>
                                     </div>
-                                    <div className="col-6 text-end">
-                                      <p className="fw-bold text-break">
-                                        {paypalDetails.transactionId}
-                                      </p>
+                                    <div className="row">
+                                      <div className="col-6 text-start">
+                                        <p className={`mb-2 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`} style={{ color: isLightTheme ? '' : '#9ca3af' }}>
+                                          Amount Paid:
+                                        </p>
+                                      </div>
+                                      <div className="col-6 text-end">
+                                        <p className={`fw-bold ${!isLightTheme ? 'text-white' : ''}`}>
+                                          {paypalDetails.currency} $
+                                          {paypalDetails.amount}
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                  <div className="row">
-                                    <div className="col-6 text-start">
-                                      <p className="text-muted mb-2">
-                                        Amount Paid:
-                                      </p>
-                                    </div>
-                                    <div className="col-6 text-end">
-                                      <p className="fw-bold">
-                                        {paypalDetails.currency} $
-                                        {paypalDetails.amount}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="row">
-                                    <div className="col-6 text-start">
-                                      <p className="text-muted mb-0">
-                                        Payment Method:
-                                      </p>
-                                    </div>
-                                    <div className="col-6 text-end">
-                                      <p className="fw-bold mb-0">
-                                        <i className="feather-check-circle text-success me-1"></i>
-                                        PayPal
-                                      </p>
+                                    <div className="row">
+                                      <div className="col-6 text-start">
+                                        <p className={`mb-0 ${isLightTheme ? 'text-muted' : 'text-gray-400'}`} style={{ color: isLightTheme ? '' : '#9ca3af' }}>
+                                          Payment Method:
+                                        </p>
+                                      </div>
+                                      <div className="col-6 text-end">
+                                        <p className={`fw-bold mb-0 ${!isLightTheme ? 'text-white' : ''}`}>
+                                          <i className="feather-check-circle text-success me-1"></i>
+                                          PayPal
+                                        </p>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
                           </div>
                         </div>
                       )}
