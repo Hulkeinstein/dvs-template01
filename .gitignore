@@ -80,3 +80,7 @@ public/css/
 !public/css/.gitkeep
 test_output*.txt
 test-results/
+
+# Playwright
+playwright-report/
+playwright/.cache/
