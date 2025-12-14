@@ -1,10 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
-import { paypalClient, isPayPalEnabled } from '@/app/lib/paypal';
-import paypal from '@paypal/checkout-server-sdk';
-import { sendOrderConfirmationEmail } from '@/app/lib/services/emailService';
-import { capturePayPalOrder } from '@/app/lib/services/paymentService';
+
+// Dynamic imports for server-only modules to prevent client bundle inclusion
+// These are loaded only when needed at runtime
+const getPayPalModules = async () => {
+  const [paypalModule, paypalLib] = await Promise.all([
+    import('@/app/lib/paypal'),
+    import('@paypal/checkout-server-sdk'),
+  ]);
+  return {
+    paypalClient: paypalModule.paypalClient,
+    isPayPalEnabled: paypalModule.isPayPalEnabled,
+    paypal: paypalLib.default,
+  };
+};
+
+const getEmailService = async () => {
+  const emailModule = await import('@/app/lib/services/emailService');
+  return emailModule.sendOrderConfirmationEmail;
+};
+
+const getPaymentService = async () => {
+  const paymentModule = await import('@/app/lib/services/paymentService');
+  return paymentModule.capturePayPalOrder;
+};
 import {
   calculateTotals,
   generateOrderNumber,
@@ -92,7 +112,6 @@ async function validateAndCalculatePrices(items: CartItem[]) {
 /**
  * Send order confirmation email
  */
-
 
 // =========================================================================
 // Main Order Creation Function (Refactored)
@@ -257,19 +276,23 @@ export async function createOrder(
 
     // 8. Send order confirmation email (non-blocking)
     const customerName = `${formData.shipping.firstName} ${formData.shipping.lastName}`;
-    sendOrderConfirmationEmail({
-      email: formData.shipping.email,
-      name: customerName,
-      orderNumber,
-      items: validatedItems,
-      subtotal,
-      tax,
-      total,
-      paymentMethod: formData.paymentMethod,
-    }).catch((error) => {
-      // Log but don't fail the order if email fails
-      console.error('Email sending failed:', error);
-    });
+    getEmailService()
+      .then((sendOrderConfirmationEmail) =>
+        sendOrderConfirmationEmail({
+          email: formData.shipping.email,
+          name: customerName,
+          orderNumber,
+          items: validatedItems,
+          subtotal,
+          tax,
+          total,
+          paymentMethod: formData.paymentMethod,
+        })
+      )
+      .catch((error) => {
+        // Log but don't fail the order if email fails
+        console.error('Email sending failed:', error);
+      });
 
     // 9. Handle payment method-specific redirects
     const orderId = orderResult?.[0]?.order_id || idempotencyKey;
@@ -277,7 +300,11 @@ export async function createOrder(
     // For PayPal, create PayPal order and return approval URL
     if (formData.paymentMethod === 'paypal') {
       try {
-        // 1. Check if PayPal is enabled
+        // 1. Load PayPal modules dynamically
+        const { paypalClient, isPayPalEnabled, paypal } =
+          await getPayPalModules();
+
+        // 2. Check if PayPal is enabled
         if (!isPayPalEnabled()) {
           console.error('[OrderAction] PayPal is not enabled');
           return {
@@ -286,7 +313,7 @@ export async function createOrder(
           };
         }
 
-        // 2. Verify session in Server Action
+        // 3. Verify session in Server Action
         const session = await getServerSession(authOptions);
 
         if (!session?.user?.id) {
@@ -302,7 +329,7 @@ export async function createOrder(
           email: session.user.email,
         });
 
-        // 3. Get course information for PayPal order
+        // 4. Get course information for PayPal order
         const { data: course } = await supabase
           .from('courses')
           .select('id, title')
@@ -317,7 +344,7 @@ export async function createOrder(
           };
         }
 
-        // 4. Create PayPal order directly using SDK
+        // 5. Create PayPal order directly using SDK
         const request = new paypal.orders.OrdersCreateRequest();
         request.prefer('return=representation');
         request.headers['Content-Type'] = 'application/json';
@@ -529,17 +556,17 @@ export async function capturePayPalOrderAction(paypalOrderId: string) {
       };
     }
 
-    // 2. Call Payment Service
+    // 2. Call Payment Service (dynamic import)
+    const capturePayPalOrder = await getPaymentService();
     return await capturePayPalOrder(paypalOrderId, session.user.id);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('[CapturePayPal] Error:', error);
     return {
       success: false,
-      error: error.message || 'Payment capture failed',
+      error: error instanceof Error ? error.message : 'Payment capture failed',
     };
   }
 }
-
 
 // =========================================================================
 // Instructor Order Functions

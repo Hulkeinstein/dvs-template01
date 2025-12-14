@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { capturePayPalOrderAction } from '@/app/lib/actions/orderActions';
 
 interface CapturePaymentProps {
   paypalOrderId?: string;
@@ -32,7 +31,13 @@ export default function CapturePayment({
       try {
         setState({ phase: 'capturing' });
 
-        const result = await capturePayPalOrderAction(paypalOrderId);
+        // Use API route instead of Server Action
+        const response = await fetch('/api/payment/paypal/capture-redirect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paypalOrderId }),
+        });
+        const result = await response.json();
 
         if (result.success) {
           setState({
@@ -46,11 +51,14 @@ export default function CapturePayment({
             msg: result.error || 'Failed to process payment',
           });
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('[CapturePayment] Error:', error);
         setState({
           phase: 'error',
-          msg: error?.message ?? 'An unexpected error occurred',
+          msg:
+            error instanceof Error
+              ? error.message
+              : 'An unexpected error occurred',
         });
       }
     })();
