@@ -37,7 +37,7 @@ const CourseFilterOneToggle: React.FC<CourseFilterOneToggleProps> = ({
 
   useEffect(() => {
     setTotalPages(Math.ceil(course.length / 6));
-  }, [course]);
+  }, [course.length]);
 
   return (
     <>

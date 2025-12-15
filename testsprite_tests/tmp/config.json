@@ -1,0 +1,18 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "diff",
+  "localEndpoint": "http://localhost:3000/student-dashboard",
+  "loginUser": "thenanum707@gmail.com",
+  "loginPassword": "jkw0508!@",
+  "executionArgs": {
+    "projectName": "DVS-TEMPLATE01",
+    "projectPath": "D:\\kamwoo\\6.programing\\DEV\\Cursor\\project\\dvs-template01\\DVS-TEMPLATE01",
+    "testIds": [],
+    "additionalInstruction": "Focus on testing the Student Dashboard data integration. Verify that: 1) userId is properly passed from StudentDashboardClient to Dashboard component, 2) Dashboard displays real enrollment data (enrolledCourses, activeCourses, completedCourses) instead of hardcoded values (30, 10, 7), 3) The data flow works correctly when a student logs in.",
+    "envs": {
+      "API_KEY": "sk-user-yxRWkp5x4PdhGoFe7SnQDVbmwdisC6pY28EH949Qc4Lf4pmqHvdVNWkkgtK4RZbkou4aVo_cYmddvQVeDWs3kFSdOJ2EynprAYtqIclsbsLK4MKRf_cq01L4OxsDevEJviE"
+    }
+  },
+  "proxy": "http://40edd569-90be-4a53-8cec-360a3a27fe69:KEwwaZ6XlRn4b6CDtoh2GnT1CBCFG7s9@tun.testsprite.com:8080"
+}

@@ -40,7 +40,15 @@ const DashboardPage = async () => {
     );
 
     // 교사용 대시보드 데이터 조회 (서비스 키 사용 X)
-    const stats = await getInstructorDashboardData(userId);
+    // InstructorStats 타입에 맞게 데이터 매핑
+    const rawStats = await getInstructorDashboardData(userId);
+
+    // getInstructorDashboardData가 반환하는 객체와 InstructorStats 타입 불일치 해결
+    const stats = {
+      ...(rawStats as any), // JS 파일에서 오는 데이터라 타입 단언 필요
+      totalRevenue: (rawStats as any).totalEarnings || 0,
+      totalLessons: 0, // 서버 액션에서 제공하지 않는 값은 기본값 처리
+    };
 
     console.log('[Dashboard] Stats received:', stats);
 

@@ -17,7 +17,7 @@ export async function getFirstVisibleCourseCard(
   try {
     await courseLink.waitFor({ state: 'visible', timeout: 15000 });
     return courseLink;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

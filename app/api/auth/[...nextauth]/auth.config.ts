@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { getServerClient } from '@/app/lib/supabase/server';
 import { NextAuthOptions, User, Account, Profile } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
+import bcrypt from 'bcrypt';
 
 // Use server-side SupabaseClient
 const getSupabaseClient = () => {
@@ -33,34 +34,53 @@ export const authOptions: NextAuthOptions = {
       // Google OpenID configuration URL 직접 지정 (캐싱 효과)
       wellKnown: 'https://accounts.google.com/.well-known/openid-configuration',
     }),
-    ...(process.env.ENABLE_TEST_AUTH === 'true'
-      ? [
-          CredentialsProvider({
-            id: 'credentials',
-            name: 'Test Credentials',
-            credentials: {
-              email: { label: 'Email', type: 'text' },
-              id: { label: 'ID', type: 'text' },
-            },
-            async authorize(credentials) {
-              if (
-                credentials?.email === 'test@example.com' &&
-                credentials?.id === 'test-user-id'
-              ) {
-                // Return a mock user that satisfies the User interface
-                return {
-                  id: 'test-user-id',
-                  email: 'test@example.com',
-                  name: 'Test User',
-                  image: 'https://via.placeholder.com/150',
-                  role: 'student',
-                } as User;
-              }
-              return null;
-            },
-          }),
-        ]
-      : []),
+    CredentialsProvider({
+      id: 'credentials',
+      name: 'Email',
+      credentials: {
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          return null;
+        }
+
+        const supabase = getSupabaseClient();
+        if (!supabase) {
+          throw new Error('Database connection failed');
+        }
+
+        // Supabase에서 사용자 조회
+        const { data: user } = await (supabase as any)
+          .from('user')
+          .select('id, email, name, role, password_hash, auth_provider')
+          .eq('email', credentials.email)
+          .single();
+
+        if (!user || !user.password_hash) {
+          return null; // 사용자 없음 또는 비밀번호 미설정
+        }
+
+        // 비밀번호 검증
+        const isValid = await bcrypt.compare(
+          credentials.password,
+          user.password_hash
+        );
+
+        if (!isValid) {
+          return null;
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: null, // Credentials 로그인 시 이미지는 별도 로드 필요할 수 있음
+          role: user.role || 'student',
+        };
+      },
+    }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

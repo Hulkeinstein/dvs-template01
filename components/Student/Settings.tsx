@@ -978,7 +978,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
               {userProfile?.auth_provider === 'google' &&
               !userProfile?.password_hash ? (
                 // Google OAuth 사용자이며 비밀번호가 설정되지 않은 경우
-                <div className="rbt-profile-row">
+                <div className="rbt-profile-row row">
                   <div className="col-12">
                     <div className="small text-muted mb-3">
                       <div className="mb-1">
@@ -1010,9 +1010,9 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
 
                   {/* Password setup form */}
                   {showPasswordSetup && (
-                    <div id="password-setup-section">
+                    <div id="password-setup-section" className="col-12">
                       <form
-                        className="rbt-profile-row rbt-default-form row row--15 mt-4"
+                        className="rbt-default-form row row--15 mt-4"
                         onSubmit={handlePasswordSetup}
                       >
                         <div className="col-12">
