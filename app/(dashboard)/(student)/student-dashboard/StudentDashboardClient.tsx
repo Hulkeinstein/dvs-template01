@@ -40,7 +40,7 @@ const StudentDashboardClient = ({ userId }: StudentDashboardClientProps) => {
                       <StudentDashboardSidebar />
                     </div>
                     <div className="col-lg-9">
-                      <Dashboard />
+                      <Dashboard userId={userId} />
                     </div>
                   </div>
                 </div>

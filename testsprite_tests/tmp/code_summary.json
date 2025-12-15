@@ -1,0 +1,29 @@
+{
+  "tech_stack": [
+    "TypeScript",
+    "Next.js 14",
+    "React",
+    "Supabase",
+    "NextAuth.js",
+    "Bootstrap 5"
+  ],
+  "features": [
+    {
+      "name": "Student Dashboard Data Integration",
+      "description": "Connect Student Dashboard UI to real data by passing userId prop from StudentDashboardClient to Dashboard component. This enables the Dashboard to fetch actual enrollment statistics (enrolledCourses, activeCourses, completedCourses) using getStudentDashboardStats server action.",
+      "files": [
+        "app/(dashboard)/(student)/student-dashboard/StudentDashboardClient.tsx",
+        "components/Student/Dashboard.tsx"
+      ]
+    },
+    {
+      "name": "TypeScript Migration Cleanup",
+      "description": "Remove duplicate JavaScript files (Dashboard.js, index.js, page.js) after migrating to TypeScript versions. The .tsx versions are now the single source of truth.",
+      "files": [
+        "app/(dashboard)/(student)/student-dashboard/(dashboard)/index.js",
+        "app/(dashboard)/dashboard/page.js",
+        "components/Student/Dashboard.js"
+      ]
+    }
+  ]
+}
