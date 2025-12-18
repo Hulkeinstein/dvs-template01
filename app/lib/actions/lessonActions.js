@@ -339,3 +339,24 @@ export async function getLessonsByCourse(courseId) {
     return { success: false, error: 'An unexpected error occurred' };
   }
 }
+
+// Get a single lesson by ID
+export async function getLessonById(lessonId) {
+  try {
+    const { data: lesson, error } = await supabase
+      .from('lessons')
+      .select('*')
+      .eq('id', lessonId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching lesson:', error);
+      return { success: false, error: 'Failed to fetch lesson' };
+    }
+
+    return { success: true, lesson };
+  } catch (error) {
+    console.error('Unexpected error in getLessonById:', error);
+    return { success: false, error: 'An unexpected error occurred' };
+  }
+}

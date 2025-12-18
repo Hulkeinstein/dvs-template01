@@ -3,6 +3,8 @@
  * These types are used across CreateCourse, modals, and lesson components
  */
 
+import { YouTubeContentData } from './youtube';
+
 // ============================================================================
 // Base Types
 // ============================================================================
@@ -45,6 +47,10 @@ export interface VideoLesson extends BaseLesson {
   is_preview?: boolean;
   thumbnail?: string | null;
   attachments?: AttachmentData[];
+  content_data?: {
+    youtube?: YouTubeContentData;
+    [key: string]: any; // Allow other data for flexibility
+  };
 }
 
 export interface QuizLesson extends BaseLesson {

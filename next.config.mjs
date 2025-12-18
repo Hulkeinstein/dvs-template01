@@ -42,6 +42,16 @@ const nextConfig = {
         hostname: 'datvqaemqzhgitxxfvar.supabase.co',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        pathname: '/**',
+      },
     ],
   },
   async headers() {

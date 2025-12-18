@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 
-const LessonTop = ({ sidebar, setSidebar }) => {
+const LessonTop = ({ sidebar, setSidebar, children }) => {
   return (
     <>
       <div className="lesson-top-bar">
@@ -20,6 +20,7 @@ const LessonTop = ({ sidebar, setSidebar }) => {
           <h5>The Complete Histudy 2023: From Zero to Expert!</h5>
         </div>
         <div className="lesson-top-right">
+          {children}
           <div className="rbt-btn-close">
             <Link
               href="/course-details"
