@@ -13,7 +13,10 @@ import type {
 
 import img from '../../../public/images/others/thumbnail-placeholder.svg';
 import { useDebouncedCallback } from 'use-debounce';
-import { fetchYouTubeMetadata, checkYoutubeDuplicate } from '@/app/lib/actions/youtubeActions';
+import {
+  fetchYouTubeMetadata,
+  checkYoutubeDuplicate,
+} from '@/app/lib/actions/youtubeActions';
 import { YouTubeContentData } from '@/types/youtube';
 import { isValidYouTubeUrl } from '@/app/lib/utils/youtube';
 
@@ -81,7 +84,8 @@ const LessonModal = ({
   // YouTube specific states
   const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
   const [metadataError, setMetadataError] = useState<string | null>(null);
-  const [youtubeMetadata, setYoutubeMetadata] = useState<YouTubeContentData | null>(null);
+  const [youtubeMetadata, setYoutubeMetadata] =
+    useState<YouTubeContentData | null>(null);
   const [isDuplicate, setIsDuplicate] = useState(false);
 
   const [lessonData, setLessonData] = useState<LessonFormData>({
@@ -95,8 +99,6 @@ const LessonModal = ({
     enablePreview: false,
     thumbnail: null,
   });
-
-
 
   // Debounced metadata fetcher
   const handleYoutubeUrlChange = useDebouncedCallback(async (url: string) => {
@@ -114,41 +116,69 @@ const LessonModal = ({
     try {
       // 1. Fetch Metadata
       const result = await fetchYouTubeMetadata(url);
-      
+
       if (!result.success || !result.data) {
         setMetadataError(result.error || '메타데이터를 가져올 수 없습니다.');
         setYoutubeMetadata(null);
       } else {
         const data = result.data;
         setYoutubeMetadata(data);
-        
+
         // Auto-fill fields if empty
-        setLessonData(prev => ({
+        // Note: Quill editor may have default HTML like '<p><br></p>' even when visually empty
+        const isDescriptionEmpty = (desc: string) => {
+          if (!desc) return true;
+          const stripped = desc
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, '')
+            .trim();
+          return stripped.length === 0;
+        };
+
+        setLessonData((prev) => ({
           ...prev,
           title: prev.title ? prev.title : data.original_title,
           // Thumbnail: if we have a valid URL, set it
-          thumbnail: !prev.thumbnail && data.thumbnail_url ? data.thumbnail_url : prev.thumbnail,
+          thumbnail:
+            !prev.thumbnail && data.thumbnail_url
+              ? data.thumbnail_url
+              : prev.thumbnail,
+          // Description: Auto-fill if empty and available (check for Quill's empty HTML)
+          description:
+            isDescriptionEmpty(prev.description) && data.description
+              ? data.description
+              : prev.description,
         }));
 
         if (!featureImagePreview && data.thumbnail_url) {
-           setFeatureImageUrl(data.thumbnail_url); // Set as implicit feature image
-           setFeatureImagePreview(data.thumbnail_url);
+          setFeatureImageUrl(data.thumbnail_url); // Set as implicit feature image
+          setFeatureImagePreview(data.thumbnail_url);
         }
 
         // Auto-fill Duration if available (API Key present)
-        if (data.duration_seconds && lessonData.hours === 0 && lessonData.minutes === 0 && lessonData.seconds === 0) {
-           const h = Math.floor(data.duration_seconds / 3600);
-           const m = Math.floor((data.duration_seconds % 3600) / 60);
-           const s = data.duration_seconds % 60;
-           setLessonData(prev => ({ ...prev, hours: h, minutes: m, seconds: s }));
+        if (
+          data.duration_seconds &&
+          lessonData.hours === 0 &&
+          lessonData.minutes === 0 &&
+          lessonData.seconds === 0
+        ) {
+          const h = Math.floor(data.duration_seconds / 3600);
+          const m = Math.floor((data.duration_seconds % 3600) / 60);
+          const s = data.duration_seconds % 60;
+          setLessonData((prev) => ({
+            ...prev,
+            hours: h,
+            minutes: m,
+            seconds: s,
+          }));
         }
 
         // 2. Check Duplicate (if courseId is available)
         if (courseId) {
-            const isDup = await checkYoutubeDuplicate(courseId, data.youtube_id);
-            if (isDup) {
-                setIsDuplicate(true);
-            }
+          const isDup = await checkYoutubeDuplicate(courseId, data.youtube_id);
+          if (isDup) {
+            setIsDuplicate(true);
+          }
         }
       }
     } catch (error) {
@@ -162,10 +192,10 @@ const LessonModal = ({
   // Wrapper for input change
   const onVideoUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
-    setLessonData(prev => ({ ...prev, videoUrl: url }));
-    
+    setLessonData((prev) => ({ ...prev, videoUrl: url }));
+
     if (lessonData.videoSource === 'youtube') {
-        handleYoutubeUrlChange(url);
+      handleYoutubeUrlChange(url);
     }
   };
 
@@ -193,8 +223,11 @@ const LessonModal = ({
       });
 
       // Load existing youtube metadata if present
-      if (editingLesson.videoSource === 'youtube' && editingLesson.content_data?.youtube) {
-          setYoutubeMetadata(editingLesson.content_data.youtube);
+      if (
+        editingLesson.videoSource === 'youtube' &&
+        editingLesson.content_data?.youtube
+      ) {
+        setYoutubeMetadata(editingLesson.content_data.youtube);
       }
 
       if (editingLesson.thumbnail) {
@@ -232,7 +265,9 @@ const LessonModal = ({
         // enablePreview는 이미 lessonData에 있음
         // DB 저장 시 is_preview로 변환 필요
         is_preview: Boolean(lessonData.enablePreview),
-        content_data: youtubeMetadata ? { youtube: youtubeMetadata } : lessonData.content_data,
+        content_data: youtubeMetadata
+          ? { youtube: youtubeMetadata }
+          : lessonData.content_data,
       };
 
       // enablePreview 필드는 제거 (is_preview로 이미 변환됨)
@@ -271,14 +306,14 @@ const LessonModal = ({
         enablePreview: false,
         thumbnail: null,
       });
-    setFeatureImagePreview(null);
-    setFeatureImageUrl(null);
-    setFeatureImageError(null);
-    setAttachments([]);
-    setAttachmentErrors([]);
-    setYoutubeMetadata(null); // Reset metadata
-    setMetadataError(null);
-    setIsDuplicate(false);
+      setFeatureImagePreview(null);
+      setFeatureImageUrl(null);
+      setFeatureImageError(null);
+      setAttachments([]);
+      setAttachmentErrors([]);
+      setYoutubeMetadata(null); // Reset metadata
+      setMetadataError(null);
+      setIsDuplicate(false);
 
       // 편집 완료 콜백
       if (onEditComplete) {
@@ -788,11 +823,11 @@ const LessonModal = ({
                       {/* Status Indicators */}
                       {isLoadingMetadata && (
                         <div className="mt-2 text-info">
-                            <span className="spinner-border spinner-border-sm me-2"></span>
-                            메타데이터 가져오는 중...
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          메타데이터 가져오는 중...
                         </div>
                       )}
-                      
+
                       {isDuplicate && (
                         <div className="alert alert-warning mt-2">
                           <i className="feather-alert-triangle me-2"></i>
@@ -803,11 +838,11 @@ const LessonModal = ({
                       {metadataError && (
                         <div className="alert alert-danger mt-2">
                           {metadataError}
-                          <button 
-                            className="btn btn-sm btn-outline-danger ms-2" 
+                          <button
+                            className="btn btn-sm btn-outline-danger ms-2"
                             onClick={(e) => {
-                                e.preventDefault();
-                                handleYoutubeUrlChange(lessonData.videoUrl);
+                              e.preventDefault();
+                              handleYoutubeUrlChange(lessonData.videoUrl);
                             }}
                           >
                             재시도
@@ -816,13 +851,32 @@ const LessonModal = ({
                       )}
 
                       {youtubeMetadata && (
-                          <div className="mt-2 p-2 border rounded d-flex align-items-center bg-light">
-                              <img src={youtubeMetadata.thumbnail_url} alt="Thumbnail" width="60" height="45" style={{objectFit: 'cover', marginRight: '10px'}} />
-                              <div>
-                                  <div className="fw-bold" style={{fontSize: '0.9rem'}}>{youtubeMetadata.original_title}</div>
-                                  <div className="text-muted" style={{fontSize: '0.8rem'}}>{youtubeMetadata.channel_name} • {youtubeMetadata.duration_seconds ? `${Math.floor(youtubeMetadata.duration_seconds / 60)}분 ${youtubeMetadata.duration_seconds % 60}초` : '길이 정보 없음'}</div>
-                              </div>
+                        <div className="mt-2 p-2 border rounded d-flex align-items-center bg-light">
+                          <img
+                            src={youtubeMetadata.thumbnail_url}
+                            alt="Thumbnail"
+                            width="60"
+                            height="45"
+                            style={{ objectFit: 'cover', marginRight: '10px' }}
+                          />
+                          <div>
+                            <div
+                              className="fw-bold"
+                              style={{ fontSize: '0.9rem' }}
+                            >
+                              {youtubeMetadata.original_title}
+                            </div>
+                            <div
+                              className="text-muted"
+                              style={{ fontSize: '0.8rem' }}
+                            >
+                              {youtubeMetadata.channel_name} •{' '}
+                              {youtubeMetadata.duration_seconds
+                                ? `${Math.floor(youtubeMetadata.duration_seconds / 60)}분 ${youtubeMetadata.duration_seconds % 60}초`
+                                : '길이 정보 없음'}
+                            </div>
                           </div>
+                        </div>
                       )}
                       <small>
                         <i className="feather-info"></i> Add the URL of your

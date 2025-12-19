@@ -19,6 +19,7 @@ export interface YouTubeContentData {
   channel_url: string;
   thumbnail_url: string;
   duration_seconds: number | null;
+  description?: string;
   fetched_at: string; // ISO 8601
 }
 
