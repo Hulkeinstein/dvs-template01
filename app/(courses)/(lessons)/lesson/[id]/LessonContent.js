@@ -8,8 +8,9 @@ import LessonPagination from '@/components/Lesson/LessonPagination';
 import LessonTop from '@/components/Lesson/LessonTop';
 import LessonVideo from '@/components/Lesson/LessonVideo';
 import LessonQuiz from '@/components/Lesson/LessonQuiz';
-import CreatorInfo from '@/components/Lesson/CreatorInfo'; // Import CreatorInfo
-import LessonCompleteButton from '@/components/Lesson/LessonCompleteButton'; // Import LessonCompleteButton
+import CreatorInfo from '@/components/Lesson/CreatorInfo';
+import LessonCompleteButton from '@/components/Lesson/LessonCompleteButton';
+import SummaryDisplay from '@/components/Lesson/SummaryDisplay';
 import {
   getQuizByLessonId,
   startQuizAttempt,
@@ -27,10 +28,7 @@ const LessonContent = ({ lessonId }) => {
   const [quizAttempt, setQuizAttempt] = useState(null);
   const [error, setError] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
-
-  useEffect(() => {
-    loadLessonData();
-  }, [lessonId, loadLessonData]);
+  const [seekTime, setSeekTime] = useState(null);
 
   const loadLessonData = useCallback(async () => {
     try {
@@ -81,6 +79,10 @@ const LessonContent = ({ lessonId }) => {
       setLoading(false);
     }
   }, [lessonId, session?.user?.id]);
+
+  useEffect(() => {
+    loadLessonData();
+  }, [lessonId, loadLessonData]);
 
   if (loading) {
     return (
@@ -147,14 +149,26 @@ const LessonContent = ({ lessonId }) => {
               />
             ) : (
              <>
-               <LessonVideo lesson={lesson} />
-               
+               <LessonVideo
+                 lesson={lesson}
+                 seekTime={seekTime}
+                 onSeekComplete={() => setSeekTime(null)}
+               />
+
                {lesson?.video_source === 'youtube' && lesson?.content_data?.youtube && (
-                   <CreatorInfo 
+                   <CreatorInfo
                         channelName={lesson.content_data.youtube.channel_name}
                         channelUrl={lesson.content_data.youtube.channel_url}
                         videoUrl={lesson.content_data.youtube.canonical_url}
                         originalTitle={lesson.content_data.youtube.original_title}
+                   />
+               )}
+
+               {lesson?.video_source === 'youtube' && lesson?.content_data?.summary && (
+                   <SummaryDisplay
+                        data={lesson.content_data.summary}
+                        isLoading={false}
+                        onTimestampClick={(seconds) => setSeekTime(seconds)}
                    />
                )}
              </>

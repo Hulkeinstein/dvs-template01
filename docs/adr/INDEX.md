@@ -92,6 +92,7 @@ ADRs are documents that capture important architectural decisions made throughou
 | ADR | Title | Date | Status | Tags |
 |-----|-------|------|--------|------|
 | [0001](./0001-record-architecture-decisions.md) | Record Architecture Decisions | 2025-11-05 | Accepted | meta, workflow |
+| [0002](./0002-youtube-ai-summarization.md) | YouTube AI Summarization Tech Stack | 2025-12-19 | Accepted | youtube, openai, supadata |
 
 ---
 
@@ -101,7 +102,7 @@ ADRs are documents that capture important architectural decisions made throughou
 - [0001](./0001-record-architecture-decisions.md) - Record Architecture Decisions
 
 ### Backend & Database
-_No ADRs yet - Consider documenting: Supabase choice, RLS patterns, migration strategy_
+- [0002](./0002-youtube-ai-summarization.md) - YouTube AI Summarization Tech Stack (GPT-4o-mini + Supadata)
 
 ### Authentication & Security
 _No ADRs yet - Consider documenting: Hybrid auth (OAuth + Email), password hashing, session management_
@@ -142,6 +143,6 @@ _None yet_
 
 ---
 
-**Last Updated**: 2025-11-05
-**Total ADRs**: 1
-**Status**: 🟢 Active (1 Accepted, 0 Proposed, 0 Deprecated, 0 Superseded)
+**Last Updated**: 2025-12-19
+**Total ADRs**: 2
+**Status**: 🟢 Active (2 Accepted, 0 Proposed, 0 Deprecated, 0 Superseded)

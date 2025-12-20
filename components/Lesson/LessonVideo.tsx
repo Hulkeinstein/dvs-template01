@@ -1,14 +1,47 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { extractYouTubeId } from '@/app/lib/utils/youtube';
 
 interface LessonVideoProps {
   lesson: any; // Using any for now as VideoLesson type might need to be imported or full schema used
+  seekTime?: number | null;
+  onSeekComplete?: () => void;
 }
 
-const LessonVideo: React.FC<LessonVideoProps> = ({ lesson }) => {
+const LessonVideo: React.FC<LessonVideoProps> = ({ lesson, seekTime, onSeekComplete }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Handle YouTube seek via postMessage API
+  const seekYouTube = useCallback((seconds: number) => {
+    if (iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({
+          event: 'command',
+          func: 'seekTo',
+          args: [seconds, true]
+        }),
+        '*'
+      );
+    }
+  }, []);
+
+  // Handle seek time changes
+  useEffect(() => {
+    if (seekTime !== null && seekTime !== undefined) {
+      const videoUrl = lesson?.content_data?.url || lesson?.video_url;
+      const youtubeId = videoUrl ? extractYouTubeId(videoUrl) : null;
+
+      if (youtubeId) {
+        seekYouTube(seekTime);
+      } else if (videoRef.current) {
+        videoRef.current.currentTime = seekTime;
+      }
+
+      onSeekComplete?.();
+    }
+  }, [seekTime, lesson, seekYouTube, onSeekComplete]);
 
   useEffect(() => {
     // Video player initialization if needed
@@ -48,7 +81,8 @@ const LessonVideo: React.FC<LessonVideoProps> = ({ lesson }) => {
         <div className="lesson-video-wrap">
           <div className="video-responsive">
             <iframe
-              src={`https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0&modestbranding=1&autoplay=0`}
+              ref={iframeRef}
+              src={`https://www.youtube-nocookie.com/embed/${youtubeId}?rel=0&modestbranding=1&autoplay=0&enablejsapi=1`}
               title={lesson.title || 'YouTube video player'}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

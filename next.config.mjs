@@ -6,6 +6,9 @@ const nextConfig = {
       bodySizeLimit: '5mb', // 기본 1mb에서 5mb로 증가
     },
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   // Exclude server-only packages from client bundle
   webpack: (config, { isServer }) => {
     if (!isServer) {

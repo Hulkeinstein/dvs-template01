@@ -509,32 +509,27 @@ export async function updateCourse(
                 content_type: lesson.content_type || 'video',
                 thumbnail_url: lesson.thumbnail || null,
                 attachments: lesson.attachments || [],
-                // Add content_data for quiz and assignment types
-                ...(lesson.content_type === 'quiz' && lesson.questions
+                // Add content_data for all lesson types
+                content_data: lesson.content_type === 'quiz' && lesson.questions
                   ? {
-                      content_data: {
-                        questions: lesson.questions,
-                        settings: lesson.settings || {},
-                        metadata: lesson.metadata || {},
-                      },
+                      questions: lesson.questions,
+                      settings: lesson.settings || {},
+                      metadata: lesson.metadata || {},
                     }
-                  : {}),
-                ...(lesson.content_type === 'assignment'
+                  : lesson.content_type === 'assignment'
                   ? {
-                      content_data: {
-                        summary: lesson.summary || '',
-                        timeLimit: lesson.timeLimit || {
-                          value: 0,
-                          unit: 'weeks',
-                        },
-                        totalPoints: lesson.totalPoints || 100,
-                        passingPoints: lesson.passingPoints || 70,
-                        maxUploads: lesson.maxUploads || 1,
-                        maxFileSize: lesson.maxFileSize || 10,
-                        attachments: lesson.attachments || [],
+                      summary: lesson.summary || '',
+                      timeLimit: lesson.timeLimit || {
+                        value: 0,
+                        unit: 'weeks',
                       },
+                      totalPoints: lesson.totalPoints || 100,
+                      passingPoints: lesson.passingPoints || 70,
+                      maxUploads: lesson.maxUploads || 1,
+                      maxFileSize: lesson.maxFileSize || 10,
+                      attachments: lesson.attachments || [],
                     }
-                  : {}),
+                  : lesson.content_data || {}, // video/lesson type - preserve existing content_data
               };
 
               console.log('Lesson data to insert:', lessonData);
@@ -610,32 +605,28 @@ export async function updateCourse(
               content_type: lesson.content_type || 'video',
               thumbnail_url: lesson.thumbnail || null,
               attachments: lesson.attachments || [],
-              // Add content_data for quiz and assignment types
-              ...(lesson.content_type === 'quiz' && lesson.questions
-                ? {
-                    content_data: {
+              // Add content_data for all lesson types
+              content_data:
+                lesson.content_type === 'quiz' && lesson.questions
+                  ? {
                       questions: lesson.questions,
                       settings: lesson.settings || {},
                       metadata: lesson.metadata || {},
-                    },
-                  }
-                : {}),
-              ...(lesson.content_type === 'assignment'
-                ? {
-                    content_data: {
-                      summary: lesson.summary || '',
-                      timeLimit: lesson.timeLimit || {
-                        value: 0,
-                        unit: 'weeks',
-                      },
-                      totalPoints: lesson.totalPoints || 100,
-                      passingPoints: lesson.passingPoints || 70,
-                      maxUploads: lesson.maxUploads || 1,
-                      maxFileSize: lesson.maxFileSize || 10,
-                      attachments: lesson.attachments || [],
-                    },
-                  }
-                : {}),
+                    }
+                  : lesson.content_type === 'assignment'
+                    ? {
+                        summary: lesson.summary || '',
+                        timeLimit: lesson.timeLimit || {
+                          value: 0,
+                          unit: 'weeks',
+                        },
+                        totalPoints: lesson.totalPoints || 100,
+                        passingPoints: lesson.passingPoints || 70,
+                        maxUploads: lesson.maxUploads || 1,
+                        maxFileSize: lesson.maxFileSize || 10,
+                        attachments: lesson.attachments || [],
+                      }
+                    : lesson.content_data || {}, // video/lesson type - preserve existing content_data
             };
 
             console.log('Lesson data to insert:', lessonData);

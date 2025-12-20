@@ -16,6 +16,10 @@ import {
   updateCourse,
   getCourseById,
 } from '@/app/lib/actions/courseActions';
+import {
+  createLesson,
+  updateLesson,
+} from '@/app/lib/actions/lessonActions';
 import { createQuizLesson } from '@/app/lib/actions/quizActions';
 import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
 import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
@@ -248,6 +252,7 @@ const CreateCourse = ({
                       enablePreview: lesson.is_preview || false,
                       thumbnail: lesson.thumbnail_url || null,
                       attachments: lesson.attachments || [],
+                      content_data: lesson.content_data || {},
                     } as VideoLesson;
                   }
                 }
@@ -312,6 +317,7 @@ const CreateCourse = ({
                     enablePreview: lesson.is_preview || false,
                     thumbnail: lesson.thumbnail_url || null,
                     attachments: lesson.attachments || [],
+                    content_data: lesson.content_data || {},
                   } as VideoLesson;
                 }
               }),
@@ -551,29 +557,75 @@ const CreateCourse = ({
     });
   };
 
-  const handleAddLesson = (
+  const handleAddLesson = async (
     topicId: string | number,
     lessonData: VideoLesson
   ) => {
+    // Track if this is a new lesson (before any DB operations)
+    const isNewLesson = !lessonData.id;
+    let savedLessonData = lessonData;
+
+    // Edit mode: Save to DB immediately
+    if (editMode && courseId) {
+      try {
+        if (lessonData.id) {
+            // Update existing lesson
+            const result = await updateLesson(lessonData.id, {
+                ...lessonData,
+                courseId,
+                topicId
+            });
+
+            if (!result.success) {
+                console.error('Error updating lesson:', result.error);
+                // Optionally show error to user
+            }
+        } else {
+            // Create new lesson
+            const result = await createLesson({
+                ...lessonData,
+                courseId,
+                topicId
+            });
+
+            if (result.success && result.lessonId) {
+                // Update lessonData with the real ID from DB
+                savedLessonData = {
+                    ...lessonData,
+                    id: result.lessonId
+                };
+            } else {
+                 console.error('Error creating lesson:', result.error);
+                 // Optionally show error
+                 return; // Don't update UI if DB save failed
+            }
+        }
+      } catch (error) {
+        console.error('Error saving lesson:', error);
+        return; // Don't update UI if DB save failed
+      }
+    }
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       topics: prevFormData.topics.map((topic) => {
         if (topic.id === topicId) {
-          // 편집 모드인지 확인 (lessonData에 id가 있으면 편집)
-          if (lessonData.id) {
+          // Use the original isNewLesson flag, not the updated ID
+          if (isNewLesson) {
+            // 새 레슨 추가
+            const newLesson: VideoLesson = {
+              ...savedLessonData,
+              id: savedLessonData.id || Date.now(),
+            };
+            return { ...topic, lessons: [...topic.lessons, newLesson] };
+          } else {
+            // 기존 레슨 편집
             return {
               ...topic,
               lessons: topic.lessons.map((lesson) =>
-                lesson.id === lessonData.id ? lessonData : lesson
+                lesson.id === savedLessonData.id ? savedLessonData : lesson
               ),
             };
-          } else {
-            // 새 레슨 추가
-            const newLesson: VideoLesson = {
-              ...lessonData,
-              id: Date.now(),
-            };
-            return { ...topic, lessons: [...topic.lessons, newLesson] };
           }
         }
         return topic;

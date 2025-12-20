@@ -1,0 +1,71 @@
+.summary-display {
+    // Default text color for light mode
+    color: #333;
+
+    &__loading {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    &__title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: inherit;
+    }
+
+    &__key-notes {
+        .list-group-item {
+            border: none;
+            background-color: transparent;
+            padding: 0.5rem 0;
+            padding-left: 1rem;
+            position: relative;
+            color: inherit;
+
+            &::before {
+                content: '';
+                /* Bullet is handled by text for now, or use custom styling */
+            }
+        }
+    }
+
+    &__detailed-notes {
+        .card {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            }
+
+            .card-title,
+            .card-text {
+                color: inherit;
+            }
+        }
+    }
+
+    // Dark mode support
+    [data-theme="dark"] &,
+    .active-dark-mode & {
+        color: #e0e0e0;
+
+        &__loading {
+            background-color: #2d2d2d;
+        }
+
+        &__detailed-notes {
+            .card {
+                border-color: #444;
+                background-color: #2d2d2d;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+                &:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                }
+            }
+        }
+    }
+}

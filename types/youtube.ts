@@ -1,3 +1,5 @@
+import type { SummaryData } from './summary';
+
 export interface YouTubeOEmbedResponse {
   title: string;
   author_name: string;
@@ -33,5 +35,6 @@ export interface YouTubeLessonInput {
 // For lesson.content_data field
 export interface LessonContentData {
   youtube?: YouTubeContentData;
-  [key: string]: any;
+  summary?: SummaryData;
+  [key: string]: unknown;
 }
