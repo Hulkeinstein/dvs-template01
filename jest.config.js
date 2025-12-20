@@ -31,7 +31,7 @@ const customJestConfig = {
     // Repository pattern mocking
     '^@/app/data/(.*)\\.repo$': '<rootDir>/tests/mocks/data/$1.repo.ts',
     // CSS/SCSS mocking
-    '\\.(css|scss|sass)$': 'identity-obj-proxy',
+    '\\.(css|scss|sass)$': '<rootDir>/__mocks__/styleMock.js',
     // ESM module mocks
     '^jose$': '<rootDir>/__mocks__/jose.ts',
     '^@panva/hkdf$': '<rootDir>/__mocks__/@panva/hkdf.js',

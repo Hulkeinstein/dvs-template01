@@ -12,6 +12,26 @@ import type {
 } from '@/types/create-course';
 
 import img from '../../../public/images/others/thumbnail-placeholder.svg';
+import { useDebouncedCallback } from 'use-debounce';
+import {
+  fetchYouTubeMetadata,
+  checkYoutubeDuplicate,
+} from '@/app/lib/actions/youtubeActions';
+import { YouTubeContentData } from '@/types/youtube';
+import { isValidYouTubeUrl } from '@/app/lib/utils/youtube';
+import SummaryButton from '@/components/Lesson/SummaryButton';
+import SummaryDisplay from '@/components/Lesson/SummaryDisplay';
+import { fetchTranscript } from '@/app/lib/actions/transcriptActions';
+import { generateFullSummary } from '@/app/lib/actions/summaryActions';
+import type { SummaryData } from '@/types/summary';
+import { useSession } from 'next-auth/react';
+import { 
+  getSavedSummary, 
+  saveSummary, 
+  checkDailyLimit, 
+  incrementDailyUsage,
+  logSummaryCost 
+} from '@/app/lib/actions/summaryCachingActions';
 
 // Internal state type for the lesson form
 interface LessonFormData {
@@ -24,6 +44,7 @@ interface LessonFormData {
   seconds: number;
   enablePreview: boolean;
   thumbnail: string | null;
+  content_data?: any;
 }
 
 // Error info for attachment uploads
@@ -52,7 +73,9 @@ const LessonModal = ({
   onAddLesson,
   editingLesson,
   onEditComplete,
-}: LessonModalProps) => {
+  courseId,
+}: LessonModalProps & { courseId?: string }) => {
+  const { data: session } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const attachmentInputRef = useRef<HTMLInputElement>(null);
   const lastPickIdRef = useRef<number>(0); // Race condition 방지용 추가
@@ -71,6 +94,21 @@ const LessonModal = ({
   const [attachmentErrors, setAttachmentErrors] = useState<AttachmentError[]>(
     []
   );
+
+  // YouTube specific states
+  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
+  const [metadataError, setMetadataError] = useState<string | null>(null);
+  const [youtubeMetadata, setYoutubeMetadata] =
+    useState<YouTubeContentData | null>(null);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+
+  // AI Summary State
+  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
+  const [summaryLoading, setSummaryLoading] = useState(false);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  // Track original URL when modal opens (for cache bypass detection)
+  const [originalVideoUrl, setOriginalVideoUrl] = useState<string | null>(null);
+
   const [lessonData, setLessonData] = useState<LessonFormData>({
     title: '',
     description: '',
@@ -82,6 +120,174 @@ const LessonModal = ({
     enablePreview: false,
     thumbnail: null,
   });
+
+  // Debounced metadata fetcher
+  const handleYoutubeUrlChange = useDebouncedCallback(async (url: string) => {
+    if (!isValidYouTubeUrl(url)) {
+      setYoutubeMetadata(null);
+      setMetadataError(null);
+      setIsDuplicate(false);
+      // URL이 유효하지 않으면 요약도 초기화
+      setSummaryData(null);
+      setSummaryError(null);
+      return;
+    }
+
+    // URL이 변경되면 이전 요약 데이터 및 content_data 초기화
+    setSummaryData(null);
+    setSummaryError(null);
+    // content_data도 초기화 (이전 youtube/summary 제거)
+    setLessonData((prev) => ({
+      ...prev,
+      content_data: undefined,
+      thumbnail: null,  // 썸네일도 초기화
+    }));
+    // 썸네일 미리보기 초기화
+    setFeatureImagePreview(null);
+    setFeatureImageUrl(null);
+
+    setIsLoadingMetadata(true);
+    setMetadataError(null);
+    setIsDuplicate(false);
+
+    try {
+      // 1. Fetch Metadata
+      const result = await fetchYouTubeMetadata(url);
+
+      if (!result.success || !result.data) {
+        setMetadataError(result.error || '메타데이터를 가져올 수 없습니다.');
+        setYoutubeMetadata(null);
+      } else {
+        const data = result.data;
+        setYoutubeMetadata(data);
+
+        // URL changed - always update all fields with new video data
+        const h = data.duration_seconds ? Math.floor(data.duration_seconds / 3600) : 0;
+        const m = data.duration_seconds ? Math.floor((data.duration_seconds % 3600) / 60) : 0;
+        const s = data.duration_seconds ? data.duration_seconds % 60 : 0;
+
+        setLessonData((prev) => ({
+          ...prev,
+          title: data.original_title || prev.title,
+          thumbnail: data.thumbnail_url || prev.thumbnail,
+          description: data.description || prev.description,
+          hours: h,
+          minutes: m,
+          seconds: s,
+        }));
+
+        // Always update thumbnail preview for new URL
+        if (data.thumbnail_url) {
+          setFeatureImageUrl(data.thumbnail_url);
+          setFeatureImagePreview(data.thumbnail_url);
+        }
+
+        // 2. Check Duplicate (if courseId is available)
+        if (courseId) {
+          const isDup = await checkYoutubeDuplicate(courseId, data.youtube_id);
+          if (isDup) {
+            setIsDuplicate(true);
+          }
+        }
+      }
+    } catch {
+      setMetadataError('오류가 발생했습니다.');
+    } finally {
+      setIsLoadingMetadata(false);
+    }
+  }, 600);
+
+  // Wrapper for input change
+  const onVideoUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const url = e.target.value;
+    setLessonData((prev) => ({ ...prev, videoUrl: url }));
+
+    if (lessonData.videoSource === 'youtube') {
+      handleYoutubeUrlChange(url);
+    }
+  };
+
+  const handleGenerateSummary = async () => {
+    // Session check
+    if (!session?.user?.id) {
+        setSummaryError('로그인이 필요합니다.');
+        return;
+    }
+    const userId = session.user.id;
+
+    if (!lessonData.videoUrl || !youtubeMetadata) return;
+    
+    setSummaryLoading(true);
+    setSummaryError(null);
+    
+    try {
+      // 1. 캐시 확인 (편집 모드이고 ID가 있고, URL이 변경되지 않았을 때만)
+      // URL이 변경되었으면 캐시를 무시하고 새로 생성
+      // Use originalVideoUrl (set when modal opened) for accurate comparison
+      const urlChanged = originalVideoUrl !== lessonData.videoUrl;
+      if (editingLesson && editingLesson.id && !urlChanged) {
+          // Note: editingLesson.id can be string or number
+          const cached = await getSavedSummary(editingLesson.id.toString());
+          if (cached.cached && cached.data) {
+              setSummaryData(cached.data);
+              setSummaryLoading(false);
+              return;
+          }
+      }
+
+      // 2. 일일 한도 확인
+      const limitCheck = await checkDailyLimit(userId);
+      if (!limitCheck.allowed) {
+          setSummaryError(`일일 요약 한도(${limitCheck.limit}건)를 초과했습니다. 내일 다시 시도해주세요.`);
+          setSummaryLoading(false);
+          return;
+      }
+
+      // 3. 자막 추출
+      const transcriptResult = await fetchTranscript(lessonData.videoUrl);
+      if (!transcriptResult.success) {
+        throw new Error(transcriptResult.error || '자막을 가져오는데 실패했습니다.');
+      }
+      
+      // 4. AI 요약 생성
+      const summaryResult = await generateFullSummary(
+        transcriptResult.data!,
+        youtubeMetadata.description || '',
+        youtubeMetadata.duration_seconds || 0
+      );
+      
+      if (!summaryResult.success) {
+        throw new Error(summaryResult.error || '요약 생성에 실패했습니다.');
+      }
+      
+      const generatedSummary = summaryResult.data!;
+      setSummaryData(generatedSummary);
+
+      // 5. 저장 (편집 모드일 경우 즉시 저장)
+      const currentLessonId = editingLesson?.id?.toString();
+      if (currentLessonId) {
+          await saveSummary(currentLessonId, generatedSummary);
+      }
+
+      // 6. 사용량 증가 및 비용 로깅
+      await incrementDailyUsage(userId, currentLessonId || null);
+      await logSummaryCost({
+          userId,
+          lessonId: currentLessonId || null,
+          model: generatedSummary.meta.model,
+          inputTokens: generatedSummary.meta.input_tokens,
+          outputTokens: generatedSummary.meta.output_tokens,
+          costUsd: generatedSummary.meta.cost_usd
+      });
+
+    } catch (error) {
+      setSummaryError(error instanceof Error ? error.message : '알 수 없는 오류');
+    } finally {
+      setSummaryLoading(false);
+    }
+  };
+
+  // 컴포넌트 마운트/편집 모드 진입 시 캐시된 요약 로드 (선택 사항: editingLesson effect에서 처리됨)
 
   // 편집 모드일 때 기존 데이터 로드
   useEffect(() => {
@@ -103,7 +309,26 @@ const LessonModal = ({
         seconds: seconds,
         enablePreview: Boolean(editingLesson.enablePreview),
         thumbnail: editingLesson.thumbnail || null,
+        content_data: editingLesson.content_data,
       });
+
+      // Load existing youtube metadata if present
+      if (
+        editingLesson.videoSource === 'youtube' &&
+        editingLesson.content_data?.youtube
+      ) {
+        setYoutubeMetadata(editingLesson.content_data.youtube);
+      }
+      
+      // Load existing summary if present
+      if (editingLesson.content_data?.summary) {
+          setSummaryData(editingLesson.content_data.summary);
+      } else {
+          setSummaryData(null);
+      }
+
+      // Store original URL for cache bypass detection
+      setOriginalVideoUrl(editingLesson.videoUrl || null);
 
       if (editingLesson.thumbnail) {
         // URL인 경우 그대로 사용, base64인 경우도 처리
@@ -140,6 +365,11 @@ const LessonModal = ({
         // enablePreview는 이미 lessonData에 있음
         // DB 저장 시 is_preview로 변환 필요
         is_preview: Boolean(lessonData.enablePreview),
+        content_data: {
+            ...(lessonData.content_data || {}),
+            youtube: youtubeMetadata ? youtubeMetadata : lessonData.content_data?.youtube,
+            summary: summaryData // Include summary data
+        }
       };
 
       // enablePreview 필드는 제거 (is_preview로 이미 변환됨)
@@ -156,7 +386,13 @@ const LessonModal = ({
         attachmentCount: attachments.length,
         totalDuration: totalDuration,
         modalId: modalId,
+        hasContentData: !!lessonToSubmit.content_data,
+        hasSummary: !!lessonToSubmit.content_data?.summary,
+        hasYoutube: !!lessonToSubmit.content_data?.youtube,
       });
+
+      // Debug: Log content_data to verify it's being passed
+      console.log('LessonModal content_data:', JSON.stringify(lessonToSubmit.content_data, null, 2).slice(0, 500));
 
       if (editingLesson) {
         // 편집 모드: 기존 레슨 업데이트
@@ -183,6 +419,12 @@ const LessonModal = ({
       setFeatureImageError(null);
       setAttachments([]);
       setAttachmentErrors([]);
+      setYoutubeMetadata(null); // Reset metadata
+      setMetadataError(null);
+      setIsDuplicate(false);
+      setSummaryData(null);
+      setSummaryLoading(false);
+      setSummaryError(null);
 
       // 편집 완료 콜백
       if (onEditComplete) {
@@ -469,6 +711,10 @@ const LessonModal = ({
     setFeatureImageError(null);
     setAttachments([]);
     setAttachmentErrors([]);
+    setSummaryData(null);
+    setSummaryLoading(false);
+    setSummaryError(null);
+    setOriginalVideoUrl(null);
 
     // Race condition 방지 카운터 리셋
     lastPickIdRef.current = 0;
@@ -687,13 +933,87 @@ const LessonModal = ({
                         type="text"
                         placeholder="Enter video URL"
                         value={lessonData.videoUrl}
-                        onChange={(e) =>
-                          setLessonData((prev) => ({
-                            ...prev,
-                            videoUrl: e.target.value,
-                          }))
-                        }
+                        onChange={onVideoUrlChange}
                       />
+                      {/* Status Indicators */}
+                      {isLoadingMetadata && (
+                        <div className="mt-2 text-info">
+                          <span className="spinner-border spinner-border-sm me-2"></span>
+                          메타데이터 가져오는 중...
+                        </div>
+                      )}
+
+                      {isDuplicate && (
+                        <div className="alert alert-warning mt-2">
+                          <i className="feather-alert-triangle me-2"></i>
+                          이미 이 코스에 등록된 영상입니다.
+                        </div>
+                      )}
+
+                      {metadataError && (
+                        <div className="alert alert-danger mt-2">
+                          {metadataError}
+                          <button
+                            className="btn btn-sm btn-outline-danger ms-2"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleYoutubeUrlChange(lessonData.videoUrl);
+                            }}
+                          >
+                            재시도
+                          </button>
+                        </div>
+                      )}
+
+                      {youtubeMetadata && (
+                        <>
+                          <div className="mt-2 p-2 border rounded d-flex align-items-center bg-light">
+                            <img
+                              src={youtubeMetadata.thumbnail_url}
+                              alt="Thumbnail"
+                              width="60"
+                              height="45"
+                              style={{ objectFit: 'cover', marginRight: '10px' }}
+                            />
+                            <div>
+                              <div
+                                className="fw-bold"
+                                style={{ fontSize: '0.9rem' }}
+                              >
+                                {youtubeMetadata.original_title}
+                              </div>
+                              <div
+                                className="text-muted"
+                                style={{ fontSize: '0.8rem' }}
+                              >
+                                {youtubeMetadata.channel_name} •{' '}
+                                {youtubeMetadata.duration_seconds
+                                  ? `${Math.floor(youtubeMetadata.duration_seconds / 60)}분 ${youtubeMetadata.duration_seconds % 60}초`
+                                  : '길이 정보 없음'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-3">
+                              <SummaryButton
+                                  youtubeUrl={lessonData.videoUrl}
+                                  onGenerateSummary={handleGenerateSummary}
+                                  isLoading={summaryLoading}
+                                  disabled={!youtubeMetadata}
+                              />
+                              <SummaryDisplay
+                                  data={summaryData}
+                                  isLoading={summaryLoading}
+                                  error={summaryError}
+                                  onRetry={handleGenerateSummary}
+                                  onTimestampClick={(seconds) => {
+                                      // TODO: Seek video player if available
+                                      console.log('Seek to:', seconds);
+                                  }}
+                              />
+                          </div>
+                        </>
+                      )}
                       <small>
                         <i className="feather-info"></i> Add the URL of your
                         lesson video from {lessonData.videoSource}.

@@ -8,10 +8,15 @@ import LessonPagination from '@/components/Lesson/LessonPagination';
 import LessonTop from '@/components/Lesson/LessonTop';
 import LessonVideo from '@/components/Lesson/LessonVideo';
 import LessonQuiz from '@/components/Lesson/LessonQuiz';
+import CreatorInfo from '@/components/Lesson/CreatorInfo';
+import LessonCompleteButton from '@/components/Lesson/LessonCompleteButton';
+import SummaryDisplay from '@/components/Lesson/SummaryDisplay';
 import {
   getQuizByLessonId,
   startQuizAttempt,
 } from '@/app/lib/actions/quizActions';
+import { getLessonById } from '@/app/lib/actions/lessonActions';
+import { getLessonProgress } from '@/app/lib/actions/progressActions';
 
 const LessonContent = ({ lessonId }) => {
   const { data: session } = useSession();
@@ -22,10 +27,8 @@ const LessonContent = ({ lessonId }) => {
   const [quizData, setQuizData] = useState(null);
   const [quizAttempt, setQuizAttempt] = useState(null);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    loadLessonData();
-  }, [lessonId, loadLessonData]);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [seekTime, setSeekTime] = useState(null);
 
   const loadLessonData = useCallback(async () => {
     try {
@@ -51,8 +54,23 @@ const LessonContent = ({ lessonId }) => {
         }
       } else {
         // This is a regular video lesson
-        // TODO: Load video lesson data
-        setLesson({ content_type: 'video' });
+        const videoResult = await getLessonById(lessonId);
+        
+        if (videoResult.success && videoResult.lesson) {
+            setLesson(videoResult.lesson);
+        } else {
+            console.error('Failed to load video lesson');
+            setError('레슨 정보를 불러올 수 없습니다.');
+            setLesson({ content_type: 'video' }); // Fallback or handle error
+        }
+      }
+      
+      // Fetch progress if user logged in
+      if (session?.user?.id) {
+          const progressResult = await getLessonProgress(lessonId, session.user.id);
+          if (progressResult.success) {
+              setIsCompleted(progressResult.isCompleted);
+          }
       }
     } catch (err) {
       console.error('Error loading lesson:', err);
@@ -61,6 +79,10 @@ const LessonContent = ({ lessonId }) => {
       setLoading(false);
     }
   }, [lessonId, session?.user?.id]);
+
+  useEffect(() => {
+    loadLessonData();
+  }, [lessonId, loadLessonData]);
 
   if (loading) {
     return (
@@ -101,25 +123,55 @@ const LessonContent = ({ lessonId }) => {
           <LessonTop
             sidebar={sidebar}
             setSidebar={() => setSidebar(!sidebar)}
-          />
+          >
+            {session?.user?.id && lesson && (
+                <LessonCompleteButton
+                    lessonId={lessonId}
+                    courseId={lesson.course_id}
+                    userId={session.user.id}
+                    isCompleted={isCompleted}
+                    onToggle={setIsCompleted}
+                />
+            )}
+          </LessonTop>
 
           <div className="inner">
             {lesson?.content_type === 'quiz' ? (
-              <div className="content">
-                <h4 className="mb-4">{lesson.title}</h4>
-                {lesson.description && (
-                  <p className="mb-4">{lesson.description}</p>
-                )}
-                {quizData && quizAttempt && (
-                  <LessonQuiz
-                    quizData={quizData}
-                    attemptId={quizAttempt.id}
-                    lessonId={lessonId}
-                  />
-                )}
-              </div>
+              <LessonQuiz
+                quizData={quizData}
+                quizAttempt={quizAttempt}
+                lessonId={lessonId}
+                courseId={lesson?.course_id}
+                onComplete={(score) => {
+                  console.log('Quiz completed with score:', score);
+                  loadLessonData();
+                }}
+              />
             ) : (
-              <LessonVideo />
+             <>
+               <LessonVideo
+                 lesson={lesson}
+                 seekTime={seekTime}
+                 onSeekComplete={() => setSeekTime(null)}
+               />
+
+               {lesson?.video_source === 'youtube' && lesson?.content_data?.youtube && (
+                   <CreatorInfo
+                        channelName={lesson.content_data.youtube.channel_name}
+                        channelUrl={lesson.content_data.youtube.channel_url}
+                        videoUrl={lesson.content_data.youtube.canonical_url}
+                        originalTitle={lesson.content_data.youtube.original_title}
+                   />
+               )}
+
+               {lesson?.video_source === 'youtube' && lesson?.content_data?.summary && (
+                   <SummaryDisplay
+                        data={lesson.content_data.summary}
+                        isLoading={false}
+                        onTimestampClick={(seconds) => setSeekTime(seconds)}
+                   />
+               )}
+             </>
             )}
           </div>
 

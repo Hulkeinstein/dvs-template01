@@ -142,6 +142,7 @@ export async function saveCourseContent(courseId, topics) {
               sort_order: j,
               attachments: lesson.attachments,
               thumbnail_url: lesson.thumbnail,
+              content_data: lesson.content_data,
             });
           } else {
             // Update existing lesson
@@ -155,6 +156,7 @@ export async function saveCourseContent(courseId, topics) {
               sort_order: j,
               attachments: lesson.attachments,
               thumbnail_url: lesson.thumbnail,
+              content_data: lesson.content_data,
             });
           }
         }

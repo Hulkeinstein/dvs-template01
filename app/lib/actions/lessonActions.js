@@ -75,6 +75,7 @@ export async function createLesson(lessonData) {
         content_type: 'lesson',
         thumbnail_url: lessonData.thumbnail_url || lessonData.thumbnail || null,
         attachments: lessonData.attachments || [],
+        content_data: lessonData.content_data || {},
       })
       .select()
       .single();
@@ -135,20 +136,38 @@ export async function updateLesson(lessonId, updates) {
     if (updates.title !== undefined) updateData.title = updates.title;
     if (updates.description !== undefined)
       updateData.description = updates.description;
-    if (updates.video_url !== undefined)
-      updateData.video_url = updates.video_url;
-    if (updates.video_source !== undefined)
-      updateData.video_source = updates.video_source;
-    if (updates.duration_minutes !== undefined)
-      updateData.duration_minutes = updates.duration_minutes;
-    if (updates.is_preview !== undefined)
-      updateData.is_preview = updates.is_preview;
+    
+    // Video URL (support both formats)
+    if (updates.video_url !== undefined) updateData.video_url = updates.video_url;
+    else if (updates.videoUrl !== undefined) updateData.video_url = updates.videoUrl;
+
+    // Video Source
+    if (updates.video_source !== undefined) updateData.video_source = updates.video_source;
+    else if (updates.videoSource !== undefined) updateData.video_source = updates.videoSource;
+
+    // Duration
+    if (updates.duration_minutes !== undefined) updateData.duration_minutes = updates.duration_minutes;
+    else if (updates.duration !== undefined) updateData.duration_minutes = updates.duration;
+
+    // Preview
+    if (updates.is_preview !== undefined) updateData.is_preview = updates.is_preview;
+    else if (updates.enablePreview !== undefined) updateData.is_preview = updates.enablePreview;
+
     if (updates.sort_order !== undefined)
       updateData.sort_order = updates.sort_order;
-    if (updates.thumbnail_url !== undefined)
-      updateData.thumbnail_url = updates.thumbnail_url;
+    
+    // Thumbnail
+    if (updates.thumbnail_url !== undefined) updateData.thumbnail_url = updates.thumbnail_url;
+    else if (updates.thumbnail !== undefined) updateData.thumbnail_url = updates.thumbnail;
+
     if (updates.attachments !== undefined)
       updateData.attachments = updates.attachments;
+    
+    // ADDED: content_data support
+    if (updates.content_data !== undefined) {
+        updateData.content_data = updates.content_data;
+        console.log('updateLesson: Saving content_data with summary:', !!updates.content_data?.summary);
+    }
 
     // Ensure content_type is set to 'lesson' for regular lessons
     if (!updates.content_type || updates.content_type === 'video') {
@@ -336,6 +355,27 @@ export async function getLessonsByCourse(courseId) {
     return { success: true, lessons: lessons || [] };
   } catch (error) {
     console.error('Unexpected error in getLessonsByCourse:', error);
+    return { success: false, error: 'An unexpected error occurred' };
+  }
+}
+
+// Get a single lesson by ID
+export async function getLessonById(lessonId) {
+  try {
+    const { data: lesson, error } = await supabase
+      .from('lessons')
+      .select('*')
+      .eq('id', lessonId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching lesson:', error);
+      return { success: false, error: 'Failed to fetch lesson' };
+    }
+
+    return { success: true, lesson };
+  } catch (error) {
+    console.error('Unexpected error in getLessonById:', error);
     return { success: false, error: 'An unexpected error occurred' };
   }
 }
