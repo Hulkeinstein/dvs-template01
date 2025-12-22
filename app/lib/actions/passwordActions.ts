@@ -107,7 +107,9 @@ export async function setPassword(data: SetPasswordData) {
     return { success: true, message: '비밀번호가 성공적으로 설정되었습니다.' };
   } catch (error) {
     console.error('Set password error:', error);
-    return { success: false, error: '비밀번호 설정 중 오류가 발생했습니다.' };
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Set password error details:', errorMessage);
+    return { success: false, error: `비밀번호 설정 중 오류: ${errorMessage}` };
   }
 }
 
