@@ -130,7 +130,35 @@ export const SectionSchema = z.object({
 });
 
 /**
- * Lilys 스타일 요약 데이터 스키마
+ * 섹션 스키마 (AI 응답용 - subsections 빈 배열 허용)
+ * AI가 가끔 빈 subsections를 반환할 수 있음
+ */
+export const SectionSchemaForAI = z.object({
+  emoji: z.string().min(1).max(4),
+  title: z.string().min(1).max(50),
+  timestamp: z
+    .string()
+    .regex(/^\d{2}:\d{2}(:\d{2})?$/, '유효한 타임스탬프 형식이 아닙니다'),
+  timestamp_seconds: z.number().nonnegative(),
+  subsections: z.array(SubsectionSchema), // min(1) 제거 - AI가 빈 배열 반환 가능
+});
+
+/**
+ * Lilys AI 응답 스키마 (meta 없음)
+ * AI가 반환하는 JSON 검증용
+ */
+export const LilysAIResponseSchema = z.object({
+  format: z.literal('lilys'),
+  core_qa: CoreQASchema,
+  action_points: ActionPointsSchema,
+  overview: z.string().min(1, '개요는 필수입니다'),
+  timeline_intro: TimelineIntroSchema,
+  sections: z.array(SectionSchemaForAI).min(1, '최소 1개의 섹션이 필요합니다'),
+  suggestions: z.array(z.string()).optional(),
+});
+
+/**
+ * Lilys 스타일 요약 데이터 스키마 (완전한 형태 - DB 저장용)
  * UI 순서: Q&A → Action Points → TOC(자동생성) → Overview → Sections
  */
 export const LilysSummaryDataSchema = z.object({

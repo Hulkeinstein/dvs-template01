@@ -7,7 +7,7 @@ import {
   DetailedNoteSchema,
   SummaryErrorType,
   TranscriptResponse,
-  LilysSummaryDataSchema,
+  LilysAIResponseSchema,
   LilysSummaryResult,
 } from '@/types/summary';
 import {
@@ -421,14 +421,22 @@ ${description}`;
       { role: 'user', content: userPrompt },
     ]);
 
-    // Validation
-    const parsed = LilysSummaryDataSchema.safeParse(result.content);
+    // Validation - AI 응답용 스키마 사용 (meta 없음, subsections 빈 배열 허용)
+    const parsed = LilysAIResponseSchema.safeParse(result.content);
 
     if (!parsed.success) {
-      console.error('Lilys Summary Validation Error:', parsed.error);
+      console.error('Lilys Summary Validation Error:');
+      console.error(
+        'Missing/Invalid fields:',
+        parsed.error.errors.map((e) => ({
+          path: e.path.join('.'),
+          message: e.message,
+          received: e.code,
+        }))
+      );
       return {
         success: false,
-        error: 'Invalid JSON schema for Lilys Summary',
+        error: `Invalid JSON schema for Lilys Summary: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
         errorType: 'API_ERROR',
       };
     }
