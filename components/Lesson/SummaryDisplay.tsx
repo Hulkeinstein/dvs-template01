@@ -164,25 +164,20 @@ export default function SummaryDisplay({
             >
               <div className="card-header bg-white border-bottom py-3">
                 <h6 className="mb-0 fw-bold fs-5">
+                  {section.timestamp && (
+                    <button
+                      className="btn btn-sm btn-outline-primary rounded-pill px-2 py-0 me-2"
+                      onClick={() =>
+                        onTimestampClick?.(section.timestamp_seconds)
+                      }
+                      style={{ fontSize: '0.7rem', verticalAlign: 'middle' }}
+                    >
+                      {section.timestamp}
+                    </button>
+                  )}
                   <span className="me-2">{section.emoji}</span>
                   {section.title}
                 </h6>
-                {section.timestamp && (
-                  <button
-                    className="btn btn-sm btn-outline-primary rounded-pill px-2 py-1 mt-2"
-                    onClick={() =>
-                      onTimestampClick?.(section.timestamp_seconds)
-                    }
-                    style={{
-                      fontSize: '0.75rem',
-                      width: 'auto',
-                      display: 'inline-block',
-                    }}
-                  >
-                    <i className="bi bi-play-fill me-1"></i>
-                    {section.timestamp}
-                  </button>
-                )}
               </div>
               <div className="card-body">
                 {section.subsections.map((sub, j) => (
