@@ -165,15 +165,15 @@ export default function SummaryDisplay({
               <div className="card-header bg-white border-bottom py-3">
                 <h6 className="mb-0 fw-bold fs-5">
                   {section.timestamp && (
-                    <button
-                      className="btn btn-sm btn-outline-primary rounded-pill px-2 py-0 me-2"
+                    <span
+                      className="text-primary me-2"
                       onClick={() =>
                         onTimestampClick?.(section.timestamp_seconds)
                       }
-                      style={{ fontSize: '0.7rem', verticalAlign: 'middle' }}
+                      style={{ cursor: 'pointer', fontSize: '0.85em' }}
                     >
-                      {section.timestamp}
-                    </button>
+                      [{section.timestamp}]
+                    </span>
                   )}
                   <span className="me-2">{section.emoji}</span>
                   {section.title}
