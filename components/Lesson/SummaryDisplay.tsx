@@ -173,7 +173,11 @@ export default function SummaryDisplay({
                     onClick={() =>
                       onTimestampClick?.(section.timestamp_seconds)
                     }
-                    style={{ fontSize: '0.75rem' }}
+                    style={{
+                      fontSize: '0.75rem',
+                      width: 'auto',
+                      display: 'inline-block',
+                    }}
                   >
                     <i className="bi bi-play-fill me-1"></i>
                     {section.timestamp}
