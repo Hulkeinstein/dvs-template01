@@ -113,11 +113,17 @@
                     box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
                 }
             }
-            
+
+            // Override rbt-accordion-style button width
+            .card-header button {
+                width: auto !important;
+                display: inline-block !important;
+            }
+
             .subsection {
                 border-left: 3px solid transparent;
                 transition: background-color 0.2s;
-                
+
                 &:hover {
                     background-color: rgba(0,0,0,0.04) !important;
                 }
