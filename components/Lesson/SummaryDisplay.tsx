@@ -164,13 +164,13 @@ export default function SummaryDisplay({
             >
               <div className="card-header bg-white border-bottom py-3">
                 <div className="d-flex align-items-center gap-2">
-                  <h6 className="mb-0 fw-bold fs-5">
+                  <h6 className="mb-0 fw-bold fs-5 flex-grow-1">
                     <span className="me-2">{section.emoji}</span>
                     {section.title}
                   </h6>
                   {section.timestamp && (
                     <button
-                      className="btn btn-sm btn-outline-primary rounded-pill px-2 py-1"
+                      className="btn btn-sm btn-outline-primary rounded-pill px-2 py-1 flex-shrink-0"
                       onClick={() =>
                         onTimestampClick?.(section.timestamp_seconds)
                       }
