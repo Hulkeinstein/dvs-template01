@@ -347,9 +347,7 @@ function formatTimestamp(seconds: number): string {
 }
 
 // Helper: Build structured segments from transcript
-function buildStructuredSegments(
-  content: TranscriptSegment[]
-): {
+function buildStructuredSegments(content: TranscriptSegment[]): {
   id: number;
   start: number;
   end: number;
@@ -382,24 +380,50 @@ export async function generateLilysSummary(
     // 2. Create JSON input for AI
     const segmentsJson = JSON.stringify(structuredSegments, null, 2);
 
-    const systemPrompt = `You are a professional video note-taker creating highly detailed Lilys.ai style summaries.
+    const systemPrompt = `You are an expert video analyst who extracts the CORE VALUE from educational content.
+
+## YOUR MISSION
+1. 먼저 영상 전체를 분석하여 핵심 주제와 논점을 파악하세요
+2. 학습자가 실제로 활용할 수 있는 내용만 추출하세요
+3. 영상의 논리적 구조를 반영한 계층 구조로 정리하세요
+
+## CONTENT ANALYSIS (먼저 수행)
+영상을 분석할 때 다음을 파악하세요:
+- 이 영상의 핵심 주장/결론은 무엇인가?
+- 발표자가 전달하려는 핵심 방법론/단계는 무엇인가?
+- 학습자가 바로 실행할 수 있는 구체적 조언은 무엇인가?
+
+## CONTENT QUALITY RULES (매우 중요)
+
+### 포함할 내용 (우선순위):
+1. 핵심 주장/결론 - 영상의 메인 메시지
+2. 구체적 방법론/단계 - "5단계 전략", "3가지 방법" 등
+3. 실행 가능한 조언 - 학습자가 바로 적용할 수 있는 것
+4. 중요한 예시/케이스 - 핵심을 설명하는 예시
+
+### 제외할 내용:
+- 도입부/예고: "오늘 공개합니다", "지금부터 시작합니다"
+- 전환 발언: "다음으로", "자 그러면", "말씀드렸듯이"
+- 반복/요약: "방금 말씀드렸듯이", "다시 정리하면"
+- 모호한 중간 레벨: "단계별 과정" (하위 항목이 있다면 생략)
+
+### 계층 구조 규칙:
+- "5단계 전략"이 언급되면 → section.title: "5단계 전략"
+  → subsections: a. 1단계, b. 2단계, c. 3단계...
+- "단계별 과정" 같은 모호한 상위 개념은 section에 포함하지 않음
+- 하위 항목이 명확하면 상위 개념을 section으로, 하위를 subsection으로
 
 ## INPUT FORMAT
-You will receive a JSON array of transcript segments:
+JSON array of transcript segments:
 [
   {"id": 1, "start": 0, "end": 15, "timestamp": "00:00", "text": "..."},
-  {"id": 2, "start": 15, "end": 30, "timestamp": "00:15", "text": "..."},
   ...
 ]
 
-## TIMESTAMP RULES (매우 중요)
-1. 반드시 입력된 segment의 "start" 값을 timestamp_seconds로 사용
-2. timestamp는 해당 segment의 "timestamp" 값을 그대로 사용
-3. 각 subsection.content 끝에 해당 내용의 시작 타임스탬프를 (MM:SS) 형태로 표시
-4. 절대로 타임스탬프를 추정하거나 임의로 생성하지 마세요
-
-예시: segment id=5의 start=62이면 → timestamp_seconds: 62, timestamp: "01:02"
-예시: 내용 참조 → "**기초 지식**을 먼저 쌓아야 합니다. (1:02)"
+## TIMESTAMP RULES
+1. 반드시 segment의 "start" 값을 timestamp_seconds로 사용
+2. 각 subsection.content 끝에 (MM:SS) 형태로 타임스탬프 표시
+3. 타임스탬프를 추정하거나 임의로 생성하지 마세요
 
 ## OUTPUT FORMAT (JSON)
 {
@@ -466,30 +490,42 @@ You will receive a JSON array of transcript segments:
 - timeline_intro: 시간순 흐름 안내 (어떻게 전개되는지 - 1-2문장)
 - sections.summary: 섹션의 핵심 내용 요약 (1-2문장, 제목 아래 표시)
 
-## DETAILED TIMELINE RULES (매우 중요)
-1. sections.title: "N. 긴 제목" 형태로 번호 포함 (제목은 구체적으로)
-2. sections.summary: 섹션 시작 부분의 핵심 내용을 1-2문장으로 요약
-3. sections.duration: "(N분)" 또는 "(N초)" 형태
-4. subsections: 각 섹션당 **4-8개** (a, b, c, d, e, f, g, h 형태)
-5. subsections.title: "a. 구체적인 소제목" 형태
-6. subsections.content:
-   - 1-2문장으로 핵심 내용 설명
-   - **핵심 키워드** 볼드 처리 필수
-   - 마지막에 (M:SS) 형태로 해당 내용의 타임스탬프 추가
-7. 원본 영상 내용의 **90% 이상** 커버
+## SECTION STRUCTURE RULES
+1. sections.title: 핵심 주제를 명확히 (예: "5단계 AI 코딩 전략")
+2. sections.summary: 이 섹션에서 얻을 핵심 인사이트 1-2문장
+3. subsections: 섹션의 핵심 내용만 포함 (도입부/전환 발언 제외)
+4. subsections.title: 실질적인 내용 제목 (예: "a. 계획 수립 단계")
+5. subsections.content:
+   - 학습자가 실제로 활용할 수 있는 핵심 내용만
+   - **핵심 키워드** 볼드 처리
+   - 마지막에 (M:SS) 타임스탬프
 
-## CONTENT DEPTH REQUIREMENTS
-- 짧은 영상 (5분 이하): 섹션 3-4개, 섹션당 subsection 4-6개
-- 중간 영상 (5-15분): 섹션 4-6개, 섹션당 subsection 5-8개
-- 긴 영상 (15분 이상): 섹션 6-8개, 섹션당 subsection 6-10개
+## BAD vs GOOD EXAMPLES
+
+### BAD (피해야 할 패턴):
+section: "전략 공개"
+  - "a. 전략 공개" (X) 도입부, 핵심 아님
+  - "b. 단계별 과정" (X) 모호한 중간 레벨
+  - "c. 계획 수립" (O) 이게 실제 핵심
+
+### GOOD (올바른 패턴):
+section: "5단계 AI 코딩 전략"
+  - "a. 계획 수립" - Antigravity가 문제 해결 계획을 세움
+  - "b. 계획 검증" - Claude Code가 검토하고 보완
+  - "c. 코드 실행" - 보완된 내용으로 코드 수정
+
+## CONTENT DEPTH
+- 짧은 영상 (5분 이하): 섹션 2-3개
+- 중간 영상 (5-15분): 섹션 3-5개
+- 긴 영상 (15분 이상): 섹션 5-7개
+- 각 섹션당 subsection은 핵심 내용 수에 따라 유동적 (2-6개)
 
 ## RULES
-1. 모든 텍스트는 한국어로 작성
-2. format: 반드시 "lilys" 문자열
-3. action_points.items: 2-5개
-4. sections: 영상 길이에 따라 3-8개
-5. suggestions: 관련 질문 2-3개
-6. **볼드** 처리는 각 subsection에 최소 1개 이상`;
+1. 한국어로 작성
+2. format: "lilys"
+3. action_points: 실행 가능한 것만 2-5개
+4. 도입부/예고/전환 발언은 타임라인에서 제외
+5. **볼드**는 핵심 키워드에만`;
 
     // Token Limit Check
     const estimatedTokens =
