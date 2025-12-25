@@ -5,7 +5,7 @@ tags:
   - type/feature
   - component/lesson
 created: 2025-12-20
-updated: 2025-12-21
+updated: 2025-12-25
 status: active
 ---
 
@@ -104,7 +104,7 @@ function isLegacyFormat(data: AnySummaryData): data is SummaryData {
 | `app/lib/actions/transcriptActions.ts` | 자막 추출 |
 | `app/lib/actions/summaryCachingActions.ts` | 캐싱, 일일 제한 |
 | `components/Lesson/SummaryDisplay.tsx` | UI 렌더링 |
-| `components/Lesson/SummaryDisplay.scss` | 스타일 |
+| `public/scss/elements/_summary-display.scss` | 스타일 |
 
 ### 주요 함수
 
@@ -297,3 +297,5 @@ CREATE TABLE ai_summary_usage_log (
 - **GitHub Issue**: #67
 - **Branch**: `feature/lilys-style-summary`
 - **YouTube 큐레이션**: [library/youtube-curation.md](./youtube-curation.md)
+- **SCSS 트러블슈팅**: [troubleshooting/scss-styling-issues.md](../troubleshooting/scss-styling-issues.md)
+- **HiStudy SCSS 가이드**: [guides/histudy-scss-guide.md](../guides/histudy-scss-guide.md)

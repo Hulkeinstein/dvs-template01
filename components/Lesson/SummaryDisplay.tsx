@@ -1,9 +1,21 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { AnySummaryData } from '@/types/summary';
-import { isLilysFormat } from '@/types/summary';
-import './SummaryDisplay.scss';
+import type { AnySummaryData, Subsection } from '@/types/summary';
+import { isLilysFormat, normalizeSuggestions } from '@/types/summary';
+
+/**
+ * **볼드** 마크다운을 <strong>으로 변환
+ */
+function renderBoldText(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    return part;
+  });
+}
 
 interface SummaryDisplayProps {
   data: AnySummaryData | null;
@@ -144,7 +156,7 @@ export default function SummaryDisplay({
           <p className="mb-0 fst-italic text-dark">{data.overview}</p>
         </section>
 
-        {/* 5. 🗂️ Timeline Notes */}
+        {/* 5. 🗂️ Timeline Notes - 릴리스AI 스타일 */}
         <section className="summary-display__timeline">
           <div className="timeline-header mb-4">
             <h5 className="fw-bold mb-2">
@@ -160,49 +172,76 @@ export default function SummaryDisplay({
             <div
               key={idx}
               id={`section-${idx}`}
-              className="card mb-4 border-0 shadow-sm"
+              className="timeline-section mb-4"
             >
-              <div className="card-header bg-white border-bottom py-3">
-                <h6 className="mb-0 fw-bold fs-5">
-                  {section.timestamp && (
-                    <span
-                      className="text-primary me-2"
-                      onClick={() =>
-                        onTimestampClick?.(section.timestamp_seconds)
-                      }
-                      style={{ cursor: 'pointer', fontSize: '0.85em' }}
-                    >
-                      [{section.timestamp}]
-                    </span>
-                  )}
-                  <span className="me-2">{section.emoji}</span>
-                  {section.title}
-                </h6>
+              {/* 섹션 헤더 - 타임스탬프 뱃지 */}
+              <div className="timeline-section__header mb-2">
+                <a
+                  href="#"
+                  className="timestamp-badge"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onTimestampClick?.(section.timestamp_seconds);
+                  }}
+                  title="클릭하여 재생"
+                >
+                  <i className="bi bi-play-circle-fill"></i>
+                  {section.timestamp}
+                </a>
               </div>
-              <div className="card-body">
-                {section.subsections.map((sub, j) => (
-                  <div
-                    key={j}
-                    className="subsection mb-3 p-3 rounded bg-light bg-opacity-50"
-                  >
-                    <div className="d-flex align-items-center mb-2">
-                      <button
-                        className="btn btn-xs btn-link text-decoration-none p-0 me-2 text-muted fw-bold font-monospace"
-                        onClick={() =>
-                          onTimestampClick?.(sub.timestamp_seconds)
-                        }
-                        style={{ fontSize: '0.85rem' }}
-                      >
-                        {sub.timestamp}
-                      </button>
-                      <span className="fw-bold text-dark">{sub.title}</span>
+
+              {/* 섹션 제목 + 요약 */}
+              <h6 className="timeline-section__title fw-bold mb-2">
+                <span className="me-2">{section.emoji}</span>
+                {renderBoldText(section.title)}
+              </h6>
+
+              {section.summary && (
+                <p className="timeline-section__summary text-dark mb-3 ps-4">
+                  {renderBoldText(section.summary)}
+                </p>
+              )}
+
+              {/* 서브섹션들 - 아웃라인 스타일 */}
+              <div className="timeline-subsections ps-4">
+                {section.subsections.map((sub: Subsection, j: number) => (
+                  <div key={j} className="timeline-subsection mb-3">
+                    {/* 서브섹션 헤더 */}
+                    <div className="mb-1">
+                      <span className="fw-semibold text-dark">
+                        {renderBoldText(sub.title)}
+                      </span>
                     </div>
-                    <p
-                      className="mb-0 text-secondary ps-4 small"
-                      style={{ lineHeight: '1.6' }}
-                    >
-                      {sub.content}
+
+                    {/* 서브섹션 내용 */}
+                    <p className="timeline-subsection__content text-secondary mb-2 ps-5">
+                      {renderBoldText(sub.content)}
                     </p>
+
+                    {/* 서브포인트들 (3단계) */}
+                    {sub.subpoints && sub.subpoints.length > 0 && (
+                      <ul className="timeline-subpoints list-unstyled ps-5 mb-0">
+                        {sub.subpoints.map((point, k) => (
+                          <li
+                            key={k}
+                            className="timeline-subpoint text-secondary mb-1 ps-3 position-relative"
+                          >
+                            <span
+                              className="position-absolute text-muted"
+                              style={{ left: 0 }}
+                            >
+                              {String.fromCharCode(105 + k)}.
+                            </span>
+                            {renderBoldText(point.text)}
+                            {point.reference && (
+                              <sup className="text-primary ms-1">
+                                [{point.reference}]
+                              </sup>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 ))}
               </div>
@@ -217,22 +256,33 @@ export default function SummaryDisplay({
               <i className="bi bi-question-circle-fill me-2"></i>관련 질문
             </h5>
             <div className="d-flex flex-wrap gap-2">
-              {data.suggestions.map((qs, i) => (
-                <span
-                  key={i}
-                  className="badge bg-light text-dark border p-2 fw-normal fs-6"
-                >
-                  {qs}
-                </span>
-              ))}
+              {normalizeSuggestions(data.suggestions).map((item, i) =>
+                item.url ? (
+                  <a
+                    key={i}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="suggestion-link badge bg-light text-dark border p-2 fw-normal text-decoration-none"
+                  >
+                    <i
+                      className={`bi ${item.urlType === 'youtube' ? 'bi-youtube text-danger' : 'bi-link-45deg'} me-1`}
+                    ></i>
+                    {item.question}
+                    <i className="bi bi-box-arrow-up-right ms-1 opacity-50"></i>
+                  </a>
+                ) : (
+                  <span
+                    key={i}
+                    className="badge bg-light text-dark border p-2 fw-normal"
+                  >
+                    {item.question}
+                  </span>
+                )
+              )}
             </div>
           </section>
         )}
-
-        {/* Meta Info */}
-        <div className="text-end text-muted small mt-4 pt-3 border-top">
-          <i className="bi bi-robot me-1"></i> Generated by {data.meta.model}
-        </div>
       </div>
     );
   }
@@ -279,11 +329,6 @@ export default function SummaryDisplay({
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Meta Info (Optional, debug purpose) */}
-      <div className="text-end text-muted small mt-2">
-        <i className="bi bi-robot"></i> Generated by {data.meta.model}
       </div>
     </div>
   );
