@@ -1,0 +1,502 @@
+.summary-display {
+    // Default text color for light mode
+    color: #333;
+
+    &__loading {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    &__title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: inherit;
+    }
+
+    &__key-notes {
+        .list-group-item {
+            border: none;
+            background-color: transparent;
+            padding: 0.5rem 0;
+            padding-left: 1rem;
+            position: relative;
+            color: inherit;
+
+            &::before {
+                content: '';
+                /* Bullet is handled by text for now, or use custom styling */
+            }
+        }
+    }
+
+    &__detailed-notes {
+        .card {
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.2s;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            }
+
+            .card-title,
+            .card-text {
+                color: inherit;
+            }
+        }
+    }
+
+    // Dark mode support
+    [data-theme="dark"] &,
+    .active-dark-mode & {
+        color: #e0e0e0;
+
+        &__loading {
+            background-color: #2d2d2d;
+        }
+
+        &__detailed-notes {
+            .card {
+                border-color: #444;
+                background-color: #2d2d2d;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+
+                &:hover {
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                }
+            }
+        }
+    }
+
+    // ==========================================
+    // Lilys Style (Additional Styles)
+    // ==========================================
+    &--lilys {
+        .summary-display__core-qa {
+            border-left-width: 5px !important;
+            transition: transform 0.2s;
+            &:hover { transform: translateY(-2px); }
+        }
+
+        .summary-display__action-points {
+            border-left-width: 5px !important;
+            transition: transform 0.2s;
+            &:hover { transform: translateY(-2px); }
+        }
+
+        .summary-display__toc {
+            .toc-list a {
+                padding: 4px 8px;
+                border-radius: 4px;
+                transition: background-color 0.15s;
+
+                &:hover {
+                    background-color: rgba(0,0,0,0.05);
+                    text-decoration: underline !important;
+                }
+            }
+        }
+
+        .summary-display__overview {
+            border-left-width: 5px !important;
+        }
+
+        .hover-underline:hover {
+            text-decoration: underline !important;
+        }
+
+        .summary-display__timeline {
+            // 릴리스AI 스타일 타임라인 - 개요와 동일한 글씨 크기 (18px)
+            // html { font-size: 62.5% } 기준: 1rem = 10px
+            font-size: 1.8rem;
+
+            .timeline-section {
+                padding: 1.25rem 0;
+                border-bottom: 1px solid #eee;
+
+                &:last-child {
+                    border-bottom: none;
+                }
+            }
+
+            // 타임스탬프 뱃지 스타일
+            .timestamp-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0.5rem 1.2rem;
+                min-height: 3.2rem;
+                font-size: 1.4rem;
+                font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+                font-weight: 600;
+                letter-spacing: 0.05em;
+                color: #6366f1;
+                background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.12) 100%);
+                border: 1px solid rgba(99, 102, 241, 0.25);
+                border-radius: 0.8rem;
+                text-decoration: none;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+                i {
+                    font-size: 1.4rem;
+                    line-height: 1;
+                }
+
+                &:hover {
+                    color: #4f46e5;
+                    background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.2) 100%);
+                    border-color: rgba(99, 102, 241, 0.4);
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.2);
+                }
+            }
+
+            .timeline-section__title {
+                font-size: 2rem; // 섹션 제목 20px
+                line-height: 1.5;
+                font-weight: 600;
+
+                strong {
+                    color: #d63384;
+                }
+            }
+
+            .timeline-section__summary {
+                font-size: 1.8rem; // 개요와 동일 18px
+                line-height: 1.7;
+
+                strong {
+                    color: #d63384;
+                    font-weight: 600;
+                }
+            }
+
+            .timeline-subsections {
+                border-left: 2px solid #e9ecef;
+                margin-left: 0.5rem;
+            }
+
+            .timeline-subsection {
+                padding: 0.5rem 0;
+
+                // 서브섹션 제목
+                span.fw-semibold {
+                    font-size: 1.8rem; // 개요와 동일 18px
+                }
+
+                // 타임스탬프 버튼
+                .btn.btn-link {
+                    font-size: 1.4rem; // 타임스탬프 14px
+                }
+            }
+
+            .timeline-subsection__content {
+                font-size: 1.8rem; // 개요와 동일 18px
+                line-height: 1.7;
+
+                strong {
+                    color: #d63384;
+                    font-weight: 600;
+                }
+            }
+
+            .timeline-subpoints {
+                .timeline-subpoint {
+                    font-size: 1.8rem; // 개요와 동일 18px
+                    line-height: 1.7;
+                    padding-left: 1.25rem;
+
+                    strong {
+                        color: #d63384;
+                        font-weight: 600;
+                    }
+                }
+            }
+
+            // Legacy card style (keep for backwards compat)
+            .card {
+                transition: box-shadow 0.2s;
+                &:hover {
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+                }
+            }
+
+            // Override rbt-accordion-style button width
+            .card-header .btn {
+                width: auto;
+                display: inline-block;
+            }
+
+            .subsection {
+                border-left: 3px solid transparent;
+                transition: background-color 0.2s;
+
+                &:hover {
+                    background-color: rgba(0,0,0,0.04);
+                }
+            }
+        }
+
+        // 관련 질문 섹션 - 개요와 동일한 글씨 크기
+        // html { font-size: 62.5% } 기준: 1rem = 10px
+        .summary-display__suggestions {
+            h5 {
+                font-size: 1.8rem; // 18px
+            }
+
+            .badge {
+                font-size: 1.6rem; // 16px
+            }
+
+            // 링크가 있는 관련 질문 스타일
+            .suggestion-link {
+                cursor: pointer;
+                transition: all 0.2s;
+
+                &:hover {
+                    background-color: #e9ecef;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+            }
+        }
+
+        // 강사 편집 UI 스타일
+        .suggestion-editor {
+            h6 {
+                font-size: 1.6rem;
+                color: #333;
+            }
+
+            .suggestion-item {
+                background-color: #fff;
+                border-color: #dee2e6;
+            }
+
+            .form-control {
+                font-size: 1.4rem;
+            }
+
+            .btn-outline-primary {
+                font-size: 1.4rem;
+            }
+        }
+
+        // 편집기 wrapper 스타일
+        &.suggestion-editor-wrapper {
+            background-color: #f8f9fa;
+            border-color: #dee2e6;
+        }
+    }
+
+    // Dark Mode Overrides for Lilys Style
+    // 다크모드 선택자를 최상위에 배치하여 올바르게 적용
+    [data-theme="dark"] &--lilys,
+    .active-dark-mode &--lilys {
+            .summary-display__core-qa {
+                background-color: #3e2723 !important; // Dark brown
+                border-color: #ff5252 !important;
+
+                h5 { color: #ff8a80 !important; }
+                p.text-dark { color: #ffebee !important; } // Q
+                p.text-secondary { color: #ffccbc !important; } // A
+            }
+
+            .summary-display__action-points {
+                background-color: #332b00 !important; // Dark yellow/brown
+                border-color: #ffd740 !important;
+
+                h5 { color: #ffff8d !important; }
+                ul li { color: #fff9c4; }
+            }
+
+            .summary-display__toc {
+                background-color: #2d2d2d !important;
+                border-color: #444 !important;
+
+                h5 { color: #adb5bd !important; }
+                .toc-list a {
+                    color: #90caf9 !important;
+                    &:hover { background-color: rgba(255,255,255,0.1); }
+                }
+            }
+
+            .summary-display__overview {
+                background-color: #1a237e !important; // deeply blue
+                border-color: #448aff !important;
+                background-opacity: 0.2;
+
+                h5 { color: #82b1ff !important; }
+                p { color: #e3f2fd !important; }
+            }
+
+            .summary-display__timeline {
+                .timeline-header {
+                    h5 { color: #e0e0e0 !important; }
+                    // timeline_intro.text - bg-light, text-muted 오버라이드
+                    p.bg-light {
+                        background-color: #424242 !important;
+                        color: #e0e0e0 !important;
+                    }
+                }
+
+                // 릴리스AI 스타일 다크모드 - 더 밝은 색상
+                .timeline-section {
+                    border-bottom-color: #444;
+                }
+
+                // 타임스탬프 뱃지 다크모드
+                .timestamp-badge {
+                    color: #a5b4fc;
+                    background: linear-gradient(135deg, rgba(129, 140, 248, 0.12) 0%, rgba(167, 139, 250, 0.15) 100%);
+                    border-color: rgba(129, 140, 248, 0.35);
+
+                    &:hover {
+                        color: #c7d2fe;
+                        background: linear-gradient(135deg, rgba(129, 140, 248, 0.2) 0%, rgba(167, 139, 250, 0.25) 100%);
+                        border-color: rgba(129, 140, 248, 0.5);
+                        box-shadow: 0 4px 16px rgba(129, 140, 248, 0.35);
+                    }
+
+                    &:active {
+                        box-shadow: 0 2px 8px rgba(129, 140, 248, 0.25);
+                    }
+                }
+
+                .timeline-section__title {
+                    color: #f5f5f5; // 더 밝게
+                    strong { color: #ff80ab; } // 핑크 강조
+                }
+
+                .timeline-section__summary {
+                    // text-dark 오버라이드 - 섹션 요약
+                    color: #e0e0e0 !important;
+                    strong { color: #ff80ab; }
+                }
+
+                .timeline-subsections {
+                    border-left-color: #666;
+                }
+
+                .timeline-subsection {
+                    // 서브섹션 제목 - text-dark 오버라이드
+                    .fw-semibold.text-dark,
+                    .fw-semibold {
+                        color: #e0e0e0 !important;
+                    }
+
+                    // 타임스탬프 버튼
+                    .btn.btn-link {
+                        color: #64b5f6;
+                    }
+                }
+
+                .timeline-subsection__content {
+                    // text-secondary 오버라이드
+                    color: #bdbdbd !important;
+                    strong { color: #ff80ab; }
+                }
+
+                .timeline-subpoints {
+                    .timeline-subpoint {
+                        color: #b0b0b0 !important; // 더 밝게
+                        strong { color: #ff80ab; }
+                    }
+
+                    // 서브포인트 인덱스 (i. ii. 등)
+                    .text-muted {
+                        color: #9e9e9e !important;
+                    }
+                }
+
+                // Legacy card style
+                .card {
+                    background-color: #333;
+                    border-color: #444 !important;
+
+                    .card-header {
+                        background-color: #2d2d2d !important;
+                        border-bottom-color: #444 !important;
+                        h6 { color: #e0e0e0; }
+                    }
+
+                    .subsection {
+                        background-color: #262626 !important;
+
+                        button { color: #90caf9 !important; }
+                        span.text-dark { color: #e0e0e0 !important; }
+                        p.text-secondary { color: #bdbdbd !important; }
+                    }
+                }
+            }
+
+            .summary-display__suggestions {
+                border-top-color: #444 !important;
+
+                .badge {
+                    background-color: #424242 !important;
+                    color: #e0e0e0 !important;
+                    border-color: #666 !important;
+                }
+
+                .suggestion-link {
+                    &:hover {
+                        background-color: #555 !important;
+                    }
+                }
+            }
+
+            // 강사 편집 UI 다크모드
+            // 모달 배경: #273041, wrapper는 약간 어둡게
+            .suggestion-editor {
+                h6 {
+                    color: #e0e0e0;
+                }
+
+                .suggestion-item {
+                    background-color: #2a3444 !important; // 모달보다 살짝 밝게
+                    border-color: #3d4a5c !important;
+                }
+
+                .form-control {
+                    background-color: #1e2530;
+                    border-color: #3d4a5c;
+                    color: #e0e0e0;
+
+                    &::placeholder {
+                        color: #8899aa;
+                    }
+                }
+
+                .btn-outline-primary {
+                    border-color: #64b5f6;
+                    color: #64b5f6;
+
+                    &:hover {
+                        background-color: #64b5f6;
+                        color: #1a1a1a;
+                    }
+                }
+
+                .text-muted {
+                    color: #8899aa !important;
+                }
+
+                .text-success {
+                    color: #81c784 !important;
+                }
+            }
+
+            // 편집기 wrapper 다크모드 - 모달 배경(#273041)보다 약간 어둡게
+            &.suggestion-editor-wrapper {
+                background-color: #1e2530 !important;
+                border-color: #3d4a5c !important;
+            }
+    }
+}

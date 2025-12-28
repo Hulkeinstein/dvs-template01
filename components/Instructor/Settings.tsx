@@ -85,6 +85,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
   const [currentCoverUrl, setCurrentCoverUrl] = useState<string | null>(null);
   const [showPasswordSetup, setShowPasswordSetup] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [hasPassword, setHasPassword] = useState(false);
 
   // File input refs
   const photoInputRef = useRef<HTMLInputElement>(null);
@@ -129,6 +130,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
         userProfile.avatar_url || userProfile.photo_url || null
       );
       setCurrentCoverUrl(userProfile.cover_photo_url || null);
+      setHasPassword(!!userProfile.password_hash);
     }
   }, [userProfile]);
 
@@ -493,9 +495,7 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
           setShowPasswordSetup(false);
           e.currentTarget.reset();
           // Update the local state to reflect that password is now set
-          if (userProfile) {
-            userProfile.password_hash = 'set';
-          }
+          setHasPassword(true);
         } else {
           setMessage({
             type: 'error',
@@ -972,13 +972,12 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
               {/* Password Guidance Component */}
               <PasswordGuidance
                 authProvider={userProfile?.auth_provider ?? undefined}
-                hasPasswordHash={!!userProfile?.password_hash}
+                hasPasswordHash={hasPassword}
               />
 
-              {userProfile?.auth_provider === 'google' &&
-              !userProfile?.password_hash ? (
-                // Google OAuth 사용자이며 비밀번호가 설정되지 않은 경우
-                <div className="rbt-profile-row">
+              {!hasPassword ? (
+                // 비밀번호가 설정되지 않은 경우 (최초 설정)
+                <div className="rbt-profile-row row">
                   <div className="col-12">
                     <div className="small text-muted mb-3">
                       <div className="mb-1">
@@ -1010,9 +1009,9 @@ const Setting: React.FC<SettingProps> = ({ userProfile }) => {
 
                   {/* Password setup form */}
                   {showPasswordSetup && (
-                    <div id="password-setup-section">
+                    <div id="password-setup-section" className="col-12">
                       <form
-                        className="rbt-profile-row rbt-default-form row row--15 mt-4"
+                        className="rbt-default-form row row--15 mt-4"
                         onSubmit={handlePasswordSetup}
                       >
                         <div className="col-12">

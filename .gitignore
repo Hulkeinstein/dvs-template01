@@ -85,6 +85,5 @@ test-results/
 playwright-report/
 playwright/.cache/
 
-# TestSprite temp files
-testsprite_tests/TC*.py
-testsprite_tests/tmp/
+# TestSprite (auto-generated test files)
+testsprite_tests/

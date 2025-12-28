@@ -7,13 +7,15 @@ interface SummaryButtonProps {
   onGenerateSummary: () => void;
   isLoading: boolean;
   disabled?: boolean;
+  hasSummary?: boolean;
 }
 
-export default function SummaryButton({ 
-  youtubeUrl, 
-  onGenerateSummary, 
-  isLoading, 
-  disabled 
+export default function SummaryButton({
+  youtubeUrl,
+  onGenerateSummary,
+  isLoading,
+  disabled,
+  hasSummary = false,
 }: SummaryButtonProps) {
   const isDisabled = disabled || !youtubeUrl || isLoading;
 
@@ -26,13 +28,17 @@ export default function SummaryButton({
     >
       {isLoading ? (
         <>
-          <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
           <span>생성 중...</span>
         </>
       ) : (
         <>
-          <i className="bi bi-stars"></i>
-          <span>AI 요약</span>
+          <i className={hasSummary ? 'bi bi-arrow-repeat' : 'bi bi-stars'}></i>
+          <span>{hasSummary ? 'AI 요약 재생성' : 'AI 요약'}</span>
         </>
       )}
     </button>

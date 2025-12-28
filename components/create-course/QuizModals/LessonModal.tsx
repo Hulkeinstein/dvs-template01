@@ -22,15 +22,21 @@ import { isValidYouTubeUrl } from '@/app/lib/utils/youtube';
 import SummaryButton from '@/components/Lesson/SummaryButton';
 import SummaryDisplay from '@/components/Lesson/SummaryDisplay';
 import { fetchTranscript } from '@/app/lib/actions/transcriptActions';
-import { generateFullSummary } from '@/app/lib/actions/summaryActions';
-import type { SummaryData } from '@/types/summary';
+import { generateLilysSummary } from '@/app/lib/actions/summaryActions';
+import type {
+  AnySummaryData,
+  SuggestionItem,
+  SummaryProvider,
+} from '@/types/summary';
+import { isLilysFormat, normalizeSuggestions } from '@/types/summary';
+import SuggestionEditor from '@/components/Lesson/SuggestionEditor';
 import { useSession } from 'next-auth/react';
-import { 
-  getSavedSummary, 
-  saveSummary, 
-  checkDailyLimit, 
+import {
+  getSavedSummary,
+  saveSummary,
+  checkDailyLimit,
   incrementDailyUsage,
-  logSummaryCost 
+  logSummaryCost,
 } from '@/app/lib/actions/summaryCachingActions';
 
 // Internal state type for the lesson form
@@ -103,9 +109,12 @@ const LessonModal = ({
   const [isDuplicate, setIsDuplicate] = useState(false);
 
   // AI Summary State
-  const [summaryData, setSummaryData] = useState<SummaryData | null>(null);
+  const [summaryData, setSummaryData] = useState<AnySummaryData | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [summaryProvider, setSummaryProvider] = useState<
+    SummaryProvider | undefined
+  >(undefined);
   // Track original URL when modal opens (for cache bypass detection)
   const [originalVideoUrl, setOriginalVideoUrl] = useState<string | null>(null);
 
@@ -136,11 +145,12 @@ const LessonModal = ({
     // URL이 변경되면 이전 요약 데이터 및 content_data 초기화
     setSummaryData(null);
     setSummaryError(null);
+    setSummaryProvider(undefined);
     // content_data도 초기화 (이전 youtube/summary 제거)
     setLessonData((prev) => ({
       ...prev,
       content_data: undefined,
-      thumbnail: null,  // 썸네일도 초기화
+      thumbnail: null, // 썸네일도 초기화
     }));
     // 썸네일 미리보기 초기화
     setFeatureImagePreview(null);
@@ -162,8 +172,12 @@ const LessonModal = ({
         setYoutubeMetadata(data);
 
         // URL changed - always update all fields with new video data
-        const h = data.duration_seconds ? Math.floor(data.duration_seconds / 3600) : 0;
-        const m = data.duration_seconds ? Math.floor((data.duration_seconds % 3600) / 60) : 0;
+        const h = data.duration_seconds
+          ? Math.floor(data.duration_seconds / 3600)
+          : 0;
+        const m = data.duration_seconds
+          ? Math.floor((data.duration_seconds % 3600) / 60)
+          : 0;
         const s = data.duration_seconds ? data.duration_seconds % 60 : 0;
 
         setLessonData((prev) => ({
@@ -207,81 +221,92 @@ const LessonModal = ({
     }
   };
 
-  const handleGenerateSummary = async () => {
+  const handleGenerateSummary = async (forceRegenerate: boolean = false) => {
     // Session check
     if (!session?.user?.id) {
-        setSummaryError('로그인이 필요합니다.');
-        return;
+      setSummaryError('로그인이 필요합니다.');
+      return;
     }
     const userId = session.user.id;
 
     if (!lessonData.videoUrl || !youtubeMetadata) return;
-    
+
     setSummaryLoading(true);
     setSummaryError(null);
-    
+
     try {
-      // 1. 캐시 확인 (편집 모드이고 ID가 있고, URL이 변경되지 않았을 때만)
-      // URL이 변경되었으면 캐시를 무시하고 새로 생성
+      // 1. 캐시 확인 (편집 모드이고 ID가 있고, URL이 변경되지 않았고, 강제 재생성이 아닐 때만)
+      // URL이 변경되었거나 forceRegenerate=true면 캐시를 무시하고 새로 생성
       // Use originalVideoUrl (set when modal opened) for accurate comparison
       const urlChanged = originalVideoUrl !== lessonData.videoUrl;
-      if (editingLesson && editingLesson.id && !urlChanged) {
-          // Note: editingLesson.id can be string or number
-          const cached = await getSavedSummary(editingLesson.id.toString());
-          if (cached.cached && cached.data) {
-              setSummaryData(cached.data);
-              setSummaryLoading(false);
-              return;
-          }
+      if (
+        editingLesson &&
+        editingLesson.id &&
+        !urlChanged &&
+        !forceRegenerate
+      ) {
+        // Note: editingLesson.id can be string or number
+        const cached = await getSavedSummary(editingLesson.id.toString());
+        if (cached.cached && cached.data) {
+          setSummaryData(cached.data);
+          setSummaryLoading(false);
+          return;
+        }
       }
 
       // 2. 일일 한도 확인
       const limitCheck = await checkDailyLimit(userId);
       if (!limitCheck.allowed) {
-          setSummaryError(`일일 요약 한도(${limitCheck.limit}건)를 초과했습니다. 내일 다시 시도해주세요.`);
-          setSummaryLoading(false);
-          return;
+        setSummaryError(
+          `일일 요약 한도(${limitCheck.limit}건)를 초과했습니다. 내일 다시 시도해주세요.`
+        );
+        setSummaryLoading(false);
+        return;
       }
 
       // 3. 자막 추출
       const transcriptResult = await fetchTranscript(lessonData.videoUrl);
       if (!transcriptResult.success) {
-        throw new Error(transcriptResult.error || '자막을 가져오는데 실패했습니다.');
+        throw new Error(
+          transcriptResult.error || '자막을 가져오는데 실패했습니다.'
+        );
       }
-      
-      // 4. AI 요약 생성
-      const summaryResult = await generateFullSummary(
+
+      // 4. AI 요약 생성 (Lilys 스타일)
+      const summaryResult = await generateLilysSummary(
         transcriptResult.data!,
         youtubeMetadata.description || '',
         youtubeMetadata.duration_seconds || 0
       );
-      
+
       if (!summaryResult.success) {
         throw new Error(summaryResult.error || '요약 생성에 실패했습니다.');
       }
-      
+
       const generatedSummary = summaryResult.data!;
       setSummaryData(generatedSummary);
+      setSummaryProvider(summaryResult.provider);
 
       // 5. 저장 (편집 모드일 경우 즉시 저장)
       const currentLessonId = editingLesson?.id?.toString();
       if (currentLessonId) {
-          await saveSummary(currentLessonId, generatedSummary);
+        await saveSummary(currentLessonId, generatedSummary);
       }
 
       // 6. 사용량 증가 및 비용 로깅
       await incrementDailyUsage(userId, currentLessonId || null);
       await logSummaryCost({
-          userId,
-          lessonId: currentLessonId || null,
-          model: generatedSummary.meta.model,
-          inputTokens: generatedSummary.meta.input_tokens,
-          outputTokens: generatedSummary.meta.output_tokens,
-          costUsd: generatedSummary.meta.cost_usd
+        userId,
+        lessonId: currentLessonId || null,
+        model: generatedSummary.meta.model,
+        inputTokens: generatedSummary.meta.input_tokens,
+        outputTokens: generatedSummary.meta.output_tokens,
+        costUsd: generatedSummary.meta.cost_usd,
       });
-
     } catch (error) {
-      setSummaryError(error instanceof Error ? error.message : '알 수 없는 오류');
+      setSummaryError(
+        error instanceof Error ? error.message : '알 수 없는 오류'
+      );
     } finally {
       setSummaryLoading(false);
     }
@@ -319,12 +344,12 @@ const LessonModal = ({
       ) {
         setYoutubeMetadata(editingLesson.content_data.youtube);
       }
-      
+
       // Load existing summary if present
       if (editingLesson.content_data?.summary) {
-          setSummaryData(editingLesson.content_data.summary);
+        setSummaryData(editingLesson.content_data.summary);
       } else {
-          setSummaryData(null);
+        setSummaryData(null);
       }
 
       // Store original URL for cache bypass detection
@@ -366,10 +391,12 @@ const LessonModal = ({
         // DB 저장 시 is_preview로 변환 필요
         is_preview: Boolean(lessonData.enablePreview),
         content_data: {
-            ...(lessonData.content_data || {}),
-            youtube: youtubeMetadata ? youtubeMetadata : lessonData.content_data?.youtube,
-            summary: summaryData // Include summary data
-        }
+          ...(lessonData.content_data || {}),
+          youtube: youtubeMetadata
+            ? youtubeMetadata
+            : lessonData.content_data?.youtube,
+          summary: summaryData, // Include summary data
+        },
       };
 
       // enablePreview 필드는 제거 (is_preview로 이미 변환됨)
@@ -392,7 +419,10 @@ const LessonModal = ({
       });
 
       // Debug: Log content_data to verify it's being passed
-      console.log('LessonModal content_data:', JSON.stringify(lessonToSubmit.content_data, null, 2).slice(0, 500));
+      console.log(
+        'LessonModal content_data:',
+        JSON.stringify(lessonToSubmit.content_data, null, 2).slice(0, 500)
+      );
 
       if (editingLesson) {
         // 편집 모드: 기존 레슨 업데이트
@@ -973,7 +1003,10 @@ const LessonModal = ({
                               alt="Thumbnail"
                               width="60"
                               height="45"
-                              style={{ objectFit: 'cover', marginRight: '10px' }}
+                              style={{
+                                objectFit: 'cover',
+                                marginRight: '10px',
+                              }}
                             />
                             <div>
                               <div
@@ -995,22 +1028,50 @@ const LessonModal = ({
                           </div>
 
                           <div className="mt-3">
-                              <SummaryButton
-                                  youtubeUrl={lessonData.videoUrl}
-                                  onGenerateSummary={handleGenerateSummary}
-                                  isLoading={summaryLoading}
-                                  disabled={!youtubeMetadata}
-                              />
-                              <SummaryDisplay
-                                  data={summaryData}
-                                  isLoading={summaryLoading}
-                                  error={summaryError}
-                                  onRetry={handleGenerateSummary}
-                                  onTimestampClick={(seconds) => {
-                                      // TODO: Seek video player if available
-                                      console.log('Seek to:', seconds);
+                            <SummaryButton
+                              youtubeUrl={lessonData.videoUrl}
+                              onGenerateSummary={() =>
+                                handleGenerateSummary(!!summaryData)
+                              }
+                              isLoading={summaryLoading}
+                              disabled={!youtubeMetadata}
+                              hasSummary={!!summaryData}
+                            />
+                            <SummaryDisplay
+                              data={summaryData}
+                              isLoading={summaryLoading}
+                              error={summaryError}
+                              onRetry={handleGenerateSummary}
+                              onTimestampClick={(seconds) => {
+                                // TODO: Seek video player if available
+                                console.log('Seek to:', seconds);
+                              }}
+                              provider={summaryProvider}
+                            />
+
+                            {/* 강사용 관련 질문 편집 (Lilys 형식일 때만) */}
+                            {summaryData && isLilysFormat(summaryData) && (
+                              <div className="summary-display--lilys mt-4 p-3 border rounded suggestion-editor-wrapper">
+                                <SuggestionEditor
+                                  suggestions={normalizeSuggestions(
+                                    summaryData.suggestions
+                                  )}
+                                  onChange={(
+                                    newSuggestions: SuggestionItem[]
+                                  ) => {
+                                    setSummaryData((prev) => {
+                                      if (!prev || !isLilysFormat(prev))
+                                        return prev;
+                                      return {
+                                        ...prev,
+                                        suggestions: newSuggestions,
+                                      };
+                                    });
                                   }}
-                              />
+                                  disabled={summaryLoading}
+                                />
+                              </div>
+                            )}
                           </div>
                         </>
                       )}
