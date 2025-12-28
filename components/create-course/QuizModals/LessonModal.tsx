@@ -23,7 +23,13 @@ import SummaryButton from '@/components/Lesson/SummaryButton';
 import SummaryDisplay from '@/components/Lesson/SummaryDisplay';
 import { fetchTranscript } from '@/app/lib/actions/transcriptActions';
 import { generateLilysSummary } from '@/app/lib/actions/summaryActions';
-import type { AnySummaryData } from '@/types/summary';
+import type {
+  AnySummaryData,
+  SuggestionItem,
+  SummaryProvider,
+} from '@/types/summary';
+import { isLilysFormat, normalizeSuggestions } from '@/types/summary';
+import SuggestionEditor from '@/components/Lesson/SuggestionEditor';
 import { useSession } from 'next-auth/react';
 import {
   getSavedSummary,
@@ -106,6 +112,9 @@ const LessonModal = ({
   const [summaryData, setSummaryData] = useState<AnySummaryData | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [summaryProvider, setSummaryProvider] = useState<
+    SummaryProvider | undefined
+  >(undefined);
   // Track original URL when modal opens (for cache bypass detection)
   const [originalVideoUrl, setOriginalVideoUrl] = useState<string | null>(null);
 
@@ -136,6 +145,7 @@ const LessonModal = ({
     // URL이 변경되면 이전 요약 데이터 및 content_data 초기화
     setSummaryData(null);
     setSummaryError(null);
+    setSummaryProvider(undefined);
     // content_data도 초기화 (이전 youtube/summary 제거)
     setLessonData((prev) => ({
       ...prev,
@@ -211,7 +221,7 @@ const LessonModal = ({
     }
   };
 
-  const handleGenerateSummary = async () => {
+  const handleGenerateSummary = async (forceRegenerate: boolean = false) => {
     // Session check
     if (!session?.user?.id) {
       setSummaryError('로그인이 필요합니다.');
@@ -225,11 +235,16 @@ const LessonModal = ({
     setSummaryError(null);
 
     try {
-      // 1. 캐시 확인 (편집 모드이고 ID가 있고, URL이 변경되지 않았을 때만)
-      // URL이 변경되었으면 캐시를 무시하고 새로 생성
+      // 1. 캐시 확인 (편집 모드이고 ID가 있고, URL이 변경되지 않았고, 강제 재생성이 아닐 때만)
+      // URL이 변경되었거나 forceRegenerate=true면 캐시를 무시하고 새로 생성
       // Use originalVideoUrl (set when modal opened) for accurate comparison
       const urlChanged = originalVideoUrl !== lessonData.videoUrl;
-      if (editingLesson && editingLesson.id && !urlChanged) {
+      if (
+        editingLesson &&
+        editingLesson.id &&
+        !urlChanged &&
+        !forceRegenerate
+      ) {
         // Note: editingLesson.id can be string or number
         const cached = await getSavedSummary(editingLesson.id.toString());
         if (cached.cached && cached.data) {
@@ -270,6 +285,7 @@ const LessonModal = ({
 
       const generatedSummary = summaryResult.data!;
       setSummaryData(generatedSummary);
+      setSummaryProvider(summaryResult.provider);
 
       // 5. 저장 (편집 모드일 경우 즉시 저장)
       const currentLessonId = editingLesson?.id?.toString();
@@ -1014,9 +1030,12 @@ const LessonModal = ({
                           <div className="mt-3">
                             <SummaryButton
                               youtubeUrl={lessonData.videoUrl}
-                              onGenerateSummary={handleGenerateSummary}
+                              onGenerateSummary={() =>
+                                handleGenerateSummary(!!summaryData)
+                              }
                               isLoading={summaryLoading}
                               disabled={!youtubeMetadata}
+                              hasSummary={!!summaryData}
                             />
                             <SummaryDisplay
                               data={summaryData}
@@ -1027,7 +1046,32 @@ const LessonModal = ({
                                 // TODO: Seek video player if available
                                 console.log('Seek to:', seconds);
                               }}
+                              provider={summaryProvider}
                             />
+
+                            {/* 강사용 관련 질문 편집 (Lilys 형식일 때만) */}
+                            {summaryData && isLilysFormat(summaryData) && (
+                              <div className="summary-display--lilys mt-4 p-3 border rounded suggestion-editor-wrapper">
+                                <SuggestionEditor
+                                  suggestions={normalizeSuggestions(
+                                    summaryData.suggestions
+                                  )}
+                                  onChange={(
+                                    newSuggestions: SuggestionItem[]
+                                  ) => {
+                                    setSummaryData((prev) => {
+                                      if (!prev || !isLilysFormat(prev))
+                                        return prev;
+                                      return {
+                                        ...prev,
+                                        suggestions: newSuggestions,
+                                      };
+                                    });
+                                  }}
+                                  disabled={summaryLoading}
+                                />
+                              </div>
+                            )}
                           </div>
                         </>
                       )}

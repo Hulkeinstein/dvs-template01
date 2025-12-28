@@ -245,7 +245,21 @@ export type SummaryErrorType =
   | 'RATE_LIMIT'
   | 'VIDEO_TOO_LONG'
   | 'DAILY_LIMIT_EXCEEDED'
+  | 'GEMINI_API_ERROR'
+  | 'PROVIDER_UNAVAILABLE'
   | 'UNKNOWN';
+
+// ============================================
+// A/B Testing Types
+// ============================================
+
+export type SummaryProvider = 'openai' | 'gemini';
+
+export interface ABTestMeta {
+  provider: SummaryProvider;
+  abTestGroupId?: string;
+  abTestWeight?: number;
+}
 
 export interface SummaryResult {
   success: boolean;
@@ -259,6 +273,9 @@ export interface LilysSummaryResult {
   data?: LilysSummaryData;
   error?: string;
   errorType?: SummaryErrorType;
+  // A/B Testing metadata
+  provider?: SummaryProvider;
+  abTestGroupId?: string;
 }
 
 // ============================================

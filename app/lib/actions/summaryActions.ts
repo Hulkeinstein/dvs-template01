@@ -9,12 +9,61 @@ import {
   TranscriptResponse,
   LilysAIResponseSchema,
   LilysSummaryResult,
+  SummaryProvider,
 } from '@/types/summary';
 import {
   validateSummaryApiKeys,
   estimateTokenCount,
+  getABTestWeight,
 } from '@/app/lib/utils/apiKeyValidator';
+import { generateLilysSummaryWithGemini } from './geminiSummaryActions';
 import { z } from 'zod';
+
+// ============================================
+// A/B Testing Helpers
+// ============================================
+
+/**
+ * A/B 테스트 그룹 선택
+ * @returns 'openai' | 'gemini'
+ */
+function selectProvider(): SummaryProvider {
+  const { openai, gemini } = validateSummaryApiKeys();
+  const weight = getABTestWeight();
+
+  // Gemini 키가 없으면 OpenAI만 사용
+  if (!gemini) {
+    console.log('[A/B Test] Gemini key not found, using OpenAI');
+    return 'openai';
+  }
+
+  // OpenAI 키가 없으면 Gemini만 사용
+  if (!openai) {
+    console.log('[A/B Test] OpenAI key not found, using Gemini');
+    return 'gemini';
+  }
+
+  // weight 기반 랜덤 선택 (0.5 = 50:50)
+  const random = Math.random();
+  const provider: SummaryProvider = random < weight ? 'gemini' : 'openai';
+
+  console.log('[A/B Test] Provider selected:', {
+    weight,
+    random: random.toFixed(3),
+    provider,
+  });
+
+  return provider;
+}
+
+/**
+ * A/B 테스트 그룹 ID 생성
+ */
+function generateABTestGroupId(): string {
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 8);
+  return `ab_${timestamp}_${random}`;
+}
 
 // Types for results
 export type KeySummaryResult = {
@@ -335,15 +384,24 @@ export async function generateFullSummary(
   }
 }
 
-// Helper: Format seconds to MM:SS or HH:MM:SS
+// Helper: Format seconds to M:SS, MM:SS, or H:MM:SS
 function formatTimestamp(seconds: number): string {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  if (h > 0) {
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  // 방어 로직: NaN, 음수, Infinity 처리
+  if (!Number.isFinite(seconds) || seconds < 0) {
+    return '0:00';
   }
-  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+
+  const totalSeconds = Math.floor(seconds);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+
+  // Zod 정규식 호환: \d{1,2}:\d{2}(:\d{2})?
+  // M:SS (0:00 ~ 9:59), MM:SS (10:00 ~ 59:59), H:MM:SS (1:00:00+)
+  if (h > 0) {
+    return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
+  return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
 // Helper: Build structured segments from transcript
@@ -367,18 +425,381 @@ function buildStructuredSegments(content: TranscriptSegment[]): {
   });
 }
 
-// 4. Generate Lilys Style Summary
+// Helper: Sample segments by time to ensure full video coverage
+// This solves the 100k character truncation problem by intelligently sampling
+interface StructuredSegment {
+  id: number;
+  start: number;
+  end: number;
+  timestamp: string;
+  text: string;
+}
+
+// Helper: Snap AI-generated timestamp to nearest actual segment start time
+// Solves: AI ignores actual timestamps and generates its own
+function snapToNearestSegment(
+  timestamp: number,
+  segments: StructuredSegment[]
+): number {
+  if (segments.length === 0) return timestamp;
+
+  // Find the closest segment by comparing distances
+  let closest = segments[0];
+  let minDistance = Math.abs(segments[0].start - timestamp);
+
+  for (const seg of segments) {
+    const distance = Math.abs(seg.start - timestamp);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closest = seg;
+    }
+  }
+
+  return closest.start;
+}
+
+function sampleSegmentsByTime(
+  segments: StructuredSegment[],
+  targetSections: number = 5,
+  maxCharsPerSection: number = 15000
+): { sampledSegments: StructuredSegment[]; sectionBoundaries: number[] } {
+  if (segments.length === 0) {
+    return { sampledSegments: [], sectionBoundaries: [] };
+  }
+
+  const lastSegment = segments[segments.length - 1];
+  const totalDuration = lastSegment.end || lastSegment.start + 10;
+  const sectionDuration = totalDuration / targetSections;
+
+  const sampledSegments: StructuredSegment[] = [];
+  const sectionBoundaries: number[] = [];
+
+  for (let i = 0; i < targetSections; i++) {
+    const sectionStart = Math.floor(i * sectionDuration);
+    const sectionEnd = Math.floor((i + 1) * sectionDuration);
+    sectionBoundaries.push(sectionStart);
+
+    // 해당 구간의 세그먼트 필터링
+    const sectionSegments = segments.filter(
+      (seg) => seg.start >= sectionStart && seg.start < sectionEnd
+    );
+
+    if (sectionSegments.length === 0) continue;
+
+    // 구간 내에서 균등하게 샘플링 (최대 글자수 제한)
+    let charCount = 0;
+    const sampledFromSection: StructuredSegment[] = [];
+
+    // 구간 시작, 중간, 끝 부분에서 샘플링
+    const indices = [
+      0,
+      Math.floor(sectionSegments.length * 0.25),
+      Math.floor(sectionSegments.length * 0.5),
+      Math.floor(sectionSegments.length * 0.75),
+      sectionSegments.length - 1,
+    ];
+
+    for (const idx of [...new Set(indices)]) {
+      if (idx < sectionSegments.length) {
+        const seg = sectionSegments[idx];
+        if (charCount + seg.text.length <= maxCharsPerSection) {
+          sampledFromSection.push(seg);
+          charCount += seg.text.length;
+        }
+      }
+    }
+
+    // 추가 세그먼트 샘플링 (글자수 허용 범위 내)
+    for (const seg of sectionSegments) {
+      if (!sampledFromSection.includes(seg)) {
+        if (charCount + seg.text.length <= maxCharsPerSection) {
+          sampledFromSection.push(seg);
+          charCount += seg.text.length;
+        }
+      }
+    }
+
+    // 시간순 정렬 후 추가
+    sampledFromSection.sort((a, b) => a.start - b.start);
+    sampledSegments.push(...sampledFromSection);
+  }
+
+  return { sampledSegments, sectionBoundaries };
+}
+
+// Helper: Normalize AI response to match expected schema
+// Handles: action_points array→object, missing timestamps, timestamp snapping & sorting
+function normalizeAIResponse(
+  response: Record<string, unknown>,
+  maxDurationSeconds: number,
+  sectionBoundaries: number[],
+  allSegments: StructuredSegment[] // 새 파라미터: 타임스탬프 스냅핑용
+): Record<string, unknown> {
+  const normalized = { ...response };
+
+  // 1. action_points: 배열이면 객체로 변환
+  if (Array.isArray(normalized.action_points)) {
+    normalized.action_points = { items: normalized.action_points };
+  }
+
+  // 1.5. timeline_intro: 문자열이면 객체로 변환
+  if (typeof normalized.timeline_intro === 'string') {
+    normalized.timeline_intro = { text: normalized.timeline_intro };
+  }
+
+  // 2. sections: 타임스탬프 스냅핑, 정규화 및 정렬
+  if (Array.isArray(normalized.sections)) {
+    let sections = normalized.sections as Record<string, unknown>[];
+    const totalSections = sections.length;
+
+    sections = sections.map((section, sectionIdx) => {
+      const normalizedSection = { ...section };
+
+      // 이 섹션의 시간 범위 계산 (섹션 수가 sectionBoundaries보다 많을 수 있음)
+      // 안전하게 영상 길이를 기반으로 균등 분배
+      const sectionStart =
+        sectionIdx < sectionBoundaries.length
+          ? sectionBoundaries[sectionIdx]
+          : Math.floor((sectionIdx / totalSections) * maxDurationSeconds);
+      const sectionEnd =
+        sectionIdx + 1 < sectionBoundaries.length
+          ? sectionBoundaries[sectionIdx + 1]
+          : sectionIdx === totalSections - 1
+            ? maxDurationSeconds
+            : Math.floor(
+                ((sectionIdx + 1) / totalSections) * maxDurationSeconds
+              );
+
+      // sectionEnd가 maxDurationSeconds를 초과하지 않도록 보장
+      const safeSectionEnd = Math.min(sectionEnd, maxDurationSeconds);
+      const safeSectionStart = Math.min(sectionStart, safeSectionEnd);
+
+      // 섹션 타임스탬프 처리
+      let sectionTimestampSeconds: number;
+
+      if (
+        typeof normalizedSection.timestamp_seconds === 'number' &&
+        Number.isFinite(normalizedSection.timestamp_seconds)
+      ) {
+        sectionTimestampSeconds = normalizedSection.timestamp_seconds as number;
+      } else if (
+        normalizedSection.timestamp &&
+        typeof normalizedSection.timestamp === 'string'
+      ) {
+        // timestamp 문자열에서 초 추출 시도
+        const parts = (normalizedSection.timestamp as string)
+          .split(':')
+          .map(Number);
+        if (parts.length === 3 && parts.every(Number.isFinite)) {
+          sectionTimestampSeconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+        } else if (parts.length === 2 && parts.every(Number.isFinite)) {
+          sectionTimestampSeconds = parts[0] * 60 + parts[1];
+        } else {
+          sectionTimestampSeconds = safeSectionStart;
+        }
+      } else {
+        sectionTimestampSeconds = safeSectionStart;
+      }
+
+      // NaN 방어
+      if (!Number.isFinite(sectionTimestampSeconds)) {
+        sectionTimestampSeconds = safeSectionStart;
+      }
+
+      // 클램핑: 영상 길이 초과 또는 음수인 경우에만 적용
+      if (
+        sectionTimestampSeconds > maxDurationSeconds ||
+        sectionTimestampSeconds < 0
+      ) {
+        sectionTimestampSeconds = safeSectionStart;
+      }
+
+      // 스냅핑: AI 타임스탬프를 가장 가까운 실제 세그먼트로 매칭
+      if (allSegments.length > 0) {
+        sectionTimestampSeconds = snapToNearestSegment(
+          sectionTimestampSeconds,
+          allSegments
+        );
+      }
+
+      normalizedSection.timestamp_seconds = sectionTimestampSeconds;
+      normalizedSection.timestamp = formatTimestamp(sectionTimestampSeconds);
+
+      // 3. subsections 타임스탬프 정규화, 스냅핑 및 정렬
+      if (Array.isArray(normalizedSection.subsections)) {
+        let subsections = normalizedSection.subsections as Record<
+          string,
+          unknown
+        >[];
+        const totalSubsections = subsections.length;
+
+        subsections = subsections.map((sub, subIdx) => {
+          const normalizedSub = { ...sub };
+
+          // 서브섹션 시작 시간 (섹션 내에서 균등 분배)
+          const subStart =
+            sectionTimestampSeconds +
+            Math.floor(
+              (subIdx / totalSubsections) *
+                (safeSectionEnd - sectionTimestampSeconds)
+            );
+
+          let subTimestampSeconds: number;
+
+          if (
+            typeof normalizedSub.timestamp_seconds === 'number' &&
+            Number.isFinite(normalizedSub.timestamp_seconds)
+          ) {
+            subTimestampSeconds = normalizedSub.timestamp_seconds as number;
+          } else if (
+            normalizedSub.timestamp &&
+            typeof normalizedSub.timestamp === 'string'
+          ) {
+            const parts = (normalizedSub.timestamp as string)
+              .split(':')
+              .map(Number);
+            if (parts.length === 3 && parts.every(Number.isFinite)) {
+              subTimestampSeconds = parts[0] * 3600 + parts[1] * 60 + parts[2];
+            } else if (parts.length === 2 && parts.every(Number.isFinite)) {
+              subTimestampSeconds = parts[0] * 60 + parts[1];
+            } else {
+              subTimestampSeconds = subStart;
+            }
+          } else {
+            subTimestampSeconds = subStart;
+          }
+
+          // NaN 방어
+          if (!Number.isFinite(subTimestampSeconds)) {
+            subTimestampSeconds = subStart;
+          }
+
+          // 클램핑: 영상 길이 초과 또는 음수인 경우에만 적용
+          if (
+            subTimestampSeconds > maxDurationSeconds ||
+            subTimestampSeconds < 0
+          ) {
+            subTimestampSeconds = subStart;
+          }
+
+          // 스냅핑: AI 타임스탬프를 가장 가까운 실제 세그먼트로 매칭
+          if (allSegments.length > 0) {
+            subTimestampSeconds = snapToNearestSegment(
+              subTimestampSeconds,
+              allSegments
+            );
+          }
+
+          normalizedSub.timestamp_seconds = subTimestampSeconds;
+          normalizedSub.timestamp = formatTimestamp(subTimestampSeconds);
+
+          return normalizedSub;
+        });
+
+        // 서브섹션 정렬: timestamp_seconds 기준 오름차순
+        subsections.sort((a, b) => {
+          const aTime = (a.timestamp_seconds as number) || 0;
+          const bTime = (b.timestamp_seconds as number) || 0;
+          return aTime - bTime;
+        });
+
+        normalizedSection.subsections = subsections;
+      }
+
+      return normalizedSection;
+    });
+
+    // 섹션 정렬: timestamp_seconds 기준 오름차순
+    sections.sort((a, b) => {
+      const aTime = (a.timestamp_seconds as number) || 0;
+      const bTime = (b.timestamp_seconds as number) || 0;
+      return aTime - bTime;
+    });
+
+    normalized.sections = sections;
+  }
+
+  return normalized;
+}
+
+// 4. Generate Lilys Style Summary (A/B Test Router)
 export async function generateLilysSummary(
+  transcript: TranscriptResponse,
+  description: string = '',
+  videoDurationSeconds: number = 0
+): Promise<LilysSummaryResult> {
+  // A/B 테스트 라우팅
+  const provider = selectProvider();
+  const abTestGroupId = generateABTestGroupId();
+
+  console.log('[Summary] A/B Test:', { provider, abTestGroupId });
+
+  if (provider === 'gemini') {
+    const result = await generateLilysSummaryWithGemini(
+      transcript,
+      description,
+      videoDurationSeconds
+    );
+    return {
+      ...result,
+      provider: 'gemini',
+      abTestGroupId,
+    };
+  }
+
+  // OpenAI 경로
+  const result = await generateLilysSummaryWithOpenAI(
+    transcript,
+    description,
+    videoDurationSeconds
+  );
+  return {
+    ...result,
+    provider: 'openai',
+    abTestGroupId,
+  };
+}
+
+// 4.1 Generate Lilys Style Summary with OpenAI
+async function generateLilysSummaryWithOpenAI(
   transcript: TranscriptResponse,
   description: string = '',
   videoDurationSeconds: number = 0
 ): Promise<LilysSummaryResult> {
   try {
     // 1. Build structured segments with explicit timestamps
-    const structuredSegments = buildStructuredSegments(transcript.content);
+    const allSegments = buildStructuredSegments(transcript.content);
 
-    // 2. Create JSON input for AI
-    const segmentsJson = JSON.stringify(structuredSegments, null, 2);
+    // 2. Apply time-based sampling to ensure full video coverage
+    // This prevents the 100k character truncation problem
+    const TARGET_SECTIONS = 5;
+    const { sampledSegments, sectionBoundaries } = sampleSegmentsByTime(
+      allSegments,
+      TARGET_SECTIONS,
+      18000 // ~18k chars per section = ~90k total, safe margin
+    );
+
+    // Calculate actual video duration
+    // 우선순위: 1) 전달된 videoDurationSeconds, 2) 세그먼트 기반 계산
+    const segmentBasedDuration =
+      allSegments.length > 0
+        ? allSegments[allSegments.length - 1].end ||
+          allSegments[allSegments.length - 1].start + 10
+        : 0;
+
+    // videoDurationSeconds가 전달되면 우선 사용 (더 정확함)
+    const actualDuration =
+      videoDurationSeconds > 0 ? videoDurationSeconds : segmentBasedDuration;
+
+    console.log('[Summary] Video duration:', {
+      videoDurationSeconds,
+      segmentBasedDuration,
+      actualDuration,
+      segmentCount: allSegments.length,
+    });
+
+    // 3. Create JSON input for AI (using sampled segments)
+    const segmentsJson = JSON.stringify(sampledSegments, null, 2);
 
     const systemPrompt = `You are an expert video analyst who extracts the CORE VALUE from educational content.
 
@@ -420,10 +841,29 @@ JSON array of transcript segments:
   ...
 ]
 
-## TIMESTAMP RULES
+## TIMESTAMP RULES (매우 중요)
 1. 반드시 segment의 "start" 값을 timestamp_seconds로 사용
 2. 각 subsection.content 끝에 (MM:SS) 형태로 타임스탬프 표시
 3. 타임스탬프를 추정하거나 임의로 생성하지 마세요
+
+## FULL VIDEO COVERAGE (필수)
+1. **영상 전체를 시간순으로 커버**해야 합니다
+2. 첫 번째 섹션은 영상 초반(0:00~2:00 사이)에서 시작
+3. 마지막 섹션은 영상 후반부 내용을 포함
+4. 섹션들의 timestamp_seconds가 **시간순으로 증가**해야 함
+5. 특정 구간(예: 12:00~15:00)에만 집중하지 말고 전체 영상을 분석
+
+### 타임스탬프 분포 예시 (20분 영상):
+- 섹션 1: 0:00~3:00 (도입 후 첫 주제)
+- 섹션 2: 4:00~8:00 (두 번째 주제)
+- 섹션 3: 9:00~13:00 (세 번째 주제)
+- 섹션 4: 14:00~18:00 (네 번째 주제)
+- 섹션 5: 18:00~20:00 (마무리/결론)
+
+### 금지 패턴:
+- 모든 섹션이 같은 시간대(예: 12:43~15:17)에 집중
+- 영상 초반이나 후반이 누락
+- 섹션 간 timestamp가 역순
 
 ## OUTPUT FORMAT (JSON)
 {
@@ -452,31 +892,19 @@ JSON array of transcript segments:
           "timestamp": "00:05",
           "timestamp_seconds": 5,
           "title": "a. 전통적 학습 방식 (바텀업)",
-          "content": "학교 교육은 **기초(Foundation)**부터 시작해야 한다는 사고방식에 기반을 두고 있습니다. (0:05)"
+          "content": "학교 교육은 **기초(Foundation)**부터 시작해야 한다는 사고방식에 기반을 두고 있습니다. 수학을 배우려면 먼저 덧셈, 뺄셈을 배우고, 그 다음 곱셈, 나눗셈을 배우는 식입니다. 이러한 **순차적 학습 방식**은 교육 시스템 전반에 깊이 뿌리내려 있으며, 대부분의 사람들이 이것이 유일한 학습 방법이라고 생각합니다. 하지만 이 방식에는 심각한 한계가 있습니다. (0:05)"
         },
         {
           "timestamp": "00:25",
           "timestamp_seconds": 25,
-          "title": "b. 머신러닝 학습의 첫 4년",
-          "content": "머신러닝을 배우려면 수학, 행렬 분류, 선형 알고리즘 등 **기초 지식**을 쌓는 데 첫 4년을 할애해야 한다고 간주합니다. (0:25)"
-        },
-        {
-          "timestamp": "00:48",
-          "timestamp_seconds": 48,
-          "title": "c. 선형 회귀의 한계",
-          "content": "이 방식은 선형 회귀와 같이 현재도 일부 사용되지만, **실제 생산 수준(production-grade)**의 ML에 도달하기까지 매우 오랜 시간이 소요됩니다. (0:48)"
+          "title": "b. 머신러닝 학습의 전통적 접근",
+          "content": "머신러닝을 배우려면 수학, 행렬 분류, 선형 알고리즘 등 **기초 지식**을 쌓는 데 첫 4년을 할애해야 한다고 간주합니다. 대학 커리큘럼을 보면 1-2학년은 수학 기초, 3학년은 통계와 알고리즘, 4학년이 되어서야 실제 ML 모델을 다룹니다. 이런 방식으로는 **실무에서 ML을 활용**하기까지 최소 4-5년이 걸리며, 그 사이에 많은 사람들이 포기하게 됩니다. (0:25)"
         },
         {
           "timestamp": "01:10",
           "timestamp_seconds": 70,
-          "title": "d. 확장성 문제",
-          "content": "이 방식이 확장(scale)하기 어려운 이유는 교사가 항상 옆에 있어야 하고, 매 순간 정확히 어떤 지식이 필요한지 알기 어렵기 때문입니다. (1:10)"
-        },
-        {
-          "timestamp": "01:35",
-          "timestamp_seconds": 95,
-          "title": "e. 바텀업 방식의 비효율",
-          "content": "반면, 바텀업 방식은 순서가 정해져 있어 확장이 훨씬 쉽지만, **극도로 비효율적**입니다. (1:35)"
+          "title": "c. 바텀업 방식의 확장성 문제",
+          "content": "**탑다운 방식**(전문가가 1:1로 가르치는 방식)이 확장하기 어려운 이유는 교사가 항상 옆에 있어야 하고, 매 순간 정확히 어떤 지식이 필요한지 알기 어렵기 때문입니다. 반면 바텀업 방식은 순서가 정해져 있어 확장이 훨씬 쉽습니다. 교재를 만들어 놓으면 수천 명이 동시에 배울 수 있죠. 하지만 이 방식은 **극도로 비효율적**입니다. 대부분의 기초 지식이 실제로 필요하지 않거나, 필요할 때 찾아보면 되는 것들이기 때문입니다. (1:10)"
         }
       ]
     }
@@ -495,24 +923,31 @@ JSON array of transcript segments:
 2. sections.summary: 이 섹션에서 얻을 핵심 인사이트 1-2문장
 3. subsections: 섹션의 핵심 내용만 포함 (도입부/전환 발언 제외)
 4. subsections.title: 실질적인 내용 제목 (예: "a. 계획 수립 단계")
-5. subsections.content:
-   - 학습자가 실제로 활용할 수 있는 핵심 내용만
+5. subsections.content (매우 중요 - 상세하게 작성):
+   - **3-5문장**으로 상세하게 설명
+   - 발표자가 말한 핵심 내용을 구체적으로 풀어서 작성
+   - 예시, 비유, 구체적 수치가 있다면 포함
    - **핵심 키워드** 볼드 처리
    - 마지막에 (M:SS) 타임스탬프
 
 ## BAD vs GOOD EXAMPLES
 
-### BAD (피해야 할 패턴):
+### BAD - 너무 간략한 content:
+"content": "Antigravity가 문제 해결 계획을 세웁니다. (12:43)"
+
+### GOOD - 상세한 content (이렇게 작성):
+"content": "**Antigravity**는 문제를 분석하고 해결 계획을 수립하는 AI 에이전트입니다. 먼저 사용자의 요청을 분석하여 필요한 작업 단계를 도출합니다. 예를 들어 '로그인 기능 추가'라는 요청이 들어오면, 1) 인증 라이브러리 선택, 2) 데이터베이스 스키마 설계, 3) API 엔드포인트 구현, 4) 프론트엔드 폼 작성 등의 세부 단계로 분해합니다. 이 계획은 **문서 형태**로 저장되어 다음 단계에서 검증을 받게 됩니다. (12:43)"
+
+### BAD - 모호한 제목과 구조:
 section: "전략 공개"
   - "a. 전략 공개" (X) 도입부, 핵심 아님
   - "b. 단계별 과정" (X) 모호한 중간 레벨
-  - "c. 계획 수립" (O) 이게 실제 핵심
 
-### GOOD (올바른 패턴):
+### GOOD - 명확한 제목과 구조:
 section: "5단계 AI 코딩 전략"
-  - "a. 계획 수립" - Antigravity가 문제 해결 계획을 세움
-  - "b. 계획 검증" - Claude Code가 검토하고 보완
-  - "c. 코드 실행" - 보완된 내용으로 코드 수정
+  - "a. 계획 수립 (Antigravity)" - 상세한 내용 3-5문장
+  - "b. 계획 검증 (Claude Code)" - 상세한 내용 3-5문장
+  - "c. 코드 실행" - 상세한 내용 3-5문장
 
 ## CONTENT DEPTH
 - 짧은 영상 (5분 이하): 섹션 2-3개
@@ -538,26 +973,69 @@ section: "5단계 AI 코딩 전략"
       };
     }
 
+    // Use actual duration from all segments (not sampled)
+    const lastSegmentStart = allSegments[allSegments.length - 1]?.start || 0;
+    const videoDurationFormatted = formatTimestamp(actualDuration);
+
+    // Calculate section time boundaries for prompt
+    const sectionRanges = sectionBoundaries
+      .map((start, i) => {
+        const end =
+          i < sectionBoundaries.length - 1
+            ? sectionBoundaries[i + 1]
+            : actualDuration;
+        return `- 섹션 ${i + 1}: ${formatTimestamp(start)} ~ ${formatTimestamp(end)}`;
+      })
+      .join('\n');
+
     const userPrompt = `## Transcript Segments (JSON)
-${segmentsJson.slice(0, 100000)}
+이 자막은 ${videoDurationFormatted} 영상에서 시간순으로 샘플링되었습니다.
+각 구간의 핵심 내용을 대표합니다.
+
+${segmentsJson}
 
 ## Video Description
 ${description}
 
-## Available Timestamps
-First segment: id=1, start=${structuredSegments[0]?.start || 0}s
-Last segment: id=${structuredSegments.length}, start=${structuredSegments[structuredSegments.length - 1]?.start || 0}s
-Total segments: ${structuredSegments.length}
+## ⚠️ CRITICAL: VIDEO TIMELINE (반드시 준수)
 
-중요: 위 segments의 "start" 값만 timestamp_seconds로 사용하세요. 임의의 값을 생성하지 마세요.`;
+### 영상 정보
+- 전체 길이: ${videoDurationFormatted} (${Math.floor(actualDuration)}초)
+- 원본 세그먼트: ${allSegments.length}개
+- 샘플링된 세그먼트: ${sampledSegments.length}개
+
+### 필수 섹션 시간 배치 (이 구간에서 시작해야 함)
+${sectionRanges}
+
+### ❌ 절대 금지
+- 모든 섹션이 같은 시간대에 몰리는 것 (예: 12:00~15:00에 집중)
+- 영상 앞부분(0:00~${formatTimestamp(sectionBoundaries[2] || 0)})이 완전히 누락
+- 두 섹션이 같은 timestamp_seconds로 시작
+- **timestamp_seconds가 ${Math.floor(actualDuration)}초를 초과** (영상 길이 초과 금지!)
+
+### ✅ 필수 규칙
+- 섹션 1은 반드시 0:00~${formatTimestamp(sectionBoundaries[1] || 60)} 사이에서 시작
+- 마지막 섹션은 반드시 ${formatTimestamp(sectionBoundaries[TARGET_SECTIONS - 1] || lastSegmentStart)} 이후에서 시작
+- 각 섹션의 timestamp_seconds는 위 구간 내 세그먼트의 "start" 값 사용
+
+중요: segments의 "start" 값만 timestamp_seconds로 사용하세요. 임의의 값을 생성하지 마세요.`;
 
     const result = await callOpenAI([
       { role: 'system', content: systemPrompt },
       { role: 'user', content: userPrompt },
     ]);
 
+    // Normalize AI response before validation
+    // Handles: action_points array→object, timestamp snapping & sorting
+    const normalizedContent = normalizeAIResponse(
+      result.content as Record<string, unknown>,
+      actualDuration,
+      sectionBoundaries,
+      allSegments // 타임스탬프 스냅핑용
+    );
+
     // Validation - AI 응답용 스키마 사용 (meta 없음, subsections 빈 배열 허용)
-    const parsed = LilysAIResponseSchema.safeParse(result.content);
+    const parsed = LilysAIResponseSchema.safeParse(normalizedContent);
 
     if (!parsed.success) {
       console.error('Lilys Summary Validation Error:');
@@ -599,10 +1077,15 @@ Total segments: ${structuredSegments.length}
       },
     };
 
-    return { success: true, data: summaryData };
+    return { success: true, data: summaryData, provider: 'openai' };
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : 'Unknown error';
-    return { success: false, error: errorMessage, errorType: 'API_ERROR' };
+    return {
+      success: false,
+      error: errorMessage,
+      errorType: 'API_ERROR',
+      provider: 'openai',
+    };
   }
 }

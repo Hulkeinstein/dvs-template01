@@ -1,7 +1,7 @@
 'use server';
 
 import { getServerClient } from '@/app/lib/supabase/server';
-import type { AnySummaryData } from '@/types/summary';
+import type { AnySummaryData, SummaryProvider } from '@/types/summary';
 
 const DAILY_LIMIT = 50;
 
@@ -35,6 +35,8 @@ interface CostInfo {
   inputTokens: number;
   outputTokens: number;
   costUsd: number;
+  provider?: SummaryProvider;
+  abTestGroupId?: string;
 }
 
 // ============================================
@@ -212,6 +214,16 @@ export async function logSummaryCost(costInfo: CostInfo): Promise<SaveResult> {
   try {
     const supabase = getServerClient();
 
+    // A/B 테스트 정보 포함하여 로깅
+    console.log('[Cost Log]', {
+      model: costInfo.model,
+      provider: costInfo.provider || 'unknown',
+      abTestGroupId: costInfo.abTestGroupId,
+      inputTokens: costInfo.inputTokens,
+      outputTokens: costInfo.outputTokens,
+      costUsd: costInfo.costUsd.toFixed(6),
+    });
+
     const { error } = await supabase.from('summary_usage_logs').insert({
       user_id: costInfo.userId,
       lesson_id: costInfo.lessonId || null,
@@ -219,6 +231,8 @@ export async function logSummaryCost(costInfo: CostInfo): Promise<SaveResult> {
       input_tokens: costInfo.inputTokens,
       output_tokens: costInfo.outputTokens,
       cost_usd: costInfo.costUsd,
+      // Note: provider와 ab_test_group_id 컬럼이 DB에 없으면 무시됨
+      // 추후 마이그레이션으로 추가 가능
     });
 
     if (error) {

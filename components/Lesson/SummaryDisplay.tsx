@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import type { AnySummaryData, Subsection } from '@/types/summary';
+import type {
+  AnySummaryData,
+  Subsection,
+  SummaryProvider,
+} from '@/types/summary';
 import { isLilysFormat, normalizeSuggestions } from '@/types/summary';
 
 /**
@@ -23,6 +27,7 @@ interface SummaryDisplayProps {
   error?: string | null;
   onRetry?: () => void;
   onTimestampClick?: (seconds: number) => void;
+  provider?: SummaryProvider;
 }
 
 export default function SummaryDisplay({
@@ -31,6 +36,7 @@ export default function SummaryDisplay({
   error,
   onRetry,
   onTimestampClick,
+  provider,
 }: SummaryDisplayProps) {
   const [loadingMessage, setLoadingMessage] =
     useState('자막을 추출하고 있습니다...');
@@ -282,6 +288,20 @@ export default function SummaryDisplay({
               )}
             </div>
           </section>
+        )}
+
+        {/* 7. Provider Badge */}
+        {provider && (
+          <div className="summary-display__provider mt-4 pt-3 border-top text-end">
+            <span
+              className={`badge ${provider === 'gemini' ? 'bg-primary' : 'bg-success'} px-3 py-2`}
+            >
+              <i
+                className={`bi ${provider === 'gemini' ? 'bi-google' : 'bi-robot'} me-1`}
+              ></i>
+              {provider === 'gemini' ? 'Gemini 3 Flash' : 'GPT-4o-mini'}
+            </span>
+          </div>
         )}
       </div>
     );
