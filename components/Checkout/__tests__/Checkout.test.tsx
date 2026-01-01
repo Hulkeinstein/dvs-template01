@@ -10,40 +10,48 @@ import {
   mockSingleItemCartState,
   mockFreeCartState,
 } from '../../../tests/utils/mock-data';
-import { setEnv } from '../../../tests/utils/test-helpers';
 
 // Mock react-redux
 jest.mock('react-redux', () => ({
   useSelector: jest.fn(),
 }));
 
-// Mock CheckoutForm component
-const MockCheckoutForm = React.forwardRef<
-  Record<string, unknown>,
-  Record<string, unknown>
->((_props, _ref) => (
-  <div data-testid="checkout-form-mock">Mocked CheckoutForm</div>
-));
-MockCheckoutForm.displayName = 'MockCheckoutForm';
+const mockUseSelector = useSelector as jest.MockedFunction<typeof useSelector>;
 
-jest.mock('../CheckoutForm', () => ({
-  __esModule: true,
-  default: MockCheckoutForm,
-}));
+// Helper to set up mock selector with CartReducer structure
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const setMockCartState = (cartState: any) => {
+  mockUseSelector.mockImplementation((selector) =>
+    selector({ CartReducer: cartState })
+  );
+};
+
+// Mock CheckoutForm component - must be inside jest.mock to avoid hoisting issues
+jest.mock('../CheckoutForm', () => {
+  const React = require('react');
+  const MockCheckoutForm = React.forwardRef(
+    (_props: Record<string, unknown>, _ref: unknown) => (
+      <div data-testid="checkout-form-mock">Mocked CheckoutForm</div>
+    )
+  );
+  MockCheckoutForm.displayName = 'MockCheckoutForm';
+  return {
+    __esModule: true,
+    default: MockCheckoutForm,
+  };
+});
 
 describe('Checkout Component', () => {
-  const mockUseSelector = useSelector as jest.MockedFunction<
-    typeof useSelector
-  >;
-
   beforeEach(() => {
     setupTest();
     mockUseSelector.mockClear();
+    // Reset to empty cart state
+    setMockCartState(mockEmptyCartState);
   });
 
   describe('Empty Cart Scenarios', () => {
     it('should show empty cart message when cart is empty', () => {
-      mockUseSelector.mockReturnValue(mockEmptyCartState);
+      setMockCartState(mockEmptyCartState);
 
       render(<Checkout />);
 
@@ -65,7 +73,7 @@ describe('Checkout Component', () => {
     });
 
     it('should NOT show checkout form when cart is empty', () => {
-      mockUseSelector.mockReturnValue(mockEmptyCartState);
+      setMockCartState(mockEmptyCartState);
 
       render(<Checkout />);
 
@@ -78,7 +86,7 @@ describe('Checkout Component', () => {
 
   describe('Cart with Items', () => {
     beforeEach(() => {
-      mockUseSelector.mockReturnValue(mockCartState);
+      setMockCartState(mockCartState);
     });
 
     it('should render checkout form when cart has items', () => {
@@ -118,8 +126,8 @@ describe('Checkout Component', () => {
 
   describe('Stripe Payment Method Selection', () => {
     it('should select Stripe by default when Stripe is enabled', () => {
-      setEnv('NEXT_PUBLIC_STRIPE_ENABLED', 'true');
-      mockUseSelector.mockReturnValue(mockSingleItemCartState);
+      process.env.NEXT_PUBLIC_STRIPE_ENABLED = 'true';
+      setMockCartState(mockSingleItemCartState);
 
       render(<Checkout />);
 
@@ -131,8 +139,8 @@ describe('Checkout Component', () => {
     });
 
     it('should select PayPal by default when Stripe is disabled', () => {
-      setEnv('NEXT_PUBLIC_STRIPE_ENABLED', 'false');
-      mockUseSelector.mockReturnValue(mockSingleItemCartState);
+      process.env.NEXT_PUBLIC_STRIPE_ENABLED = 'false';
+      setMockCartState(mockSingleItemCartState);
 
       render(<Checkout />);
 
@@ -142,8 +150,8 @@ describe('Checkout Component', () => {
     });
 
     it('should disable Stripe radio button when Stripe is disabled', () => {
-      setEnv('NEXT_PUBLIC_STRIPE_ENABLED', 'false');
-      mockUseSelector.mockReturnValue(mockSingleItemCartState);
+      process.env.NEXT_PUBLIC_STRIPE_ENABLED = 'false';
+      setMockCartState(mockSingleItemCartState);
 
       render(<Checkout />);
 
@@ -160,7 +168,7 @@ describe('Checkout Component', () => {
 
   describe('Free Order Scenarios', () => {
     it('should show "Enroll Now (Free)" button for free orders', () => {
-      mockUseSelector.mockReturnValue(mockFreeCartState);
+      setMockCartState(mockFreeCartState);
 
       render(<Checkout />);
 
@@ -169,7 +177,7 @@ describe('Checkout Component', () => {
     });
 
     it('should show "Place order" button for paid orders', () => {
-      mockUseSelector.mockReturnValue(mockSingleItemCartState);
+      setMockCartState(mockSingleItemCartState);
 
       render(<Checkout />);
 
@@ -178,7 +186,7 @@ describe('Checkout Component', () => {
     });
 
     it('should NOT show payment method selection for free orders', () => {
-      mockUseSelector.mockReturnValue(mockFreeCartState);
+      setMockCartState(mockFreeCartState);
 
       render(<Checkout />);
 
@@ -189,7 +197,7 @@ describe('Checkout Component', () => {
 
   describe('Tax Calculation', () => {
     it('should correctly calculate 5% tax', () => {
-      mockUseSelector.mockReturnValue(mockSingleItemCartState);
+      setMockCartState(mockSingleItemCartState);
 
       render(<Checkout />);
 
@@ -208,19 +216,24 @@ describe('Checkout Component', () => {
       const tax = subtotal * taxRate;
       const grandTotal = subtotal + tax;
 
-      mockUseSelector.mockReturnValue({
-        cart: [
-          {
-            id: 1,
-            product: {
-              courseTitle: 'Test Course',
-              price: subtotal,
-            },
-            amount: 1,
+      mockUseSelector.mockImplementation((selector) =>
+        selector({
+          CartReducer: {
+            cart: [
+              {
+                id: 1,
+                product: {
+                  courseTitle: 'Test Course',
+                  price: subtotal,
+                },
+                amount: 1,
+              },
+            ],
+            total_amount: subtotal,
+            shipping_fee: 0,
           },
-        ],
-        total_amount: subtotal,
-      });
+        })
+      );
 
       render(<Checkout />);
 

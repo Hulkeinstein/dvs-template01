@@ -100,7 +100,7 @@ describe('AssignmentModal', () => {
     );
   });
 
-  it('prompts for template name when save template clicked', async () => {
+  it('shows template name input when save template clicked', async () => {
     render(<AssignmentModal {...defaultProps} />);
     await waitFor(() => expect(getMyTemplates).toHaveBeenCalled());
 
@@ -109,18 +109,20 @@ describe('AssignmentModal', () => {
     fireEvent.change(titleInput, { target: { value: 'Test Assignment' } });
 
     const saveTemplateBtn = screen.getByText('Save as Template');
-
-    // Mock prompt
-    jest.spyOn(window, 'prompt').mockReturnValue('My Template');
-
     fireEvent.click(saveTemplateBtn);
 
-    expect(window.prompt).toHaveBeenCalledWith('Enter template name:');
+    // Should show template name input field (not window.prompt)
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Template name')).toBeInTheDocument();
+    });
   });
 
   it('saves template', async () => {
     (saveAsTemplate as jest.Mock).mockResolvedValue({ success: true });
-    jest.spyOn(window, 'prompt').mockReturnValue('My Template');
+    (getMyTemplates as jest.Mock).mockResolvedValue({
+      success: true,
+      data: [],
+    });
 
     render(<AssignmentModal {...defaultProps} />);
     await waitFor(() => expect(getMyTemplates).toHaveBeenCalled());
@@ -129,8 +131,22 @@ describe('AssignmentModal', () => {
     const titleInput = screen.getByPlaceholderText('Assignments');
     fireEvent.change(titleInput, { target: { value: 'Test Assignment' } });
 
-    // Click save
+    // Click "Save as Template" to show input
     fireEvent.click(screen.getByText('Save as Template'));
+
+    // Wait for input to appear and fill it
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText('Template name')).toBeInTheDocument();
+    });
+
+    const templateNameInput = screen.getByPlaceholderText('Template name');
+    fireEvent.change(templateNameInput, { target: { value: 'My Template' } });
+
+    // Click the Save button (not "Save as Template")
+    // Use getByText since the modal has aria-hidden="true"
+    const saveBtns = screen.getAllByText('Save');
+    const saveBtn = saveBtns.find((el) => el.closest('button'));
+    fireEvent.click(saveBtn!);
 
     await waitFor(() => {
       expect(saveAsTemplate).toHaveBeenCalledWith(

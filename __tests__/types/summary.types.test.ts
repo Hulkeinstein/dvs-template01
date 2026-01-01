@@ -26,14 +26,15 @@ describe('Summary Types - Zod Schema Validation', () => {
       expect(() => TranscriptSegmentSchema.parse(invalid)).toThrow();
     });
 
-    it('text가 빈 문자열이면 실패', () => {
-      const invalid = {
+    it('text가 빈 문자열이어도 통과 (Supadata API 호환)', () => {
+      // Note: Supadata API에서 빈 세그먼트가 올 수 있음
+      const valid = {
         text: '',
         offset: 0,
         duration: 5000,
         lang: 'en',
       };
-      expect(() => TranscriptSegmentSchema.parse(invalid)).toThrow();
+      expect(() => TranscriptSegmentSchema.parse(valid)).not.toThrow();
     });
 
     it('duration이 음수면 실패', () => {

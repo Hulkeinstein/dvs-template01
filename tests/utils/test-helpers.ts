@@ -3,7 +3,7 @@ import { render, RenderOptions, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // Re-export setup functions from test-providers
-export { setupTest, teardownTest } from './test-providers';
+export { setupTest, teardownTest } from './test-providers.js';
 
 /**
  * Test Helper Utilities

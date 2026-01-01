@@ -244,6 +244,18 @@ export const authOptions = {
 
 ## 📋 배포 체크리스트
 
+### 🧹 Pre-deployment 정리 작업
+> 최종 빌드 전 반드시 수행해야 할 코드 정리 작업
+
+#### HiStudy 데모 컴포넌트 정리 (Issue #69)
+- [ ] 데모 라우트 삭제 (9개 폴더)
+  - `app/(courses)/course-detail-{2-8}/` (7개)
+  - `app/(courses)/course-card-{2-3}/` (2개)
+- [ ] 데모 컴포넌트 삭제 (7개 파일)
+  - `components/Course-Details/CourseDetails-{Two-Eight}.js`
+- [ ] 빌드 확인: `npm run build`
+- [ ] Work Plan 참조: `docs/work-plans/histudy-demo-cleanup.md`
+
 ### 🔍 Pre-deployment (배포 전)
 #### 코드 준비
 - [ ] 모든 console.log 제거
