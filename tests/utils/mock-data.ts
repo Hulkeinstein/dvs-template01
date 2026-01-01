@@ -1,36 +1,64 @@
 /**
  * Mock data for testing
- * TODO: Implement actual mock data
+ * Matches the actual Redux CartReducer structure
  */
 
+// CartReducer structure used by components
 export const mockCartState = {
-  items: [],
-  total: 0,
+  cart: [
+    {
+      id: 1,
+      product: {
+        courseTitle: 'React Fundamentals',
+        price: 149.99,
+      },
+      amount: 1,
+    },
+    {
+      id: 2,
+      product: {
+        courseTitle: 'TypeScript Advanced',
+        price: 99.99,
+      },
+      amount: 1,
+    },
+  ],
+  total_amount: 249.98,
+  shipping_fee: 0,
 };
 
 export const mockEmptyCartState = {
-  items: [],
-  total: 0,
+  cart: [],
+  total_amount: 0,
+  shipping_fee: 0,
 };
 
 export const mockSingleItemCartState = {
-  items: [
+  cart: [
     {
-      id: '1',
-      title: 'Test Course',
-      price: 99.99,
+      id: 1,
+      product: {
+        courseTitle: 'Test Course',
+        price: 99.99,
+      },
+      amount: 1,
     },
   ],
-  total: 99.99,
+  total_amount: 99.99,
+  shipping_fee: 0,
 };
 
 export const mockFreeCartState = {
-  items: [
+  cart: [
     {
-      id: '1',
-      title: 'Free Course',
-      price: 0,
+      id: 1,
+      product: {
+        courseTitle: 'Free Course',
+        price: 0,
+      },
+      amount: 1,
     },
   ],
-  total: 0,
+  total_amount: 0,
+  shipping_fee: 0,
 };

@@ -15,57 +15,92 @@ jest.mock('@/app/lib/actions/lessonActions');
 jest.mock('@/app/lib/actions/quizActions');
 jest.mock('@/app/lib/actions/progressActions');
 
-// Component Mocks
-const MockLessonSidebar = () => <div data-testid="lesson-sidebar">Sidebar</div>;
-MockLessonSidebar.displayName = 'MockLessonSidebar';
-jest.mock('@/components/Lesson/LessonSidebar', () => MockLessonSidebar);
+// Component Mocks - inline to avoid hoisting issues
+jest.mock('@/components/Lesson/LessonSidebar', () => {
+  const MockLessonSidebar = () => (
+    <div data-testid="lesson-sidebar">Sidebar</div>
+  );
+  MockLessonSidebar.displayName = 'MockLessonSidebar';
+  return MockLessonSidebar;
+});
 
-const MockLessonPagination = () => <div data-testid="lesson-pagination">Pagination</div>;
-MockLessonPagination.displayName = 'MockLessonPagination';
-jest.mock('@/components/Lesson/LessonPagination', () => MockLessonPagination);
+jest.mock('@/components/Lesson/LessonPagination', () => {
+  const MockLessonPagination = () => (
+    <div data-testid="lesson-pagination">Pagination</div>
+  );
+  MockLessonPagination.displayName = 'MockLessonPagination';
+  return MockLessonPagination;
+});
 
-const MockLessonTop = ({ children }: { children: React.ReactNode }) => <div data-testid="lesson-top">{children}</div>;
-MockLessonTop.displayName = 'MockLessonTop';
-jest.mock('@/components/Lesson/LessonTop', () => MockLessonTop);
+jest.mock('@/components/Lesson/LessonTop', () => {
+  const React = require('react');
+  const MockLessonTop = ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="lesson-top">{children}</div>
+  );
+  MockLessonTop.displayName = 'MockLessonTop';
+  return MockLessonTop;
+});
 
-const MockLessonCompleteButton = () => <button data-testid="complete-btn">Complete</button>;
-MockLessonCompleteButton.displayName = 'MockLessonCompleteButton';
-jest.mock('@/components/Lesson/LessonCompleteButton', () => MockLessonCompleteButton);
+jest.mock('@/components/Lesson/LessonCompleteButton', () => {
+  const MockLessonCompleteButton = () => (
+    <button data-testid="complete-btn">Complete</button>
+  );
+  MockLessonCompleteButton.displayName = 'MockLessonCompleteButton';
+  return MockLessonCompleteButton;
+});
 
-const MockCreatorInfo = () => <div data-testid="creator-info">Creator Info</div>;
-MockCreatorInfo.displayName = 'MockCreatorInfo';
-jest.mock('@/components/Lesson/CreatorInfo', () => MockCreatorInfo);
+jest.mock('@/components/Lesson/CreatorInfo', () => {
+  const MockCreatorInfo = () => (
+    <div data-testid="creator-info">Creator Info</div>
+  );
+  MockCreatorInfo.displayName = 'MockCreatorInfo';
+  return MockCreatorInfo;
+});
 
-const MockLessonQuiz = () => <div data-testid="lesson-quiz">Quiz</div>;
-MockLessonQuiz.displayName = 'MockLessonQuiz';
-jest.mock('@/components/Lesson/LessonQuiz', () => MockLessonQuiz);
+jest.mock('@/components/Lesson/LessonQuiz', () => {
+  const MockLessonQuiz = () => <div data-testid="lesson-quiz">Quiz</div>;
+  MockLessonQuiz.displayName = 'MockLessonQuiz';
+  return MockLessonQuiz;
+});
 
 // Mock LessonVideo to verify props
-const MockLessonVideo = ({ seekTime }: { seekTime?: number }) => {
-  return <div data-testid="lesson-video" data-seek-time={seekTime}>Video Player</div>;
-};
-MockLessonVideo.displayName = 'MockLessonVideo';
-jest.mock('@/components/Lesson/LessonVideo', () => MockLessonVideo);
+jest.mock('@/components/Lesson/LessonVideo', () => {
+  const MockLessonVideo = ({ seekTime }: { seekTime?: number }) => {
+    return (
+      <div data-testid="lesson-video" data-seek-time={seekTime}>
+        Video Player
+      </div>
+    );
+  };
+  MockLessonVideo.displayName = 'MockLessonVideo';
+  return MockLessonVideo;
+});
 
 // Mock SummaryDisplay to trigger clicks
-const MockSummaryDisplay = ({ onTimestampClick }: { onTimestampClick?: (seconds: number) => void }) => {
-  return (
-    <div data-testid="summary-display">
-      Summary Found
-      <button onClick={() => onTimestampClick?.(120)}>Jump to 2:00</button>
-    </div>
-  );
-};
-MockSummaryDisplay.displayName = 'MockSummaryDisplay';
-jest.mock('@/components/Lesson/SummaryDisplay', () => MockSummaryDisplay);
+jest.mock('@/components/Lesson/SummaryDisplay', () => {
+  const MockSummaryDisplay = ({
+    onTimestampClick,
+  }: {
+    onTimestampClick?: (seconds: number) => void;
+  }) => {
+    return (
+      <div data-testid="summary-display">
+        Summary Found
+        <button onClick={() => onTimestampClick?.(120)}>Jump to 2:00</button>
+      </div>
+    );
+  };
+  MockSummaryDisplay.displayName = 'MockSummaryDisplay';
+  return MockSummaryDisplay;
+});
 
 describe('LessonContent Component', () => {
   const mockLessonId = 'lesson-123';
   const mockUserId = 'user-456';
-  
+
   const mockSummaryData = {
     key_notes: ['Note 1'],
-    detailed_notes: []
+    detailed_notes: [],
   };
 
   const mockVideoLesson = {
@@ -81,29 +116,32 @@ describe('LessonContent Component', () => {
         channel_name: 'Test Channel',
         // ... other fields
       },
-      summary: mockSummaryData
-    }
+      summary: mockSummaryData,
+    },
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Auth Session
     (useSession as jest.Mock).mockReturnValue({
       data: { user: { id: mockUserId } },
-      status: 'authenticated'
+      status: 'authenticated',
     });
 
     // Default Action Responses
     (getQuizByLessonId as jest.Mock).mockResolvedValue({ success: false });
-    (getLessonProgress as jest.Mock).mockResolvedValue({ success: true, isCompleted: false });
+    (getLessonProgress as jest.Mock).mockResolvedValue({
+      success: true,
+      isCompleted: false,
+    });
   });
 
   it('renders SummaryDisplay when summary data exists for YouTube video', async () => {
     // Given: Lesson with summary
-    (getLessonById as jest.Mock).mockResolvedValue({ 
-      success: true, 
-      lesson: mockVideoLesson 
+    (getLessonById as jest.Mock).mockResolvedValue({
+      success: true,
+      lesson: mockVideoLesson,
     });
 
     // When
@@ -118,12 +156,12 @@ describe('LessonContent Component', () => {
   it('does NOT render SummaryDisplay if summary is missing', async () => {
     // Given: Lesson without summary
     const noSummaryLesson = {
-        ...mockVideoLesson,
-        content_data: { ...mockVideoLesson.content_data, summary: null }
+      ...mockVideoLesson,
+      content_data: { ...mockVideoLesson.content_data, summary: null },
     };
-    (getLessonById as jest.Mock).mockResolvedValue({ 
-      success: true, 
-      lesson: noSummaryLesson 
+    (getLessonById as jest.Mock).mockResolvedValue({
+      success: true,
+      lesson: noSummaryLesson,
     });
 
     // When
@@ -132,18 +170,18 @@ describe('LessonContent Component', () => {
     // Then
     // Wait for loading to finish and content to appear
     await waitFor(() => {
-        expect(screen.getByTestId('lesson-video')).toBeInTheDocument();
+      expect(screen.getByTestId('lesson-video')).toBeInTheDocument();
     });
-    
+
     // Now check summary is not there
     expect(screen.queryByTestId('summary-display')).not.toBeInTheDocument();
   });
 
   it('passes seekTime to LessonVideo when timestamp is clicked', async () => {
     // Given
-    (getLessonById as jest.Mock).mockResolvedValue({ 
-      success: true, 
-      lesson: mockVideoLesson 
+    (getLessonById as jest.Mock).mockResolvedValue({
+      success: true,
+      lesson: mockVideoLesson,
     });
 
     render(<LessonContent lessonId={mockLessonId} />);
@@ -162,7 +200,7 @@ describe('LessonContent Component', () => {
 
     // Then: LessonVideo receives seekTime=120
     await waitFor(() => {
-        expect(video).toHaveAttribute('data-seek-time', '120');
+      expect(video).toHaveAttribute('data-seek-time', '120');
     });
   });
 });

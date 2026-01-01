@@ -16,11 +16,22 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import PaymentMethodSelector from '@/components/Checkout/PaymentMethodSelector';
-import {
-  setEnv,
-  setupTest,
-  createMockFunction,
-} from '../../utils/test-helpers';
+
+// Inline helper functions to avoid module resolution issues
+function setEnv(key: string, value: string) {
+  process.env[key] = value;
+}
+
+function createMockFunction<
+  T extends (...args: any[]) => any,
+>(): jest.MockedFunction<T> {
+  return jest.fn() as unknown as jest.MockedFunction<T>;
+}
+
+function setupTest() {
+  // Clear environment variables
+  delete process.env.NEXT_PUBLIC_STRIPE_ENABLED;
+}
 
 describe('Integration: Checkout Components', () => {
   beforeEach(() => {
