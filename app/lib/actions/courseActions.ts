@@ -12,6 +12,7 @@ import {
   mapFormDataToSettings,
   logUnmappedFields,
 } from '@/app/lib/utils/courseDataMapper';
+import { CourseFormData as FullCourseFormData } from '@/types/create-course';
 
 // =========================================================================
 // Type Definitions
@@ -510,26 +511,27 @@ export async function updateCourse(
                 thumbnail_url: lesson.thumbnail || null,
                 attachments: lesson.attachments || [],
                 // Add content_data for all lesson types
-                content_data: lesson.content_type === 'quiz' && lesson.questions
-                  ? {
-                      questions: lesson.questions,
-                      settings: lesson.settings || {},
-                      metadata: lesson.metadata || {},
-                    }
-                  : lesson.content_type === 'assignment'
-                  ? {
-                      summary: lesson.summary || '',
-                      timeLimit: lesson.timeLimit || {
-                        value: 0,
-                        unit: 'weeks',
-                      },
-                      totalPoints: lesson.totalPoints || 100,
-                      passingPoints: lesson.passingPoints || 70,
-                      maxUploads: lesson.maxUploads || 1,
-                      maxFileSize: lesson.maxFileSize || 10,
-                      attachments: lesson.attachments || [],
-                    }
-                  : lesson.content_data || {}, // video/lesson type - preserve existing content_data
+                content_data:
+                  lesson.content_type === 'quiz' && lesson.questions
+                    ? {
+                        questions: lesson.questions,
+                        settings: lesson.settings || {},
+                        metadata: lesson.metadata || {},
+                      }
+                    : lesson.content_type === 'assignment'
+                      ? {
+                          summary: lesson.summary || '',
+                          timeLimit: lesson.timeLimit || {
+                            value: 0,
+                            unit: 'weeks',
+                          },
+                          totalPoints: lesson.totalPoints || 100,
+                          passingPoints: lesson.passingPoints || 70,
+                          maxUploads: lesson.maxUploads || 1,
+                          maxFileSize: lesson.maxFileSize || 10,
+                          attachments: lesson.attachments || [],
+                        }
+                      : lesson.content_data || {}, // video/lesson type - preserve existing content_data
               };
 
               console.log('Lesson data to insert:', lessonData);
@@ -1368,6 +1370,213 @@ export async function getUserBookmarks(userId: string): Promise<string[]> {
   } catch (error) {
     console.error('Error in getUserBookmarks:', error);
     return [];
+  }
+}
+
+// =========================================================================
+// Headless Course Creation (Admin Only - Claude Code Integration)
+// =========================================================================
+
+/**
+ * Create a course without web session authentication (Admin only)
+ * This function is designed for Claude Code natural language automation.
+ *
+ * @param formData - CourseFormData with all course details
+ * @param adminEmail - Email of the admin user (must have role='admin')
+ * @returns CreateCourseResult with success status and courseId
+ *
+ * @example
+ * // Claude Code can call this function directly:
+ * const result = await createCourseHeadless(
+ *   {
+ *     title: "Python 입문",
+ *     shortDescription: "파이썬 기초부터 실전까지",
+ *     description: "상세 설명...",
+ *     category: "프로그래밍",
+ *     level: "beginner",
+ *     language: "Korean",
+ *     price: 0,
+ *     topics: [...]
+ *   },
+ *   "admin@example.com"
+ * );
+ */
+export async function createCourseHeadless(
+  formData: FullCourseFormData,
+  adminEmail: string
+): Promise<CreateCourseResult> {
+  console.log('!!! ENTERING createCourseHeadless !!!', formData.title);
+
+  try {
+    // 1. Validate admin email is provided
+    if (!adminEmail || typeof adminEmail !== 'string') {
+      return { error: 'Admin email is required for headless course creation' };
+    }
+
+    // 2. Get user by email and verify admin role
+    const { data: userData, error: userError } = await supabaseAdmin
+      .from('user')
+      .select('id, role, email')
+      .eq('email', adminEmail.trim().toLowerCase())
+      .single();
+
+    if (userError || !userData) {
+      console.error('Admin user not found:', userError);
+      return { error: `Admin user not found: ${adminEmail}` };
+    }
+
+    // 3. Verify admin role (strict check)
+    if (userData.role !== 'admin') {
+      console.error(
+        'Permission denied: User is not admin. Role:',
+        userData.role
+      );
+      return {
+        error: `Permission denied: Only admins can use headless course creation. User role: ${userData.role}`,
+      };
+    }
+
+    console.log('Admin verified:', userData.email, 'Role:', userData.role);
+
+    // 4. Generate unique slug
+    const desiredSlug =
+      (formData.slug as string)?.trim() || (formData.title as string);
+    const slug = await generateUniqueSlug(desiredSlug);
+
+    // 5. Map form data to database format
+    const mappedData = mapFormDataToDB(formData);
+    const courseData = {
+      instructor_id: userData.id, // Admin becomes the instructor
+      slug,
+      status: formData.status || 'draft',
+      is_public: false,
+      enable_qa: false,
+      ...mappedData,
+    };
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Headless course data to insert:', {
+        ...courseData,
+        thumbnail_url: courseData.thumbnail_url
+          ? `[URL: ${courseData.thumbnail_url.substring(0, 50)}...]`
+          : 'none',
+      });
+    }
+
+    // 6. Insert course using admin client (bypasses RLS)
+    const { data: course, error: courseError } = await supabaseAdmin
+      .from('courses')
+      .insert(courseData)
+      .select()
+      .single();
+
+    if (courseError) {
+      console.error('Headless course creation error:', {
+        error: courseError,
+        message: courseError.message,
+        code: courseError.code,
+      });
+
+      const isUniqueViolation =
+        courseError.code === '23505' ||
+        /duplicate key|unique/i.test(courseError.message || '');
+
+      return {
+        error: isUniqueViolation
+          ? '이미 사용 중인 URL입니다. 다른 제목이나 슬러그를 시도해 주세요.'
+          : `코스 생성 실패: ${courseError.message || '알 수 없는 오류'}`,
+      };
+    }
+
+    // 7. Create course settings
+    const settingsData = {
+      course_id: course.id,
+      ...mapFormDataToSettings(formData),
+    };
+
+    const { error: settingsError } = await supabaseAdmin
+      .from('course_settings')
+      .insert(settingsData);
+
+    if (settingsError) {
+      console.error('Headless settings creation error:', settingsError);
+      // Don't fail the whole operation if settings fail
+    }
+
+    // 8. Create topics and lessons
+    const topics = formData.topics;
+
+    if (topics && topics.length > 0) {
+      for (let topicIndex = 0; topicIndex < topics.length; topicIndex++) {
+        const topic = topics[topicIndex];
+
+        // Create topic
+        const { data: topicData, error: topicError } = await supabaseAdmin
+          .from('course_topics')
+          .insert({
+            course_id: course.id,
+            title: topic.name,
+            description: topic.summary,
+            sort_order: topicIndex + 1,
+          })
+          .select()
+          .single();
+
+        if (topicError) {
+          console.error('Headless topic creation error:', topicError);
+          continue;
+        }
+
+        // Create lessons for this topic
+        if (topic.lessons && topic.lessons.length > 0) {
+          for (
+            let lessonIndex = 0;
+            lessonIndex < topic.lessons.length;
+            lessonIndex++
+          ) {
+            const lesson = topic.lessons[lessonIndex] as any;
+
+            const { error: lessonError } = await supabaseAdmin
+              .from('lessons')
+              .insert({
+                course_id: course.id,
+                topic_id: topicData.id,
+                title: lesson.title,
+                description: lesson.description,
+                video_url: lesson.videoUrl,
+                video_source: lesson.videoSource || 'youtube',
+                duration_minutes: Math.floor(lesson.duration / 60) || 0,
+                sort_order: lessonIndex + 1,
+                is_preview: lesson.enablePreview || false,
+                content_type: lesson.content_type || 'video',
+                thumbnail_url: lesson.thumbnail || null,
+                content_data: lesson.content_data || {},
+              });
+
+            if (lessonError) {
+              console.error('Headless lesson creation error:', lessonError);
+            }
+          }
+        }
+      }
+    }
+
+    // 9. Revalidate paths (for cache invalidation)
+    revalidatePath(ROUTES.INSTRUCTOR.COURSES);
+    revalidatePath('/courses');
+
+    console.log(
+      '✅ Headless course created successfully:',
+      course.id,
+      course.title
+    );
+
+    return { success: true, courseId: course.id };
+  } catch (error) {
+    console.error('Unexpected error in createCourseHeadless:', error);
+    return {
+      error: '코스를 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+    };
   }
 }
 
