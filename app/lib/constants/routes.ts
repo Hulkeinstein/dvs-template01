@@ -46,16 +46,6 @@ export const ROUTES = {
     SETTINGS: '/instructor-settings',
   },
 
-  // Admin routes
-  ADMIN: {
-    DASHBOARD: '/admin-dashboard',
-    USERS: '/admin-users',
-    COURSES: '/admin-courses',
-    SETTINGS: '/admin-settings',
-    HELP: '/admin-help',
-    LOGS: '/admin-logs',
-  },
-
   // Course/Lesson routes (dynamic builders)
   COURSE: {
     DETAILS: (id: string) => `/course-details/${id}` as const,
@@ -163,7 +153,6 @@ export type StaticRoute =
   | typeof ROUTES.INSTRUCTOR.STUDENTS
   | typeof ROUTES.INSTRUCTOR.PROFILE
   | typeof ROUTES.INSTRUCTOR.SETTINGS
-  | (typeof ROUTES.ADMIN)[keyof typeof ROUTES.ADMIN]
   | (typeof ROUTES.PUBLIC)[keyof typeof ROUTES.PUBLIC];
 
 // Type for dynamic route builders
@@ -209,14 +198,4 @@ export const INSTRUCTOR_NAV_ITEMS = [
   },
   { label: 'Students', href: ROUTES.INSTRUCTOR.STUDENTS, icon: 'users' },
   { label: 'Analytics', href: ROUTES.INSTRUCTOR.ANALYTICS, icon: 'chart' },
-] as const;
-
-/**
- * Admin navigation menu items
- */
-export const ADMIN_NAV_ITEMS = [
-  { label: 'Dashboard', href: ROUTES.ADMIN.DASHBOARD, icon: 'home' },
-  { label: 'Users', href: ROUTES.ADMIN.USERS, icon: 'users' },
-  { label: 'Courses', href: ROUTES.ADMIN.COURSES, icon: 'book' },
-  { label: 'Settings', href: ROUTES.ADMIN.SETTINGS, icon: 'settings' },
 ] as const;

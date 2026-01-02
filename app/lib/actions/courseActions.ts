@@ -1661,3 +1661,92 @@ export async function getAvailableCourses(
     };
   }
 }
+
+// =========================================================================
+// Course Approval Actions (Instructor-side)
+// =========================================================================
+
+/**
+ * Submit a course for review (Instructor action)
+ * Transitions course from 'draft' or 'rejected' to 'pending'
+ */
+export async function submitCourseForReview(
+  courseId: string
+): Promise<ActionResult> {
+  try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return { error: 'You must be logged in to submit a course for review' };
+    }
+
+    // Get user data
+    const { data: userData, error: userError } = await supabase
+      .from('user')
+      .select('id, role')
+      .eq('email', session.user.email)
+      .single();
+
+    if (userError || !userData) {
+      return { error: 'User not found' };
+    }
+
+    // Check if user is an instructor or admin
+    if (userData.role !== 'instructor' && userData.role !== 'admin') {
+      return { error: 'Only instructors can submit courses for review' };
+    }
+
+    // Check course ownership and current status
+    const { data: course, error: courseError } = await supabase
+      .from('courses')
+      .select('id, instructor_id, status, title')
+      .eq('id', courseId)
+      .single();
+
+    if (courseError || !course) {
+      return { error: 'Course not found' };
+    }
+
+    // Verify ownership
+    if (course.instructor_id !== userData.id) {
+      return { error: 'You can only submit your own courses for review' };
+    }
+
+    // Check if course is in a valid state for submission
+    const validStatuses = ['draft', 'rejected'];
+    if (!validStatuses.includes(course.status)) {
+      return {
+        error: `Course must be in draft or rejected status to submit for review. Current status: ${course.status}`,
+      };
+    }
+
+    // Update course status to pending
+    const { error: updateError } = await supabase
+      .from('courses')
+      .update({
+        status: 'pending',
+        submitted_at: new Date().toISOString(),
+        // Clear previous review notes when resubmitting
+        review_notes: null,
+      })
+      .eq('id', courseId);
+
+    if (updateError) {
+      console.error('Failed to update course status:', updateError);
+      return { error: 'Failed to submit course for review' };
+    }
+
+    // Revalidate relevant paths
+    revalidatePath('/instructor-personal-courses');
+    revalidatePath('/instructor-dashboard');
+    revalidatePath(`/create-course?courseId=${courseId}`);
+
+    return {
+      success: true,
+      message: `Course "${course.title}" has been submitted for review`,
+    };
+  } catch (error) {
+    console.error('Error in submitCourseForReview:', error);
+    return { error: 'An unexpected error occurred' };
+  }
+}
