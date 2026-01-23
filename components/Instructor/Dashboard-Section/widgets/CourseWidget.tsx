@@ -6,8 +6,8 @@ import Image from 'next/image';
 import {
   updateCourseStatus,
   deleteCourse,
+  submitCourseForReview,
 } from '@/app/lib/actions/courseActions';
-import { submitCourseForReview } from '@/app/lib/actions/courseApprovalActions';
 // @ts-ignore - TODO: Migrate CourseBadges to TypeScript
 import CourseBadges from '@/components/Common/CourseBadges';
 import BookmarkButton from '@/components/Common/BookmarkButton';

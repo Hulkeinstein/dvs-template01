@@ -17,6 +17,7 @@ interface FormData {
   level?: string;
   maxStudents?: number | string;
   introVideoUrl?: string;
+  introVideoSource?: string; // youtube, vimeo, etc.
   startDate?: string;
   requirements?: string;
   targetedAudience?: string;
@@ -51,12 +52,14 @@ interface DBData {
   title?: string;
   description?: string;
   about_course?: string;
+  price?: number; // courses.price 컬럼
   regular_price?: number;
   discounted_price?: number | null;
   language?: string;
   difficulty_level?: string;
   max_students?: number;
   intro_video_url?: string | null;
+  intro_video_source?: string | null; // youtube, vimeo, etc.
   is_free?: boolean;
   start_date?: string | null;
   requirements?: string | null;
@@ -68,9 +71,16 @@ interface DBData {
   course_tags?: string[];
   slug?: string;
   category?: string;
-  thumbnail_url?: string;
+  thumbnail_url?: string | null;
   status?: string;
-  end_date?: string;
+  end_date?: string | null;
+  certificate_settings?: {
+    enabled: boolean;
+    auto_issue: boolean;
+    template_id: string;
+    passing_grade: number;
+    certificate_title: string;
+  };
   course_settings?: Array<{
     certificate_enabled?: boolean;
     certificate_title?: string;
@@ -98,31 +108,48 @@ interface CourseSettings {
  * @returns {DBData} DB에 저장할 데이터
  */
 export function mapFormDataToDB(formData: FormData): DBData {
+  // 가격 계산
+  const regularPrice =
+    typeof formData.price === 'string'
+      ? parseFloat(formData.price)
+      : formData.price || 0;
+
+  const discountedPrice = formData.discountPrice
+    ? typeof formData.discountPrice === 'string'
+      ? parseFloat(formData.discountPrice)
+      : formData.discountPrice
+    : null;
+
+  // 실제 판매가 결정 (할인가 있으면 할인가, 없으면 정상가)
+  const effectivePrice =
+    discountedPrice !== null ? discountedPrice : regularPrice;
+
   // 기본 필드들
   const dbData: DBData = {
     title: formData.title,
     description: formData.shortDescription, // UI: shortDescription → DB: description
     about_course: formData.description, // UI: description → DB: about_course
-    regular_price:
-      typeof formData.price === 'string'
-        ? parseFloat(formData.price)
-        : formData.price || 0,
-    discounted_price: formData.discountPrice
-      ? typeof formData.discountPrice === 'string'
-        ? parseFloat(formData.discountPrice)
-        : formData.discountPrice
-      : null,
+
+    // 가격 필드들
+    price: effectivePrice, // courses.price - 실제 판매가
+    regular_price: regularPrice, // 정상가
+    discounted_price: discountedPrice, // 할인가 (없으면 null)
+    is_free: effectivePrice === 0,
+
     language: formData.language || 'English',
     difficulty_level: formData.level || 'All Levels',
     max_students:
       typeof formData.maxStudents === 'string'
         ? parseInt(formData.maxStudents)
         : formData.maxStudents || 0,
+
+    // 비디오 필드들
     intro_video_url: formData.introVideoUrl || null,
-    is_free: formData.price === 0 || formData.price === '0',
+    intro_video_source: formData.introVideoSource || null, // youtube, vimeo, etc.
 
     // Additional Information 필드들
     start_date: formData.startDate || null,
+    end_date: formData.endDate || null,
     requirements: formData.requirements || null,
     targeted_audience: formData.targetedAudience || null,
 
@@ -151,6 +178,18 @@ export function mapFormDataToDB(formData: FormData): DBData {
           .map((tag) => tag.trim())
           .filter((tag) => tag)
       : [],
+
+    // Certificate Settings (jsonb)
+    certificate_settings: {
+      enabled: formData.certificateEnabled || false,
+      auto_issue: true, // 기본값: 자동 발급
+      template_id: 'default', // 기본 템플릿
+      passing_grade:
+        typeof formData.passingGrade === 'string'
+          ? parseInt(formData.passingGrade)
+          : formData.passingGrade || 70,
+      certificate_title: formData.certificateTitle || '',
+    },
   };
 
   // 선택적 필드들
@@ -162,7 +201,9 @@ export function mapFormDataToDB(formData: FormData): DBData {
     dbData.category = formData.category;
   }
 
-  if (formData.thumbnail_url !== undefined) {
+  // thumbnail_url은 비워둠 (사용자가 직접 수정)
+  // formData.thumbnail_url이 명시적으로 제공된 경우에만 설정
+  if (formData.thumbnail_url) {
     dbData.thumbnail_url = formData.thumbnail_url;
   }
 
@@ -180,6 +221,10 @@ export function mapFormDataToDB(formData: FormData): DBData {
  * @returns {FormData} UI 폼에서 사용할 데이터
  */
 export function mapDBToFormData(courseData: DBData): FormData {
+  // certificate_settings jsonb에서 값 추출 (우선순위: jsonb > course_settings 테이블)
+  const certSettings = courseData.certificate_settings;
+  const legacySettings = courseData.course_settings?.[0];
+
   const formData: FormData = {
     // 기본 정보
     title: courseData.title || '',
@@ -188,15 +233,21 @@ export function mapDBToFormData(courseData: DBData): FormData {
     category: courseData.category || '',
     level: courseData.difficulty_level || 'all_levels',
     maxStudents: courseData.max_students || 0,
-    introVideoUrl: courseData.intro_video_url || '',
-    price: courseData.regular_price || 0,
-    discountPrice: courseData.discounted_price || null,
     language: courseData.language || 'English',
     slug: courseData.slug || '',
     status: courseData.status || 'draft',
 
+    // 가격 정보
+    price: courseData.regular_price || 0,
+    discountPrice: courseData.discounted_price || null,
+
+    // 비디오 정보
+    introVideoUrl: courseData.intro_video_url || '',
+    introVideoSource: courseData.intro_video_source || '',
+
     // Additional Information
     startDate: courseData.start_date || '',
+    endDate: courseData.end_date || legacySettings?.end_date || '',
     requirements: courseData.requirements || '',
     targetedAudience: courseData.targeted_audience || '',
 
@@ -214,17 +265,17 @@ export function mapDBToFormData(courseData: DBData): FormData {
       ? courseData.course_tags.join(', ')
       : '',
 
-    // Course Settings (course_settings 테이블에서 오는 데이터)
+    // Certificate Settings (jsonb 우선, 없으면 course_settings 테이블)
     certificateEnabled:
-      courseData.course_settings?.[0]?.certificate_enabled || false,
-    certificateTitle: courseData.course_settings?.[0]?.certificate_title || '',
-    passingGrade: courseData.course_settings?.[0]?.passing_grade || 70,
-    enrollmentDeadline:
-      courseData.course_settings?.[0]?.enrollment_deadline || '',
-    endDate:
-      courseData.course_settings?.[0]?.end_date || courseData.end_date || '',
-    lifetimeAccess:
-      courseData.course_settings?.[0]?.allow_lifetime_access !== false,
+      certSettings?.enabled ?? legacySettings?.certificate_enabled ?? false,
+    certificateTitle:
+      certSettings?.certificate_title ||
+      legacySettings?.certificate_title ||
+      '',
+    passingGrade:
+      certSettings?.passing_grade ?? legacySettings?.passing_grade ?? 70,
+    enrollmentDeadline: legacySettings?.enrollment_deadline || '',
+    lifetimeAccess: legacySettings?.allow_lifetime_access !== false,
 
     // 미디어
     thumbnailPreview: courseData.thumbnail_url || null,

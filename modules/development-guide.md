@@ -175,6 +175,63 @@ Order: Create `.ts/.tsx` → Update imports → `typecheck && build` → Test �
 - Lessons: DnD reorder, delete cascade
 - Quizzes: Zod v3.25.76, 9 types
 
+## Course Automation (Claude Code)
+
+**Admin 전용** - Claude Code에게 자연어로 코스 생성 지시.
+
+### Agent 사용법 (권장)
+
+대화형 Agent로 코스 생성:
+```
+User: "React 강의 만들어줘"
+Agent: 카테고리, 레벨, 가격 등 질문 → 확인 → 생성
+```
+
+Agent 위치: `.claude/agents/course-creator.md`
+
+### CLI 직접 사용
+
+```bash
+# 기본 사용
+node scripts/course-automation/create-course.mjs --title="Python 기초"
+
+# 상세 옵션
+node scripts/course-automation/create-course.mjs \
+  --title="React 심화" \
+  --category="Web Development" \
+  --level="intermediate" \
+  --price=50000
+
+# Dry-run (DB 저장 없이 미리보기)
+node scripts/course-automation/create-course.mjs --title="테스트" --dry-run
+```
+
+### Quick Usage (코드)
+```typescript
+import { createCourseHeadless } from '@/app/lib/actions/courseActions';
+import { fetchYouTubeMetadata } from '@/app/lib/actions/youtubeActions';
+
+// 1. YouTube 메타데이터
+const video = await fetchYouTubeMetadata('VIDEO_ID');
+
+// 2. CourseFormData 구성 후 호출
+const result = await createCourseHeadless(formData, 'admin@email.com');
+```
+
+### Required Fields
+- `title` (필수), 나머지는 기본값 사용 가능
+
+### 환경변수
+```env
+COURSE_AUTOMATION_ADMIN_EMAIL=admin@example.com  # Admin 이메일 (role='admin' 필요)
+```
+
+### Permissions
+- **Admin**: 수동 (웹 UI) + 자동 (Claude Code/Agent)
+- **Instructor**: 수동만 (웹 UI)
+
+**Full Guide**: [docs/library/course-automation.md](../docs/library/course-automation.md)
+
 ## Testing Guidelines
 
 When writing tests for this project:
