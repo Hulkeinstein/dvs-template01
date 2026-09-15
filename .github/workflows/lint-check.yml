@@ -74,17 +74,31 @@ jobs:
             exit 1
           fi
 
-      - name: Guard - react-pdf isolated to API route
+      - name: Guard - react-pdf isolated to server-only modules
         run: |
           set -e
+          # 의도: @react-pdf/renderer가 클라이언트 번들에 들어가지 않게 한다.
+          # 허용 경로는 서버에서만 실행되는 모듈이다:
+          #   - app/api/certificates/generate/** (수료증 PDF)
+          #   - app/api/receipts/generate/**, components/PDF/** (영수증 PDF, 서버 라우트에서만 import)
           HITS=$(git grep -nI "@react-pdf/renderer" -- \
             ":(exclude)node_modules" \
             ":(exclude).next" \
             ":(exclude)app/api/certificates/generate/**" \
+            ":(exclude)app/api/receipts/generate/**" \
+            ":(exclude)components/PDF/**" \
             -- "*.js" "*.jsx" "*.ts" "*.tsx" || true)
           if [ -n "$HITS" ]; then
             echo "$HITS"
-            echo "react-pdf must be isolated to app/api/certificates/generate/route.*" >&2
+            echo "react-pdf must stay in server-only modules (see allowed paths above)" >&2
+            exit 1
+          fi
+          # 허용 경로 안이라도 'use client' 파일이면 클라이언트 번들로 새어 나간다
+          CLIENT_HITS=$(git grep -lI "@react-pdf/renderer" -- "*.js" "*.jsx" "*.ts" "*.tsx" \
+            | xargs grep -l "^['\"]use client['\"]" 2>/dev/null || true)
+          if [ -n "$CLIENT_HITS" ]; then
+            echo "$CLIENT_HITS"
+            echo "react-pdf must not be imported from a 'use client' module" >&2
             exit 1
           fi
 
