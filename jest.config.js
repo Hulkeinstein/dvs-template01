@@ -66,8 +66,6 @@ const customJestConfig = {
     '/node_modules/(?!(jose|openid-client|next-auth|@panva|oidc-token-hash|@supabase|nanoid|@supabase/supabase-js|@supabase/realtime-js|@supabase/auth-js|@supabase/auth-helpers-core|@supabase/functions-js|@supabase/postgrest-js|@supabase/storage-js))',
   ],
 
-  // ESM support
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 
   // Coverage configuration
   collectCoverageFrom: [
