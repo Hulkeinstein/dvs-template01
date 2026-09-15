@@ -13,7 +13,7 @@ related:
 
 # T1. 저장소 위생·CI 복구 - Work Plan
 
-**Status**: Active (승인 대기)
+**Status**: Active (P0~P4 완료, P5 진행)
 **Created**: 2026-09-16
 **Last Updated**: 2026-09-16
 **Branch**: `chore/repo-hygiene-ci`
@@ -51,9 +51,9 @@ related:
 
 - [x] **P0: 기준값 기록** (CRLF 수, Prettier 목록, 로컬 검사 결과)
 - [x] **P1: 줄바꿈 정규화** (단독 커밋)
-- [ ] **P2: 추적 산출물 정리**
-- [ ] **P3: 서식 정리** (단독 커밋)
-- [ ] **P4: Next·NextAuth 패치 버전**
+- [x] **P2: 추적 산출물 정리**
+- [x] **P3: 서식 정리** (단독 커밋)
+- [x] **P4: Next·NextAuth 패치 버전**
 - [ ] **P5: PR과 CI 확인**
 - [ ] **P6: 문서 정리** (완료 work-plan 삭제, 로드맵 갱신, 이 plan 삭제)
 
@@ -67,6 +67,17 @@ related:
 - [x] `npx prettier --check .` 경고 파일 37개 목록 저장
 - [x] 로컬 `tsc --noEmit` · `eslint .` · jest 결과 기록 — 오류 0 · 경고 167 · 17 묶음 133개 통과
 
+**P0 기준값 (이후 Phase의 비교 기준)**
+
+| 항목 | 값 |
+|------|----|
+| 색인의 CRLF 파일 | 138 |
+| `prettier --check` 경고 파일 | 37 |
+| `tsc --noEmit` 오류 | 0 |
+| `eslint .` | 오류 0 · 경고 167 |
+| jest | 17 묶음 · 133개 통과 |
+| `npm audit` | 49건 (critical 4 · high 30 · moderate 12 · low 3) |
+
 ### P1: 줄바꿈 정규화
 
 - [x] `git add --renormalize .` 후 이 변경만 커밋 — 138 파일
@@ -75,20 +86,22 @@ related:
 
 ### P2: 추적 산출물 정리
 
-- [ ] `git rm --cached build_log.txt tsconfig.tsbuildinfo` 및 `supabase/.temp/`
-- [ ] `.gitignore`에 `build_log.txt`, `supabase/.temp/` 추가 (`tsconfig.tsbuildinfo`는 이미 있음)
-- [ ] `check_quiz.sql` 삭제 (참조 0건 확인됨)
+- [x] `git rm --cached build_log.txt tsconfig.tsbuildinfo` 및 `supabase/.temp/`
+- [x] `.gitignore`에 `build_log.txt`, `supabase/.temp/` 추가 (`tsconfig.tsbuildinfo`는 이미 있음)
+- [x] `check_quiz.sql` 삭제 (참조 0건 확인됨)
+- [x] 검증: `git check-ignore -v`로 3개 패턴 적중 확인, 추적 파일 0개
 
 ### P3: 서식 정리
 
-- [ ] P0 목록 37개에만 `prettier --write` 적용 후 이 변경만 커밋
-- [ ] 검증: `git diff -w`로 공백 외 변경이 서식 규칙(따옴표·줄바꿈·쉼표)뿐인지 확인
-- [ ] 검증: type-check · lint · jest 결과가 P0와 같다
+- [x] P0 목록 37개에만 `prettier --write` 적용 후 이 변경만 커밋
+- [x] 검증: 37개 파일 전부 "옛 내용을 prettier로 돌린 결과"와 바이트 단위로 일치 (손댄 부분 0)
+- [x] 검증: type-check · lint · jest 결과가 P0와 같다 (오류 0 · 경고 167 · 133 통과)
 
 ### P4: Next·NextAuth 패치 버전
 
-- [ ] `npm install next@14.2.35 next-auth@4.24.15` (package.json 범위 표기 유지)
-- [ ] 검증: type-check · lint · jest 통과, `npm audit` 수 기록(참고용)
+- [x] `npm install next@14.2.35 next-auth@4.24.15` (package.json 범위 표기 유지)
+- [x] 검증: type-check · lint · jest 통과, `npm audit` 49 → 47건
+- [x] lockfile 부수 변경 확인: `@next/swc-*` 9개와 `@next/env`(next 14.2.35가 고정하는 버전), 전이 의존 `uuid` 8.3.2 → 11.1.1 (next-auth 4.24.15 요구, 직접 의존 아님)
 
 ### P5: PR과 CI 확인
 
@@ -118,6 +131,8 @@ related:
 | 줄바꿈 정규화 커밋이 `git blame`을 흐린다 | 단독 커밋으로 두고 커밋 메시지에 명시 |
 | 서식 정리가 제품 코드 파일을 건드린다 | 서식 규칙 외 변경 없음을 diff와 검사로 확인 |
 | 로컬 빌드는 Google 글꼴 다운로드가 끊겨 실패한 적이 있다 | 빌드 검증은 CI(ubuntu) 결과를 기준으로 한다 |
+| `.husky/pre-commit`의 JS/JSX 게이트가 `.js` 파일이 포함된 서식 커밋을 막는다. 이 클론은 훅이 설치돼 있지 않아 실제로는 막히지 않았다 | P5에서 사실을 기록하고, 훅을 되살릴 때 게이트와 서식·린트 커밋의 충돌을 어디서 풀지(T6 또는 TS 전환 트랙) 결정한다 |
+| PR을 올리면 Docs Validation이 함께 도는데, T6로 미룬 문서 검사 실패(문서 lint 2311건, front-matter 32건) 때문에 빨간 표시가 난다 | PR 본문에 T1 범위 밖임을 명시하고, CI Checks job 결과로 판정한다 |
 
 ## Verification
 
