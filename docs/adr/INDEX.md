@@ -3,7 +3,7 @@ title: "Architecture Decision Records - Index"
 tags:
   - type/docs
 created: 2025-11-05
-updated: 2025-11-05
+updated: 2026-09-16
 lifecycle: active
 ---
 
@@ -93,6 +93,7 @@ ADRs are documents that capture important architectural decisions made throughou
 |-----|-------|------|--------|------|
 | [0001](./0001-record-architecture-decisions.md) | Record Architecture Decisions | 2025-11-05 | Accepted | meta, workflow |
 | [0002](./0002-youtube-ai-summarization.md) | YouTube AI Summarization Tech Stack | 2025-12-19 | Accepted | youtube, openai, supadata |
+| [0003](./0003-continue-existing-codebase.md) | Continue and Clean Up the Existing Codebase | 2026-09-16 | Accepted | architecture, resume |
 
 ---
 
@@ -111,7 +112,7 @@ _No ADRs yet - Consider documenting: Hybrid auth (OAuth + Email), password hashi
 _No ADRs yet - Consider documenting: Bootstrap vs Tailwind, SCSS architecture, dark mode implementation_
 
 ### Architecture & Patterns
-_No ADRs yet - Consider documenting: Folder structure, Server Actions pattern, state management_
+- [0003](./0003-continue-existing-codebase.md) - Continue and Clean Up the Existing Codebase (vs migrating to a new project)
 
 ---
 
@@ -143,6 +144,6 @@ _None yet_
 
 ---
 
-**Last Updated**: 2025-12-19
-**Total ADRs**: 2
-**Status**: 🟢 Active (2 Accepted, 0 Proposed, 0 Deprecated, 0 Superseded)
+**Last Updated**: 2026-09-16
+**Total ADRs**: 3
+**Status**: 🟢 Active (3 Accepted, 0 Proposed, 0 Deprecated, 0 Superseded)
