@@ -1,9 +1,17 @@
+const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
 
-// Service Role Key 사용 (Server Action과 동일)
-const supabaseUrl = 'https://datvqaemqzhgitxxfvar.supabase.co';
-const serviceKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRhdHZxYWVtcXpoZ2l0eHhmdmFyIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NDc5OTg4MSwiZXhwIjoyMDYwMzc1ODgxfQ.o8LmzAqeLvodW1veKHgr5P0lizTwOHZdUhWq1YymHYU';
+require('dotenv').config({ path: path.join(__dirname, '..', '.env.local') });
+
+// Service Role Key 사용 (Server Action과 동일) — 키는 .env.local에서 읽는다 (저장소에 키를 두지 않는다)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!supabaseUrl || !serviceKey) {
+  console.error(
+    'NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY를 .env.local에 설정하세요.'
+  );
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, serviceKey);
 
