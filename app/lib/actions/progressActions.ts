@@ -4,7 +4,12 @@ import { getServerClient } from '@/app/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
 // Toggle lesson completion status
-export async function toggleLessonProgress(lessonId: string | number, courseId: string | number, userId: string, completed: boolean) {
+export async function toggleLessonProgress(
+  lessonId: string | number,
+  courseId: string | number,
+  userId: string,
+  completed: boolean
+) {
   try {
     const supabase = getServerClient(); // Users client with session
 
@@ -14,18 +19,16 @@ export async function toggleLessonProgress(lessonId: string | number, courseId: 
 
     if (completed) {
       // Mark as complete
-      const { error } = await supabase
-        .from('lesson_progress')
-        .upsert(
-          { 
-            user_id: userId, 
-            lesson_id: lessonId, 
-            course_id: courseId,
-            completed_at: new Date().toISOString(),
-            last_accessed: new Date().toISOString()
-          },
-          { onConflict: 'user_id, lesson_id' } // Assuming composite PK or unique constraint
-        );
+      const { error } = await supabase.from('lesson_progress').upsert(
+        {
+          user_id: userId,
+          lesson_id: lessonId,
+          course_id: courseId,
+          completed_at: new Date().toISOString(),
+          last_accessed: new Date().toISOString(),
+        },
+        { onConflict: 'user_id, lesson_id' } // Assuming composite PK or unique constraint
+      );
 
       if (error) {
         console.error('Error marking complete:', error);
@@ -41,8 +44,8 @@ export async function toggleLessonProgress(lessonId: string | number, courseId: 
         .update({ completed_at: null })
         .eq('user_id', userId)
         .eq('lesson_id', lessonId);
-      
-       if (error) {
+
+      if (error) {
         console.error('Error marking incomplete:', error);
         return { success: false, error: '진행률 저장 실패' };
       }
@@ -57,20 +60,23 @@ export async function toggleLessonProgress(lessonId: string | number, courseId: 
   }
 }
 
-export async function getLessonProgress(lessonId: string | number, userId: string) {
-    try {
-        const supabase = getServerClient();
-        const { data, error } = await supabase
-            .from('lesson_progress')
-            .select('completed_at')
-            .eq('user_id', userId)
-            .eq('lesson_id', lessonId)
-            .maybeSingle();
-        
-        if (error) return { success: false };
-        
-        return { success: true, isCompleted: !!data?.completed_at };
-    } catch {
-        return { success: false };
-    }
+export async function getLessonProgress(
+  lessonId: string | number,
+  userId: string
+) {
+  try {
+    const supabase = getServerClient();
+    const { data, error } = await supabase
+      .from('lesson_progress')
+      .select('completed_at')
+      .eq('user_id', userId)
+      .eq('lesson_id', lessonId)
+      .maybeSingle();
+
+    if (error) return { success: false };
+
+    return { success: true, isCompleted: !!data?.completed_at };
+  } catch {
+    return { success: false };
+  }
 }

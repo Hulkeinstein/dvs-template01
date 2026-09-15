@@ -37,7 +37,6 @@ const CourseDetailsOne = ({ checkMatchCourses }) => {
           // 정규화된 ID로 리뷰 통계 가져오기
           const stats = await getCourseReviewStats(normalizedId);
 
-
           // 응답이 없거나 비어있어도 기본값 설정
           const safeStats = stats || {
             averageRating: 0,

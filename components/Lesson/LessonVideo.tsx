@@ -9,7 +9,11 @@ interface LessonVideoProps {
   onSeekComplete?: () => void;
 }
 
-const LessonVideo: React.FC<LessonVideoProps> = ({ lesson, seekTime, onSeekComplete }) => {
+const LessonVideo: React.FC<LessonVideoProps> = ({
+  lesson,
+  seekTime,
+  onSeekComplete,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -20,7 +24,7 @@ const LessonVideo: React.FC<LessonVideoProps> = ({ lesson, seekTime, onSeekCompl
         JSON.stringify({
           event: 'command',
           func: 'seekTo',
-          args: [seconds, true]
+          args: [seconds, true],
         }),
         '*'
       );

@@ -3,7 +3,7 @@ import {
   CartAction,
   CartItem,
   AddToCartPayload,
-  ToggleAmountPayload
+  ToggleAmountPayload,
 } from '@/types/cart';
 
 const getLocalStorage = (): CartItem[] => {
@@ -35,7 +35,10 @@ const initialState: CartState = {
   msg: '',
 };
 
-export const CartReducer = (state = initialState, action: CartAction): CartState => {
+export const CartReducer = (
+  state = initialState,
+  action: CartAction
+): CartState => {
   switch (action.type) {
     case 'CART_REQ':
       return {
@@ -59,16 +62,15 @@ export const CartReducer = (state = initialState, action: CartAction): CartState
       const isCourse = product.kind === 'course' || !!product.courseTitle;
 
       // 고유키 생성
-      const productKey = product.productKey || (
-        isCourse
+      const productKey =
+        product.productKey ||
+        (isCourse
           ? `course:${product.courseId || product.id || id}`
-          : `product:${product.id || id}`
-      );
+          : `product:${product.id || id}`);
 
       // 고유키로 중복 체크 (레거시 호환성 포함)
-      const tempItem = state.cart.find((i) =>
-        (i.productKey && i.productKey === productKey) ||
-        i.id === id
+      const tempItem = state.cart.find(
+        (i) => (i.productKey && i.productKey === productKey) || i.id === id
       );
 
       if (tempItem) {
@@ -76,13 +78,16 @@ export const CartReducer = (state = initialState, action: CartAction): CartState
           // 코스는 중복 추가 무시
           return {
             ...state,
-            msg: 'Course already in cart'
+            msg: 'Course already in cart',
           };
         }
 
         // 일반 상품만 수량 증가
         const tempCart = state.cart.map((cartItem) => {
-          if ((cartItem.productKey && cartItem.productKey === productKey) || cartItem.id === id) {
+          if (
+            (cartItem.productKey && cartItem.productKey === productKey) ||
+            cartItem.id === id
+          ) {
             let newAmount = cartItem.amount + amount;
             if (newAmount > cartItem.max) {
               newAmount = cartItem.max;
@@ -126,9 +131,10 @@ export const CartReducer = (state = initialState, action: CartAction): CartState
       const tempCart = state.cart.map((item) => {
         if (item.id === id) {
           // 타입 기반 판단 (레거시 호환성 포함)
-          const isCourse = item.kind === 'course' ||
-                           item.product?.kind === 'course' ||
-                           !!item.product?.courseTitle;
+          const isCourse =
+            item.kind === 'course' ||
+            item.product?.kind === 'course' ||
+            !!item.product?.courseTitle;
 
           // 코스인 경우 수량 변경 차단
           if (isCourse) {

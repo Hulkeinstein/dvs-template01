@@ -75,7 +75,11 @@ Examples:
 // Validate required environment variables
 const requiredEnvVars = isDryRunMode
   ? ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY']
-  : ['NEXT_PUBLIC_SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'COURSE_AUTOMATION_ADMIN_EMAIL'];
+  : [
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'COURSE_AUTOMATION_ADMIN_EMAIL',
+    ];
 
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
@@ -161,9 +165,13 @@ async function createCourse() {
   const adminEmail = process.env.COURSE_AUTOMATION_ADMIN_EMAIL;
   const isDryRun = args['dry-run'];
 
-  console.log('═══════════════════════════════════════════════════════════════');
+  console.log(
+    '═══════════════════════════════════════════════════════════════'
+  );
   console.log('🎓 Course Creator CLI');
-  console.log('═══════════════════════════════════════════════════════════════\n');
+  console.log(
+    '═══════════════════════════════════════════════════════════════\n'
+  );
 
   let userData = null;
 
@@ -186,7 +194,9 @@ async function createCourse() {
     }
 
     if (data.role !== 'admin') {
-      console.error(`❌ Permission denied. User role is "${data.role}", not "admin"`);
+      console.error(
+        `❌ Permission denied. User role is "${data.role}", not "admin"`
+      );
       process.exit(1);
     }
     userData = data;
@@ -209,7 +219,9 @@ async function createCourse() {
     // Basic info
     title: args.title,
     description: args.shortDescription || `${args.title} 코스입니다.`,
-    about_course: args.description || `<h2>${args.title}</h2><p>이 코스에서 배울 내용을 설명합니다.</p>`,
+    about_course:
+      args.description ||
+      `<h2>${args.title}</h2><p>이 코스에서 배울 내용을 설명합니다.</p>`,
     category: args.category,
     difficulty_level: args.level,
     language: args.language,
@@ -245,16 +257,28 @@ async function createCourse() {
 
   // Display course data
   console.log('\n📋 코스 정보:');
-  console.log('┌────────────────────┬─────────────────────────────────────────┐');
+  console.log(
+    '┌────────────────────┬─────────────────────────────────────────┐'
+  );
   console.log(`│ 제목               │ ${courseData.title.padEnd(39)} │`);
   console.log(`│ 카테고리           │ ${courseData.category.padEnd(39)} │`);
-  console.log(`│ 레벨               │ ${courseData.difficulty_level.padEnd(39)} │`);
-  console.log(`│ 가격               │ ${(courseData.is_free ? '무료' : courseData.price + '원').padEnd(39)} │`);
+  console.log(
+    `│ 레벨               │ ${courseData.difficulty_level.padEnd(39)} │`
+  );
+  console.log(
+    `│ 가격               │ ${(courseData.is_free ? '무료' : courseData.price + '원').padEnd(39)} │`
+  );
   console.log(`│ 언어               │ ${courseData.language.padEnd(39)} │`);
-  console.log(`│ 최대 수강생        │ ${String(courseData.max_students).padEnd(39)} │`);
+  console.log(
+    `│ 최대 수강생        │ ${String(courseData.max_students).padEnd(39)} │`
+  );
   console.log(`│ 상태               │ ${courseData.status.padEnd(39)} │`);
-  console.log(`│ Slug               │ ${courseData.slug.substring(0, 39).padEnd(39)} │`);
-  console.log('└────────────────────┴─────────────────────────────────────────┘\n');
+  console.log(
+    `│ Slug               │ ${courseData.slug.substring(0, 39).padEnd(39)} │`
+  );
+  console.log(
+    '└────────────────────┴─────────────────────────────────────────┘\n'
+  );
 
   // Dry-run mode
   if (args['dry-run']) {
@@ -278,15 +302,21 @@ async function createCourse() {
   }
 
   // Success
-  console.log('\n═══════════════════════════════════════════════════════════════');
+  console.log(
+    '\n═══════════════════════════════════════════════════════════════'
+  );
   console.log('✅ 코스 생성 완료!');
-  console.log('═══════════════════════════════════════════════════════════════');
+  console.log(
+    '═══════════════════════════════════════════════════════════════'
+  );
   console.log(`   📌 Course ID: ${course.id}`);
   console.log(`   📝 제목: ${course.title}`);
   console.log(`   🔗 Slug: ${course.slug}`);
   console.log(`   💰 가격: ${course.is_free ? '무료' : course.price + '원'}`);
   console.log(`   📋 상태: ${course.status}`);
-  console.log(`\n   🔗 편집 페이지: http://localhost:3000/create-course?courseId=${course.id}`);
+  console.log(
+    `\n   🔗 편집 페이지: http://localhost:3000/create-course?courseId=${course.id}`
+  );
 }
 
 // Run

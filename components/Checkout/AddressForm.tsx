@@ -41,7 +41,9 @@ const AddressForm: React.FC<AddressFormProps> = ({
             type="checkbox"
             id="sameAsShipping"
             checked={data.sameAsShipping}
-            onChange={(e) => onChange('sameAsShipping', e.target.checked.toString())}
+            onChange={(e) =>
+              onChange('sameAsShipping', e.target.checked.toString())
+            }
           />
           <label htmlFor="sameAsShipping" className="ms-2">
             Same as shipping address
@@ -105,9 +107,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
             className={errors.city ? 'error' : ''}
             required
           />
-          {errors.city && (
-            <span className="error-message">{errors.city}</span>
-          )}
+          {errors.city && <span className="error-message">{errors.city}</span>}
         </div>
 
         <div className="col-lg-6 col-12 mb--30">

@@ -3,7 +3,7 @@ import { getCourseById } from '../actions/courseActions';
 import {
   DatabaseCourse,
   TransformedCourse,
-  Course
+  Course,
 } from '@/types/course-provider';
 
 interface Lesson {
@@ -366,7 +366,9 @@ export class DatabaseCourseProvider extends CourseProvider {
   /**
    * Parse requirements string into array format
    */
-  private parseRequirements(requirements?: string | Array<{ listItem: string }>): Array<{ listItem: string }> {
+  private parseRequirements(
+    requirements?: string | Array<{ listItem: string }>
+  ): Array<{ listItem: string }> {
     // If requirements is already an array, return it
     if (Array.isArray(requirements)) {
       return requirements;

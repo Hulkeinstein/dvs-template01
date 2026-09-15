@@ -18,7 +18,9 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
             <div className="rbt-card variation-01 rbt-hover">
               <div className="rbt-card-img">
                 <Link href={`/course-details/${data.id}`}>
-                  <div style={{ position: 'relative', aspectRatio: '355 / 244' }}>
+                  <div
+                    style={{ position: 'relative', aspectRatio: '355 / 244' }}
+                  >
                     <Image
                       fill
                       src={data.courseImg}
@@ -79,7 +81,13 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                   <div className="rbt-author-meta mb--10">
                     <div className="rbt-avater">
                       <Link href={`/profile/${data.id}`}>
-                        <div style={{ position: 'relative', width: '33px', height: '33px' }}>
+                        <div
+                          style={{
+                            position: 'relative',
+                            width: '33px',
+                            height: '33px',
+                          }}
+                        >
                           <Image
                             fill
                             src={data.userImg}

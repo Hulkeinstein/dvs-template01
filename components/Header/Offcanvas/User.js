@@ -69,10 +69,7 @@ const User = () => {
                   </Link>
                 </li>
                 <li>
-                  <button
-                    onClick={handleSignOut}
-                    className="logout-button"
-                  >
+                  <button onClick={handleSignOut} className="logout-button">
                     <i className="feather-log-out" />
                     <span>Logout</span>
                   </button>

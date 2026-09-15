@@ -31,11 +31,15 @@ async function checkLinks() {
       const fullPath = path.join(rootDir, file);
 
       await new Promise((resolve, reject) => {
-        const proc = spawn('npx', ['markdown-link-check', fullPath, '--quiet'], {
-          stdio: 'inherit',
-          shell: true,
-          cwd: rootDir
-        });
+        const proc = spawn(
+          'npx',
+          ['markdown-link-check', fullPath, '--quiet'],
+          {
+            stdio: 'inherit',
+            shell: true,
+            cwd: rootDir,
+          }
+        );
 
         proc.on('close', (code) => {
           // Exit code 0 = success, 1 = broken links found

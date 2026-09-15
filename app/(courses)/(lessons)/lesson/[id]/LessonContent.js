@@ -55,22 +55,25 @@ const LessonContent = ({ lessonId }) => {
       } else {
         // This is a regular video lesson
         const videoResult = await getLessonById(lessonId);
-        
+
         if (videoResult.success && videoResult.lesson) {
-            setLesson(videoResult.lesson);
+          setLesson(videoResult.lesson);
         } else {
-            console.error('Failed to load video lesson');
-            setError('레슨 정보를 불러올 수 없습니다.');
-            setLesson({ content_type: 'video' }); // Fallback or handle error
+          console.error('Failed to load video lesson');
+          setError('레슨 정보를 불러올 수 없습니다.');
+          setLesson({ content_type: 'video' }); // Fallback or handle error
         }
       }
-      
+
       // Fetch progress if user logged in
       if (session?.user?.id) {
-          const progressResult = await getLessonProgress(lessonId, session.user.id);
-          if (progressResult.success) {
-              setIsCompleted(progressResult.isCompleted);
-          }
+        const progressResult = await getLessonProgress(
+          lessonId,
+          session.user.id
+        );
+        if (progressResult.success) {
+          setIsCompleted(progressResult.isCompleted);
+        }
       }
     } catch (err) {
       console.error('Error loading lesson:', err);
@@ -120,18 +123,15 @@ const LessonContent = ({ lessonId }) => {
         </div>
 
         <div className="rbt-lesson-rightsidebar overflow-hidden">
-          <LessonTop
-            sidebar={sidebar}
-            setSidebar={() => setSidebar(!sidebar)}
-          >
+          <LessonTop sidebar={sidebar} setSidebar={() => setSidebar(!sidebar)}>
             {session?.user?.id && lesson && (
-                <LessonCompleteButton
-                    lessonId={lessonId}
-                    courseId={lesson.course_id}
-                    userId={session.user.id}
-                    isCompleted={isCompleted}
-                    onToggle={setIsCompleted}
-                />
+              <LessonCompleteButton
+                lessonId={lessonId}
+                courseId={lesson.course_id}
+                userId={session.user.id}
+                isCompleted={isCompleted}
+                onToggle={setIsCompleted}
+              />
             )}
           </LessonTop>
 
@@ -148,30 +148,32 @@ const LessonContent = ({ lessonId }) => {
                 }}
               />
             ) : (
-             <>
-               <LessonVideo
-                 lesson={lesson}
-                 seekTime={seekTime}
-                 onSeekComplete={() => setSeekTime(null)}
-               />
+              <>
+                <LessonVideo
+                  lesson={lesson}
+                  seekTime={seekTime}
+                  onSeekComplete={() => setSeekTime(null)}
+                />
 
-               {lesson?.video_source === 'youtube' && lesson?.content_data?.youtube && (
-                   <CreatorInfo
-                        channelName={lesson.content_data.youtube.channel_name}
-                        channelUrl={lesson.content_data.youtube.channel_url}
-                        videoUrl={lesson.content_data.youtube.canonical_url}
-                        originalTitle={lesson.content_data.youtube.original_title}
-                   />
-               )}
+                {lesson?.video_source === 'youtube' &&
+                  lesson?.content_data?.youtube && (
+                    <CreatorInfo
+                      channelName={lesson.content_data.youtube.channel_name}
+                      channelUrl={lesson.content_data.youtube.channel_url}
+                      videoUrl={lesson.content_data.youtube.canonical_url}
+                      originalTitle={lesson.content_data.youtube.original_title}
+                    />
+                  )}
 
-               {lesson?.video_source === 'youtube' && lesson?.content_data?.summary && (
-                   <SummaryDisplay
-                        data={lesson.content_data.summary}
-                        isLoading={false}
-                        onTimestampClick={(seconds) => setSeekTime(seconds)}
-                   />
-               )}
-             </>
+                {lesson?.video_source === 'youtube' &&
+                  lesson?.content_data?.summary && (
+                    <SummaryDisplay
+                      data={lesson.content_data.summary}
+                      isLoading={false}
+                      onTimestampClick={(seconds) => setSeekTime(seconds)}
+                    />
+                  )}
+              </>
             )}
           </div>
 

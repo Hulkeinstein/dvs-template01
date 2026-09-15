@@ -63,5 +63,10 @@ export interface ToggleAmountPayload {
 
 export interface CartAction {
   type: CartActionType;
-  payload?: AddToCartPayload | ToggleAmountPayload | CartItem[] | string | undefined;
+  payload?:
+    | AddToCartPayload
+    | ToggleAmountPayload
+    | CartItem[]
+    | string
+    | undefined;
 }

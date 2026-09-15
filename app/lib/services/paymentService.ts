@@ -57,16 +57,21 @@ export async function capturePayPalOrder(
       capture = await paypalClient.execute(request);
     } catch (err: any) {
       // Check if already captured
-      if (err.statusCode === 422 && err.message?.includes('ORDER_ALREADY_CAPTURED')) {
-         console.log('[PaymentService] Order already captured, checking DB status...');
-         // Proceed to check DB status
-         // We'll skip fetching details for now to avoid specific SDK type issues
-         // and assume we can find the order by ID if needed or fail gracefully.
-         // const getRequest = new paypal.orders.OrdersGetRequest(paypalOrderId);
-         // const orderDetails = await paypalClient.execute(getRequest);
-         throw new Error('Order already captured'); 
+      if (
+        err.statusCode === 422 &&
+        err.message?.includes('ORDER_ALREADY_CAPTURED')
+      ) {
+        console.log(
+          '[PaymentService] Order already captured, checking DB status...'
+        );
+        // Proceed to check DB status
+        // We'll skip fetching details for now to avoid specific SDK type issues
+        // and assume we can find the order by ID if needed or fail gracefully.
+        // const getRequest = new paypal.orders.OrdersGetRequest(paypalOrderId);
+        // const orderDetails = await paypalClient.execute(getRequest);
+        throw new Error('Order already captured');
       } else {
-          throw err;
+        throw err;
       }
     }
 
@@ -74,7 +79,7 @@ export async function capturePayPalOrder(
 
     // 3. Verify capture success
     if (result.status !== 'COMPLETED') {
-        // If it's not completed (e.g. pending), we might still want to record it, but for now treat as error
+      // If it's not completed (e.g. pending), we might still want to record it, but for now treat as error
       console.error('[PaymentService] Capture not completed:', result.status);
       return {
         success: false,
@@ -86,27 +91,27 @@ export async function capturePayPalOrder(
     // Capture ID is usually inside purchase_units[0].payments.captures[0].id
     // But if we used 'capture' action, it might be result.id if result is a capture object?
     // PayPal SDK execute returns the full response.
-    // Ensure we parse it correctly. 
+    // Ensure we parse it correctly.
     // If it was a 'capture' call, the result IS the capture.
     // If it was a 'get' call (already captured), the result is the Order, which has purchase_units[0].payments.captures
-    
+
     let transactionId = '';
     let amount = '';
     let referenceId = '';
 
     if (result.purchase_units) {
-        // It's an Order object (from Get or Capture response structure)
-        const captures = result.purchase_units[0]?.payments?.captures;
-        if (captures && captures.length > 0) {
-            transactionId = captures[0].id;
-            amount = captures[0].amount?.value;
-            referenceId = result.purchase_units[0]?.reference_id;
-        }
-    } 
-    
+      // It's an Order object (from Get or Capture response structure)
+      const captures = result.purchase_units[0]?.payments?.captures;
+      if (captures && captures.length > 0) {
+        transactionId = captures[0].id;
+        amount = captures[0].amount?.value;
+        referenceId = result.purchase_units[0]?.reference_id;
+      }
+    }
+
     // Fallback if structure is different (direct capture object?)
     if (!transactionId) {
-        transactionId = result.id || paypalOrderId; // Fallback
+      transactionId = result.id || paypalOrderId; // Fallback
     }
 
     console.log('[PaymentService] Capture successful:', {
@@ -117,11 +122,16 @@ export async function capturePayPalOrder(
     });
 
     if (!referenceId) {
-        console.warn('[PaymentService] No reference_id found in PayPal order. Cannot link to local order.');
-        // Try to find order by stripe_event_id (paypalOrderId) if we stored it?
-        // But we store it AFTER capture usually. 
-        // We should depend on reference_id being set during create-order.
-        return { success: false, error: 'Could not link PayPal order to local order' };
+      console.warn(
+        '[PaymentService] No reference_id found in PayPal order. Cannot link to local order.'
+      );
+      // Try to find order by stripe_event_id (paypalOrderId) if we stored it?
+      // But we store it AFTER capture usually.
+      // We should depend on reference_id being set during create-order.
+      return {
+        success: false,
+        error: 'Could not link PayPal order to local order',
+      };
     }
 
     // 5. Update order in DB
@@ -158,13 +168,17 @@ export async function capturePayPalOrder(
     if (rpcError) {
       console.error('[PaymentService] Failed to activate order:', rpcError);
       return {
-          success: true, // Payment successful technically
-          message: 'Payment received but enrollment failed. Please contact support.',
-          error: `Enrollment error: ${rpcError.message}`
+        success: true, // Payment successful technically
+        message:
+          'Payment received but enrollment failed. Please contact support.',
+        error: `Enrollment error: ${rpcError.message}`,
       };
     }
 
-    console.log('[PaymentService] Order activated successfully:', activationResult);
+    console.log(
+      '[PaymentService] Order activated successfully:',
+      activationResult
+    );
 
     // 7. Send Email
     // Fetch order details first
@@ -187,10 +201,13 @@ export async function capturePayPalOrder(
       .single();
 
     if (orderError || !orderData) {
-        console.error('[PaymentService] Failed to fetch order for email:', orderError);
+      console.error(
+        '[PaymentService] Failed to fetch order for email:',
+        orderError
+      );
     } else {
-        // Fetch items
-         const { data: orderItems } = await supabase
+      // Fetch items
+      const { data: orderItems } = await supabase
         .from('order_items')
         .select(
           `
@@ -204,30 +221,33 @@ export async function capturePayPalOrder(
         `
         )
         .eq('order_id', referenceId);
-        
-        const items = orderItems?.map((item: any) => ({
-             course_title: item.courses?.title,
-             amount: item.quantity,
-             validated_price: item.price,
-             subtotal: item.price * item.quantity
+
+      const items =
+        orderItems?.map((item: any) => ({
+          course_title: item.courses?.title,
+          amount: item.quantity,
+          validated_price: item.price,
+          subtotal: item.price * item.quantity,
         })) || [];
 
-        const user = Array.isArray(orderData.user) ? orderData.user[0] : orderData.user;
-        const customerName = user?.name || 'Customer';
-        const customerEmail = user?.email;
+      const user = Array.isArray(orderData.user)
+        ? orderData.user[0]
+        : orderData.user;
+      const customerName = user?.name || 'Customer';
+      const customerEmail = user?.email;
 
-        if (customerEmail) {
-             await sendOrderConfirmationEmail({
-                email: customerEmail,
-                name: customerName,
-                orderNumber: orderData.order_number,
-                items,
-                subtotal: Number(orderData.subtotal),
-                tax: Number(orderData.tax_amount),
-                total: Number(orderData.total_amount),
-                paymentMethod: 'paypal'
-             });
-        }
+      if (customerEmail) {
+        await sendOrderConfirmationEmail({
+          email: customerEmail,
+          name: customerName,
+          orderNumber: orderData.order_number,
+          items,
+          subtotal: Number(orderData.subtotal),
+          tax: Number(orderData.tax_amount),
+          total: Number(orderData.total_amount),
+          paymentMethod: 'paypal',
+        });
+      }
     }
 
     return {
@@ -236,7 +256,6 @@ export async function capturePayPalOrder(
       transactionId,
       message: 'Payment completed successfully',
     };
-
   } catch (error: any) {
     console.error('[PaymentService] Capture exception:', error);
     return {

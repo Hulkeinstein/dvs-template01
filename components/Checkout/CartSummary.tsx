@@ -39,7 +39,8 @@ const CartSummary: React.FC<CartSummaryProps> = ({
       {/* Product list */}
       <ul>
         {items.map((data, index) => {
-          const title = data.product.courseTitle || data.product.title || 'Unknown Course';
+          const title =
+            data.product.courseTitle || data.product.title || 'Unknown Course';
           const lineTotal = data.product.price * data.amount;
 
           return (

@@ -11,10 +11,10 @@ describe('SummaryButton', () => {
 
   it('renders correctly', () => {
     render(
-      <SummaryButton 
-        youtubeUrl="https://youtube.com/watch?v=123" 
-        onGenerateSummary={mockGenerate} 
-        isLoading={false} 
+      <SummaryButton
+        youtubeUrl="https://youtube.com/watch?v=123"
+        onGenerateSummary={mockGenerate}
+        isLoading={false}
       />
     );
     expect(screen.getByRole('button')).toBeInTheDocument();
@@ -23,10 +23,10 @@ describe('SummaryButton', () => {
 
   it('is disabled if no YouTube URL', () => {
     render(
-      <SummaryButton 
-        youtubeUrl="" 
-        onGenerateSummary={mockGenerate} 
-        isLoading={false} 
+      <SummaryButton
+        youtubeUrl=""
+        onGenerateSummary={mockGenerate}
+        isLoading={false}
         disabled={true}
       />
     );
@@ -35,10 +35,10 @@ describe('SummaryButton', () => {
 
   it('is disabled if explicitly disabled', () => {
     render(
-      <SummaryButton 
-        youtubeUrl="url" 
-        onGenerateSummary={mockGenerate} 
-        isLoading={false} 
+      <SummaryButton
+        youtubeUrl="url"
+        onGenerateSummary={mockGenerate}
+        isLoading={false}
         disabled={true}
       />
     );
@@ -47,10 +47,10 @@ describe('SummaryButton', () => {
 
   it('shows loading spinner when loading', () => {
     render(
-      <SummaryButton 
-        youtubeUrl="url" 
-        onGenerateSummary={mockGenerate} 
-        isLoading={true} 
+      <SummaryButton
+        youtubeUrl="url"
+        onGenerateSummary={mockGenerate}
+        isLoading={true}
       />
     );
     expect(screen.getByRole('button')).toBeDisabled();
@@ -59,10 +59,10 @@ describe('SummaryButton', () => {
 
   it('calls onGenerateSummary when clicked', () => {
     render(
-      <SummaryButton 
-        youtubeUrl="url" 
-        onGenerateSummary={mockGenerate} 
-        isLoading={false} 
+      <SummaryButton
+        youtubeUrl="url"
+        onGenerateSummary={mockGenerate}
+        isLoading={false}
       />
     );
     fireEvent.click(screen.getByRole('button'));

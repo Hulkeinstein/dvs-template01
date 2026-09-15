@@ -136,37 +136,50 @@ export async function updateLesson(lessonId, updates) {
     if (updates.title !== undefined) updateData.title = updates.title;
     if (updates.description !== undefined)
       updateData.description = updates.description;
-    
+
     // Video URL (support both formats)
-    if (updates.video_url !== undefined) updateData.video_url = updates.video_url;
-    else if (updates.videoUrl !== undefined) updateData.video_url = updates.videoUrl;
+    if (updates.video_url !== undefined)
+      updateData.video_url = updates.video_url;
+    else if (updates.videoUrl !== undefined)
+      updateData.video_url = updates.videoUrl;
 
     // Video Source
-    if (updates.video_source !== undefined) updateData.video_source = updates.video_source;
-    else if (updates.videoSource !== undefined) updateData.video_source = updates.videoSource;
+    if (updates.video_source !== undefined)
+      updateData.video_source = updates.video_source;
+    else if (updates.videoSource !== undefined)
+      updateData.video_source = updates.videoSource;
 
     // Duration
-    if (updates.duration_minutes !== undefined) updateData.duration_minutes = updates.duration_minutes;
-    else if (updates.duration !== undefined) updateData.duration_minutes = updates.duration;
+    if (updates.duration_minutes !== undefined)
+      updateData.duration_minutes = updates.duration_minutes;
+    else if (updates.duration !== undefined)
+      updateData.duration_minutes = updates.duration;
 
     // Preview
-    if (updates.is_preview !== undefined) updateData.is_preview = updates.is_preview;
-    else if (updates.enablePreview !== undefined) updateData.is_preview = updates.enablePreview;
+    if (updates.is_preview !== undefined)
+      updateData.is_preview = updates.is_preview;
+    else if (updates.enablePreview !== undefined)
+      updateData.is_preview = updates.enablePreview;
 
     if (updates.sort_order !== undefined)
       updateData.sort_order = updates.sort_order;
-    
+
     // Thumbnail
-    if (updates.thumbnail_url !== undefined) updateData.thumbnail_url = updates.thumbnail_url;
-    else if (updates.thumbnail !== undefined) updateData.thumbnail_url = updates.thumbnail;
+    if (updates.thumbnail_url !== undefined)
+      updateData.thumbnail_url = updates.thumbnail_url;
+    else if (updates.thumbnail !== undefined)
+      updateData.thumbnail_url = updates.thumbnail;
 
     if (updates.attachments !== undefined)
       updateData.attachments = updates.attachments;
-    
+
     // ADDED: content_data support
     if (updates.content_data !== undefined) {
-        updateData.content_data = updates.content_data;
-        console.log('updateLesson: Saving content_data with summary:', !!updates.content_data?.summary);
+      updateData.content_data = updates.content_data;
+      console.log(
+        'updateLesson: Saving content_data with summary:',
+        !!updates.content_data?.summary
+      );
     }
 
     // Ensure content_type is set to 'lesson' for regular lessons

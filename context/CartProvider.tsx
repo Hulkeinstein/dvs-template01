@@ -1,9 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
-import { useDispatch, useSelector } from "react-redux";
-import { getCartKey, migrateLegacyCartIfNeeded, CART_PREFIX } from "@/app/lib/utils/cartKey";
+import { useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getCartKey,
+  migrateLegacyCartIfNeeded,
+  CART_PREFIX,
+} from '@/app/lib/utils/cartKey';
 
 interface CartProviderProps {
   children: React.ReactNode;
@@ -23,14 +27,14 @@ export default function CartProvider({ children }: CartProviderProps) {
 
   // 1) 레거시 키 1회 마이그레이션
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       migrateLegacyCartIfNeeded();
     }
   }, []);
 
   // 2) 세션 변화 시 게스트 → 사용자 카트 마이그레이션
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     const userId = session?.user?.id as string | undefined;
     const guestKey = getCartKey();
@@ -45,7 +49,7 @@ export default function CartProvider({ children }: CartProviderProps) {
         const guestData = JSON.parse(guestCart);
         localStorage.setItem(userKey, guestCart);
         localStorage.removeItem(guestKey);
-        dispatch({ type: "SYNC_CART", payload: guestData });
+        dispatch({ type: 'SYNC_CART', payload: guestData });
         console.log('Guest cart migrated to user cart');
       } catch (error) {
         console.error('Failed to migrate guest cart:', error);
@@ -57,7 +61,7 @@ export default function CartProvider({ children }: CartProviderProps) {
         const userData = JSON.parse(userCart);
         // 현재 Redux 카트와 다르면 동기화
         if (JSON.stringify(cart) !== userCart) {
-          dispatch({ type: "SYNC_CART", payload: userData });
+          dispatch({ type: 'SYNC_CART', payload: userData });
         }
       } catch (error) {
         console.error('Failed to load user cart:', error);
@@ -68,7 +72,7 @@ export default function CartProvider({ children }: CartProviderProps) {
       try {
         const guestData = JSON.parse(guestCart);
         if (JSON.stringify(cart) !== guestCart) {
-          dispatch({ type: "SYNC_CART", payload: guestData });
+          dispatch({ type: 'SYNC_CART', payload: guestData });
         }
       } catch (error) {
         console.error('Failed to load guest cart:', error);
@@ -78,7 +82,7 @@ export default function CartProvider({ children }: CartProviderProps) {
 
   // 3) 카트 변경 시 localStorage 동기화 (단일 작성자 패턴)
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     const userId = session?.user?.id as string | undefined;
     const key = getCartKey(userId);
@@ -86,9 +90,9 @@ export default function CartProvider({ children }: CartProviderProps) {
 
     // 빈 카트일 때 명시적으로 제거 (다른 탭 동기화를 위해)
     if (!Array.isArray(cart) || cart.length === 0) {
-      if (lastSnapshotRef.current !== "[]") {
-        localStorage.removeItem(key);  // storage 이벤트: newValue = null
-        lastSnapshotRef.current = "[]";
+      if (lastSnapshotRef.current !== '[]') {
+        localStorage.removeItem(key); // storage 이벤트: newValue = null
+        lastSnapshotRef.current = '[]';
       }
       return;
     }
@@ -119,7 +123,7 @@ export default function CartProvider({ children }: CartProviderProps) {
 
           // 현재 카트와 다른 경우만 동기화
           if (currentSnapshot !== newSnapshot) {
-            dispatch({ type: "SYNC_CART", payload: newCart });
+            dispatch({ type: 'SYNC_CART', payload: newCart });
             console.log('Cart synced from another tab');
           }
         } catch (error) {
@@ -128,8 +132,8 @@ export default function CartProvider({ children }: CartProviderProps) {
       }
     };
 
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
   }, [dispatch, session, cart]);
 
   return <>{children}</>;
