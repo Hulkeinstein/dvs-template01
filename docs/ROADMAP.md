@@ -5,7 +5,7 @@ tags:
   - phase/planning
   - progress/in-progress
 created: 2025-11-08
-updated: 2025-11-08
+updated: 2026-09-16
 lifecycle: active
 related:
   - PROJECT_VISION.md
@@ -14,8 +14,8 @@ related:
 
 # DVS Product Roadmap
 
-**Version**: 2.0 (실제 프로젝트 상태 반영)
-**Last Updated**: 2025-11-08
+**Version**: 2.1 (재개 점검 반영)
+**Last Updated**: 2026-09-16
 **Status**: Active
 
 ---
@@ -34,6 +34,22 @@ related:
 - **현실 기반**: As-Is 파악 → Gap 분석 → 실행 계획
 - **점진적 가치**: 각 Phase마다 사용자 체감 가능한 기능 출시
 - **품질 우선**: 빠른 출시보다 안정적인 기능 우선
+
+---
+
+## 🔁 재개 점검 (2026-09-16)
+
+2026-01-23 이후 멈췄던 프로젝트를 다시 점검한 결과입니다. 아래 Phase 0~3의 일정(2025-11 ~ 2026-01)은 모두 지났고, **첫 행의 결정 전까지 기존 Phase 일정은 보류**합니다.
+
+| 항목 | 상태 | 비고 |
+|------|------|------|
+| 현 코드베이스를 이어갈지, 핵심 기능만 새 프로젝트로 옮길지 결정 | 🔜 다음 작업 | 코드 변경 없음 |
+| 유출된 Supabase 키 폐기 및 저장소에서 제거 | ✅ 완료 | #74 |
+| 보안 후속 조치 (서버 액션·API 인가, DB 권한·RLS 재정비) | ⏸️ 결정 후 | 상세는 비공개 점검 보고서 |
+| Next.js 14 · Node 20 지원 종료 대응 | ⏸️ 결정 후 | |
+| DB 마이그레이션 기준선 재수립 (운영 DB 스키마 기준) | ⏸️ 결정 후 | |
+| 저장소 정리·CI 복구 (서식, 줄바꿈 정규화, 추적 산출물) | ⏸️ 결정 후 | |
+| 완료됐지만 남아 있는 work-plan 정리 | ⏸️ 결정 후 | histudy-demo-cleanup, youtube-ai-summarization |
 
 ---
 
@@ -89,6 +105,7 @@ related:
 ---
 
 #### Feature 2: Assignment 템플릿 시스템 (#10)
+**Status**: ✅ 완료 (#60, 2025-12-14)
 **Purpose**: 교사가 자주 사용하는 과제를 템플릿으로 저장/재사용
 **Scope**:
 - DB: `assignment_templates` 테이블
@@ -511,6 +528,7 @@ export function middleware(request: NextRequest) {
 |---------|------|---------|--------|
 | 1.0 | 2025-11-08 16:30 | Initial Roadmap (Vision 기반, 실제 상태 무시) | AI |
 | 2.0 | 2025-11-08 17:00 | **재작성 (As-Is 반영)**: Gap Analysis, Phase 0 추가, 기존 구현 명시 | AI + User |
+| 2.1 | 2026-09-16 | 재개 점검 결과 등재, 기존 Phase 일정 보류, #10 완료 표시 | AI + User |
 
 ---
 
