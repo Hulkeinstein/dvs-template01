@@ -87,3 +87,6 @@ playwright/.cache/
 
 # TestSprite (auto-generated test files)
 testsprite_tests/
+
+# local MCP config (contains access tokens)
+/.claude.json
