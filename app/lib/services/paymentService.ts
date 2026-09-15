@@ -1,13 +1,9 @@
-import { createClient } from '@supabase/supabase-js';
+// Supabase client with Service Role for admin access
+// NOTE: 공용 지연 생성 클라이언트 — import 시점이 아닌 최초 사용 시점에 env를 검증한다
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 import { paypalClient, isPayPalEnabled } from '@/app/lib/paypal';
 import paypal from '@paypal/checkout-server-sdk';
 import { sendOrderConfirmationEmail } from './emailService';
-
-// Initialize Supabase client with Service Role for admin access
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 interface CaptureResult {
   success: boolean;
