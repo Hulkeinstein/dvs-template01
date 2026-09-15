@@ -49,8 +49,8 @@ related:
 
 ## Phases
 
-- [ ] **P0: 기준값 기록** (CRLF 수, Prettier 목록, 로컬 검사 결과)
-- [ ] **P1: 줄바꿈 정규화** (단독 커밋)
+- [x] **P0: 기준값 기록** (CRLF 수, Prettier 목록, 로컬 검사 결과)
+- [x] **P1: 줄바꿈 정규화** (단독 커밋)
 - [ ] **P2: 추적 산출물 정리**
 - [ ] **P3: 서식 정리** (단독 커밋)
 - [ ] **P4: Next·NextAuth 패치 버전**
@@ -63,15 +63,15 @@ related:
 
 ### P0: 기준값 기록
 
-- [ ] `git ls-files --eol | grep -c i/crlf` = 138 확인
-- [ ] `npx prettier --check .` 경고 파일 37개 목록 저장
-- [ ] 로컬 `tsc --noEmit` · `eslint .` · jest 결과 기록 (알려진 값: 오류 0 · 경고 167 · 133 통과)
+- [x] `git ls-files --eol | grep -c i/crlf` = 138 확인
+- [x] `npx prettier --check .` 경고 파일 37개 목록 저장
+- [x] 로컬 `tsc --noEmit` · `eslint .` · jest 결과 기록 — 오류 0 · 경고 167 · 17 묶음 133개 통과
 
 ### P1: 줄바꿈 정규화
 
-- [ ] `git add --renormalize .` 후 이 변경만 커밋
-- [ ] 검증: `git diff --cached --ignore-cr-at-eol --stat`의 변경 파일 0개 (내용 변경 없음)
-- [ ] 검증: 새 작업 트리에서 `git status` 수정 파일 0개
+- [x] `git add --renormalize .` 후 이 변경만 커밋 — 138 파일
+- [x] 검증: 내용 변경 0 (`--ignore-cr-at-eol` 기준), 이진 파일 0, 색인의 CRLF 138 → 0
+- [x] 검증: 작업 트리 수정 파일 0개 (새 clone 확인은 P5에서)
 
 ### P2: 추적 산출물 정리
 
