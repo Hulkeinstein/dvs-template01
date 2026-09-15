@@ -1,8 +1,16 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM =
   process.env.EMAIL_FROM || 'DVS Education <onboarding@resend.dev>';
+
+// 키가 없는 환경(CI, Docker 빌드)에서 import만으로 실패하지 않도록 발송 시점에 생성한다
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+  return new Resend(apiKey);
+}
 
 export interface OrderItem {
   course_title?: string;
@@ -57,6 +65,8 @@ export async function sendOrderConfirmationEmail(data: OrderConfirmationData) {
     }[data.paymentMethod] || data.paymentMethod;
 
   try {
+    const resend = getResendClient();
+
     await resend.emails.send({
       from: EMAIL_FROM,
       to: data.email,
