@@ -175,9 +175,9 @@ lifecycle: active
 | jest Test Suites / Tests | `Test Suites: 17 passed, 17 total` / `Tests: 133 passed, 133 total`, exit 0 — 기대값과 일치 |
 | Docs Validation 최근 결론 | 최근 3건 모두 failure — main(2026-09-16) 1건, `chore/repo-hygiene-ci`(2026-09-15~16) 2건. 기존 문서 결함(T6 범위)로 판단 |
 | 이 계획서 git 최초 작성일 | 2026-01-01 (`git log --follow --diff-filter=A`, front-matter 반영 완료) |
-| `route-map.mjs map` entries / keep / del / sections | 미수집 (기대 190 / 71 / 119 / 99) |
+| `route-map.mjs map` entries / keep / del / sections | `entries=190 keep=71 del=119 sections=99` — 기대값과 일치 |
 | `check-route-links.mjs` del-route / missing / nav-missing | 미수집 |
-| `Content.js`·`LessonAssignmentsSubmit.js` 판정 | 미수집 |
+| `Content.js`·`LessonAssignmentsSubmit.js` 판정 | `components/Course-Details/Course-Sections/Content.js` 유지 — `deleteFiles` 미포함(KEEP `app/(courses)/course-details/[courseId]/page.js`가 닿음) · `components/Lesson/LessonAssignmentsSubmit.js` 삭제 — `deleteFiles` 포함, phase 5 |
 
 ## Gap Probe (역검증 — DoD를 100% 채웠는데 Goal에 못 미치는 시나리오)
 
@@ -197,7 +197,7 @@ lifecycle: active
 
 ## Phase 1: 기준선·검증 도구·복구 기록 초안 (Foundational)
 
-- [ ] T001 [P] 기준선 확인과 기록 — `docs/work-plans/histudy-demo-cleanup.md` `category:quick`
+- [x] T001 [P] 기준선 확인과 기록 — `docs/work-plans/histudy-demo-cleanup.md` `category:quick`
   **Goal**: 브랜치 코드가 태그 `pre-demo-removal`과 같고 CI 동등 검사가 통과함을 확인해, 섹션 2 "기준선" 표의 T001 몫(앞 8행)을 실제 값으로 채운다.
   **References**:
   - `.github/workflows/lint-check.yml:54-144` — CI 단계 순서와 가드 스크립트 원문. 로컬 검증을 이와 맞춘다
