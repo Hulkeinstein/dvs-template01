@@ -311,12 +311,12 @@ lifecycle: active
 - [x] T003 경로 문자열 검사 스크립트와 링크 기준선 — `scripts/demo-removal/check-route-links.mjs` (depends on T002) `category:ultrabrain`
   **Goal**: 작업 트리에서 KEEP 진입점이 닿는 파일의 경로 문자열 중 삭제(예정) 라우트를 가리키는 것과 어느 라우트에도 없는 것을 `파일:줄 분류 문자열`로 모두 내고, Phase 1 기준선 수치를 기록한다. 이 출력이 Phase 2 작업 목록이다.
   **Spec**:
-  1. **라우트 표**: 작업 트리의 `page.*`·`route.*` 진입점 → URL 패턴(`(group)` 세그먼트 제거, `[x]` = 동적 1세그먼트, `[...x]`·`[[...x]]` = 나머지 전부). T002 분류로 DEL 진입점은 삭제 라우트, 나머지는 유지 라우트(`graph.mjs` 재사용 — 유지 라우트를 손으로 적지 않는다)
+  1. **라우트 표**: 작업 트리의 `page.*`·`route.*` 진입점 → URL 패턴(`(group)` 세그먼트 제거, `[x]` = 동적 1세그먼트, `[...x]`·`[[...x]]` = 나머지 전부). T002 분류로 DEL 진입점은 삭제 라우트, 나머지는 유지 라우트(`graph.mjs` 재사용 — 유지 라우트를 손으로 적지 않는다). 삭제 라우트는 태그 트리의 DEL 진입점에서 만든다(화면 파일을 지운 뒤에도 그 주소로 가는 링크가 `missing`이 아닌 `del-route`로 남게).
   2. **스캔 범위**: KEEP 진입점이 닿는 코드 파일(`.js .jsx .ts .tsx .mjs .json`). 소비자 루트(테스트·scripts)는 제외
   3. **추출**: 따옴표·백틱 문자열 리터럴 중 `/`로 시작하고 `//`로 시작하지 않으며 공백이 없는 것. `?`·`#` 뒤는 버리고, `${…}`와 `[x]`는 동적 세그먼트로 본다. 제외: `/` 한 글자, 자산(확장자 `png jpg jpeg gif svg webp ico css scss mp4 pdf woff woff2 ttf json txt xml` 또는 `/images/` `/fonts/` `/_next/` 접두), 앞 공백 제거 후 `//`·`*`·`/*`로 시작하는 주석 줄
   4. **판정**: 유지 라우트와 일치하면 보고 안 함 · 삭제 라우트와만 일치하면 `del-route` · 어느 라우트와도 불일치하면 `missing`. 세그먼트 수가 다르면 불일치(`/lesson` ≠ `/lesson/[id]`)
   5. **출력**: 첫 줄 `del-route=<n> missing=<m> nav-missing=<k>`(`nav-missing` = `data/MegaMenu.json`·`data/footer.json`의 missing), 이후 정렬된 `<file>:<line> <del-route|missing> <원문 리터럴>`
-  6. **exit**: `del-route>0` 또는 `nav-missing>0`이면 1. `--report-only`면 항상 0(스크립트 오류 제외). `--root DIR` 지원
+  6. **exit**: `del-route>0` 또는 `nav-missing>0`이면 1. `--report-only`면 항상 0(스크립트 오류 제외). `--root DIR` 지원. `--baseline FILE`(기준선 출력 형식)을 주면 `missing` 중 (파일 경로, 리터럴) 쌍이 기준선에 없는 것을 본문에 `missing-new`로 표시하고 첫 줄 끝에 ` new-missing=<n>`을 붙이며, `new-missing>0`이면 1이다.
   **References** (known-answer 근거 — 모두 원문 확인):
   - `app/(courses)/course-details/index.js:71` — `router.push('/course-filter-one-toggle')` → `del-route`
   - `app/(courses)/course-details/page.js:11` — `router.push('/course-details/1')` → 유지 동적 라우트라 보고되면 안 됨
@@ -588,7 +588,7 @@ Critical Path: T002 → T003 → T007 → T011 → T012 → T013 → T014 → T0
 ## Final Verification
 
 - [ ] F1. 삭제·보존 판정 — `node scripts/demo-removal/route-map.mjs verify` → exit 0, 출력에 `del-entries-remaining=0`, `delete-candidates-remaining=0`, `keep-entries-present=71/71`
-- [ ] F2. 참조 0건 — `node scripts/demo-removal/check-route-links.mjs` → exit 0, 첫 줄 `del-route=0`·`nav-missing=0`, `missing` ≤ 기준선. 그리고 `git grep -nE "data/blog|@/mdx|mdx/index" -- app components scripts __tests__ tests ':!scripts/demo-removal'` → 0줄(Q1 A 기준)
+- [ ] F2. 참조 0건 — `node scripts/demo-removal/check-route-links.mjs --baseline .tmp/demo-removal/links-baseline.txt` → exit 0, 첫 줄 `del-route=0`·`nav-missing=0`·`new-missing=0`, `missing` ≤ 기준선. 그리고 `git grep -nE "data/blog|@/mdx|mdx/index" -- app components scripts __tests__ tests ':!scripts/demo-removal'` → 0줄(Q1 A 기준)
 - [ ] F3. Tier 1 — `npm run type-check && npm run lint && npm run format:check && npm run build` → exit 0, Test Strategy의 jest 명령 → 기준선과 같은 `Test Suites`·`Tests` 수
 - [ ] F4. CI 가드 — `.github/workflows/lint-check.yml:63-110`(글꼴·react-pdf)과 `:130-144`(skip 금지)의 run 스크립트를 Bash로 그대로 실행 → 각 exit 0
 - [ ] F5. 범위 밖 불변 — `git diff --name-only 'pre-demo-removal^{commit}' HEAD -- public progress.json app/lib app/api 'app/(dashboard)' 'app/(auth)' package.json package-lock.json` → 0줄

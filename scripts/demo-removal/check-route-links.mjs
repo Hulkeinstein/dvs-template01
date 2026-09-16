@@ -4,18 +4,21 @@
  * HiStudy 데모 삭제(T2) 경로 문자열 검사 CLI
  *
  * 사용법:
- *   node scripts/demo-removal/check-route-links.mjs [--root DIR] [--report-only]
+ *   node scripts/demo-removal/check-route-links.mjs [--root DIR] [--report-only] [--baseline FILE]
  *
  * 작업 트리에서 KEEP 진입점이 닿는 코드 파일의 경로 문자열을 라우트 표와 대조해
  * 삭제(예정) 라우트를 가리키는 것(del-route)과 어느 라우트에도 없는 것(missing)을 낸다.
- * 출력 첫 줄: del-route=<n> missing=<m> nav-missing=<k>
- * 이후 줄:   <file>:<line> <del-route|missing> <원문 리터럴>
- * exit: del-route>0 또는 nav-missing>0이면 1(--report-only면 0), 스크립트 오류는 2
+ * 유지 라우트는 작업 트리의 KEEP 진입점, 삭제 라우트는 태그 트리의 DEL 진입점에서 만든다.
+ * 출력 첫 줄: del-route=<n> missing=<m> nav-missing=<k> (--baseline이면 끝에 new-missing=<j>)
+ * 이후 줄:   <file>:<line> <del-route|missing|missing-new> <원문 리터럴>
+ * --baseline FILE: 기준선 출력에 (파일, 리터럴) 쌍이 없는 missing을 missing-new로 표시한다
+ * exit: del-route>0 · nav-missing>0 · new-missing>0 중 하나면 1(--report-only면 0), 스크립트 오류는 2
  *
  * 계약의 원문은 docs/work-plans/histudy-demo-cleanup.md T003 Spec 1~6이다.
  * NOTE: 파일을 고치지 않는다(stdout 출력만). 라우트 표와 KEEP/DEL 분류는 graph.mjs에서 온다.
  */
 
+import fs from 'fs';
 import path from 'path';
 import {
   buildTagContext,
@@ -30,7 +33,8 @@ import {
   sorted,
 } from './graph.mjs';
 
-const USAGE = 'usage: check-route-links.mjs [--root DIR] [--report-only]';
+const USAGE =
+  'usage: check-route-links.mjs [--root DIR] [--report-only] [--baseline FILE]';
 
 // Spec 1 — 라우트 표에 넣는 진입점(layout·not-found 등은 URL이 아니다)
 const ROUTE_FILE_RE = /^(page|route)\.[^/]+$/;
@@ -40,21 +44,23 @@ const ASSET_EXT_RE =
 const ASSET_PREFIX_RE = /^\/(images|fonts|_next)\//;
 // Spec 5 — nav-missing 집계 대상(D9: 헤더·푸터 데이터)
 const NAV_FILES = new Set(['data/MegaMenu.json', 'data/footer.json']);
+// Spec 6 — --baseline 파일의 첫 줄(links-baseline.txt 형식)
+const BASELINE_HEAD_RE = /^del-route=(\d+) missing=(\d+) nav-missing=(\d+)$/;
 // ${…} 자리 표시(원문에 나올 수 없는 문자)
 const DYN = String.fromCharCode(0);
 
 function parseArgs(argv) {
-  const opts = { reportOnly: false, root: null };
+  const opts = { reportOnly: false, root: null, baseline: null };
   for (let i = 0; i < argv.length; i += 1) {
     const key = argv[i];
     if (key === '--report-only') {
       opts.reportOnly = true;
-    } else if (key === '--root') {
+    } else if (key === '--root' || key === '--baseline') {
       const value = argv[i + 1];
       if (value === undefined || value.startsWith('--')) {
-        throw new Error('missing value for --root');
+        throw new Error(`missing value for ${key}`);
       }
-      opts.root = value;
+      opts[key.slice(2)] = value;
       i += 1;
     } else {
       throw new Error(`unknown option ${key}\n${USAGE}`);
@@ -74,17 +80,22 @@ function routeSegment(seg) {
   return { kind: 'static', value: seg };
 }
 
-/** Spec 1 — 작업 트리의 page.*·route.* → URL 패턴과 T002 분류 */
-function routeTable(workEntries) {
-  return workEntries
-    .filter((e) => ROUTE_FILE_RE.test(path.posix.basename(e.path)))
-    .map((e) => ({
-      class: e.class,
-      segs: e.route
+/**
+ * Spec 1 — 진입점 목록 중 T002 분류가 cls인 page.*·route.* → URL 패턴 목록.
+ * 유지 라우트는 작업 트리, 삭제 라우트는 태그 트리 진입점으로 부른다. 화면 파일을 지운 뒤에도
+ * 그 주소를 가리키는 링크가 missing이 아니라 del-route로 남아 게이트에 걸리게 하기 위해서다.
+ */
+function routeTable(entries, cls) {
+  return entries
+    .filter(
+      (e) => e.class === cls && ROUTE_FILE_RE.test(path.posix.basename(e.path))
+    )
+    .map((e) =>
+      e.route
         .split('/')
         .filter((s) => s.length > 0)
-        .map(routeSegment),
-    }));
+        .map(routeSegment)
+    );
 }
 
 /** 백틱 안 `${`의 짝 `}` 위치(중첩 중괄호·문자열 고려), 없으면 -1 */
@@ -198,14 +209,55 @@ function routeMatches(litSegs, routeSegs) {
   return litSegs.length === routeSegs.length;
 }
 
+/** Spec 4 — 유지 라우트 일치 → 보고 안 함, 삭제 라우트 일치 → del-route, 둘 다 아니면 missing */
 function classify(litSegs, routes) {
-  let del = false;
-  for (const r of routes) {
-    if (!routeMatches(litSegs, r.segs)) continue;
-    if (r.class === 'keep') return null;
-    del = true;
+  if (routes.keep.some((r) => routeMatches(litSegs, r))) return null;
+  if (routes.del.some((r) => routeMatches(litSegs, r))) return 'del-route';
+  return 'missing';
+}
+
+/** (파일, 리터럴) 비교 키. 둘 다 한 줄 안의 값이라 줄바꿈으로 이어도 겹치지 않는다 */
+function pairKey(file, raw) {
+  return `${file}\n${raw}`;
+}
+
+/**
+ * Spec 6 — --baseline 파일의 missing (파일, 리터럴) 쌍. 줄 번호는 편집으로 바뀌므로 키에서 뺀다.
+ * 형식이 어긋나거나 첫 줄 수치와 본문 줄 수가 다르면 오류(잘린 기준선을 조용히 쓰지 않는다).
+ */
+function readBaseline(file) {
+  const lines = fs.readFileSync(file, 'utf8').replace(/\r/g, '').split('\n');
+  if (lines[lines.length - 1] === '') lines.pop();
+  const head = BASELINE_HEAD_RE.exec(lines[0] || '');
+  if (!head) throw new Error(`baseline: unexpected first line in ${file}`);
+  const counts = { delRoute: 0, missing: 0 };
+  const pairs = new Set();
+  for (const l of lines.slice(1)) {
+    // <file>:<line> <kind> <raw> — raw·kind에는 공백이 없다(Spec 3)
+    const rawAt = l.lastIndexOf(' ');
+    const kindAt = rawAt > 0 ? l.lastIndexOf(' ', rawAt - 1) : -1;
+    const loc = kindAt > 0 ? l.slice(0, kindAt) : '';
+    const colon = loc.lastIndexOf(':');
+    const kind = l.slice(kindAt + 1, rawAt);
+    if (colon <= 0 || !/^\d+$/.test(loc.slice(colon + 1))) {
+      throw new Error(`baseline: unexpected line in ${file}: ${l}`);
+    }
+    if (kind === 'del-route') {
+      counts.delRoute += 1;
+    } else if (kind === 'missing') {
+      counts.missing += 1;
+      pairs.add(pairKey(loc.slice(0, colon), l.slice(rawAt + 1)));
+    } else {
+      throw new Error(`baseline: unexpected kind in ${file}: ${l}`);
+    }
   }
-  return del ? 'del-route' : 'missing';
+  if (
+    counts.delRoute !== Number(head[1]) ||
+    counts.missing !== Number(head[2])
+  ) {
+    throw new Error(`baseline: first line does not match body in ${file}`);
+  }
+  return pairs;
 }
 
 function isCommentLine(line) {
@@ -230,12 +282,19 @@ function scanFile(file, source, routes) {
 }
 
 function run(opts) {
+  // 상대 경로는 실행 위치(cwd) 기준. --root와 무관하다
+  const baseline = opts.baseline ? readBaseline(opts.baseline) : null;
   const root = repoTopLevel(
     opts.root ? path.resolve(opts.root) : process.cwd()
   );
   const work = readWorkTree(root);
-  const plan = computeDeletion(buildTagContext(readTagTree(root)), work);
-  const routes = routeTable(plan.workEntries);
+  const tagCtx = buildTagContext(readTagTree(root));
+  const plan = computeDeletion(tagCtx, work);
+  // Spec 1 — 태그에만 남은 KEEP 진입점(작업 트리에서 사라짐)은 유지 라우트로 치지 않는다
+  const routes = {
+    keep: routeTable(plan.workEntries, 'keep'),
+    del: routeTable(tagCtx.entries, 'del'),
+  };
 
   // Spec 2 — KEEP 진입점이 닿는 코드 파일. 소비자 루트·삭제 대상(plan)은 스캔하지 않는다
   const deleteSet = new Set(plan.deleteFiles.map((f) => f.path));
@@ -267,13 +326,22 @@ function run(opts) {
   const delRoute = findings.filter((f) => f.kind === 'del-route').length;
   const missing = findings.filter((f) => f.kind === 'missing');
   const navMissing = missing.filter((f) => NAV_FILES.has(f.file)).length;
+  // Spec 6 — 기준선에 없는 missing. 정렬은 원래 분류로 한 뒤 표시만 바꾼다(--baseline 없는 출력과 순서 동일)
+  const isNew = (f) =>
+    baseline !== null &&
+    f.kind === 'missing' &&
+    !baseline.has(pairKey(f.file, f.raw));
+  const newMissing = missing.filter(isNew).length;
+  const head = `del-route=${delRoute} missing=${missing.length} nav-missing=${navMissing}`;
   const out = [
-    `del-route=${delRoute} missing=${missing.length} nav-missing=${navMissing}`,
-    ...findings.map((f) => `${f.file}:${f.line} ${f.kind} ${f.raw}`),
+    baseline ? `${head} new-missing=${newMissing}` : head,
+    ...findings.map(
+      (f) => `${f.file}:${f.line} ${isNew(f) ? 'missing-new' : f.kind} ${f.raw}`
+    ),
   ];
   process.stdout.write(out.join('\n') + '\n');
   if (opts.reportOnly) return 0;
-  return delRoute > 0 || navMissing > 0 ? 1 : 0;
+  return delRoute > 0 || navMissing > 0 || newMissing > 0 ? 1 : 0;
 }
 
 function main() {
