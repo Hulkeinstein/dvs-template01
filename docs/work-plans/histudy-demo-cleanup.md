@@ -560,7 +560,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - 기록: R1 표 4행(`Cart.js` 2, `CartItems.tsx` 분기 2 — 입력 종류별 전/후: DB 코스·JSON 코스·이벤트·상품), R3 표 4행
   - 커밋 메시지: `chore(demo): drop demo menus and cart demo links from header`
 
-- [ ] T006 푸터 링크 정리 — `data/footer.json`, `components/Footer/CopyRight.js` (depends on T022) `category:quick`
+- [x] T006 푸터 링크 정리 — `data/footer.json`, `components/Footer/CopyRight.js` (depends on T022) `category:quick`
   **Goal**: 푸터 데이터·저작권 줄에 삭제 라우트 링크 0, `data/footer.json` missing 0(D9). 소셜 링크·연락처 문구는 그대로.
   **편집 목록 (AREA = `data/footer\.json|components/Footer/[^:]*`)**:
   1. `data/footer.json` — `footerOne`(`:8-51`)·`footerTwo`(`:79-122`) 같은 구조, D12
@@ -996,3 +996,12 @@ R3 전/후 표 (T005):
 | `HeaderTop-Eight.js:123` | 같은 패턴(separator) | 조건 제거 | diff 0 |
 
 환경 메모: 저장소 밖 실행 상태 파일 `.omo/boulder.json`(`.git/info/exclude`로만 제외)이 `npm run format:check`에 걸려 prettier로 정렬함 — 코드 결함 아님
+
+**T006** (f7309b7): 푸터. 링크 검사 `del-route=265 missing=44 nav-missing=0 new-missing=0`(배정 del-route 11·nav-missing 6 해소 — 헤더·푸터 없는 주소 0 달성). 푸터 문구·소셜 링크 불변
+
+R1 치환 표 (T006):
+
+| 파일:줄(편집 전) | 편집 전 경로 | 편집 후 경로 | 근거 |
+|---|---|---|---|
+| `data/footer.json:27` (footerOne FAQ) | `/pages/faqs` | `/faqs` | 유지 라우트 `app/(pages)/faqs` 존재, 제목 FAQ와 1:1(D12·R1) |
+| `data/footer.json:98` (footerTwo FAQ) | `/pages/faqs` | `/faqs` | 같음 |
