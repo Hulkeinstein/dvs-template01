@@ -11,7 +11,7 @@ lifecycle: active
 
 # Work Plan: HiStudy 데모 페이지·컴포넌트 삭제 (T2)
 
-> **Status**: Active — 계획 승인 대기 (Phase 1 착수 전)
+> **Status**: Active — Phase 1 완료, Phase 2 착수 승인 대기
 > **Track**: `docs/ROADMAP.md:50` T2 · **Branch**: `chore/histudy-demo-removal` · **기준 태그**: `pre-demo-removal` (main 91d9fd9, 원격 push 완료)
 > **이력**: 2025-12-28 원안(Issue #69, 닫힘)은 `CourseDetails-Two~Eight`와 데모 라우트 9개만 다뤘다. 2026-09-16 재개 점검(ADR 0003)과 사용자 확정 답으로 범위를 데모 전체로 넓혀 다시 썼다. 원안의 소요 추정은 뺐다(시간 표현 금지 규칙).
 > **검증 명령 실행 환경**: 저장소 루트에서 Bash(git-bash). `npm run test*`는 `NODE_ENV=test` 접두 때문에 Windows cmd에서 돌지 않으므로 jest는 Test Strategy의 명령으로 직접 실행한다.
@@ -622,3 +622,12 @@ Critical Path: T002 → T003 → T007 → T011 → T012 → T013 → T014 → T0
 ## Implementation Log
 
 _(Phase 시작 후 누적 — 기준선 차이, R3 편집 전/후 표, validator·적대축 결과, 사용자 답)_
+
+### 2026-09-16 — Phase 1 완료 (T001~T004)
+
+- 기준선: type-check·lint(0/167)·format·build·jest(17/133) 통과, 태그 = main 91d9fd9
+- T002 `map`: entries=190 keep=71 del=119 sections=99, deleteFiles=504(p3 138/p4 305/p5 22/p6 39). `unresolvedNonAsset` 기대값 0 → 4로 정정(주석 import 2·루트 package.json 1·tests 재export 1, 판정 영향 없음)
+- T003 링크 기준선: `del-route=378 missing=51 nav-missing=7`. 기준선 파일을 잃으면 태그 worktree에서 `node scripts/demo-removal/check-route-links.mjs --report-only --root <wt>`로 같은 파일을 다시 만든다
+- **validator 1회차 INTENT_FAIL** — (1) 삭제 후 링크 검사기가 삭제 라우트 링크를 `missing`으로 분류 (2) 복구 문서가 공유 파일 수정 영향을 알리지 않음 (3) 실데이터 코드 `QuizResultContent.js`가 조용히 삭제됨. 사용자 결정: 지금 수정 + 재검증, `QuizResultContent.js`는 삭제하되 문서에 별도 표시
+  - 조치: 1795de1(삭제 라우트를 태그 DEL 진입점에서 분류, `--baseline`의 `new-missing`), 6dd7a55(섹션별 `T2에서 수정됨` 표시, `## 실데이터 코드가 들어 있던 삭제 파일`, 폴더 안 미사용 파일 라벨)
+- **validator 2회차 INTENT_PASS** (HEAD 6dd7a55) — 비차단 주의: (가) `new-missing`이 (파일, 리터럴) 집합 비교라 같은 파일의 기존 missing 리터럴이 새로 늘어나면 가려짐 → Phase 2 착수 전 개수 비교로 보완 권장 (나) git add 안 한 파일은 검사 대상 밖 → 검사는 add·커밋 후 (다) Phase 2~6 Checkpoint에도 `--baseline` 권장 (라) 뜻이 틀린 대체 주소는 검사기 한계 → R1·T011 validator 몫 (마) `T2에서 수정됨` 표시는 `components/`·`data/`만 봄 — `context`·`redux`·`hooks`·`types`는 F5 불변 목록 밖
