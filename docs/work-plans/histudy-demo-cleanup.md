@@ -475,7 +475,7 @@ for (const [n, b, a, u] of C) for (const p of u ? [...P, undefined] : P) { const
 console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(d ? 1 : 0);'
 ```
 
-- [ ] T022 기준선 비교를 (파일, 리터럴)별 개수로 보완 — `scripts/demo-removal/check-route-links.mjs` (depends on T003) `category:ultrabrain`
+- [x] T022 기준선 비교를 (파일, 리터럴)별 개수로 보완 — `scripts/demo-removal/check-route-links.mjs` (depends on T003) `category:ultrabrain`
   **Goal**: `--baseline` 비교가 같은 파일에 이미 있던 missing 리터럴이 하나 더 생긴 경우도 `new-missing`으로 잡는다. 지금 트리의 출력은 `--baseline` 유무 모두 바이트 단위로 그대로다.
   **Spec (D16 — T003 Spec 6의 비교 방식을 대체)**:
   1. `readBaseline`은 missing 줄의 (파일, 리터럴)별 개수와 (파일, 줄, 리터럴) 집합을 함께 돌려준다. 첫 줄 수치·줄 형식 검사는 그대로
