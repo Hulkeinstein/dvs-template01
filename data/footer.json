@@ -7,24 +7,8 @@
       "address": "North America, USA",
       "usefulLinks": [
         {
-          "text": "Marketplace",
-          "link": "/12-marketplace"
-        },
-        {
-          "text": "kindergarten",
-          "link": "/04-kindergarten"
-        },
-        {
-          "text": "University",
-          "link": "/13-university-classic"
-        },
-        {
-          "text": "Classic Lms",
-          "link": "/05-classic-lms"
-        },
-        {
           "text": "FAQ",
-          "link": "/pages/faqs"
+          "link": "/faqs"
         }
       ],
       "ourCompany": [
@@ -35,18 +19,6 @@
         {
           "text": "Become Teacher",
           "link": "/become-a-teacher"
-        },
-        {
-          "text": "Blog",
-          "link": "/blog-list"
-        },
-        {
-          "text": "Instructor",
-          "link": "/elements/team"
-        },
-        {
-          "text": "Events",
-          "link": "/pages/event-list"
         }
       ],
       "socialLink": [
@@ -78,24 +50,8 @@
       "address": "North America, USA",
       "usefulLinks": [
         {
-          "text": "Marketplace",
-          "link": "/12-marketplace"
-        },
-        {
-          "text": "kindergarten",
-          "link": "/04-kindergarten"
-        },
-        {
-          "text": "University",
-          "link": "/13-university-classic"
-        },
-        {
-          "text": "Classic Lms",
-          "link": "/05-classic-lms"
-        },
-        {
           "text": "FAQ",
-          "link": "/pages/faqs"
+          "link": "/faqs"
         }
       ],
       "ourCompany": [
@@ -106,18 +62,6 @@
         {
           "text": "Become Teacher",
           "link": "/become-a-teacher"
-        },
-        {
-          "text": "Blog",
-          "link": "/blog-list"
-        },
-        {
-          "text": "Instructor",
-          "link": "/elements/team"
-        },
-        {
-          "text": "Events",
-          "link": "/pages/event-list"
         }
       ],
       "socialLink": [

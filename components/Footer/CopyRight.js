@@ -26,9 +26,6 @@ const CopyRight = () => {
                   <Link href="/privacy-policy">Privacy policy</Link>
                 </li>
                 <li>
-                  <Link href="/subscription">Subscription</Link>
-                </li>
-                <li>
                   <Link href="/login">Login & Register</Link>
                 </li>
               </ul>
