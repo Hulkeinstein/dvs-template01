@@ -690,7 +690,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - 기록: R3 표 5행 — U2 예외 3행에 "U2=A 승인(날짜)" 표시
   - 커밋 메시지: `chore(demo): unlink demo lesson and quiz routes`
 
-- [ ] T009 홈의 블로그 결합·`/blog` 링크 정리 — `app/01-main-demo/page.js`, `app/01-main-demo/(main-demo)/index.tsx`, `components/01-Main-Demo/01-Main-Demo.js` (depends on T022; Q1) `category:visual-engineering`
+- [x] T009 홈의 블로그 결합·`/blog` 링크 정리 — `app/01-main-demo/page.js`, `app/01-main-demo/(main-demo)/index.tsx`, `components/01-Main-Demo/01-Main-Demo.js` (depends on T022; Q1) `category:visual-engineering`
   **Goal (Q1 확정안 A)**: 홈이 `@/mdx`를 import하지 않고 블로그 섹션이 없으며 `/blog` 링크 0. 나머지 홈 섹션 9개는 그대로이고 build가 통과한다. `BlogGrid-Top.js`·`mdx/index.js`·`data/blog/**`는 Phase 6 삭제 목록으로 넘어간다.
   **편집 목록 (AREA = `app/01-main-demo/[^:]*|components/01-Main-Demo/[^:]*|components/Blogs/[^:]*`)**:
   1. `app/01-main-demo/page.js` — `:2` import 삭제 · `:9-10` → `const HomePage = () => {`(기다릴 대상이 없어져 `async`·`blog` 삭제) · `:13` → `<HomePageLayout />`
@@ -1062,3 +1062,8 @@ R3 전/후 표 (T008, 유지 경로 54개):
 | `data/lesson.json` `lssonLink` 13줄 → `LessonSidebar.js:13,19-26` 활성 묶음 | 레슨·퀴즈·과제 경로 12개 `startsWith` | `startsWith('#')` | `/lesson/x1` true→false — U2=A 승인(2026-09-16, 활성 항목·펼침 해제) |
 
 R3 명령 마지막 줄: `keep-paths 54 conds 5 diff 3`(DIFF 3줄 = U2 예외 3행, 오케스트레이터 재실행 동일)
+
+**T009** (a8a08f1): 홈 블로그 결합. 링크 검사 `del-route=5 missing=40 nav-missing=0 new-missing=0`(배정 del-route 6 = `BlogGrid-Top.js` 도달 끊김 + missing `/blog` 1 해소, 영역 0). `@/mdx|getAllPostsMeta|BlogGridTop|getBlog|blogs` 0. 홈 섹션 9개 보존. build exit 0(`/` 824 B, 정적 페이지 167/167). Phase 6 목록에 `BlogGrid-Top.js`·`mdx/index.js` 2 + `data/blog/` 18(= `git ls-files data/blog` 18). type-check 0, lint 0/167, format 0
+
+- build 로그의 `Test DB error`·`Profile fetch error` 2줄은 `app/api/test-db/route.js:33` 등 API 라우트가 정적 생성 중 env 부재로 찍는 기존 로그(exit 0, 홈과 무관)
+- R1·R3 해당 없음(섹션 삭제·prop 제거)
