@@ -11,10 +11,11 @@
  * 유지 라우트는 작업 트리의 KEEP 진입점, 삭제 라우트는 태그 트리의 DEL 진입점에서 만든다.
  * 출력 첫 줄: del-route=<n> missing=<m> nav-missing=<k> (--baseline이면 끝에 new-missing=<j>)
  * 이후 줄:   <file>:<line> <del-route|missing|missing-new> <원문 리터럴>
- * --baseline FILE: 기준선 출력에 (파일, 리터럴) 쌍이 없는 missing을 missing-new로 표시한다
+ * --baseline FILE: (파일, 리터럴)별 missing 개수가 기준선보다 늘어난 몫을 missing-new로 표시한다
  * exit: del-route>0 · nav-missing>0 · new-missing>0 중 하나면 1(--report-only면 0), 스크립트 오류는 2
  *
  * 계약의 원문은 docs/work-plans/histudy-demo-cleanup.md T003 Spec 1~6이다.
+ * --baseline 비교는 T022 Spec(T003 Spec 6의 비교 방식을 대체)이다.
  * NOTE: 파일을 고치지 않는다(stdout 출력만). 라우트 표와 KEEP/DEL 분류는 graph.mjs에서 온다.
  */
 
@@ -221,8 +222,14 @@ function pairKey(file, raw) {
   return `${file}\n${raw}`;
 }
 
+/** (파일, 줄, 리터럴) 키. 개수 비교가 아니라 어느 줄을 기존 몫으로 칠지 고르는 데만 쓴다 */
+function lineKey(file, line, raw) {
+  return `${file}\n${line}\n${raw}`;
+}
+
 /**
- * Spec 6 — --baseline 파일의 missing (파일, 리터럴) 쌍. 줄 번호는 편집으로 바뀌므로 키에서 뺀다.
+ * T022 Spec 1 — --baseline 파일의 missing을 (파일, 리터럴)별 개수와 (파일, 줄, 리터럴) 집합으로 읽는다.
+ * 개수 키에서 줄 번호를 빼는 것은 편집으로 줄이 밀려도 새것으로 치지 않기 위해서다.
  * 형식이 어긋나거나 첫 줄 수치와 본문 줄 수가 다르면 오류(잘린 기준선을 조용히 쓰지 않는다).
  */
 function readBaseline(file) {
@@ -231,7 +238,8 @@ function readBaseline(file) {
   const head = BASELINE_HEAD_RE.exec(lines[0] || '');
   if (!head) throw new Error(`baseline: unexpected first line in ${file}`);
   const counts = { delRoute: 0, missing: 0 };
-  const pairs = new Set();
+  const pairs = new Map();
+  const lineKeys = new Set();
   for (const l of lines.slice(1)) {
     // <file>:<line> <kind> <raw> — raw·kind에는 공백이 없다(Spec 3)
     const rawAt = l.lastIndexOf(' ');
@@ -246,7 +254,11 @@ function readBaseline(file) {
       counts.delRoute += 1;
     } else if (kind === 'missing') {
       counts.missing += 1;
-      pairs.add(pairKey(loc.slice(0, colon), l.slice(rawAt + 1)));
+      const src = loc.slice(0, colon);
+      const raw = l.slice(rawAt + 1);
+      const key = pairKey(src, raw);
+      pairs.set(key, (pairs.get(key) || 0) + 1);
+      lineKeys.add(lineKey(src, Number(loc.slice(colon + 1)), raw));
     } else {
       throw new Error(`baseline: unexpected kind in ${file}: ${l}`);
     }
@@ -257,7 +269,33 @@ function readBaseline(file) {
   ) {
     throw new Error(`baseline: first line does not match body in ${file}`);
   }
-  return pairs;
+  return { pairs, lineKeys };
+}
+
+/**
+ * T022 Spec 2·3 — 기준선 개수를 넘는 missing의 집합.
+ * (파일, 리터럴) 묶음마다 기준선 개수 b만큼을 기존 몫으로 친다: 기준선에 같은 줄이 있는 것부터,
+ * 남은 몫은 줄 번호 오름차순으로. 나머지가 새것이라 집합 크기 = 묶음별 max(0, c − b)의 합이다.
+ */
+function newMissingOf(missing, baseline) {
+  const groups = new Map();
+  for (const f of missing) {
+    const key = pairKey(f.file, f.raw);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(f);
+  }
+  const fresh = new Set();
+  for (const [key, group] of groups) {
+    const byLine = [...group].sort((a, b) => a.line - b.line);
+    const inBaseline = (f) =>
+      baseline.lineKeys.has(lineKey(f.file, f.line, f.raw));
+    const ordered = [
+      ...byLine.filter(inBaseline),
+      ...byLine.filter((f) => !inBaseline(f)),
+    ];
+    for (const f of ordered.slice(baseline.pairs.get(key) || 0)) fresh.add(f);
+  }
+  return fresh;
 }
 
 function isCommentLine(line) {
@@ -326,17 +364,15 @@ function run(opts) {
   const delRoute = findings.filter((f) => f.kind === 'del-route').length;
   const missing = findings.filter((f) => f.kind === 'missing');
   const navMissing = missing.filter((f) => NAV_FILES.has(f.file)).length;
-  // Spec 6 — 기준선에 없는 missing. 정렬은 원래 분류로 한 뒤 표시만 바꾼다(--baseline 없는 출력과 순서 동일)
-  const isNew = (f) =>
-    baseline !== null &&
-    f.kind === 'missing' &&
-    !baseline.has(pairKey(f.file, f.raw));
-  const newMissing = missing.filter(isNew).length;
+  // T022 Spec 2·3 — 기준선 개수를 넘는 missing. 정렬은 원래 분류로 한 뒤 표시만 바꾼다(--baseline 없는 출력과 순서 동일)
+  const fresh = baseline ? newMissingOf(missing, baseline) : new Set();
+  const newMissing = fresh.size;
   const head = `del-route=${delRoute} missing=${missing.length} nav-missing=${navMissing}`;
   const out = [
     baseline ? `${head} new-missing=${newMissing}` : head,
     ...findings.map(
-      (f) => `${f.file}:${f.line} ${isNew(f) ? 'missing-new' : f.kind} ${f.raw}`
+      (f) =>
+        `${f.file}:${f.line} ${fresh.has(f) ? 'missing-new' : f.kind} ${f.raw}`
     ),
   ];
   process.stdout.write(out.join('\n') + '\n');
