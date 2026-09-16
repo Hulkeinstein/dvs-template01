@@ -1,8 +1,8 @@
 /**
- * Jest Configuration for Next.js with TypeScript/ESM Support
+ * Jest Configuration for Next.js with TypeScript
  *
  * Key features:
- * - ESM module support
+ * - babel-jest transform (CJS output; ESM deps are transformed via transformIgnorePatterns)
  * - Coverage thresholds for quality gates
  * - Repository pattern mocking
  * - Test isolation and cleanup

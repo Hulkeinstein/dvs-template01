@@ -93,12 +93,19 @@ jobs:
             echo "react-pdf must stay in server-only modules (see allowed paths above)" >&2
             exit 1
           fi
-          # 허용 경로 안이라도 'use client' 파일이면 클라이언트 번들로 새어 나간다
-          CLIENT_HITS=$(git grep -lI "@react-pdf/renderer" -- "*.js" "*.jsx" "*.ts" "*.tsx" \
-            | xargs grep -l "^['\"]use client['\"]" 2>/dev/null || true)
+          # 허용 경로 안이라도 'use client' 파일이면 클라이언트 번들로 새어 나간다.
+          # 직접 import와 components/PDF를 거친 간접 import를 모두 본다.
+          CANDIDATES=$(git grep -lI -e "@react-pdf/renderer" -e "components/PDF" \
+            -- "*.js" "*.jsx" "*.ts" "*.tsx" || true)
+          CLIENT_HITS=""
+          for f in $CANDIDATES; do
+            if head -5 "$f" | grep -qE "^['\"]use client['\"]"; then
+              CLIENT_HITS="$CLIENT_HITS $f"
+            fi
+          done
           if [ -n "$CLIENT_HITS" ]; then
             echo "$CLIENT_HITS"
-            echo "react-pdf must not be imported from a 'use client' module" >&2
+            echo "react-pdf (directly or via components/PDF) must not be reachable from a 'use client' module" >&2
             exit 1
           fi
 
