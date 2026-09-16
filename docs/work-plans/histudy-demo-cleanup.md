@@ -1083,3 +1083,17 @@ R3 전/후 표 (T010, 유지 경로 54개):
 | `About-Two.js:121-123,140` | `pathname === '/17-online-academy'` → 버튼 숨김 | `about-btn` `div` 항상 렌더, `pathname`·`usePathname` 삭제(R4) | false→false |
 
 R3 명령 마지막 줄: `keep-paths 54 conds 1 diff 0`
+
+**Phase 2 Checkpoint** (T011 전, HEAD 5d53eef — 오케스트레이터 직접 실행):
+
+| # | 항목 | 결과 |
+|---|---|---|
+| 1 | 링크 게이트 `--baseline` | exit 0, `del-route=0 missing=40 nav-missing=0 new-missing=0` |
+| 2 | 삭제 라우트·새 missing 줄 | `0` |
+| 3 | `verify` | `del-entries-remaining=119 delete-candidates-remaining=531 keep-entries-present=71/71`, exit 1 |
+| 4 | 편집으로 생긴 고아(`plan --phase 7`) | 7줄 = 기대 7개 전부 — `CourseBreadcrumb-{Two,Three,Four,Five,Six,Seven}.js`, `Header/NavProps/ElementsLayout.js`(모두 `components/` 허용 루트 안) |
+| 5 | G3 `ElementsLayout|grid-item-5` in `Nav.js` | `0` |
+| 6 | Tier 1 | type-check 0 · lint 0/167 · format 0 · build 0(정적 167/167) · jest `17 passed` / `133 passed` |
+| 7 | 매핑 불변 | `entries=190 keep=71 del=119 sections=99`, `route-map.json` sha1 `8c291f752f2c75ddd9c92a1b2383070521aadc6c` = T022 준비 기록값(`.omo` verification 노트) |
+| 8 | 복구 문서 표시(D17) | `expected 28 marked 28 SAME app-in-sections 0` · 수정 파일 34(U1=A 기대값) · 추가·삭제 파일 0 |
+| 9 | 작업 트리 | 출력 없음 |
