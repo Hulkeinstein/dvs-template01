@@ -659,7 +659,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Negative (남은 참조 0·간격 클래스 보존): `git grep -c '/profile/' -- components/Cards/Card.js components/Category/Filter components/Course-Details/Course-Sections` → 출력 없음 · `cat components/Cards/Card.js components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js | grep -c 'className="px-1" href="#"'` → `2`
   - 커밋 메시지: `chore(demo): unlink removed profile route from course cards and data`
 
-- [ ] T008 레슨 영역 링크 정리 — `data/lesson.json`, `components/Lesson/LessonSidebar.js`, `components/Lesson/LessonQuiz.js` (depends on T022; U2) `category:quick`
+- [x] T008 레슨 영역 링크 정리 — `data/lesson.json`, `components/Lesson/LessonSidebar.js`, `components/Lesson/LessonQuiz.js` (depends on T022; U2) `category:quick`
   **선행**: U2 답. A면 아래대로, B면 이 task를 보류하고 Implementation Log에 적는다
   **Goal**: 실제 레슨 화면(`lesson/[id]`)의 사이드바·퀴즈가 삭제 라우트를 가리키지 않는다. 가짜 문항·사이드바 제목은 그대로이고, 유지 경로 결과 변화는 U2가 승인한 3가지(활성 항목·펼침·"Welcome Lessons" 배지)뿐이다.
   **편집 목록 (AREA = `data/lesson\.json|components/Lesson/[^:]*`)**:
@@ -1045,3 +1045,20 @@ R3 명령 마지막 줄: `keep-paths 54 conds 20 diff 0`
 - D14 사전 확인 재실행: `linkTwo`를 읽는 코드는 `Card-Three.js:68,78`·`BlogDetails.js:173,201`뿐(다른 데이터 파일) — 계획과 같음
 - `Instructor.js:26-29` 여러 줄 `Link`는 `href`가 짧아져 Prettier가 한 줄로 합침(className·텍스트 불변, 형식 변화만)
 - R1·R3 해당 없음(D13·D14 치환만)
+
+**T008** (b35c78c): 레슨 영역. 링크 검사 `del-route=11 missing=41 nav-missing=0 new-missing=0`(배정 del-route 28 해소, 영역 0). `lssonLink` `"#"` 15·`"/` 0, JSON 유효. `isActive('/` 0·`isActive(` 4. `LessonContent.test.tsx` 3/3 통과. type-check 0, lint 0/167, format 0
+
+- **배정 표 정정**: T008 missing은 `0`이 아니라 `1` — `LessonSidebar.js:83` `/quiz-passing-grade`(없는 주소)가 배지 식 안에 있어 식과 함께 사라짐. 누적 missing 51→50→44→42→41, T009의 `/blog` 1줄을 빼면 Checkpoint 기대값 `missing=40`과 맞는다
+- 배지 4곳은 Prettier가 `{0}/{data.listItem.length}` 한 줄로 합침
+
+R3 전/후 표 (T008, 유지 경로 54개):
+
+| 파일:줄(편집 전) | 편집 전 조건 | 편집 후 | 유지 경로 결과(전→후) |
+|---|---|---|---|
+| `LessonSidebar.js:71-89` (Histudy Quiz 배지) | 데모 퀴즈 경로 9개 `startsWith` 순번 | `0` | 모두 0→0 |
+| `LessonSidebar.js:94-98` (Welcome History 배지) | `/lesson` → 1, `/lesson-intro` → 2 | `0` | `/lesson/x1` 1→0 — U2=A 승인(2026-09-16), 이 제목은 데이터에 없어 렌더 안 됨 |
+| `LessonSidebar.js:103-107` (Welcome Lessons 배지) | 같음 | `0` | `/lesson/x1` 1→0 — U2=A 승인(2026-09-16) |
+| `LessonSidebar.js:112-116` (Histudy Assignments 배지) | `/lesson-assignments(-submit)` | `0` | 모두 0→0 |
+| `data/lesson.json` `lssonLink` 13줄 → `LessonSidebar.js:13,19-26` 활성 묶음 | 레슨·퀴즈·과제 경로 12개 `startsWith` | `startsWith('#')` | `/lesson/x1` true→false — U2=A 승인(2026-09-16, 활성 항목·펼침 해제) |
+
+R3 명령 마지막 줄: `keep-paths 54 conds 5 diff 3`(DIFF 3줄 = U2 예외 3행, 오케스트레이터 재실행 동일)
