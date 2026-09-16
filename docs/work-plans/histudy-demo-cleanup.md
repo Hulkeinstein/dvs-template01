@@ -1097,3 +1097,15 @@ R3 명령 마지막 줄: `keep-paths 54 conds 1 diff 0`
 | 7 | 매핑 불변 | `entries=190 keep=71 del=119 sections=99`, `route-map.json` sha1 `8c291f752f2c75ddd9c92a1b2383070521aadc6c` = T022 준비 기록값(`.omo` verification 노트) |
 | 8 | 복구 문서 표시(D17) | `expected 28 marked 28 SAME app-in-sections 0` · 수정 파일 34(U1=A 기대값) · 추가·삭제 파일 0 |
 | 9 | 작업 트리 | 출력 없음 |
+
+### 2026-09-16 — T011 Phase 2 제3자 검증
+
+- validator T011 — INTENT_PASS
+- 입력: 수정 파일 34(U1=A 기대값), 추가·삭제 0. validator 독자 확인 — 링크 검사 `new-missing=0`, 새로 짠 R3 조건 22개 `keep-paths 54 conds 22 diff 0`, 태그 대비 삭제 계획 `added 27 removed 0 moved 0`(Phase 7 = Checkpoint 4의 7개, Phase 6 = `BlogGrid-Top.js`·`mdx/index.js`·`data/blog` 18), F5 불변 목록 변경은 `routes.ts` 2줄뿐, 지운 식별자 18종 잔여 참조 0, `Link` 벗기기·className 변경 0
+- 기록만(판정 불변, 5건):
+  - (가) T005 G9 부수 효과: Courses 메가메뉴 두 항목이 오른쪽 열 → 왼쪽 열, "Create Course" New 배지 클래스 `rbt-badge-card ms-3` → `rbt-badge-card`(`components/Header/NavProps/CourseLayout.js:33` vs `:59`) — Q2·G9 범위 안
+  - (나) U2 범위 보충: 같은 `isActive(lssonLink)` 식이 `LessonSidebar.js:132-145` 체크 아이콘(`feather-check`→`feather-circle`)·`unread` 클래스도 정한다 → "Course Intro"·"Hello World!" 체크 표시도 사라짐(U2가 승인한 활성 표시의 일부)
+  - (다) **D15 전제 정정**: "유지 화면에서 장바구니에 담기는 것은 코스뿐"은 사실과 다르다 — 유지 라우트 `/wishlist`(`components/wishlist/Wishlist.js:106`)가 `data/shop.json` 상품(id 100~999)을 담는다(→ 조회 실패 뒤 `/all-courses`, D15 설명대로). 이벤트 id 1~9는 데모 코스 1~9와 겹쳐 엉뚱한 데모 코스가 열리지만, 이벤트를 담는 곳은 Phase 4 삭제 대상 데모 화면과 예전 localStorage 잔여분뿐. 결론(코스 상세 하나로 통일)은 유지
+  - (라) `CourseLayout.js:44-67` `courseType=false` 분기는 이제 부르는 곳이 없음 — T005가 NavProps 수정을 금지해 남김(T017 고아 정리 때 확인)
+  - (마) `CategoryOne.js:21` 홈 카테고리 필터 소실은 R1 규칙 안(`/all-courses`는 카테고리 인자 없음) — 사용자 결정 불필요, 완료 보고에 한 줄 노출. `CategoryHead.js` 미사용 인자 유지도 수용(유일한 유지 사용처가 `undefined` 전달)
+- 범위 밖 기존 버그(편집과 무관): `components/wishlist/Wishlist.js:25` `setCart(!cartToggle)` — `cartToggle` 미정의로 담기 직후 ReferenceError
