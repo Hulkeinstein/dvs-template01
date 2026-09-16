@@ -20,11 +20,30 @@
 import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
-import { TAG, repoTopLevel, sorted } from './graph.mjs';
+import {
+  TAG,
+  extractImportSpecs,
+  isCodeFile,
+  repoTopLevel,
+  sorted,
+} from './graph.mjs';
 
-const USAGE = 'usage: render-doc.mjs --date YYYY-MM-DD --links FILE [--final]';
+const USAGE =
+  'usage: render-doc.mjs --date YYYY-MM-DD --links FILE [--final] [--out FILE]';
 const OUT_REL = 'docs/library/histudy-demo-removal.md';
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+// (B) 실데이터 코드 판정 — import 지정자 접두사(하나라도 시작하면 실데이터로 본다)
+const REAL_DATA_IMPORT_STARTS = [
+  '@/app/lib/supabase',
+  '@/app/lib/actions',
+  '@/app/lib/services',
+  'next-auth',
+];
+// (B) 정확히 일치해야 하는 지정자
+const REAL_DATA_IMPORT_EXACT = new Set(['@supabase/supabase-js']);
+// (B) 본문에 Supabase 테이블 조회(`.from('table')`)가 있으면 실데이터로 본다
+const SUPABASE_FROM_RE = /\.from\(\s*['"]([A-Za-z_]+)['"]\s*\)/;
 
 // Spec 5 (check-route-links.mjs와 동일) — 헤더·푸터 데이터는 nav-missing으로 따로 집계된다
 const NAV_FILES = new Set(['data/MegaMenu.json', 'data/footer.json']);
@@ -38,14 +57,14 @@ const PHASE_GROUPS = [
 ];
 
 function parseArgs(argv) {
-  const opts = { date: null, links: null, final: false };
+  const opts = { date: null, links: null, final: false, out: null };
   for (let i = 0; i < argv.length; i += 1) {
     const key = argv[i];
     if (key === '--final') {
       opts.final = true;
       continue;
     }
-    if (key === '--date' || key === '--links') {
+    if (key === '--date' || key === '--links' || key === '--out') {
       const value = argv[i + 1];
       if (value === undefined || value.startsWith('--')) {
         throw new Error(`missing value for ${key}\n${USAGE}`);
@@ -165,13 +184,59 @@ function removedPrettierIgnoreLines(root, final) {
   return sorted(removed);
 }
 
+/**
+ * (A) 되살릴 때 알아둘 점 — 태그 대비 현재 작업 트리에서 내용이 바뀐 공유 파일.
+ * HEAD가 아니라 작업 트리와 비교한다(커밋 안 된 변경 포함). --final 여부와 무관하게 항상 계산한다.
+ */
+function modifiedSharedFilesFromTag(root) {
+  return new Set(
+    gitLines(root, [
+      'diff',
+      '--name-only',
+      '--diff-filter=M',
+      `${TAG}^{commit}`,
+      '--',
+      'app',
+      'components',
+      'data',
+      'mdx',
+    ])
+  );
+}
+
+/** 태그 시점 소스를 읽는다(작업 트리 파일은 읽지 않는다 — 삭제 후에도 같은 결과) */
+function readTagSource(root, filePath) {
+  return git(root, ['show', `${TAG}:${filePath}`]);
+}
+
+/**
+ * (B) 실데이터 코드 판정. import 지정자 또는 `.from('table')` 본문 패턴 중 하나라도 맞으면
+ * 실데이터로 보고 근거(첫 1건)를 반환한다. 아니면 null.
+ */
+function classifyRealDataFile(root, filePath) {
+  if (!isCodeFile(filePath)) return null;
+  const src = readTagSource(root, filePath);
+  const specs = extractImportSpecs(src);
+  const matchedImport = specs.find(
+    (s) =>
+      REAL_DATA_IMPORT_EXACT.has(s) ||
+      REAL_DATA_IMPORT_STARTS.some((prefix) => s.startsWith(prefix))
+  );
+  if (matchedImport) return { evidence: matchedImport };
+  const tableMatch = src.match(SUPABASE_FROM_RE);
+  if (tableMatch) return { evidence: `from('${tableMatch[1]}')` };
+  return null;
+}
+
 function computeSectionView(section, deleteSet) {
   const dirPrefix = `${section.dir}/`;
   const entryFiles = section.entries;
+  const entrySet = new Set(entryFiles);
   const underDir = sorted(
     [...deleteSet].filter((p) => p.startsWith(dirPrefix))
   );
   const reachDeleted = section.reachFiles.filter((p) => deleteSet.has(p));
+  const reachDeletedSet = new Set(reachDeleted);
   const reachKept = section.reachFiles.filter(
     (p) =>
       (p.startsWith('components/') || p.startsWith('data/')) &&
@@ -181,10 +246,21 @@ function computeSectionView(section, deleteSet) {
     p.startsWith('components/')
   );
   const dataDeleted = reachDeleted.filter((p) => p.startsWith('data/'));
+  // (B) 섹션 폴더 안에 있지만 그 섹션 진입점에서 import로 닿지 않던 삭제 파일
+  const folderOnly = underDir.filter(
+    (p) => !entrySet.has(p) && !reachDeletedSet.has(p)
+  );
   const restoreSet = sorted(
     new Set([...entryFiles, ...underDir, ...reachDeleted])
   );
-  return { entryFiles, componentsDeleted, dataDeleted, reachKept, restoreSet };
+  return {
+    entryFiles,
+    componentsDeleted,
+    dataDeleted,
+    folderOnly,
+    reachKept,
+    restoreSet,
+  };
 }
 
 // ---- markdown 조립 helper -------------------------------------------------
@@ -205,6 +281,12 @@ function bulletList(items) {
 function labeledList(label, items, emptyText = '없음') {
   if (items.length === 0) return [`**${label}**: ${emptyText}`];
   return [`**${label}**:`, bulletList(items)];
+}
+
+/** labeledList와 같으나 항목마다 접미사를 붙인다(예: ` — T2에서 수정됨`) */
+function labeledListWithSuffix(label, items, suffixFn, emptyText = '없음') {
+  if (items.length === 0) return [`**${label}**: ${emptyText}`];
+  return [`**${label}**:`, bulletList(items.map((p) => `${p}${suffixFn(p)}`))];
 }
 
 function restoreCommandBlock(paths) {
@@ -252,14 +334,40 @@ function build(root, opts) {
   }
   const orphanFiles = sorted([...deleteSet].filter((p) => !claimed.has(p)));
 
+  // (B) 실데이터 코드가 들어 있던 삭제 파일 — import 지정자·Supabase 테이블 조회 판정
+  const realDataFiles = deleteFiles
+    .map((f) => {
+      const hit = classifyRealDataFile(root, f.path);
+      if (!hit) return null;
+      const owningSections = sorted(
+        [...sectionViews.entries()]
+          .filter(([, view]) => view.restoreSet.includes(f.path))
+          .map(([route]) => route)
+      );
+      const importedAtDeletion = routeMap.sections.some((s) =>
+        s.reachFiles.includes(f.path)
+      );
+      return {
+        path: f.path,
+        sections: owningSections,
+        evidence: hit.evidence,
+        imported: importedAtDeletion,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+
   const generateCmd = [
     'node scripts/demo-removal/render-doc.mjs',
     `--date ${opts.date}`,
     `--links ${opts.linksArg}`,
     opts.final ? '--final' : null,
+    opts.out ? `--out ${opts.out}` : null,
   ]
     .filter(Boolean)
     .join(' ');
+
+  const modifiedSharedSet = modifiedSharedFilesFromTag(root);
 
   const chunks = [];
 
@@ -320,6 +428,11 @@ function build(root, opts) {
       ? ['**(e)** `.prettierignore`에서 뺀 항목: 아직 없음(T013 이후 채워짐)']
       : labeledList('(e) `.prettierignore`에서 뺀 항목', removedIgnore))
   );
+  chunks.push(
+    '**(f)** 화면 파일을 되살려도 그 화면이 쓰던 공유 파일은 T2에서 경로·분기가 수정됐을 수 있다. ' +
+      "섹션의 'T2에서 수정됨' 표시와 `git diff pre-demo-removal -- <파일>`로 확인하고, " +
+      '태그 시점 그대로 보려면 해당 공유 파일도 함께 되돌려야 한다(유지 화면에 영향이 가므로 주의).'
+  );
 
   // ## 요약
   chunks.push(heading(2, '요약'));
@@ -367,7 +480,30 @@ function build(root, opts) {
         ...labeledList('함께 삭제한 컴포넌트', view.componentsDeleted)
       );
       chunks.push(...labeledList('함께 삭제한 데이터', view.dataDeleted));
-      chunks.push(...labeledList('쓰던 유지 파일(삭제 안 함)', view.reachKept));
+      if (view.folderOnly.length > 0) {
+        chunks.push(
+          ...labeledList(
+            '폴더 안에 있었지만 화면이 쓰지 않던 파일',
+            view.folderOnly
+          )
+        );
+      }
+      const modifiedInSection = view.reachKept.filter((p) =>
+        modifiedSharedSet.has(p)
+      );
+      chunks.push(
+        ...labeledListWithSuffix(
+          '쓰던 유지 파일(삭제 안 함)',
+          view.reachKept,
+          (p) => (modifiedSharedSet.has(p) ? ' — T2에서 수정됨' : '')
+        )
+      );
+      if (modifiedInSection.length > 0) {
+        chunks.push(
+          `이 화면이 쓰던 유지 파일 ${modifiedInSection.length}개가 T2에서 수정됐다. ` +
+            '되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.'
+        );
+      }
       chunks.push('**복구 명령**:');
       chunks.push(restoreCommandBlock(view.restoreSet));
     }
@@ -383,6 +519,29 @@ function build(root, opts) {
     chunks.push(bulletList(orphanFiles));
     chunks.push('**복구 명령**:');
     chunks.push(restoreCommandBlock(orphanFiles));
+  }
+
+  // ## 실데이터 코드가 들어 있던 삭제 파일
+  chunks.push(heading(2, '실데이터 코드가 들어 있던 삭제 파일'));
+  chunks.push(
+    '나중에 실제 기능을 만들 때 참고할 수 있는 코드다. 복구 명령은 소속 섹션에 있다.'
+  );
+  if (realDataFiles.length === 0) {
+    chunks.push('없음');
+  } else {
+    chunks.push(
+      bulletList(
+        realDataFiles.map((f) => {
+          const sectionText = f.sections.length
+            ? f.sections.map((r) => `\`${r}\``).join(', ')
+            : '없음(화면에 속하지 않음)';
+          const importedText = f.imported
+            ? '삭제 시점에 화면에서 import됨'
+            : '삭제 시점에 화면에서 import 안 됨';
+          return `\`${f.path}\` — 소속: ${sectionText} · 근거: \`${f.evidence}\` · ${importedText}`;
+        })
+      )
+    );
   }
 
   // ## 삭제하지 않은 후보
@@ -441,10 +600,11 @@ function main() {
   try {
     const root = repoTopLevel(process.cwd());
     const doc = build(root, opts);
-    const out = path.join(root, OUT_REL);
+    const outRel = opts.out || OUT_REL;
+    const out = path.join(root, outRel);
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, doc);
-    console.log(`wrote ${OUT_REL}`);
+    console.log(`wrote ${outRel}`);
     return 0;
   } catch (err) {
     console.error(err.message);

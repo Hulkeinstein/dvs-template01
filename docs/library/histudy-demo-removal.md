@@ -45,6 +45,8 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 
 **(e)** `.prettierignore`에서 뺀 항목: 아직 없음(T013 이후 채워짐)
 
+**(f)** 화면 파일을 되살려도 그 화면이 쓰던 공유 파일은 T2에서 경로·분기가 수정됐을 수 있다. 섹션의 'T2에서 수정됨' 표시와 `git diff pre-demo-removal -- <파일>`로 확인하고, 태그 시점 그대로 보려면 해당 공유 파일도 함께 되돌려야 한다(유지 화면에 영향이 가므로 주의).
+
 ## 요약
 
 | 그룹 | 라우트 섹션 수 | 진입점 수 | 삭제 파일 수 |
@@ -5527,6 +5529,10 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 데이터**: 없음
 
+**폴더 안에 있었지만 화면이 쓰지 않던 파일**:
+
+- app/(courses)/(lessons)/lesson-quiz-result/QuizResultContent.js
+
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
@@ -6401,6 +6407,12 @@ git checkout pre-demo-removal -- \
 ## 화면에 속하지 않는 삭제 파일
 
 없음 — 삭제 집합 전부가 위 라우트 섹션의 복구 명령에 들어 있다.
+
+## 실데이터 코드가 들어 있던 삭제 파일
+
+나중에 실제 기능을 만들 때 참고할 수 있는 코드다. 복구 명령은 소속 섹션에 있다.
+
+- `app/(courses)/(lessons)/lesson-quiz-result/QuizResultContent.js` — 소속: `/lesson-quiz-result` · 근거: `@/app/lib/supabase/client` · 삭제 시점에 화면에서 import 안 됨
 
 ## 삭제하지 않은 후보
 

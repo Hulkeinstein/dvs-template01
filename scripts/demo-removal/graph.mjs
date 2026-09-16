@@ -120,6 +120,23 @@ export function isConsumer(p) {
   return CONSUMER_RE.test(p);
 }
 
+/** Spec 4 — 소스에서 import 지정자만 뽑는다(순서 보존). buildGraph와 render-doc.mjs가 재사용. */
+export function extractImportSpecs(src) {
+  const specs = [];
+  const seen = new Set();
+  for (const re of [IMPORT_RE, JEST_MOCK_RE]) {
+    re.lastIndex = 0;
+    let m;
+    while ((m = re.exec(src))) {
+      if (!seen.has(m[1])) {
+        seen.add(m[1]);
+        specs.push(m[1]);
+      }
+    }
+  }
+  return specs;
+}
+
 /** 그래프 노드(해석 대상 폴더 또는 소비자 루트 안의 코드 파일) */
 function isScanned(p) {
   if (!isCodeFile(p)) return false;
@@ -223,12 +240,7 @@ export function buildGraph(tree) {
       continue;
     }
     const src = tree.read(f);
-    const specs = new Set();
-    for (const re of [IMPORT_RE, JEST_MOCK_RE]) {
-      re.lastIndex = 0;
-      let m;
-      while ((m = re.exec(src))) specs.add(m[1]);
-    }
+    const specs = new Set(extractImportSpecs(src));
     const out = new Set();
     const pkgs = new Set();
     for (const spec of sorted(specs)) {
