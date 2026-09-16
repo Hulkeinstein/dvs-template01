@@ -147,17 +147,23 @@ function validateFrontMatter(frontMatter, filePath) {
   // lifecycle 검증
   if (frontMatter.lifecycle) {
     if (!VALID_LIFECYCLE.includes(frontMatter.lifecycle)) {
-      errors.push(`Invalid lifecycle: "${frontMatter.lifecycle}" (valid: ${VALID_LIFECYCLE.join(', ')})`);
+      errors.push(
+        `Invalid lifecycle: "${frontMatter.lifecycle}" (valid: ${VALID_LIFECYCLE.join(', ')})`
+      );
     }
   }
 
   // created/updated 날짜 형식 검증
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (frontMatter.created && !dateRegex.test(frontMatter.created)) {
-    errors.push(`Invalid date format for "created": "${frontMatter.created}" (expected: YYYY-MM-DD)`);
+    errors.push(
+      `Invalid date format for "created": "${frontMatter.created}" (expected: YYYY-MM-DD)`
+    );
   }
   if (frontMatter.updated && !dateRegex.test(frontMatter.updated)) {
-    errors.push(`Invalid date format for "updated": "${frontMatter.updated}" (expected: YYYY-MM-DD)`);
+    errors.push(
+      `Invalid date format for "updated": "${frontMatter.updated}" (expected: YYYY-MM-DD)`
+    );
   }
 
   return errors;

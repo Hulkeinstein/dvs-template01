@@ -16,10 +16,7 @@ import {
   updateCourse,
   getCourseById,
 } from '@/app/lib/actions/courseActions';
-import {
-  createLesson,
-  updateLesson,
-} from '@/app/lib/actions/lessonActions';
+import { createLesson, updateLesson } from '@/app/lib/actions/lessonActions';
 import { createQuizLesson } from '@/app/lib/actions/quizActions';
 import { uploadCourseThumbnail } from '@/app/lib/actions/uploadActions';
 import { mapDBToFormData } from '@/app/lib/utils/courseDataMapper';
@@ -569,36 +566,36 @@ const CreateCourse = ({
     if (editMode && courseId) {
       try {
         if (lessonData.id) {
-            // Update existing lesson
-            const result = await updateLesson(lessonData.id, {
-                ...lessonData,
-                courseId,
-                topicId
-            });
+          // Update existing lesson
+          const result = await updateLesson(lessonData.id, {
+            ...lessonData,
+            courseId,
+            topicId,
+          });
 
-            if (!result.success) {
-                console.error('Error updating lesson:', result.error);
-                // Optionally show error to user
-            }
+          if (!result.success) {
+            console.error('Error updating lesson:', result.error);
+            // Optionally show error to user
+          }
         } else {
-            // Create new lesson
-            const result = await createLesson({
-                ...lessonData,
-                courseId,
-                topicId
-            });
+          // Create new lesson
+          const result = await createLesson({
+            ...lessonData,
+            courseId,
+            topicId,
+          });
 
-            if (result.success && result.lessonId) {
-                // Update lessonData with the real ID from DB
-                savedLessonData = {
-                    ...lessonData,
-                    id: result.lessonId
-                };
-            } else {
-                 console.error('Error creating lesson:', result.error);
-                 // Optionally show error
-                 return; // Don't update UI if DB save failed
-            }
+          if (result.success && result.lessonId) {
+            // Update lessonData with the real ID from DB
+            savedLessonData = {
+              ...lessonData,
+              id: result.lessonId,
+            };
+          } else {
+            console.error('Error creating lesson:', result.error);
+            // Optionally show error
+            return; // Don't update UI if DB save failed
+          }
         }
       } catch (error) {
         console.error('Error saving lesson:', error);

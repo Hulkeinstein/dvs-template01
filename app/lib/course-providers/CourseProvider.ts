@@ -1,4 +1,7 @@
-import { CourseProvider as ICourseProvider, Course } from '@/types/course-provider';
+import {
+  CourseProvider as ICourseProvider,
+  Course,
+} from '@/types/course-provider';
 
 /**
  * Abstract CourseProvider class

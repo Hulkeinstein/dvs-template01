@@ -1,14 +1,14 @@
-import { 
-  getSavedSummary, 
-  saveSummary, 
-  checkDailyLimit, 
+import {
+  getSavedSummary,
+  saveSummary,
+  checkDailyLimit,
   incrementDailyUsage,
-  logSummaryCost 
+  logSummaryCost,
 } from '@/app/lib/actions/summaryCachingActions';
 
 // Mock Supabase
 jest.mock('@/app/lib/supabase/server', () => ({
-  getServerClient: jest.fn()
+  getServerClient: jest.fn(),
 }));
 
 describe('Summary Caching Actions', () => {
@@ -17,7 +17,12 @@ describe('Summary Caching Actions', () => {
   const mockSummaryData = {
     key_notes: ['핵심 1', '핵심 2'],
     detailed_notes: [
-      { timestamp: '00:00', timestamp_seconds: 0, title: '시작', content: '내용' }
+      {
+        timestamp: '00:00',
+        timestamp_seconds: 0,
+        title: '시작',
+        content: '내용',
+      },
     ],
     meta: {
       model: 'gpt-4o-mini',
@@ -27,8 +32,8 @@ describe('Summary Caching Actions', () => {
       source_lang: 'en',
       output_lang: 'ko',
       video_duration_seconds: 600,
-      processed_at: new Date().toISOString()
-    }
+      processed_at: new Date().toISOString(),
+    },
   };
 
   beforeEach(() => {
@@ -44,10 +49,12 @@ describe('Summary Caching Actions', () => {
         eq: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
           data: { content_data: { summary: mockSummaryData } },
-          error: null
-        })
+          error: null,
+        }),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await getSavedSummary(mockLessonId);
@@ -66,10 +73,12 @@ describe('Summary Caching Actions', () => {
         eq: jest.fn().mockReturnThis(),
         single: jest.fn().mockResolvedValue({
           data: { content_data: null },
-          error: null
-        })
+          error: null,
+        }),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await getSavedSummary(mockLessonId);
@@ -97,14 +106,18 @@ describe('Summary Caching Actions', () => {
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: { content_data: {} }, error: null }),
-        then: (resolve: any) => resolve({ data: null, error: null })
+        single: jest
+          .fn()
+          .mockResolvedValue({ data: { content_data: {} }, error: null }),
+        then: (resolve: any) => resolve({ data: null, error: null }),
       };
 
       const mockSupabase = {
-        from: jest.fn().mockReturnValue(mockBuilder)
+        from: jest.fn().mockReturnValue(mockBuilder),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await saveSummary(mockLessonId, mockSummaryData);
@@ -120,17 +133,22 @@ describe('Summary Caching Actions', () => {
         update: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(),
-        single: jest.fn().mockResolvedValue({ data: { content_data: {} }, error: null }),
-        then: (resolve: any) => resolve({ 
-          data: null, 
-          error: { message: 'DB Error' } 
-        })
+        single: jest
+          .fn()
+          .mockResolvedValue({ data: { content_data: {} }, error: null }),
+        then: (resolve: any) =>
+          resolve({
+            data: null,
+            error: { message: 'DB Error' },
+          }),
       };
 
       const mockSupabase = {
-        from: jest.fn().mockReturnValue(mockBuilder)
+        from: jest.fn().mockReturnValue(mockBuilder),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await saveSummary(mockLessonId, mockSummaryData);
@@ -145,9 +163,11 @@ describe('Summary Caching Actions', () => {
     it('일일 한도 내이면 허용', async () => {
       // Given: 오늘 10건 사용
       const mockSupabase = {
-        rpc: jest.fn().mockResolvedValue({ data: 10, error: null })
+        rpc: jest.fn().mockResolvedValue({ data: 10, error: null }),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await checkDailyLimit(mockUserId);
@@ -161,9 +181,11 @@ describe('Summary Caching Actions', () => {
     it('일일 한도 초과 시 거부', async () => {
       // Given: 오늘 50건 사용
       const mockSupabase = {
-        rpc: jest.fn().mockResolvedValue({ data: 50, error: null })
+        rpc: jest.fn().mockResolvedValue({ data: 50, error: null }),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await checkDailyLimit(mockUserId);
@@ -188,9 +210,11 @@ describe('Summary Caching Actions', () => {
       // Given
       const mockSupabase = {
         from: jest.fn().mockReturnThis(),
-        insert: jest.fn().mockResolvedValue({ data: null, error: null })
+        insert: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await incrementDailyUsage(mockUserId, mockLessonId);
@@ -209,13 +233,15 @@ describe('Summary Caching Actions', () => {
         model: 'gpt-4o-mini',
         inputTokens: 1000,
         outputTokens: 500,
-        costUsd: 0.001
+        costUsd: 0.001,
       };
       const mockSupabase = {
         from: jest.fn().mockReturnThis(),
-        insert: jest.fn().mockResolvedValue({ data: null, error: null })
+        insert: jest.fn().mockResolvedValue({ data: null, error: null }),
       };
-      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(mockSupabase);
+      require('@/app/lib/supabase/server').getServerClient.mockReturnValue(
+        mockSupabase
+      );
 
       // When
       const result = await logSummaryCost(costInfo);

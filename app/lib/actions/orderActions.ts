@@ -1,4 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+// Supabase client
+// NOTE: 공용 지연 생성 클라이언트 — import 시점이 아닌 최초 사용 시점에 env를 검증한다
+import { supabaseServer as supabase } from '@/app/lib/supabase/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth.config';
 
@@ -39,12 +41,6 @@ import type {
   CheckoutResponse,
   CartItem,
 } from '@/types/checkout';
-
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // =========================================================================
 // Helper Functions

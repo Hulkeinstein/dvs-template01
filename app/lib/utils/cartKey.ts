@@ -40,7 +40,7 @@ export const clearAllCartKeys = (): void => {
   }
 
   // 별도로 제거 (반복 중 수정 방지)
-  keysToRemove.forEach(key => {
+  keysToRemove.forEach((key) => {
     localStorage.removeItem(key);
   });
 

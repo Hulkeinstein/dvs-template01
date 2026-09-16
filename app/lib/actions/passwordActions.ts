@@ -230,10 +230,18 @@ export async function checkPasswordStatus() {
 }
 
 // Initialize email service
-const resend = new Resend(process.env.RESEND_API_KEY);
 const APP_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 const EMAIL_FROM =
   process.env.EMAIL_FROM || 'DVS Education <no-reply@dvs-education.com>';
+
+// 키가 없는 환경(CI, Docker 빌드)에서 import만으로 실패하지 않도록 발송 시점에 생성한다
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+  return new Resend(apiKey);
+}
 
 // SHA-256 hash function for token security
 function sha256Hex(input: string): string {
@@ -278,6 +286,8 @@ export async function requestPasswordReset(email: string) {
       const resetLink = `${APP_URL}/auth/reset-password?token=${rawToken}`;
 
       try {
+        const resend = getResendClient();
+
         await resend.emails.send({
           from: EMAIL_FROM,
           to: email,

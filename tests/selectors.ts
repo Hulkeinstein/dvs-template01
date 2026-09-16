@@ -15,16 +15,16 @@ export const SELECTORS = {
   // Checkout
   checkoutButton: '.rbt-btn:has-text("Proceed to Checkout")',
   checkoutForm: 'form', // Generic for now
-  
+
   CHECKOUT_FORM: {
-     FIRST_NAME: '#billing_first_name',
-     LAST_NAME: '#billing_last_name',
-     EMAIL: '#billing_email',
-     PHONE: '#billing_phone',
-     ADDRESS: '#billing_address_1',
-     CITY: '#billing_city',
-     ZIP: '#billing_postcode',
-  }
+    FIRST_NAME: '#billing_first_name',
+    LAST_NAME: '#billing_last_name',
+    EMAIL: '#billing_email',
+    PHONE: '#billing_phone',
+    ADDRESS: '#billing_address_1',
+    CITY: '#billing_city',
+    ZIP: '#billing_postcode',
+  },
 };
 
 export const TIMEOUTS = {

@@ -1,16 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabaseServer } from './server';
 
 // Admin client with SERVICE_ROLE_KEY for bypassing RLS
 // Only use this in server-side code, never expose to client
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+// NOTE: 공용 지연 생성 클라이언트 — import 시점이 아닌 최초 사용 시점에 env를 검증한다
+const supabaseAdmin = supabaseServer;
 
 export { supabaseAdmin };

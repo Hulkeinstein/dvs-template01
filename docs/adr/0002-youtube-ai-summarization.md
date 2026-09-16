@@ -210,7 +210,7 @@ OPENAI_API_KEY=xxx
 
 ## Links
 
-- [Work Plan]: [../work-plans/youtube-ai-summarization.md](../work-plans/youtube-ai-summarization.md)
+- [Library]: [../library/lilys-summary.md](../library/lilys-summary.md) (구현 완료 후 work plan은 삭제됨, 2026-09-16)
 - [YouTube Actions]: [../../app/lib/actions/youtubeActions.ts](../../app/lib/actions/youtubeActions.ts)
 - [Supadata Docs]: https://supadata.ai/docs
 - [OpenAI JSON Mode]: https://platform.openai.com/docs/guides/json-mode

@@ -11,58 +11,63 @@ interface LessonCompleteButtonProps {
   onToggle?: (status: boolean) => void;
 }
 
-const LessonCompleteButton: React.FC<LessonCompleteButtonProps> = ({ 
-    lessonId, 
-    courseId,
-    userId, 
-    isCompleted: initialDetails,
-    onToggle
+const LessonCompleteButton: React.FC<LessonCompleteButtonProps> = ({
+  lessonId,
+  courseId,
+  userId,
+  isCompleted: initialDetails,
+  onToggle,
 }) => {
-    // 1. Optimistic State
-    const [optimisticCompleted, addOptimisticCompleted] = useOptimistic(
-        initialDetails,
-        (_, newStatus: boolean) => newStatus
-    );
+  // 1. Optimistic State
+  const [optimisticCompleted, addOptimisticCompleted] = useOptimistic(
+    initialDetails,
+    (_, newStatus: boolean) => newStatus
+  );
 
-    const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-    const handleToggle = async () => {
-        if (!userId || isLoading) return;
+  const handleToggle = async () => {
+    if (!userId || isLoading) return;
 
-        const newStatus = !optimisticCompleted;
-        console.log('Toggling progress:', newStatus);
+    const newStatus = !optimisticCompleted;
+    console.log('Toggling progress:', newStatus);
 
-        // Optimistic UI Update immediately
+    // Optimistic UI Update immediately
+    startTransition(() => {
+      addOptimisticCompleted(newStatus);
+    });
+
+    setIsLoading(true);
+
+    try {
+      const result = await toggleLessonProgress(
+        lessonId,
+        courseId,
+        userId,
+        newStatus
+      );
+      if (!result.success) {
+        // Revert if failed (Optimistic UI naturally handles this via next render if we used state properly,
+        // but here useOptimistic resets on next server revalidate mostly.
+        // For robust undo, we might need manual state revert, but Next.js useOptimistic helps.)
+        console.error(result.error);
+        alert(result.error);
+        // Force revert optimistic?
         startTransition(() => {
-            addOptimisticCompleted(newStatus);
+          addOptimisticCompleted(!newStatus); // Revert
         });
-        
-        setIsLoading(true);
-
-        try {
-            const result = await toggleLessonProgress(lessonId, courseId, userId, newStatus);
-            if (!result.success) {
-                  // Revert if failed (Optimistic UI naturally handles this via next render if we used state properly,
-                  // but here useOptimistic resets on next server revalidate mostly. 
-                  // For robust undo, we might need manual state revert, but Next.js useOptimistic helps.)
-                  console.error(result.error);
-                  alert(result.error); 
-                  // Force revert optimistic? 
-                   startTransition(() => {
-                    addOptimisticCompleted(!newStatus); // Revert
-                   });
-            } else {
-                if (onToggle) onToggle(newStatus);
-            }
-        } catch (error) {
-            console.error(error);
-             startTransition(() => {
-                addOptimisticCompleted(!newStatus);
-             });
-        } finally {
-            setIsLoading(false);
-        }
-    };
+      } else {
+        if (onToggle) onToggle(newStatus);
+      }
+    } catch (error) {
+      console.error(error);
+      startTransition(() => {
+        addOptimisticCompleted(!newStatus);
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <button
@@ -71,12 +76,18 @@ const LessonCompleteButton: React.FC<LessonCompleteButtonProps> = ({
       disabled={isLoading}
     >
       <span className="icon-reverse-wrapper">
-        <span className="btn-text">{optimisticCompleted ? '완료됨' : '완료하기'}</span>
-        <span className="btn-icon">
-          <i className={`feather-${optimisticCompleted ? 'check-circle' : 'circle'}`}></i>
+        <span className="btn-text">
+          {optimisticCompleted ? '완료됨' : '완료하기'}
         </span>
         <span className="btn-icon">
-          <i className={`feather-${optimisticCompleted ? 'check-circle' : 'circle'}`}></i>
+          <i
+            className={`feather-${optimisticCompleted ? 'check-circle' : 'circle'}`}
+          ></i>
+        </span>
+        <span className="btn-icon">
+          <i
+            className={`feather-${optimisticCompleted ? 'check-circle' : 'circle'}`}
+          ></i>
         </span>
       </span>
     </button>

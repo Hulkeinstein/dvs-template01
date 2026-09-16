@@ -90,3 +90,7 @@ testsprite_tests/
 
 # local MCP config (contains access tokens)
 /.claude.json
+
+# build/debug artifacts
+build_log.txt
+supabase/.temp/

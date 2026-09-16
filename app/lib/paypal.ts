@@ -14,7 +14,8 @@ import paypal from '@paypal/checkout-server-sdk';
  * @returns true if PayPal credentials are configured
  */
 export function isPayPalEnabled(): boolean {
-  const clientId = process.env.PAYPAL_CLIENT_ID || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+  const clientId =
+    process.env.PAYPAL_CLIENT_ID || process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   return !!(clientId && clientSecret);
 }
