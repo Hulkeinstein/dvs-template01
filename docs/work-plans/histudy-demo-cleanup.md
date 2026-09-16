@@ -631,7 +631,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - 기록: R1 표 3행(`index.js` 2, `CategoryOne.js` 1), R3 표 20행 + 명령 마지막 줄
   - 커밋 메시지: `chore(demo): remove demo route branches from course detail and list`
 
-- [ ] T023 강사 프로필(`/profile`) 링크 정리 — `data/course-details/courseData.json`, `components/Cards/Card.js`, `components/Category/Filter/CourseFilterOneToggle.tsx`, `components/Course-Details/Course-Sections/{Breadcrumb/Course-Breadcrumb.js,Instructor.js,RelatedCourse.js,SimilarCourses.js}` (depends on T022) `category:quick`
+- [x] T023 강사 프로필(`/profile`) 링크 정리 — `data/course-details/courseData.json`, `components/Cards/Card.js`, `components/Category/Filter/CourseFilterOneToggle.tsx`, `components/Course-Details/Course-Sections/{Breadcrumb/Course-Breadcrumb.js,Instructor.js,RelatedCourse.js,SimilarCourses.js}` (depends on T022) `category:quick`
   **Goal**: 삭제되는 `/profile` 화면을 가리키는 값 182줄이 0이 되고, 화면의 `Link`·클래스·표시 텍스트는 그대로다(D13·D14).
   **편집 목록 (AREA = `data/course-details/courseData\.json|components/Cards/Card\.js|components/Category/Filter/CourseFilterOneToggle\.tsx|components/Course-Details/Course-Sections/(Breadcrumb/Course-Breadcrumb|Instructor|RelatedCourse|SimilarCourses)\.js`)**:
   1. `data/course-details/courseData.json` — `"linkTwo": "/profile",` 171줄 삭제(D14, `similarCourse` 항목 안, 줄 목록은 `links-baseline.txt` 230~400행)
@@ -1039,3 +1039,9 @@ R3 전/후 표 (T007, 유지 경로 54개, `usePathname` 기준):
 | `CategoryHead.js:176-178` | tab·tab-two·masonry | 탭 블록 삭제 | false→false |
 
 R3 명령 마지막 줄: `keep-paths 54 conds 20 diff 0`
+
+**T023** (b8f73bc): 강사 프로필 링크. 링크 검사 `del-route=39 missing=42 nav-missing=0 new-missing=0`(배정 del-route 182 해소, 영역 0). `courseData.json` numstat `0 171`·JSON 유효·`linkTwo` 0. `href="#"` 10곳, `<Link` 개수 6파일 모두 불변, `className="px-1" href="#"` 2. type-check 0, lint 0/167, format 0
+
+- D14 사전 확인 재실행: `linkTwo`를 읽는 코드는 `Card-Three.js:68,78`·`BlogDetails.js:173,201`뿐(다른 데이터 파일) — 계획과 같음
+- `Instructor.js:26-29` 여러 줄 `Link`는 `href`가 짧아져 Prettier가 한 줄로 합침(className·텍스트 불변, 형식 변화만)
+- R1·R3 해당 없음(D13·D14 치환만)
