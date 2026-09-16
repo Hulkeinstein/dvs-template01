@@ -510,7 +510,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Format: `npx prettier@3.5.3 --check scripts/demo-removal` → exit 0 · `npm run type-check` → exit 0
   - 커밋: `git add -- scripts/demo-removal/check-route-links.mjs && git commit -m "chore(demo): count repeated missing links in baseline comparison"`
 
-- [ ] T005 헤더 메뉴·장바구니 링크 정리 — `data/MegaMenu.json`, `components/Header/Nav.js`, `components/Header/HeaderStyle-Ten.js`, `components/Header/Header-Top/HeaderTop-Eight.js`, `components/Header/Offcanvas/Cart.js`, `components/Cart/CartItems.tsx` (depends on T022; Q2) `category:visual-engineering`
+- [x] T005 헤더 메뉴·장바구니 링크 정리 — `data/MegaMenu.json`, `components/Header/Nav.js`, `components/Header/HeaderStyle-Ten.js`, `components/Header/Header-Top/HeaderTop-Eight.js`, `components/Header/Offcanvas/Cart.js`, `components/Cart/CartItems.tsx` (depends on T022; Q2) `category:visual-engineering`
   **Goal**: 헤더(데스크톱·모바일 공용 `Nav.js`)·장바구니에 삭제 라우트 링크 0, `data/MegaMenu.json` missing 0, 빈 메뉴 0, Home은 드롭다운 없는 `/` 단일 링크(Q2). 남는 메뉴 링크와 유지 경로 렌더 조건은 그대로.
   **편집 목록 (AREA = `data/MegaMenu\.json|components/Header/[^:]*|components/Cart/CartItems\.tsx`)**:
   1. `data/MegaMenu.json` (D12·Q2)
@@ -970,3 +970,29 @@ _(Phase 시작 후 누적 — 기준선 차이, R3 편집 전/후 표, validator
 - **validator 1회차 INTENT_FAIL** — (1) 삭제 후 링크 검사기가 삭제 라우트 링크를 `missing`으로 분류 (2) 복구 문서가 공유 파일 수정 영향을 알리지 않음 (3) 실데이터 코드 `QuizResultContent.js`가 조용히 삭제됨. 사용자 결정: 지금 수정 + 재검증, `QuizResultContent.js`는 삭제하되 문서에 별도 표시
   - 조치: 1795de1(삭제 라우트를 태그 DEL 진입점에서 분류, `--baseline`의 `new-missing`), 6dd7a55(섹션별 `T2에서 수정됨` 표시, `## 실데이터 코드가 들어 있던 삭제 파일`, 폴더 안 미사용 파일 라벨)
 - **validator 2회차 INTENT_PASS** (HEAD 6dd7a55) — 비차단 주의: (가) `new-missing`이 (파일, 리터럴) 집합 비교라 같은 파일의 기존 missing 리터럴이 새로 늘어나면 가려짐 → Phase 2 착수 전 개수 비교로 보완 권장 (나) git add 안 한 파일은 검사 대상 밖 → 검사는 add·커밋 후 (다) Phase 2~6 Checkpoint에도 `--baseline` 권장 (라) 뜻이 틀린 대체 주소는 검사기 한계 → R1·T011 validator 몫 (마) `T2에서 수정됨` 표시는 `components/`·`data/`만 봄 — `context`·`redux`·`hooks`·`types`는 F5 불변 목록 밖
+
+### 2026-09-16 — Phase 2 진행 기록
+
+**T022** (6064581): `--baseline` 비교를 (파일, 리터럴)별 개수로 변경. 변이 검사 — 구판(978c63c) `new-missing=0` / 신판 `new-missing=1`. 무회귀: 삭제 전 출력 == 기준선(바이트 동일)
+
+**T005** (a991e01): 헤더 메뉴·장바구니. 링크 검사 `del-route=276 missing=50 nav-missing=6 new-missing=0`(배정 del-route 102·nav-missing 1 해소). G3 0, Home `/` 단일 링크 1, `CourseLayout` 1개(G9), R3 `keep-paths 54 conds 4 diff 0`
+
+R1 치환 표 (T005):
+
+| 파일:줄(편집 전) | 편집 전 경로 | 편집 후 경로 | 근거 |
+|---|---|---|---|
+| `components/Header/Offcanvas/Cart.js:63-67` | `data.product.title ? /event-details/${id} : /course-details/${id}` | `/course-details/${id}` | D15 — DB 코스도 `title`이 있어 이벤트로 오판정되던 것을 코스 상세로 통일 |
+| `components/Header/Offcanvas/Cart.js:82-86` | 위와 같음 | `/course-details/${id}` | D15 |
+| `components/Cart/CartItems.tsx:43-51` 상품 분기 | `/single-product/${id}` | `/course-details/${id}` | D15 — 유지 화면에서 담기는 것은 코스뿐 |
+| `components/Cart/CartItems.tsx:43-51` 이벤트 분기 | `/event-details/${id}` | `/course-details/${id}` | D15 |
+
+R3 전/후 표 (T005):
+
+| 파일:줄(편집 전) | 편집 전 조건 | 편집 후 | 유지 경로 결과(전→후) |
+|---|---|---|---|
+| `HeaderStyle-Ten.js:32-34` | `p === '/01-main-demo' && '/16-udemy-affiliate' && '/01-main-demo'` | `p === '/01-main-demo' && '/01-main-demo'` | 모든 유지 경로 diff 0(상수 문자열은 참) |
+| `HeaderTop-Eight.js:55` | `router.pathname === '/10-online-course' ? '' : <li>` | 조건 제거, `<li>` 항상 렌더 | diff 0(App Router `useRouter()`에 `pathname` 없음 → 편집 전에도 항상 else) |
+| `HeaderTop-Eight.js:95` | 같은 패턴(social-share) | 조건 제거 | diff 0 |
+| `HeaderTop-Eight.js:123` | 같은 패턴(separator) | 조건 제거 | diff 0 |
+
+환경 메모: 저장소 밖 실행 상태 파일 `.omo/boulder.json`(`.git/info/exclude`로만 제외)이 `npm run format:check`에 걸려 prettier로 정렬함 — 코드 결함 아님
