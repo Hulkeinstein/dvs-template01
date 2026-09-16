@@ -59,7 +59,7 @@ export const ROUTES = {
 
   // Public pages
   PUBLIC: {
-    ABOUT: '/about',
+    ABOUT: '/about-us-01',
     CONTACT: '/contact',
     PRIVACY: '/privacy-policy',
     TERMS: '/terms-of-service',

@@ -10,11 +10,8 @@ import { useParallax } from 'react-scroll-parallax';
 import aboutImg1 from '../../public/images/about/about-01.png';
 import aboutImg2 from '../../public/images/about/about-02.png';
 import aboutImg3 from '../../public/images/about/about-03.png';
-import { usePathname } from 'next/navigation';
 
 const AboutTwo = () => {
-  const pathname = usePathname();
-
   const { ref: ref1, style: style1 } = useParallax({
     translateY: [0, -20],
     easing: 'easeOutQuad',
@@ -118,26 +115,22 @@ const AboutTwo = () => {
                   ))}
                 </div>
 
-                {pathname === '/17-online-academy' ? (
-                  ''
-                ) : (
-                  <div className="about-btn mt--40">
-                    <Link
-                      className="rbt-btn btn-gradient hover-icon-reverse"
-                      href="#"
-                    >
-                      <span className="icon-reverse-wrapper">
-                        <span className="btn-text">More About Us</span>
-                        <span className="btn-icon">
-                          <i className="feather-arrow-right"></i>
-                        </span>
-                        <span className="btn-icon">
-                          <i className="feather-arrow-right"></i>
-                        </span>
+                <div className="about-btn mt--40">
+                  <Link
+                    className="rbt-btn btn-gradient hover-icon-reverse"
+                    href="#"
+                  >
+                    <span className="icon-reverse-wrapper">
+                      <span className="btn-text">More About Us</span>
+                      <span className="btn-icon">
+                        <i className="feather-arrow-right"></i>
                       </span>
-                    </Link>
-                  </div>
-                )}
+                      <span className="btn-icon">
+                        <i className="feather-arrow-right"></i>
+                      </span>
+                    </span>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>

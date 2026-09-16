@@ -41,7 +41,7 @@ const EventCarouse = () => {
               <div className="single-slide">
                 <div className="rbt-card event-grid-card variation-01 rbt-hover">
                   <div className="rbt-card-img">
-                    <Link href={`/event-details/${data.id}`}>
+                    <Link href="#">
                       <Image
                         src={data.img}
                         width={710}
@@ -64,15 +64,13 @@ const EventCarouse = () => {
                       </li>
                     </ul>
                     <h4 className="rbt-card-title">
-                      <Link href={`/event-details/${data.id}`}>
-                        {data.title}
-                      </Link>
+                      <Link href="#">{data.title}</Link>
                     </h4>
 
                     <div className="read-more-btn">
                       <Link
                         className="rbt-btn btn-border hover-icon-reverse btn-sm radius-round"
-                        href={`/event-details/${data.id}`}
+                        href="#"
                       >
                         <span className="icon-reverse-wrapper">
                           <span className="btn-text">Get Ticket</span>
