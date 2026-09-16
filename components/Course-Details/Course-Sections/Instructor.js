@@ -12,7 +12,7 @@ const Instructor = ({ checkMatchCourses }) => {
         {checkMatchCourses.body.map((teacher, innerIndex) => (
           <div className="media align-items-center" key={innerIndex}>
             <div className="thumbnail">
-              <Link href={`/profile/${teacher.id}`}>
+              <Link href="#">
                 <Image
                   src={teacher.img}
                   width={250}
@@ -24,10 +24,7 @@ const Instructor = ({ checkMatchCourses }) => {
             <div className="media-body">
               <div className="author-info">
                 <h5 className="title">
-                  <Link
-                    className="hover-flip-item-wrapper"
-                    href={`/profile/${teacher.id}`}
-                  >
+                  <Link className="hover-flip-item-wrapper" href="#">
                     {teacher.name}
                   </Link>
                 </h5>

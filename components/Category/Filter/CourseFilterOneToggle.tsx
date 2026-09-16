@@ -119,7 +119,7 @@ const CourseFilterOneToggle: React.FC<CourseFilterOneToggleProps> = ({
                   </div>
                   <div className="rbt-author-info">
                     By{' '}
-                    <Link href={`/profile/${data.id}`}>
+                    <Link href="#">
                       {data.name || data.instructor || 'Instructor'}
                     </Link>
                     In <Link href="#">{data.userCategory}</Link>

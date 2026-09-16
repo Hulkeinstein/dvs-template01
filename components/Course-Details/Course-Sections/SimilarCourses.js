@@ -80,7 +80,7 @@ const SimilarCourses = ({ checkMatchCourses }) => {
 
                     <div className="rbt-author-meta mb--20">
                       <div className="rbt-avater">
-                        <Link href={`/profile/${item.id}`}>
+                        <Link href="#">
                           <Image
                             src={item.avatar}
                             width={33}
@@ -91,7 +91,7 @@ const SimilarCourses = ({ checkMatchCourses }) => {
                       </div>
                       <div className="rbt-author-info">
                         By
-                        <Link href={`/profile/${item.id}`}>{item.author}</Link>
+                        <Link href="#">{item.author}</Link>
                         In
                         <Link href="#">{item.post}</Link>
                       </div>

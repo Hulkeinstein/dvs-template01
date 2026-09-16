@@ -80,7 +80,7 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                 {isUser ? (
                   <div className="rbt-author-meta mb--10">
                     <div className="rbt-avater">
-                      <Link href={`/profile/${data.id}`}>
+                      <Link href="#">
                         <div
                           style={{
                             position: 'relative',
@@ -100,7 +100,7 @@ const Card = ({ start, end, col, mt, isDesc, isUser }) => {
                     </div>
                     <div className="rbt-author-info">
                       By
-                      <Link className="px-1" href={`/profile/${data.id}`}>
+                      <Link className="px-1" href="#">
                         {data.name || data.instructor || 'Instructor'}
                       </Link>
                       In <Link href="#">{data.userCategory}</Link>

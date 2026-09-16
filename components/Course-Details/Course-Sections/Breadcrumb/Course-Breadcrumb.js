@@ -96,7 +96,7 @@ const CourseBreadcrumb = ({ getMatchCourse, reviewStats }) => {
 
           <div className="rbt-author-meta mb--20">
             <div className="rbt-avater">
-              <Link href={`/profile/${getMatchCourse.id}`}>
+              <Link href="#">
                 {getMatchCourse.userImg && (
                   <Image
                     width={40}
@@ -109,7 +109,7 @@ const CourseBreadcrumb = ({ getMatchCourse, reviewStats }) => {
             </div>
             <div className="rbt-author-info">
               By
-              <Link className="px-1" href={`/profile/${getMatchCourse.id}`}>
+              <Link className="px-1" href="#">
                 {getMatchCourse.userName}
               </Link>
               In <Link href="#">{getMatchCourse.userCategory}</Link>

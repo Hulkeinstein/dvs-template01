@@ -96,7 +96,7 @@ const RelatedCourse = ({ checkMatchCourses, colClass }) => {
                 <p className="rbt-card-text">{data.desc}</p>
                 <div className="rbt-author-meta mb--10">
                   <div className="rbt-avater">
-                    <Link href={`/profile/${data.id}`}>
+                    <Link href="#">
                       <Image
                         src={data.avatar}
                         width={33}
@@ -106,7 +106,7 @@ const RelatedCourse = ({ checkMatchCourses, colClass }) => {
                     </Link>
                   </div>
                   <div className="rbt-author-info">
-                    By <Link href={`/profile/${data.id}`}>{data.author}</Link>
+                    By <Link href="#">{data.author}</Link>
                     In <Link href="#">{data.post}</Link>
                   </div>
                 </div>
