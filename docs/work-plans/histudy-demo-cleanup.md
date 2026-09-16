@@ -167,13 +167,13 @@ lifecycle: active
 
 | 항목 | 값 |
 |---|---|
-| 태그 대상 커밋 | 미수집 (기대: `91d9fd9`로 시작, `origin/main`과 같음) |
-| 태그 원격 존재 | 미수집 |
-| 코드 트리 == 태그 | 미수집 |
+| 태그 대상 커밋 | `91d9fd9541217e68312dd6f8c0cca4eb1b80991c` — `git rev-parse 'pre-demo-removal^{commit}' origin/main` 두 줄 동일 |
+| 태그 원격 존재 | 있음 — `git ls-remote --tags origin refs/tags/pre-demo-removal \| wc -l` → `1` |
+| 코드 트리 == 태그 | 같음 — `git diff --stat 'pre-demo-removal^{commit}' HEAD -- app components data mdx public scripts .prettierignore package.json package-lock.json` 출력 없음 |
 | husky 훅(`git config --get core.hooksPath`) | 미설치 — hooksPath 빈 값, `.git/hooks/pre-commit` 없음 (2026-09-16 확인) |
-| type-check / lint / format:check / build | 미수집 |
-| jest Test Suites / Tests | 미수집 (T1 기록: 17 / 133) |
-| Docs Validation 최근 결론 | 미수집 |
+| type-check / lint / format:check / build | 전부 exit 0 — lint 0 errors/167 warnings(any·exhaustive-deps, 기존 결함), build는 폰트 오류 없이 1회 만에 성공 |
+| jest Test Suites / Tests | `Test Suites: 17 passed, 17 total` / `Tests: 133 passed, 133 total`, exit 0 — 기대값과 일치 |
+| Docs Validation 최근 결론 | 최근 3건 모두 failure — main(2026-09-16) 1건, `chore/repo-hygiene-ci`(2026-09-15~16) 2건. 기존 문서 결함(T6 범위)로 판단 |
 | 이 계획서 git 최초 작성일 | 2026-01-01 (`git log --follow --diff-filter=A`, front-matter 반영 완료) |
 | `route-map.mjs map` entries / keep / del / sections | 미수집 (기대 190 / 71 / 119 / 99) |
 | `check-route-links.mjs` del-route / missing / nav-missing | 미수집 |
