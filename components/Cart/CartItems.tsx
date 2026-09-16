@@ -41,13 +41,7 @@ const CartItems: React.FC<CartItemsProps> = ({ id, product, amount }) => {
   };
 
   const getProductLink = (): string => {
-    if (product.productType) {
-      return `/single-product/${id}`;
-    } else if (product.title && !product.courseTitle) {
-      return `/event-details/${id}`;
-    } else {
-      return `/course-details/${id}`;
-    }
+    return `/course-details/${id}`;
   };
 
   const getProductImage = (): string => {

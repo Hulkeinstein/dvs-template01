@@ -59,13 +59,7 @@ const Cart = () => {
                   cart.map((data, index) => (
                     <li className="minicart-item" key={index}>
                       <div className="thumbnail">
-                        <Link
-                          href={
-                            data.product.title
-                              ? `/event-details/${data.id}`
-                              : `/course-details/${data.id}`
-                          }
-                        >
+                        <Link href={`/course-details/${data.id}`}>
                           <Image
                             src={
                               data.product.courseImg || data.product.eventImg
@@ -78,13 +72,7 @@ const Cart = () => {
                       </div>
                       <div className="product-content">
                         <h6 className="title">
-                          <Link
-                            href={
-                              data.product.title
-                                ? `/event-details/${data.id}`
-                                : `/course-details/${data.id}`
-                            }
-                          >
+                          <Link href={`/course-details/${data.id}`}>
                             {data.product.courseTitle || data.product.title}
                           </Link>
                         </h6>

@@ -29,9 +29,7 @@ const HeaderStyleTen = ({ headerSticky }) => {
         <DynamicDarkSwitch isLight={isLightTheme} switchTheme={toggleTheme} />
       )}
       <header className="rbt-header rbt-header-10">
-        {router.pathname === '/01-main-demo' &&
-        '/16-udemy-affiliate' &&
-        '/01-main-demo' ? (
+        {router.pathname === '/01-main-demo' && '/01-main-demo' ? (
           <HeaderTopBar />
         ) : (
           <HeaderTopEight
