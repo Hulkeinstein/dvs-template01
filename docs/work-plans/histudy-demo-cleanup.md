@@ -709,7 +709,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Negative (다른 홈 섹션 보존): `grep -cE '<(CategoryOne|Card|AboutTwo|CallToAction|Counter|TestimonialSeven|EventCarouse|TeamTwo|NewsletterTwo)\b' components/01-Main-Demo/01-Main-Demo.js` → `9`
   - 커밋 메시지: `chore(demo): remove blog section from main home`
 
-- [ ] T010 나머지 영역 정리 — `components/Abouts/About-Two.js`, `components/Events/EventCarouse.js`, `app/lib/constants/routes.ts` (depends on T022; U1) `category:quick`
+- [x] T010 나머지 영역 정리 — `components/Abouts/About-Two.js`, `components/Events/EventCarouse.js`, `app/lib/constants/routes.ts` (depends on T022; U1) `category:quick`
   **선행**: U1 답(routes.ts 항목만 대기 — 답이 오기 전에는 task 전체를 시작하지 않는다, 1커밋 유지)
   **Goal**: T005~T009·T023 영역 밖 유지 코드의 삭제 라우트 참조 5줄이 0(U1=B면 `routes.ts:62` 1줄만 남음). 홈 소개 섹션 버튼과 이벤트 카드 렌더는 그대로.
   **편집 목록 (AREA = `components/Abouts/About-Two\.js|components/Events/EventCarouse\.js|app/lib/constants/routes\.ts`)**:
@@ -1067,3 +1067,19 @@ R3 명령 마지막 줄: `keep-paths 54 conds 5 diff 3`(DIFF 3줄 = U2 예외 3�
 
 - build 로그의 `Test DB error`·`Profile fetch error` 2줄은 `app/api/test-db/route.js:33` 등 API 라우트가 정적 생성 중 env 부재로 찍는 기존 로그(exit 0, 홈과 무관)
 - R1·R3 해당 없음(섹션 삭제·prop 제거)
+
+**T010** (3109467): 나머지 영역. 링크 검사 `del-route=0 missing=40 nav-missing=0 new-missing=0`(배정 del-route 5 해소 — Phase 2 삭제 라우트 참조 0 달성). `About-Two.js` `pathname` 0·"More About Us" 1, `EventCarouse.js` `href="#"` 3·`event-details` 0, `<Link` 개수 불변. `routes.ts` 변경 2줄, `ROUTES.PUBLIC` 참조는 `:156` 타입 합집합 1줄. type-check 0, lint 0/167, format 0
+
+R1 치환 표 (T010):
+
+| 파일:줄(편집 전) | 편집 전 경로 | 편집 후 경로 | 근거 |
+|---|---|---|---|
+| `app/lib/constants/routes.ts:62` (`ROUTES.PUBLIC.ABOUT`) | `/about` | `/about-us-01` | U1=A 승인(2026-09-16) — 유지 라우트 `app/(pages)/about-us-01` 존재, 값 참조는 `:156` 타입뿐 |
+
+R3 전/후 표 (T010, 유지 경로 54개):
+
+| 파일:줄(편집 전) | 편집 전 조건 | 편집 후 | 유지 경로 결과(전→후) |
+|---|---|---|---|
+| `About-Two.js:121-123,140` | `pathname === '/17-online-academy'` → 버튼 숨김 | `about-btn` `div` 항상 렌더, `pathname`·`usePathname` 삭제(R4) | false→false |
+
+R3 명령 마지막 줄: `keep-paths 54 conds 1 diff 0`
