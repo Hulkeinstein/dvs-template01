@@ -308,7 +308,7 @@ lifecycle: active
   - Format: `npx prettier@3.5.3 --check scripts/demo-removal` → exit 0 · `npm run type-check` → exit 0
   - 기록: `map` 첫 줄 값, `Content.js`·`LessonAssignmentsSubmit.js`(`components/Lesson/LessonAssignmentsSubmit.js`)의 판정을 기준선 표에 적는다
 
-- [ ] T003 경로 문자열 검사 스크립트와 링크 기준선 — `scripts/demo-removal/check-route-links.mjs` (depends on T002) `category:ultrabrain`
+- [x] T003 경로 문자열 검사 스크립트와 링크 기준선 — `scripts/demo-removal/check-route-links.mjs` (depends on T002) `category:ultrabrain`
   **Goal**: 작업 트리에서 KEEP 진입점이 닿는 파일의 경로 문자열 중 삭제(예정) 라우트를 가리키는 것과 어느 라우트에도 없는 것을 `파일:줄 분류 문자열`로 모두 내고, Phase 1 기준선 수치를 기록한다. 이 출력이 Phase 2 작업 목록이다.
   **Spec**:
   1. **라우트 표**: 작업 트리의 `page.*`·`route.*` 진입점 → URL 패턴(`(group)` 세그먼트 제거, `[x]` = 동적 1세그먼트, `[...x]`·`[[...x]]` = 나머지 전부). T002 분류로 DEL 진입점은 삭제 라우트, 나머지는 유지 라우트(`graph.mjs` 재사용 — 유지 라우트를 손으로 적지 않는다)
