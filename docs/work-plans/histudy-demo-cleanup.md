@@ -355,7 +355,7 @@ lifecycle: active
   - Edge case (게이트가 문다): `node scripts/demo-removal/check-route-links.mjs > /dev/null; echo $?` → `1`(지금은 `del-route`·`nav-missing`가 0보다 큼)
   - Format: `npx prettier@3.5.3 --check scripts/demo-removal` → exit 0 · `npm run type-check` → exit 0
 
-- [ ] T004 매핑 문서 생성기와 복구 기록 초안 — `scripts/demo-removal/render-doc.mjs`, `docs/library/histudy-demo-removal.md` (depends on T002, T003) `category:writing`
+- [x] T004 매핑 문서 생성기와 복구 기록 초안 — `scripts/demo-removal/render-doc.mjs`, `docs/library/histudy-demo-removal.md` (depends on T002, T003) `category:writing`
   **Goal**: `node scripts/demo-removal/render-doc.mjs --date 2026-09-16 --links .tmp/demo-removal/links-baseline.txt`가 `docs/library/histudy-demo-removal.md`(계획본, `lifecycle: draft`)를 생성하고, 삭제 진입점 119개와 삭제 파일 전부가 라우트 섹션 99개에 복구 명령과 함께 들어간다. Phase 7(T018)은 같은 생성기를 `--final`로 돌려 실제 삭제 기준으로 확정한다.
   **문서 구조 계약 (생성기가 고정 출력 — 손 편집 금지)**:
   1. **front-matter**: `title: "HiStudy 데모 삭제 기록 (T2)"`, tags `type/docs`·`component/ui`·`progress/in-progress`(`--final`이면 `progress/completed`), `created: 2026-09-16`, `updated: <--date>`, `lifecycle: draft`(`--final`이면 `active`). LF 줄바꿈
