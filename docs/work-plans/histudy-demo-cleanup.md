@@ -219,7 +219,7 @@ lifecycle: active
   - Edge case: 5·6 중 하나라도 실패 → T2 중단, 실패 명령과 exit code를 보고(태그 시점이 이미 깨졌다는 뜻)
   - Negative: `git status --porcelain -- app components data mdx` → 출력 없음(T001은 코드를 건드리지 않는다)
 
-- [ ] T002 [P] 라우트·파일 판정 스크립트 — `scripts/demo-removal/graph.mjs`, `scripts/demo-removal/route-map.mjs` `category:ultrabrain`
+- [x] T002 [P] 라우트·파일 판정 스크립트 — `scripts/demo-removal/graph.mjs`, `scripts/demo-removal/route-map.mjs` `category:ultrabrain`
   **Goal**: `node scripts/demo-removal/route-map.mjs map`이 태그 트리 기준 분류·매핑을 `.tmp/demo-removal/route-map.json`에 쓰고 `entries=190 keep=71 del=119 sections=99`를 출력하며, `plan`·`verify`가 작업 트리 기준 삭제 목록과 완료 판정을 낸다. 같은 입력이면 출력 JSON이 바이트 단위로 같다.
   **Spec (구현 계약 — 뒤 Phase가 이 출력에 기댄다)**:
   1. **CLI**: `map [--out F]`(기본 `.tmp/demo-removal/route-map.json`, 태그 트리) · `plan [--root DIR] [--out F] [--phase N --list]`(기본 `.tmp/demo-removal/plan.json`, 작업 트리. `--list`는 그 Phase 경로만 한 줄에 하나) · `verify [--root DIR]`. 출력 폴더가 없으면 만든다
@@ -259,7 +259,7 @@ lifecycle: active
   - `tsconfig.json:34` — `scripts/**/*`가 type-check 범위(`allowJs`, `checkJs: false`) · `.eslintignore:10` — `scripts/`는 lint 제외, prettier는 검사
   **Must NOT do**: 스크립트가 파일을 지우거나 고치지 않는다(목록만 출력 — `git rm`은 Phase 3~7 task가 명령으로). npm 의존성 추가·`package.json` scripts 등록·CI 연결 금지. 분류 목록을 손으로 적은 파일 목록으로 바꾸지 않는다(규칙으로만). 출력 JSON 커밋 금지.
   **QA Scenarios**:
-  - Happy path: `node scripts/demo-removal/route-map.mjs map` → exit 0, 첫 줄 `entries=190 keep=71 del=119 sections=99`(값이 다르면 기준선 표에 적고 멈춘다 — 분류 규칙이나 진입점 정의 오류 신호). 이어서 `unresolvedNonAsset=0` 출력(이미지·스타일 외 해석 실패 0 — `@/mdx` 28건이 사라져야 함)
+  - Happy path: `node scripts/demo-removal/route-map.mjs map` → exit 0, 첫 줄 `entries=190 keep=71 del=119 sections=99`(값이 다르면 기준선 표에 적고 멈춘다 — 분류 규칙이나 진입점 정의 오류 신호). 이어서 `unresolvedNonAsset=4` 출력(2026-09-16 T002 확정 기준값: 주석 처리된 import 2건[`app/lib/auth/adminTokenProd.js:88`, `redux/store.js:5`] · 해석 폴더 밖 루트 `package.json` 1건[`scripts/automation/pre-push-guard.js:73`] · TS식 `.js` 표기 1건[`tests/utils/test-helpers.ts:6` → 로컬 import 없는 `test-providers.tsx`] — 모두 삭제 판정 영향 없음을 오케스트레이터가 원문 확인. `@/mdx` 28건은 사라짐)
   - Happy path (분류 known-answer): 아래 → `ok`
 
     ```bash
