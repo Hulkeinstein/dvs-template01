@@ -10,22 +10,12 @@ import FooterThree from '@/components/Footer/Footer-Three';
 
 import MainDemo from '@/components/01-Main-Demo/01-Main-Demo';
 
-interface BlogPost {
-  id: string | number;
-  title: string;
-  [key: string]: unknown;
-}
-
-interface HomePageLayoutProps {
-  getBlog: BlogPost[];
-}
-
-const HomePageLayout = ({ getBlog }: HomePageLayoutProps) => {
+const HomePageLayout = () => {
   return (
     <>
       <MobileMenu />
       <HeaderStyleTen headerSticky="rbt-sticky" />
-      <MainDemo blogs={getBlog} />
+      <MainDemo />
       <Cart />
 
       <Separator />

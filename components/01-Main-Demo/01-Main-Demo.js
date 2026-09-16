@@ -13,12 +13,11 @@ import Counter from '../Counters/Counter';
 import TestimonialSeven from '../Testimonials/Testimonial-Seven';
 import EventCarouse from '../Events/EventCarouse';
 import TeamTwo from '../Team/TeamTwo';
-import BlogGridTop from '../Blogs/Blog-Sections/BlogGrid-Top';
 import NewsletterTwo from '../Newsletters/Newsletter-Two';
 
 import { ParallaxProvider } from 'react-scroll-parallax';
 
-const MainDemo = ({ blogs }) => {
+const MainDemo = () => {
   useEffect(() => {
     sal({
       threshold: 0.01,
@@ -169,38 +168,6 @@ const MainDemo = ({ blogs }) => {
               </div>
             </div>
             <TeamTwo />
-          </div>
-        </div>
-
-        <div className="rbt-rbt-blog-area rbt-section-gap bg-color-extra2">
-          <div className="container">
-            <div className="row g-5 align-items-center mb--30">
-              <div className="col-lg-6 col-md-6 col-12">
-                <div className="section-title">
-                  <span className="subtitle bg-pink-opacity">Blog Post</span>
-                  <h2 className="title">Post Popular Post.</h2>
-                </div>
-              </div>
-              <div className="col-lg-6 col-md-6 col-12">
-                <div className="read-more-btn text-start text-md-end">
-                  <Link
-                    className="rbt-btn btn-gradient hover-icon-reverse"
-                    href="/blog"
-                  >
-                    <div className="icon-reverse-wrapper">
-                      <span className="btn-text">See All Articles</span>
-                      <span className="btn-icon">
-                        <i className="feather-arrow-right"></i>
-                      </span>
-                      <span className="btn-icon">
-                        <i className="feather-arrow-right"></i>
-                      </span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <BlogGridTop BlogData={blogs} />
           </div>
         </div>
 
