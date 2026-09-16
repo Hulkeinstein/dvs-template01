@@ -11,7 +11,7 @@ lifecycle: active
 
 # Work Plan: HiStudy 데모 페이지·컴포넌트 삭제 (T2)
 
-> **Status**: Active — Phase 2 상세화 완료, 실행 대기
+> **Status**: Paused — Phase 2 완료(T011 INTENT_PASS), Phase 3 착수 승인 대기
 > **Track**: `docs/ROADMAP.md:50` T2 · **Branch**: `chore/histudy-demo-removal` · **기준 태그**: `pre-demo-removal` (main 91d9fd9, 원격 push 완료)
 > **이력**: 2025-12-28 원안(Issue #69, 닫힘)은 `CourseDetails-Two~Eight`와 데모 라우트 9개만 다뤘다. 2026-09-16 재개 점검(ADR 0003)과 사용자 확정 답으로 범위를 데모 전체로 넓혀 다시 썼다. 원안의 소요 추정은 뺐다(시간 표현 금지 규칙).
 > **검증 명령 실행 환경**: 저장소 루트에서 Bash(git-bash). `npm run test*`는 `NODE_ENV=test` 접두 때문에 Windows cmd에서 돌지 않으므로 jest는 Test Strategy의 명령으로 직접 실행한다.
@@ -730,7 +730,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - 기록: R1 표(U1=A면 1행), R3 표 1행
   - 커밋 메시지: `chore(demo): unlink remaining demo routes`
 
-- [ ] T011 Phase 2 제3자 검증 (validator 항상 + 적대축 opt-in) — `docs/work-plans/histudy-demo-cleanup.md` (depends on T005, T006, T007, T023, T008, T009, T010) `category:quick`
+- [x] T011 Phase 2 제3자 검증 (validator 항상 + 적대축 opt-in) — `docs/work-plans/histudy-demo-cleanup.md` (depends on T005, T006, T007, T023, T008, T009, T010) `category:quick`
   **Goal**: Phase 2 수정 파일에 validator `INTENT_PASS`, 적대축은 사용자 opt-in 시 `adversarial-round` 결과 반영 또는 거절 기록, 반영이 있었으면 Tier 1과 Phase 2 Checkpoint를 다시 통과한다.
   **절차**:
   1. **입력 준비**: `git diff --name-only --diff-filter=M 'pre-demo-removal^{commit}' HEAD -- app components data > .tmp/demo-removal/p2-modified.txt; wc -l < .tmp/demo-removal/p2-modified.txt` → U1=A `34` / U1=B `33`, 목록 = T005~T010·T023 편집 목록의 합집합 · `git diff --name-only --diff-filter=AD 'pre-demo-removal^{commit}' HEAD -- app components data mdx` → 출력 없음
@@ -1109,3 +1109,5 @@ R3 명령 마지막 줄: `keep-paths 54 conds 1 diff 0`
   - (라) `CourseLayout.js:44-67` `courseType=false` 분기는 이제 부르는 곳이 없음 — T005가 NavProps 수정을 금지해 남김(T017 고아 정리 때 확인)
   - (마) `CategoryOne.js:21` 홈 카테고리 필터 소실은 R1 규칙 안(`/all-courses`는 카테고리 인자 없음) — 사용자 결정 불필요, 완료 보고에 한 줄 노출. `CategoryHead.js` 미사용 인자 유지도 수용(유일한 유지 사용처가 `undefined` 전달)
 - 범위 밖 기존 버그(편집과 무관): `components/wishlist/Wishlist.js:25` `setCart(!cartToggle)` — `cartToggle` 미정의로 담기 직후 ReferenceError
+- 적대축 T011 — OFF(사용자 거절, 2026-09-16)
+- 재검증: validator·적대축 모두 코드 반영 없음 → Tier 1·Phase 2 Checkpoint 재실행 불필요(위 Checkpoint 표가 최종)
