@@ -68,7 +68,7 @@ const SingleCourse = ({ getParams }) => {
           }
         } else {
           setError('Course not found');
-          router.push('/course-filter-one-toggle');
+          router.push('/all-courses');
         }
       } catch (err) {
         console.error('Error fetching course:', err);
@@ -76,7 +76,7 @@ const SingleCourse = ({ getParams }) => {
 
         // Only redirect if it's not an access denied error
         if (!err.message?.includes('Access denied')) {
-          router.push('/course-filter-one-toggle');
+          router.push('/all-courses');
         }
       } finally {
         setLoading(false);

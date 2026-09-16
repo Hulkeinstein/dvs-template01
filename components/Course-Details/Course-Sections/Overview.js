@@ -1,22 +1,15 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
 const Overview = ({ checkMatchCourses }) => {
-  const pathname = usePathname();
   const [toggle, setToggle] = useState(false);
   const { title, desc, descTwo, overviewList } = checkMatchCourses;
 
-  const addClass = ['/course-detail-8'].some((path) =>
-    pathname.startsWith(path)
-  );
   return (
     <>
       <div
-        className={`rbt-course-feature-box overview-wrapper rbt-shadow-box ${
-          addClass ? 'rbt-border-with-box' : 'mt--30'
-        } has-show-more ${toggle ? 'active' : ''}`}
+        className={`rbt-course-feature-box overview-wrapper rbt-shadow-box mt--30 has-show-more ${toggle ? 'active' : ''}`}
         id="overview"
       >
         <div className="rbt-course-feature-inner has-show-more-inner-content">

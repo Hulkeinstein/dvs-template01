@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 
 import 'venobox/dist/venobox.min.css';
@@ -54,7 +54,6 @@ const Viedo: React.FC<ViedoProps> = ({
   checkMatchCourses,
   instructor = {},
 }) => {
-  const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
   const { cartToggle, setCart } = useAppContext();
@@ -64,20 +63,6 @@ const Viedo: React.FC<ViedoProps> = ({
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [checkingEnrollment, setCheckingEnrollment] = useState(true);
-
-  const disableVideo = [
-    '/course-detail-2',
-    '/course-detail-3',
-    '/course-detail-4',
-    '/course-detail-5',
-    '/course-detail-6',
-    '/course-detail-7',
-    '/course-detail-8',
-  ].some((path) => pathname.startsWith(path));
-
-  const isVideo = ['/course-detail-6'].some((path) =>
-    pathname.startsWith(path)
-  );
 
   // =====> Start ADD-To-Cart
   const dispatch = useDispatch<any>();
@@ -225,73 +210,39 @@ const Viedo: React.FC<ViedoProps> = ({
     );
   };
 
-  const getEmbedUrl = (): string => {
-    const videoUrl = checkMatchCourses.previewVideoUrl;
-    if (videoUrl) {
-      return (
-        videoUrl
-          .replace('watch?v=', 'embed/')
-          .replace('youtu.be/', 'youtube.com/embed/') +
-        '?autoplay=0&controls=1&rel=0&modestbranding=1'
-      );
-    }
-    return 'https://www.youtube.com/embed/DR9lxZ8kPYQ?autoplay=0&controls=1&rel=0&modestbranding=1';
-  };
-
   const formatPrice = (price?: number): string => {
     return price !== undefined ? `$${price}` : '$0';
   };
 
   return (
     <>
-      {!disableVideo ? (
-        <Link
-          className={`video-popup-with-text video-popup-wrapper text-center popup-video sidebar-video-hidden mb--15 ${
-            hideOnScroll ? 'd-none' : ''
-          }`}
-          data-vbtype="video"
-          href={getVideoUrl()}
-        >
-          <div className="video-content">
-            {checkMatchCourses.courseImg && (
-              <Image
-                className="w-100 rbt-radius"
-                src={checkMatchCourses.courseImg}
-                width={355}
-                height={255}
-                alt="Video Images"
-              />
-            )}
-            <div className="position-to-top">
-              <span className="rbt-btn rounded-player-2 with-animation">
-                <span className="play-icon"></span>
-              </span>
-            </div>
-            <span className="play-view-text d-block color-white">
-              <i className="feather-eye"></i> Preview this course
+      <Link
+        className={`video-popup-with-text video-popup-wrapper text-center popup-video sidebar-video-hidden mb--15 ${
+          hideOnScroll ? 'd-none' : ''
+        }`}
+        data-vbtype="video"
+        href={getVideoUrl()}
+      >
+        <div className="video-content">
+          {checkMatchCourses.courseImg && (
+            <Image
+              className="w-100 rbt-radius"
+              src={checkMatchCourses.courseImg}
+              width={355}
+              height={255}
+              alt="Video Images"
+            />
+          )}
+          <div className="position-to-top">
+            <span className="rbt-btn rounded-player-2 with-animation">
+              <span className="play-icon"></span>
             </span>
           </div>
-        </Link>
-      ) : null}
-
-      {isVideo ? (
-        <div
-          className={`radius-6 overflow-hidden sidebar-video-hidden mb--30 ${
-            hideOnScroll ? 'd-none' : ''
-          }`}
-        >
-          <div className="plyr__video-embed rbtplayer">
-            <iframe
-              className="radius-6 overflow-hidden"
-              src={getEmbedUrl()}
-              allowFullScreen
-              width={355}
-              height={200}
-              allow="autoplay"
-            ></iframe>
-          </div>
+          <span className="play-view-text d-block color-white">
+            <i className="feather-eye"></i> Preview this course
+          </span>
         </div>
-      ) : null}
+      </Link>
 
       <div className="content-item-content">
         <div className="rbt-price-wrapper d-flex flex-wrap align-items-center justify-content-between">

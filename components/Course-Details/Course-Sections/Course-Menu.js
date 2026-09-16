@@ -1,16 +1,10 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 
 const CourseMenu = () => {
-  const pathname = usePathname();
   const [currentSection, setCurrentSection] = useState('overview');
-
-  const menuClass = ['/course-detail-8'].some((path) =>
-    pathname.startsWith(path)
-  );
 
   const sections = [
     { id: 'overview', label: 'Overview' },
@@ -51,11 +45,7 @@ const CourseMenu = () => {
   return (
     <>
       <nav className="mainmenu-nav onepagenav">
-        <ul
-          className={`mainmenu ${
-            menuClass ? 'pt--10 pb--10 px-4 justify-content-center' : ''
-          }`}
-        >
+        <ul className="mainmenu">
           {sections.map((sec, i) => (
             <li className={currentSection === sec.id ? 'current' : ''} key={i}>
               <ScrollLink

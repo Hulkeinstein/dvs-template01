@@ -4,21 +4,14 @@ import React, { useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 const Featured = ({ coursesFeatured }) => {
-  const pathname = usePathname();
   const [toggle, setToggle] = useState(false);
 
-  const addClass = ['/course-detail-8'].some((path) =>
-    pathname.startsWith(path)
-  );
   return (
     <>
       <div
-        className={`about-author-list featured-wrapper ${
-          addClass ? 'rbt-border-with-box' : 'rbt-shadow-box'
-        } mt--30 has-show-more ${toggle ? 'active' : ''}`}
+        className={`about-author-list featured-wrapper rbt-shadow-box mt--30 has-show-more ${toggle ? 'active' : ''}`}
       >
         <div className="section-title">
           <h4 className="rbt-title-style-3">{coursesFeatured.title}</h4>

@@ -42,7 +42,7 @@ const Content = ({ checkMatchCourses }) => {
                     <ul className="rbt-course-main-content liststyle">
                       {item.listItem.map((list, subIndex) => (
                         <li key={subIndex}>
-                          <Link href="/lesson">
+                          <Link href="#">
                             <div className="course-content-left">
                               {list.isQuiz ? (
                                 <i className="feather-help-circle"></i>
