@@ -510,7 +510,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Format: `npx prettier@3.5.3 --check scripts/demo-removal` → exit 0 · `npm run type-check` → exit 0
   - 커밋: `git add -- scripts/demo-removal/check-route-links.mjs && git commit -m "chore(demo): count repeated missing links in baseline comparison"`
 
-- [ ] T005 [P] 헤더 메뉴·장바구니 링크 정리 — `data/MegaMenu.json`, `components/Header/Nav.js`, `components/Header/HeaderStyle-Ten.js`, `components/Header/Header-Top/HeaderTop-Eight.js`, `components/Header/Offcanvas/Cart.js`, `components/Cart/CartItems.tsx` (depends on T022; Q2) `category:visual-engineering`
+- [ ] T005 헤더 메뉴·장바구니 링크 정리 — `data/MegaMenu.json`, `components/Header/Nav.js`, `components/Header/HeaderStyle-Ten.js`, `components/Header/Header-Top/HeaderTop-Eight.js`, `components/Header/Offcanvas/Cart.js`, `components/Cart/CartItems.tsx` (depends on T022; Q2) `category:visual-engineering`
   **Goal**: 헤더(데스크톱·모바일 공용 `Nav.js`)·장바구니에 삭제 라우트 링크 0, `data/MegaMenu.json` missing 0, 빈 메뉴 0, Home은 드롭다운 없는 `/` 단일 링크(Q2). 남는 메뉴 링크와 유지 경로 렌더 조건은 그대로.
   **편집 목록 (AREA = `data/MegaMenu\.json|components/Header/[^:]*|components/Cart/CartItems\.tsx`)**:
   1. `data/MegaMenu.json` (D12·Q2)
@@ -560,7 +560,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - 기록: R1 표 4행(`Cart.js` 2, `CartItems.tsx` 분기 2 — 입력 종류별 전/후: DB 코스·JSON 코스·이벤트·상품), R3 표 4행
   - 커밋 메시지: `chore(demo): drop demo menus and cart demo links from header`
 
-- [ ] T006 [P] 푸터 링크 정리 — `data/footer.json`, `components/Footer/CopyRight.js` (depends on T022) `category:quick`
+- [ ] T006 푸터 링크 정리 — `data/footer.json`, `components/Footer/CopyRight.js` (depends on T022) `category:quick`
   **Goal**: 푸터 데이터·저작권 줄에 삭제 라우트 링크 0, `data/footer.json` missing 0(D9). 소셜 링크·연락처 문구는 그대로.
   **편집 목록 (AREA = `data/footer\.json|components/Footer/[^:]*`)**:
   1. `data/footer.json` — `footerOne`(`:8-51`)·`footerTwo`(`:79-122`) 같은 구조, D12
@@ -578,7 +578,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Negative (저작권 줄): `grep -c '<li>' components/Footer/CopyRight.js` → `3` · `grep -cE 'href="/(privacy-policy|login)"' components/Footer/CopyRight.js` → `2`
   - 커밋 메시지: `chore(demo): drop demo and broken links from footer`
 
-- [ ] T007 [P] 코스 상세·목록의 리다이렉트·경로 분기 정리 — `app/(courses)/course-details/index.js`, `components/Course-Details/Course-Sections/{course-head.js,Viedo.tsx,Overview.js,Featured.js,Course-Menu.js,Course-Action-Bottom.js,Content.js}`, `components/Category/{CategoryHead.js,CategoryOne.js}` (depends on T022) `category:ultrabrain`
+- [ ] T007 코스 상세·목록의 리다이렉트·경로 분기 정리 — `app/(courses)/course-details/index.js`, `components/Course-Details/Course-Sections/{course-head.js,Viedo.tsx,Overview.js,Featured.js,Course-Menu.js,Course-Action-Bottom.js,Content.js}`, `components/Category/{CategoryHead.js,CategoryOne.js}` (depends on T022) `category:ultrabrain`
   **Goal**: 실제 코스 상세(`/course-details/[courseId]`)·목록(`/all-courses`)·홈 카테고리가 삭제 라우트로 이동·링크·분기하지 않고, 유지 경로에서 모든 조건의 평가 결과가 그대로다(R3 명령 `diff 0`). 데모 전용 브레드크럼 6개는 도달이 끊겨 Phase 7 고아가 된다.
   **편집 목록 (AREA = `app/\(courses\)/course-details/index\.js|components/Course-Details/Course-Sections/(course-head\.js|Viedo\.tsx|Overview\.js|Featured\.js|Course-Menu\.js|Course-Action-Bottom\.js|Content\.js|Breadcrumb/CourseBreadcrumb-(Two|Three|Four|Five|Six|Seven)\.js)|components/Category/(CategoryHead|CategoryOne)\.js`)**:
   1. `app/(courses)/course-details/index.js:71`, `:79` `router.push('/course-filter-one-toggle')` → `router.push('/all-courses')`(R1)
@@ -605,7 +605,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   **Must NOT do**: `CourseBreadcrumb-*.js`·`Course-Breadcrumb.js`·`Instructor.js`·`RelatedCourse.js`·`SimilarCourses.js`·`Card.js` 수정 금지(T023·T017 몫). `CategoryHeadTwo.js` 수정 금지(검사 범위 밖). 유지 블록(`course-head.js:38-60`)의 마크업 변경 금지. 조건식을 순수 함수·공용 유틸로 빼지 않는다. `.js`→TS 전환 금지(D6).
   **QA Scenarios** (공통 절차 1~7, task 이름 `T007`):
   - Happy path (영역): 공통 절차 4 → `0`(브레드크럼 5줄은 도달 끊김으로 빠짐) · `grep -cF 'app/(courses)/course-details/index.js:' .tmp/demo-removal/links-T007.txt` → `0` · `grep -c "router.push('/all-courses')" 'app/(courses)/course-details/index.js'` → `2`
-  - R3: 공통 R3 명령의 `C`에 아래 21개 → `conds 21 diff 0`
+  - R3: 공통 R3 명령의 `C`에 아래 20개 → `conds 20 diff 0`(실행 중 links-T007에 남는 분기 줄이 있으면 조건을 추가하고 숫자를 갱신)
 
     ```js
     ...[2, 3, 4, 5, 6, 7, 8].map((k) => ["course-head:detail-" + k, (p) => p.startsWith("/course-detail-" + k + "/"), () => false]),
@@ -628,10 +628,10 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Edge case (D13 `Link` 보존): `grep -c '<Link' components/Course-Details/Course-Sections/Content.js` → `1` · `grep -c '<Link href="#">' components/Course-Details/Course-Sections/Content.js` → `1`
   - Edge case (고아 예고, 커밋 후): `node scripts/demo-removal/route-map.mjs plan --phase 7 --list > .tmp/demo-removal/p7-T007.txt` → `grep -cE '^components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-(Two|Three|Four|Five|Six|Seven)\.js$' .tmp/demo-removal/p7-T007.txt` → `6`
   - Negative (유지 파일은 고아가 아니다): `grep -cE 'Breadcrumb/Course-Breadcrumb\.js$|Course-Sections/(course-head|Viedo|Content)\.' .tmp/demo-removal/p7-T007.txt` → `0`
-  - 기록: R1 표 3행(`index.js` 2, `CategoryOne.js` 1), R3 표 21행 + 명령 마지막 줄
+  - 기록: R1 표 3행(`index.js` 2, `CategoryOne.js` 1), R3 표 20행 + 명령 마지막 줄
   - 커밋 메시지: `chore(demo): remove demo route branches from course detail and list`
 
-- [ ] T023 [P] 강사 프로필(`/profile`) 링크 정리 — `data/course-details/courseData.json`, `components/Cards/Card.js`, `components/Category/Filter/CourseFilterOneToggle.tsx`, `components/Course-Details/Course-Sections/{Breadcrumb/Course-Breadcrumb.js,Instructor.js,RelatedCourse.js,SimilarCourses.js}` (depends on T022) `category:quick`
+- [ ] T023 강사 프로필(`/profile`) 링크 정리 — `data/course-details/courseData.json`, `components/Cards/Card.js`, `components/Category/Filter/CourseFilterOneToggle.tsx`, `components/Course-Details/Course-Sections/{Breadcrumb/Course-Breadcrumb.js,Instructor.js,RelatedCourse.js,SimilarCourses.js}` (depends on T022) `category:quick`
   **Goal**: 삭제되는 `/profile` 화면을 가리키는 값 182줄이 0이 되고, 화면의 `Link`·클래스·표시 텍스트는 그대로다(D13·D14).
   **편집 목록 (AREA = `data/course-details/courseData\.json|components/Cards/Card\.js|components/Category/Filter/CourseFilterOneToggle\.tsx|components/Course-Details/Course-Sections/(Breadcrumb/Course-Breadcrumb|Instructor|RelatedCourse|SimilarCourses)\.js`)**:
   1. `data/course-details/courseData.json` — `"linkTwo": "/profile",` 171줄 삭제(D14, `similarCourse` 항목 안, 줄 목록은 `links-baseline.txt` 230~400행)
@@ -659,7 +659,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Negative (남은 참조 0·간격 클래스 보존): `git grep -c '/profile/' -- components/Cards/Card.js components/Category/Filter components/Course-Details/Course-Sections` → 출력 없음 · `cat components/Cards/Card.js components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js | grep -c 'className="px-1" href="#"'` → `2`
   - 커밋 메시지: `chore(demo): unlink removed profile route from course cards and data`
 
-- [ ] T008 [P] 레슨 영역 링크 정리 — `data/lesson.json`, `components/Lesson/LessonSidebar.js`, `components/Lesson/LessonQuiz.js` (depends on T022; U2) `category:quick`
+- [ ] T008 레슨 영역 링크 정리 — `data/lesson.json`, `components/Lesson/LessonSidebar.js`, `components/Lesson/LessonQuiz.js` (depends on T022; U2) `category:quick`
   **선행**: U2 답. A면 아래대로, B면 이 task를 보류하고 Implementation Log에 적는다
   **Goal**: 실제 레슨 화면(`lesson/[id]`)의 사이드바·퀴즈가 삭제 라우트를 가리키지 않는다. 가짜 문항·사이드바 제목은 그대로이고, 유지 경로 결과 변화는 U2가 승인한 3가지(활성 항목·펼침·"Welcome Lessons" 배지)뿐이다.
   **편집 목록 (AREA = `data/lesson\.json|components/Lesson/[^:]*`)**:
@@ -690,7 +690,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - 기록: R3 표 5행 — U2 예외 3행에 "U2=A 승인(날짜)" 표시
   - 커밋 메시지: `chore(demo): unlink demo lesson and quiz routes`
 
-- [ ] T009 [P] 홈의 블로그 결합·`/blog` 링크 정리 — `app/01-main-demo/page.js`, `app/01-main-demo/(main-demo)/index.tsx`, `components/01-Main-Demo/01-Main-Demo.js` (depends on T022; Q1) `category:visual-engineering`
+- [ ] T009 홈의 블로그 결합·`/blog` 링크 정리 — `app/01-main-demo/page.js`, `app/01-main-demo/(main-demo)/index.tsx`, `components/01-Main-Demo/01-Main-Demo.js` (depends on T022; Q1) `category:visual-engineering`
   **Goal (Q1 확정안 A)**: 홈이 `@/mdx`를 import하지 않고 블로그 섹션이 없으며 `/blog` 링크 0. 나머지 홈 섹션 9개는 그대로이고 build가 통과한다. `BlogGrid-Top.js`·`mdx/index.js`·`data/blog/**`는 Phase 6 삭제 목록으로 넘어간다.
   **편집 목록 (AREA = `app/01-main-demo/[^:]*|components/01-Main-Demo/[^:]*|components/Blogs/[^:]*`)**:
   1. `app/01-main-demo/page.js` — `:2` import 삭제 · `:9-10` → `const HomePage = () => {`(기다릴 대상이 없어져 `async`·`blog` 삭제) · `:13` → `<HomePageLayout />`
@@ -709,7 +709,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Negative (다른 홈 섹션 보존): `grep -cE '<(CategoryOne|Card|AboutTwo|CallToAction|Counter|TestimonialSeven|EventCarouse|TeamTwo|NewsletterTwo)\b' components/01-Main-Demo/01-Main-Demo.js` → `9`
   - 커밋 메시지: `chore(demo): remove blog section from main home`
 
-- [ ] T010 [P] 나머지 영역 정리 — `components/Abouts/About-Two.js`, `components/Events/EventCarouse.js`, `app/lib/constants/routes.ts` (depends on T022; U1) `category:quick`
+- [ ] T010 나머지 영역 정리 — `components/Abouts/About-Two.js`, `components/Events/EventCarouse.js`, `app/lib/constants/routes.ts` (depends on T022; U1) `category:quick`
   **선행**: U1 답(routes.ts 항목만 대기 — 답이 오기 전에는 task 전체를 시작하지 않는다, 1커밋 유지)
   **Goal**: T005~T009·T023 영역 밖 유지 코드의 삭제 라우트 참조 5줄이 0(U1=B면 `routes.ts:62` 1줄만 남음). 홈 소개 섹션 버튼과 이벤트 카드 렌더는 그대로.
   **편집 목록 (AREA = `components/Abouts/About-Two\.js|components/Events/EventCarouse\.js|app/lib/constants/routes\.ts`)**:
@@ -873,15 +873,15 @@ Phase 1 (즉시 시작):
 
 Phase 2 (Phase 1 완료 + Q1·Q2 답 후, T008은 U2·T010은 U1 답 후):
 ├── T022: 검사기 개수 비교 (deps: T003)               → [P] 없음, 가장 먼저
-├── T005: 헤더 메뉴·장바구니 (deps: T022)             → [P]
-├── T006: 푸터 (deps: T022)                           → [P]
-├── T007: 코스 상세·목록 분기 (deps: T022)            → [P]
-├── T023: 강사 프로필 링크 (deps: T022)               → [P]
-├── T008: 레슨 영역 (deps: T022)                      → [P]
-├── T009: 홈 블로그 결합 (deps: T022)                 → [P]
-├── T010: 나머지 영역 (deps: T022)                    → [P]
+├── T005: 헤더 메뉴·장바구니 (deps: T022)             → T022 후 순차
+├── T006: 푸터 (deps: T022)                           → T022 후 순차
+├── T007: 코스 상세·목록 분기 (deps: T022)            → T022 후 순차
+├── T023: 강사 프로필 링크 (deps: T022)               → T022 후 순차
+├── T008: 레슨 영역 (deps: T022)                      → T022 후 순차
+├── T009: 홈 블로그 결합 (deps: T022)                 → T022 후 순차
+├── T010: 나머지 영역 (deps: T022)                    → T022 후 순차
 └── T011: 제3자 검증 (deps: T005~T010, T023)          → 순차
-    ※ [P] task는 파일이 겹치지 않지만 한 작업 트리의 lint·링크 검사가 서로의 미커밋 편집을 보므로 실행은 순차 권장
+    ※ 파일은 겹치지 않지만 T022(개수 비교 검사기)에 의존하고, 한 작업 트리의 lint·링크 검사가 서로의 미커밋 편집을 보므로 [P] 없이 순차 실행(momus 1회차 지적 반영)
 
 Phase 3: T012 (deps: T011) → T013 (deps: T012)
 Phase 4: T014 (deps: T013)
