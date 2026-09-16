@@ -316,7 +316,7 @@ lifecycle: active
   3. **추출**: 따옴표·백틱 문자열 리터럴 중 `/`로 시작하고 `//`로 시작하지 않으며 공백이 없는 것. `?`·`#` 뒤는 버리고, `${…}`와 `[x]`는 동적 세그먼트로 본다. 제외: `/` 한 글자, 자산(확장자 `png jpg jpeg gif svg webp ico css scss mp4 pdf woff woff2 ttf json txt xml` 또는 `/images/` `/fonts/` `/_next/` 접두), 앞 공백 제거 후 `//`·`*`·`/*`로 시작하는 주석 줄
   4. **판정**: 유지 라우트와 일치하면 보고 안 함 · 삭제 라우트와만 일치하면 `del-route` · 어느 라우트와도 불일치하면 `missing`. 세그먼트 수가 다르면 불일치(`/lesson` ≠ `/lesson/[id]`)
   5. **출력**: 첫 줄 `del-route=<n> missing=<m> nav-missing=<k>`(`nav-missing` = `data/MegaMenu.json`·`data/footer.json`의 missing), 이후 정렬된 `<file>:<line> <del-route|missing> <원문 리터럴>`
-  6. **exit**: `del-route>0` 또는 `nav-missing>0`이면 1. `--report-only`면 항상 0(스크립트 오류 제외). `--root DIR` 지원. `--baseline FILE`(기준선 출력 형식)을 주면 `missing` 중 (파일 경로, 리터럴) 쌍이 기준선에 없는 것을 본문에 `missing-new`로 표시하고 첫 줄 끝에 ` new-missing=<n>`을 붙이며, `new-missing>0`이면 1이다.
+  6. **exit**: `del-route>0` 또는 `nav-missing>0`이면 1. `--report-only`면 항상 0(스크립트 오류 제외). `--root DIR` 지원. `--baseline FILE`(기준선 출력 형식)을 주면 `missing` 중 (파일 경로, 리터럴) 쌍이 기준선에 없는 것을 본문에 `missing-new`로 표시하고 첫 줄 끝에 공백 한 칸과 `new-missing=<n>`을 붙이며, `new-missing>0`이면 1이다.
   **References** (known-answer 근거 — 모두 원문 확인):
   - `app/(courses)/course-details/index.js:71` — `router.push('/course-filter-one-toggle')` → `del-route`
   - `app/(courses)/course-details/page.js:11` — `router.push('/course-details/1')` → 유지 동적 라우트라 보고되면 안 됨
