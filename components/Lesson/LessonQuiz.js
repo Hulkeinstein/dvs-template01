@@ -176,7 +176,7 @@ const LessonQuiz = () => {
             className={`rbt-btn btn-gradient btn-sm ms-2 ${
               !next ? 'd-none' : ''
             }`}
-            href="/lesson-quiz-result"
+            href="#"
             id="submit-btn"
           >
             Submit

@@ -68,53 +68,19 @@ const LessonSidebar = () => {
                       {data.title}
                       {data.title === 'Histudy Quiz' ? (
                         <span className="rbt-badge-5 ml--10">
-                          {isActive('/questions-types')
-                            ? 1
-                            : isActive('/all-questions')
-                              ? 2
-                              : isActive('/pagination-quiz')
-                                ? 3
-                                : isActive('/single-question')
-                                  ? 4
-                                  : isActive('/quiz-with-point')
-                                    ? 5
-                                    : isActive('/quiz-with-custom-timer')
-                                      ? 6
-                                      : isActive('/quiz-passing-grade')
-                                        ? 7
-                                        : isActive('/lesson-quiz')
-                                          ? 8
-                                          : isActive('/lesson-quiz-result')
-                                            ? 9
-                                            : 0}
-                          /{data.listItem.length}
+                          {0}/{data.listItem.length}
                         </span>
                       ) : data.title === 'Welcome History' ? (
                         <span className="rbt-badge-5 ml--10">
-                          {isActive('/lesson')
-                            ? 1
-                            : isActive('/lesson-intro')
-                              ? 2
-                              : 0}
-                          /{data.listItem.length}
+                          {0}/{data.listItem.length}
                         </span>
                       ) : data.title === 'Welcome Lessons' ? (
                         <span className="rbt-badge-5 ml--10">
-                          {isActive('/lesson')
-                            ? 1
-                            : isActive('/lesson-intro')
-                              ? 2
-                              : 0}
-                          /{data.listItem.length}
+                          {0}/{data.listItem.length}
                         </span>
                       ) : data.title === 'Histudy Assignments' ? (
                         <span className="rbt-badge-5 ml--10">
-                          {isActive('/lesson-assignments')
-                            ? 1
-                            : isActive('/lesson-assignments-submit')
-                              ? 2
-                              : 0}
-                          /{data.listItem.length}
+                          {0}/{data.listItem.length}
                         </span>
                       ) : (
                         ''

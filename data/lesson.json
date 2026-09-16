@@ -6,7 +6,7 @@
       "isShow": true,
       "listItem": [
         {
-          "lssonLink": "/lesson",
+          "lssonLink": "#",
           "lssonIntroLink": false,
           "lessonName": "Course Intro",
           "lable": true,
@@ -15,7 +15,7 @@
           "isCircle": true
         },
         {
-          "lssonLink": "/lesson-intro",
+          "lssonLink": "#",
           "lessonName": "Introduction",
           "iconFile": true,
           "lable": false,
@@ -31,7 +31,7 @@
       "isShow": false,
       "listItem": [
         {
-          "lssonLink": "/lesson",
+          "lssonLink": "#",
           "lessonName": "Hello World!",
           "lable": true,
           "time": 2,
@@ -62,7 +62,7 @@
       "isShow": false,
       "listItem": [
         {
-          "lssonLink": "/questions-types",
+          "lssonLink": "#",
           "lessonName": "Questions Types",
           "lable": true,
           "time": 0,
@@ -71,7 +71,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/all-questions",
+          "lssonLink": "#",
           "lessonName": "Questions Below Each Other",
           "lable": true,
           "time": 0,
@@ -80,7 +80,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/pagination-quiz",
+          "lssonLink": "#",
           "lessonName": "Pagination Quiz Style",
           "lable": true,
           "time": 0,
@@ -89,7 +89,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/single-question",
+          "lssonLink": "#",
           "lessonName": "Single Question",
           "lable": true,
           "time": 0,
@@ -98,7 +98,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/quiz-with-point",
+          "lssonLink": "#",
           "lessonName": "Quiz with individual point",
           "lable": true,
           "time": 0,
@@ -107,7 +107,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/quiz-with-custom-timer",
+          "lssonLink": "#",
           "lessonName": "Quiz with custom timer",
           "lable": true,
           "time": 0,
@@ -116,7 +116,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/lesson-quiz",
+          "lssonLink": "#",
           "lessonName": "Histudy Quiz Start",
           "lable": true,
           "time": 0,
@@ -125,7 +125,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/lesson-quiz-result",
+          "lssonLink": "#",
           "lessonName": "Histudy Quiz Result",
           "lable": true,
           "time": 0,
@@ -141,7 +141,7 @@
       "isShow": false,
       "listItem": [
         {
-          "lssonLink": "/lesson-assignments",
+          "lssonLink": "#",
           "lessonName": "Histudy Assignments",
           "lable": true,
           "time": 0,
@@ -150,7 +150,7 @@
           "iconHelp": true
         },
         {
-          "lssonLink": "/lesson-assignments-submit",
+          "lssonLink": "#",
           "lessonName": "Histudy Assignments Submit",
           "lable": true,
           "time": 0,
