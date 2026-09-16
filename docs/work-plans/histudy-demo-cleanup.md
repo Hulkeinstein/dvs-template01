@@ -176,7 +176,7 @@ lifecycle: active
 | Docs Validation 최근 결론 | 최근 3건 모두 failure — main(2026-09-16) 1건, `chore/repo-hygiene-ci`(2026-09-15~16) 2건. 기존 문서 결함(T6 범위)로 판단 |
 | 이 계획서 git 최초 작성일 | 2026-01-01 (`git log --follow --diff-filter=A`, front-matter 반영 완료) |
 | `route-map.mjs map` entries / keep / del / sections | `entries=190 keep=71 del=119 sections=99` — 기대값과 일치 |
-| `check-route-links.mjs` del-route / missing / nav-missing | 미수집 |
+| `check-route-links.mjs` del-route / missing / nav-missing | `del-route=378 missing=51 nav-missing=7` — `--report-only` exit 0, 스캔 389파일(KEEP 도달 − 소비자 − 삭제 대상), 같은 줄의 같은 리터럴은 1건으로 셈 |
 | `Content.js`·`LessonAssignmentsSubmit.js` 판정 | `components/Course-Details/Course-Sections/Content.js` 유지 — `deleteFiles` 미포함(KEEP `app/(courses)/course-details/[courseId]/page.js`가 닿음) · `components/Lesson/LessonAssignmentsSubmit.js` 삭제 — `deleteFiles` 포함, phase 5 |
 
 ## Gap Probe (역검증 — DoD를 100% 채웠는데 Goal에 못 미치는 시나리오)
