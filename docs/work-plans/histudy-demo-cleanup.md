@@ -578,7 +578,7 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
   - Negative (저작권 줄): `grep -c '<li>' components/Footer/CopyRight.js` → `3` · `grep -cE 'href="/(privacy-policy|login)"' components/Footer/CopyRight.js` → `2`
   - 커밋 메시지: `chore(demo): drop demo and broken links from footer`
 
-- [ ] T007 코스 상세·목록의 리다이렉트·경로 분기 정리 — `app/(courses)/course-details/index.js`, `components/Course-Details/Course-Sections/{course-head.js,Viedo.tsx,Overview.js,Featured.js,Course-Menu.js,Course-Action-Bottom.js,Content.js}`, `components/Category/{CategoryHead.js,CategoryOne.js}` (depends on T022) `category:ultrabrain`
+- [x] T007 코스 상세·목록의 리다이렉트·경로 분기 정리 — `app/(courses)/course-details/index.js`, `components/Course-Details/Course-Sections/{course-head.js,Viedo.tsx,Overview.js,Featured.js,Course-Menu.js,Course-Action-Bottom.js,Content.js}`, `components/Category/{CategoryHead.js,CategoryOne.js}` (depends on T022) `category:ultrabrain`
   **Goal**: 실제 코스 상세(`/course-details/[courseId]`)·목록(`/all-courses`)·홈 카테고리가 삭제 라우트로 이동·링크·분기하지 않고, 유지 경로에서 모든 조건의 평가 결과가 그대로다(R3 명령 `diff 0`). 데모 전용 브레드크럼 6개는 도달이 끊겨 Phase 7 고아가 된다.
   **편집 목록 (AREA = `app/\(courses\)/course-details/index\.js|components/Course-Details/Course-Sections/(course-head\.js|Viedo\.tsx|Overview\.js|Featured\.js|Course-Menu\.js|Course-Action-Bottom\.js|Content\.js|Breadcrumb/CourseBreadcrumb-(Two|Three|Four|Five|Six|Seven)\.js)|components/Category/(CategoryHead|CategoryOne)\.js`)**:
   1. `app/(courses)/course-details/index.js:71`, `:79` `router.push('/course-filter-one-toggle')` → `router.push('/all-courses')`(R1)
@@ -1005,3 +1005,37 @@ R1 치환 표 (T006):
 |---|---|---|---|
 | `data/footer.json:27` (footerOne FAQ) | `/pages/faqs` | `/faqs` | 유지 라우트 `app/(pages)/faqs` 존재, 제목 FAQ와 1:1(D12·R1) |
 | `data/footer.json:98` (footerTwo FAQ) | `/pages/faqs` | `/faqs` | 같음 |
+
+**T007** (e7081a8): 코스 상세·목록 분기. 링크 검사 `del-route=221 missing=42 nav-missing=0 new-missing=0`(배정 del-route 44 + missing 2 해소). R3 `keep-paths 54 conds 20 diff 0`(편집 전·후 모두). type-check 0, lint 0/167
+
+- 편집 9 조정: `CategoryHead.js`의 미사용 인자 `filterItem`·`setCourseFilter`는 **남김** — 지우면 `app/(courses)/all-courses/index.tsx(60,13)` TS2322(JS 컴포넌트 인자 이름이 prop 타입이 됨). `all-courses/index.tsx`는 T007 범위 밖
+- **의미 변화(T011 validator 확인 대상)**: `components/Category/CategoryOne.js:21` 카테고리 링크 `/course-filter-one-toggle/${category}` → `/all-courses` — `/all-courses`는 카테고리 인자를 받지 않아 카테고리 필터가 사라진다(원래 필터 화면이 삭제 대상 데모)
+
+R1 치환 표 (T007):
+
+| 파일:줄(편집 전) | 편집 전 경로 | 편집 후 경로 | 근거 |
+|---|---|---|---|
+| `app/(courses)/course-details/index.js:71` | `/course-filter-one-toggle` | `/all-courses` | R1 코스 목록류 — 코스를 못 찾았을 때 이동 |
+| `app/(courses)/course-details/index.js:79` | `/course-filter-one-toggle` | `/all-courses` | R1 — 조회 오류 때 이동 |
+| `components/Category/CategoryOne.js:21` | `/course-filter-one-toggle/${item.category}` | `/all-courses` | R1 — 카테고리 필터 소실(위 의미 변화) |
+
+R3 전/후 표 (T007, 유지 경로 54개, `usePathname` 기준):
+
+| 파일:줄(편집 전) | 편집 전 조건 | 편집 후 | 유지 경로 결과(전→후) |
+|---|---|---|---|
+| `course-head.js:25,62,85,106,118,138,152` | `pathname === /course-detail-N/${courseId}` (N=2~8) | 블록 7개 삭제 | 모두 false→false |
+| `Viedo.tsx:68-76` | `disableVideo`(`/course-detail-2~8` startsWith) | 선언 삭제, 미리보기 `Link` 항상 렌더 | false→false |
+| `Viedo.tsx:78-80` | `isVideo`(`/course-detail-6`) | 선언·iframe 블록 삭제 | false→false |
+| `Overview.js:11-13` | `addClass`(`/course-detail-8`) | `mt--30` 고정 | false→false, className 동일 |
+| `Featured.js:13-15` | `addClass`(`/course-detail-8`) | `rbt-shadow-box` 고정 | false→false, className 동일 |
+| `Course-Menu.js:11-13` | `menuClass`(`/course-detail-8`) | `className="mainmenu"` | false→false(끝 공백만 빠짐) |
+| `Course-Action-Bottom.js:16` | `path === '/course-detail-2/[courseId]'` | `isHide = ScrollPosition > 4365` | false→false(실제 주소에 `[courseId]` 글자가 없어 항상 false) |
+| `CategoryHead.js:44-45` | `/course-card-3` ∨ `/course-masonry` | 레이아웃 전환 `div` 항상 렌더 | false→false |
+| `CategoryHead.js:53,71` | `=== '/course-card-2'` | `toggle` / `!toggle` | false→false |
+| `CategoryHead.js:107` | `=== '/course-with-sidebar'` | 검색 폼 항상 렌더 | false→false |
+| `CategoryHead.js:126-128` | tab·tab-two·with-sidebar | "Short By" 블록 삭제 | false→false |
+| `CategoryHead.js:147-153` | 7개 OR(`/all-courses` 포함) | `pathname === '/all-courses'` | `/all-courses` true→true, 나머지 false→false |
+| `CategoryHead.js:170` | `=== '/course-filter-one-open'` | `<CourseFilter filterToggle={filterToggle} />` | false→false |
+| `CategoryHead.js:176-178` | tab·tab-two·masonry | 탭 블록 삭제 | false→false |
+
+R3 명령 마지막 줄: `keep-paths 54 conds 20 diff 0`
