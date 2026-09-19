@@ -1,0 +1,699 @@
+{
+  "schema_version": 1,
+  "phase": 3,
+  "source_manifest_sha256": "44ef55465f327b6fa029c3d9be1aca5285091545661ea8271c9bf78328be5956",
+  "file_count": 138,
+  "files": [
+    {
+      "path": "app/02-course-school/(course-school)/index.js",
+      "sha256": "596240307e9c8d202f53d696c017c80d222956a786d4c22ad652fe5892aabe97",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/02-course-school/page.js",
+      "sha256": "6b615761664d3c71e7f216cbd4191edd2d21afc1595c0d6502fd0478e71af589",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/03-online-school/(online-school)/index.js",
+      "sha256": "602642c2ae4fd2cd03ea8e3ffd66bc0aa3d454898104a756a4dbe95c528a38d0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/03-online-school/page.js",
+      "sha256": "d0184a0f6d4452ce79b6789e53ebd9113fab19f7e011649e26ebb631148df553",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/04-kindergarten/(kindergarten)/index.js",
+      "sha256": "770dce7710e8c45e96decaf431306f769768399b4f15fa1a79d9ef5b58b1ef90",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/04-kindergarten/page.js",
+      "sha256": "9427335a2f6368ab47cbd9846639b08d19b94466c1e33d0287cf4fe65f4e23c8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/05-classic-lms/(classic-lms)/index.js",
+      "sha256": "b66537b78c6d12937111e17a9e72ab676c3144070971b14a9c206d60a0759fa8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/05-classic-lms/page.js",
+      "sha256": "cc793776708a9e44fb5809e649fa921878836f9aded3b9c7db96a2e8f8b951ee",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/06-university-status/(university-status)/index.js",
+      "sha256": "d15326e1ef0a1210f7768a469a91a8a6e409fe3c2cb7175add9b55a6eaade820",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/06-university-status/page.js",
+      "sha256": "18810bc1fd8da4b88cb375724948062f1002c7c620747158eec6a210363125d9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/07-instructor-portfolio/(instructor-portfolio)/index.js",
+      "sha256": "ce3c53d9251fee32735a28e964ee7cff6802c76c7df86ab9763ab59ac23a374f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/07-instructor-portfolio/page.js",
+      "sha256": "9482862fc3413311ddf4891406265d8cbed9a580a846546d80dcaad927b5b397",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/08-language-academy/(language-academy)/index.js",
+      "sha256": "a868d8d535ce2cdff853b9166012464707f71ea6b4dd6a157beac430ee65ada7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/08-language-academy/page.js",
+      "sha256": "124bd476a28bddce7ee8ff4a5de84a3b7a3bcbc2a6a5dfb5c32cdf04185b5bcd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/10-online-course/(online-course)/index.js",
+      "sha256": "02d2399220d531e6ceaa040b6ab58ba33c208d1f104fd4252b2471eb7b4b9b03",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/10-online-course/page.js",
+      "sha256": "ccfff2fc0b500131692beed74c847bd51e566d4b2ef1724897a315a846fe265f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/11-single-course/(single-course)/index.js",
+      "sha256": "dfa8ef8e4207bf599068a752d55f94f748b5e99a3c70d0fa69176b6b445a06f2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/11-single-course/page.js",
+      "sha256": "137c9ed7d3e50010cc0ea91fe3a20535946a47827a1c53c86914384101a91d7c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/12-marketplace/(marketplace)/index.js",
+      "sha256": "7d154d239765ede0dbfabd88645f9f2cfea6f8079b93af123ad41c47662ba33f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/12-marketplace/page.js",
+      "sha256": "727f47b3d268356986039db4c97fce36fffb68d13f28aeb4af840e392b29f43b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/13-university-classic/(university-classic)/index.js",
+      "sha256": "3c580756bef7c20ca0f8a6fd46f86e776d008791b9692dca04a3eb60bd3cae8e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/13-university-classic/page.js",
+      "sha256": "6506fc06c95c522324466da696df1ef68d68f7adf0e390ad4b85c2591005b5f4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/14-home-elegant/(home-elegant)/index.js",
+      "sha256": "4ebfd32f328da6fac89d2da85d5bf8c0d26ae6e437c1eee58447328284d6f040",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/14-home-elegant/page.js",
+      "sha256": "7aa0dcd82189f21661a98bd23a236842fdabab4777ed896e30c17d96a2a66a3b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/15-home-technology/(home-technology)/index.js",
+      "sha256": "c0bc58f1a7f2498dd2054e67d68a47d30af63d66f3d2323b4dba7a656ab8adc4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/15-home-technology/page.js",
+      "sha256": "edf69717270b00e8d552c93d0e59885e6bdd91c08f7288314ed2c54cbc3dd892",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/16-udemy-affiliate/(udemy-affiliate)/index.js",
+      "sha256": "39057c99ac655e7c39a39cce873eea6099959d4e51b980a9483305050af29b81",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/16-udemy-affiliate/page.js",
+      "sha256": "28328b0ac907054a0feb3d80b5cb5a9713bfdacf6c67c912e582aed47930d7e5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/17-online-academy/(online-academy)/index.js",
+      "sha256": "5df137af2d66efa17758f08e7871432abe4b3f1608ca9bf9364b98497df82f15",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/17-online-academy/page.js",
+      "sha256": "022fa9a903561f5a7ff729d342ff995a2b084be27dbe35acd87b93a0e33526e4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/18-instructors-coaches/(instructors-coaches)/index.js",
+      "sha256": "ae325a7bca253e88b7ebf43cfc8d65e27d5966d12993ea84011adef273edea11",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/18-instructors-coaches/page.js",
+      "sha256": "e2e4d00a6491d3142d545accf7c6a8ab3bb3bbc37d92aff6feca6053115d8223",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/19-modern-university/(modern-university)/index.js",
+      "sha256": "818959be7410755c60a3d64c290deb83a5ee02455454f2ee57b2b599e2256d37",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/19-modern-university/page.js",
+      "sha256": "e9d06c6ab05039a89c823620c60325ec219df715048c1819aab06c9d8aa0070a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/20-multilingual/(multilingual)/index.js",
+      "sha256": "90d6a6e3d58b9fe726945ad4f0a659915b95a9578ead7d6671982b73848c8d9a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/20-multilingual/page.js",
+      "sha256": "2fdce06d28e2194a6cfeabfa9ad1f4636824a99d56d66b82e1a233c1ccac3a6b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/21-art-design-school/(art-design-school)/index.js",
+      "sha256": "a9498af4b989ca32a238c412e6b6d04c6d8bb72c2cea95587d9a5d5f51da9ba9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/21-art-design-school/page.js",
+      "sha256": "0554793cc3bc682ec3998a85bdc6b4230cd94ccde76901710c68378ebcd963b8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/22-wishlist/(wishlist)/index.js",
+      "sha256": "ddcbc6c771fed942a898885eaaac24e43e6654c1b381190545b9b6d26febe42f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/22-wishlist/page.js",
+      "sha256": "7ba725dac80146d34a77da0299b375ad9a7bb6fef1295232479d5a7715d93137",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/23-coaching/(coaching)/index.js",
+      "sha256": "268aaa8a4ac6ce4700818724db9a45cd4afbd454090f19a4157cc3b0a1c75d0b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/23-coaching/page.js",
+      "sha256": "8f50bfc837cdc20c61161f4aecc127da53bc12e68a3b6f21d0ec4759d42c6ddb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/24-health-wellness-institute/(health-wellness-institute)/index.js",
+      "sha256": "c2dae717faa1be6928d4c07df6ff24c8f8c94d21f145db45305cbb85c6963755",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/24-health-wellness-institute/page.js",
+      "sha256": "dbd13ecc05b7edbd23fcca8d762b2c89bbedcbfc39fdc2e7597f883d9d4d4c01",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/25-life-coach/(life-coach)/index.js",
+      "sha256": "207ff23d9c4446887080321fa09e3e71cb1bb254c540a3ab94cafd389c3fe7a0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/25-life-coach/page.js",
+      "sha256": "62cdb439d6009430f4f28dfddd06b3c35f36bfd590c5e4eb3661ea2bdc8f9656",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/26-islamic-center/(islamic-center)/index.js",
+      "sha256": "7eb4260cf03c33d903f4774cd1b06a36edfb44526c66b95d5710c13c979257b8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/26-islamic-center/page.js",
+      "sha256": "e50026f7696b3f6f9ca153a993e1d345536001c7eeec72ed79f003a76ea537ac",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/02-course-school/CourseSchool.js",
+      "sha256": "cf807d0d5ef2d78077d2167dcde74d395168730e042a624106cddfd244bf3d93",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/03-online-school/OnlineSchool.js",
+      "sha256": "a7c76f340758511525f077c4ff539c0d8b75ba7a5b8c48a5f55fc2e769786663",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/03-online-school/OnlineSchoolForm.js",
+      "sha256": "2e01487ee301cbbcd9335064224e2e9ff80699cbce39da71ff3fe3b9a6e49ffe",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/04-kindergarten/04-kindergarten.js",
+      "sha256": "f77c28308a9e10fe9e54c7f91b3d9ef6968609c1d5ed34da07315f207aacb4b2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/05-classic-lms/05-ClassicLms.js",
+      "sha256": "f12ca08ec33873e4eb17836ef880fd7b5fbe78bcfe1549234996d9a9502c63ec",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/06-university-status/UniversityStatus.js",
+      "sha256": "55c6db876fd93fedaaa5fac33ee8700d8432e0b891430ac6078ce211befce50f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/07-instructor-portfolio/InstructorForm.js",
+      "sha256": "e96fb25a81d7f937c35ffd84f87ab540e26cec3ff8b9712bb186d27c2c355622",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/07-instructor-portfolio/InstructorPortfolio.js",
+      "sha256": "868d1e0f49d46e91b0842bcbdd4bdf7b3d7416d111562f038617ccdd7552e6c9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/08-language-academy/LanguageAcademy.js",
+      "sha256": "10dbc5a663d831277224d85b2f5bfa5ed75cd2e21d927fd30050840f6c395116",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/10-online-course/OnlineCourse.js",
+      "sha256": "0202b96ee12777d50cb9a7a8f17e4d293910845b1c939907cf26e0cb1a17270f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/10-online-course/OnlineCourseBanner.js",
+      "sha256": "c65793da929a00098ee34fa62a00a7b4a671b9b8aced045ed271eaf2426152ca",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/11-single-course/CourseLessonProp.js",
+      "sha256": "a8609054b2007bc1edc87ca537a531ec72a169fa7c3dd1947aacb0e6d11fda9d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/11-single-course/CourseSlider.js",
+      "sha256": "e2e26c318c48e26f5f55974beb03578f20761bb183097a4f1f58afc1f31a95d8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/11-single-course/SingleCourse.js",
+      "sha256": "afab9455376f422ae2d66ea874bcb9105b771452b110b07be69c47ede5b65214",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/11-single-course/SingleCourseBanner.js",
+      "sha256": "7f1b2b810d15a45d215463e00899180389392c0a82388046428d5bfac1264f03",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/11-single-course/SingleCourseProp.js",
+      "sha256": "0ce4b080f138f4c3d43890fb681f6a0036d490dbe511739eb54f687c7918df50",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/12-Marketplace/12-Marketplace.js",
+      "sha256": "40d52dde8313c436cd04dc1b74c4a05b60d7371d3816daaed283731bfc48544c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/13-university-classic/13-University-Classic.js",
+      "sha256": "310f7fa65c1fc919cb73a17d813fde691b029f92c005ec0c32de26061a8b3e01",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/13-university-classic/UniversityBanner.js",
+      "sha256": "e8fdb95d644cd47d7a7b70ea610aa78da0389e84c6a437ae9db149ce1d69dd96",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/14-home-elegant/14-Home-Elegant.js",
+      "sha256": "02b3d43ad6428e4419cbbe8709733c8de3ff08df4dbb40df9abdae842a41d2f5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/14-home-elegant/CrashCourse.js",
+      "sha256": "0e067e4aac49bac50708cddd17a1689c91a3796caa1a273dfac0b3c7ec205af7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/14-home-elegant/HomeElegantBanner.js",
+      "sha256": "b22d2624cfb031fd75d7f390e5e9850cd010ab514191c52da01bb4c0eb721b66",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/15-home-technology/HomeTechnology.js",
+      "sha256": "952662c36a74c6f731d7f119f16a3c80c1165c2a1c24bdafa471599b2a6d1223",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/15-home-technology/HomeTechnologyBanner.js",
+      "sha256": "48516e1f36e9c9579526aeed84ec386f13c611822105b963213480c465b6fc79",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/16-udemy-affiliate/UdemyAffiliate-Banner.js",
+      "sha256": "4b4b96d261fe592d8029179ae76a09868f042de2eba1b63b51333689ed5edbc2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/16-udemy-affiliate/UdemyAffiliate.js",
+      "sha256": "f3a4c30323a61caf38bb5d9624fda2b44eb0e223e4dc596f5e65f5eaf67d1ddb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/17-online-academy/OnlineAcademy-Banner.js",
+      "sha256": "da6289eb52724e88524a5220543b34ad074a0ad9f1324e8e8a8a4bfc05910730",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/17-online-academy/OnlineAcademy.js",
+      "sha256": "3a41fc10f50cb3167161a8d91974cb08181d69a1d6d450e45b53794193bf52c6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/18-instructors-coaches/InstructorsCoaches-Banner.js",
+      "sha256": "d178cd0fa431688369c66a1f830583b9d9235a627961a78a73e0649e30b6be0f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/18-instructors-coaches/InstructorsCoaches.js",
+      "sha256": "8729f4ba6f6abd60a023df9bb787491b60c3d8734b479416f9ffd8aaa33f6f13",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/19-modern-university/ModernUniversity-Banner.js",
+      "sha256": "06b0a50325e5f7d4c860b6b729b59f273a922e8b32c6a83c7f5cf9e673e3ffb8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/19-modern-university/ModernUniversity-Props.js",
+      "sha256": "53772f3653174545d5b54982322e1c14ab3dcf01aa046621e8b65759ccf927dc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/19-modern-university/ModernUniversity.js",
+      "sha256": "83283e003b057adf1cbab1c98e1490f5017e83332877d223372878e0a1b522d8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/20-multilingual/Multilingual-Banner.js",
+      "sha256": "b86e5ca27daf0930b65e9bd9179ebf62587177b823951260e319df30e0bdb051",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/20-multilingual/Multilingual.js",
+      "sha256": "5279532897c92ccef33018fe918834f5df0633664df4d574e721de3baf446545",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/21-art-design-school/ArtDesignSchool-Banner.js",
+      "sha256": "75213425b1b9637a57ca4b6cd9833e73b378163a41770a930be3b67abef55b22",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/21-art-design-school/ArtDesignSchool.js",
+      "sha256": "173190a3d2a4f4d3149d2fb55a490c6afc723f268e02554cd261cfa50e66622f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/22-wishlist/Wishlist-Banner.js",
+      "sha256": "57fe2e41d266b5ac848c75af4bedc282ea1daa400a50efdab1cd8f1b91058b0f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/22-wishlist/Wishlist.js",
+      "sha256": "0da2eb040c6589d551c4cceb888e31127ce80d32a59565a9a4f88efdb52e3310",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/23-coaching/Coaching-Banner.js",
+      "sha256": "18335e399503c0e98eb36688fc72401289440351700c06e4f34183ed2d82cc05",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/23-coaching/Coaching.js",
+      "sha256": "71bf153cfc332f23fc5bb17c08d28abafe8593b032ac6e4e08d8f49b49468cdb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/23-coaching/CoachingForm.js",
+      "sha256": "95d70d1d71234f44be11ae6105567acb92ef3a02c35e998870d00808167e561c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/24-health-wellness-institute/Health-Banner.js",
+      "sha256": "c02ae702fb9873e2e3a9f947c9b94de6f2ed66c273ba883e0483316f658e60b7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/24-health-wellness-institute/HealthFeature.js",
+      "sha256": "f428847a8af54dca4f87672b108b4d7f3d8be8f49678e6c4af30ca23e9b84ddf",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/24-health-wellness-institute/HealthGoal.js",
+      "sha256": "a0f0bf226f618786452c2bed64b83920d48ed7448254a8c40f49820c10ab2278",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/24-health-wellness-institute/HealthInstitute.js",
+      "sha256": "632197f03647487e4f5b425fc988b5d4faf1acadd08cecedc1af26f088f0efa5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/24-health-wellness-institute/InstituteGallery.js",
+      "sha256": "8e2969a90557a338e7d3d3fc6595e50b5fc270af7481cf8f8375a5319de9f91b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/25-life-coach/LifeCoach-Banner.js",
+      "sha256": "2a5a6719cd2dfae0b57a208c237db8132bf3663805a4cf3dd2420a5ac9166048",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/25-life-coach/LifeCoach.js",
+      "sha256": "8ecf3b563284809886206fdbae96ffce8f80b9b5d6f0407ba765e455aa19ded9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/25-life-coach/LifeCoachFeature.js",
+      "sha256": "ce5c6f373dfab3d7af91fff6a8165507815f7e0a58e1c41d713aa02876d25d83",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/26-islamic-center/IslamicCenter-Banner.js",
+      "sha256": "e2f72196d5884912fe4aef920285bc34d7b8b2d8aec1f48585b5461c54bc5301",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/26-islamic-center/IslamicCenter.js",
+      "sha256": "8aaef6f70b11614ab881395560477a4cc5e70fe31a0d07807be99b5dcdfa69a9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Cards/Card-Seven.js",
+      "sha256": "66d2a197e65ae8b32611f1c93d41447d7af838c4338cb2ead404db9196a04a3e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Cards/Card-Six.js",
+      "sha256": "db9887b356e92602bb26be4723f124382566d9c1fee372301a19d64ecdbb00c5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/Course-Six.js",
+      "sha256": "029309ba938c487b9cd3dc4dfeb58b8fc7a2ad84ac5a94b4aebd74009f2c9c4d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Common/CourseTag-Two.js",
+      "sha256": "b73229b0ea19847369586b9f5b6362f63cfd32e795e14c7b5ba1132d44812239",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Counters/CountDownTwo.js",
+      "sha256": "d1ebac3d5037cf6d3bef2627c6bd351af2f0c7189774dda11bfc045243b06396",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Footer/FooterFive.js",
+      "sha256": "44b29114cc515729618c82942a588cb76b5521dd5d216e47ea3141cd5c19f0c9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Footer/FooterFour.js",
+      "sha256": "cbb964c2a04a8dc53599da653f44a662f4f65b9af6da2888774b12028db73dbe",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Category/SearchWithCategory.js",
+      "sha256": "989477b21c534f5d12c275be4e8fec9aac236503b38efc0fd9658741445c37ea",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Right/HeaderRight-Three.js",
+      "sha256": "f351ab556d7613f032e1a2be92f7162884cb124f67bcf694affe70f7d80df0cb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Top/Header-Language.js",
+      "sha256": "bf81d9a76a646e61980f1bb15c96b9b4385b076407301f92fcb1848f863cc176",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Top/HeaderMid-One.js",
+      "sha256": "35cb1a8cffcc3b38df739dc441ce363927dd068a17259b12ec3ab66ba9de022f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Top/HeaderTop-Four.js",
+      "sha256": "94a00e42f6c0da0c0a0145b26bde9d95b77d809785bf43c1233671ebdf88837c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Top/HeaderTop-Seven.js",
+      "sha256": "fd47bdda519df31abcd435d8784ae9360680bb1602acf1523534b5d5657511fb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Top/HeaderTop-Two.js",
+      "sha256": "6ef4671ffd9a056cadd76f8b37946436f2f79b9a4eb2cde126ec23a9ed3e160e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Header-Top/HeaderTopMid-Three.js",
+      "sha256": "b04ac1941ebf5152473f42101cc4a4d4b3174891d49aecb2e8d95156f347a0c6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Eight.js",
+      "sha256": "1cf388a1a35fdd61332ce3535abcd5c3e10750472ccf5146d8442485bf28ceb1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Eleven.js",
+      "sha256": "8bcb56a974753e4922f809c50af8b84218bdd6ef54b65ab55fff0f6cbecbc2b7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Five.js",
+      "sha256": "324fc7c501f5f3e2d3dc66554867998d43aa9f13bd66cde2bc40bcf51b372467",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Four.js",
+      "sha256": "bc4e8e2f888989a77647c147e3873370716bc5617d794eef79d89cd0e92c53ff",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Nine.js",
+      "sha256": "566e290fc12f640661985c7322286aa3b2fdc3af3d833980efdf46d758dd0e68",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Seven.js",
+      "sha256": "2b33618e50c2dfb55d5c4704dbf4f3a47c7e07b6be91cd3061d34e4055f45d0a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Six.js",
+      "sha256": "484f23a7edeac3969e748339fe430c96fecfee9275d62affadf5f486b47d3e91",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Thirteen.js",
+      "sha256": "7bc22864b895f34a114e433520c7a1fb97a5f2b4e60415d14c8ba6f070c1534d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Three.js",
+      "sha256": "e73d8090663d2694c66394945c2571e03145e26c80a2594a9800146e390e9123",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/HeaderStyle-Twelve.js",
+      "sha256": "acfdb5ce6951be4b220bfb89d4c1bc65f6c05d462ed7a9ea4a69db192a3da311",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Eleven.js",
+      "sha256": "90ee9eea755bc7ddb53e5e6aef9e3b0c756fd536d5826489b4537bb0bbf9c8dd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Five.js",
+      "sha256": "ac498d9b6f57c85f1bd4dcb4a61c51c7ba7c19de0b4c412a577e43669f09c028",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Four.js",
+      "sha256": "a327b3938d393cd6cca85c924ab4f01ab733e21a390101593d85c8dfb01bf08b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Nine.js",
+      "sha256": "a35952fda96cf76aa2550d08c68508c3585904b5e9798f567e9d51b0fb416f57",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Seven.js",
+      "sha256": "b88a75024fb25daab2e884a8ab52b3b59b17fb86a992f7c8b8a2384a11b0fcc1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Six.js",
+      "sha256": "4867569a14b14e50dda7ca5a2223bdd067420282063c00805174254dcc42ea71",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Ten.js",
+      "sha256": "d235896610fcdf9f7b476ca17a442555f8e33438c035068ba48e1520eb9da3a2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/Headers/Header-Two.js",
+      "sha256": "b78c13234b5ecdf521fb2bc81eea9a0ebbe5d232103c15e5a0d0a4b8cf767219",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/SideNav.js",
+      "sha256": "4510d66f218d2727fd93b58d00c88651496de91f0afab4a0807cf45b698cbdd3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/package/HeaderType-Container-Four.js",
+      "sha256": "722b645290aa770e4e68a9d73b807f22b5b7346170f2dd06e3bae10f91b96059",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/pages/11-singleCourse.json",
+      "sha256": "d5b72066251f8629c471da42e68909541dd27669948b54bb68566d029450c339",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/pages/healthInstitute.json",
+      "sha256": "909c1816bcbbd07a1da180fb39e3b7a236b57f7fe5684ff1254b32f5c2907ed2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/pages/lifeCoach.json",
+      "sha256": "5c9e983e8ab2d6de01dbfd4c3e8a888a35aa6ba396d9144c4bbe76fd6029268c",
+      "verdict": "deleted"
+    }
+  ],
+  "verdict": "deleted"
+}

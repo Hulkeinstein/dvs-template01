@@ -1,0 +1,14 @@
+{
+  "work_id": "histudy-demo-phase3-execution",
+  "task_id": "T012",
+  "attempt": 1,
+  "axis": "INTENT",
+  "reviewer_id": "01a0bb4f-61ab-7141-adaa-df1ce99a6756",
+  "reviewed_artifacts": [
+    {
+      "path": "docs/work-plans/evidence/histudy-demo-phase3/T012-receipt.json",
+      "sha256": "b79bdb4788044014f093d4166e03fc8ee33ab1c9f3db5a06d5ec2aacb081507e"
+    }
+  ],
+  "verdict": "INTENT_PASS"
+}
