@@ -1,0 +1,14 @@
+{
+  "work_id": "histudy-demo-phase3-execution",
+  "task_id": "T013",
+  "attempt": 1,
+  "axis": "INTENT",
+  "reviewer_id": "01a0bb5a-8503-75d3-b5a9-f302103ca124",
+  "reviewed_artifacts": [
+    {
+      "path": ".prettierignore",
+      "sha256": "84541e4086cc24116aeaaebc74c85afb08e9cda330e50e30afc54bb44838b37f"
+    }
+  ],
+  "verdict": "INTENT_FAIL"
+}
