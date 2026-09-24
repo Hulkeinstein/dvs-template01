@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "phase": 5,
+  "source_commit": "dc7db3b9653ac1417ce52a85e50284c9a66f4f18",
+  "source_manifest_sha256": "82a12620eb5226bf23cec43e0bd7cd6238ab5db822a76652625b1dd9883c982f",
+  "file_count": 22,
+  "files": [
+    {
+      "path": "app/(courses)/(lessons)/lesson-assignments-submit/(assignments-submit)/index.js",
+      "sha256": "ccc00b04b446f56dc10b88f1d6631515d6c6e9ed0aa0d007fb1f8bc070f243b6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-assignments-submit/page.js",
+      "sha256": "dd578151d46bff212a064464c866d6707d3919b85c7419deb83defb46fb2a6d1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-assignments/(lesson-assignments)/index.js",
+      "sha256": "fbf4fa88e8eba63510b670dba86a53ddc929fb1156868b89e9361435c2b52dd7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-assignments/page.js",
+      "sha256": "05052fd7dcee7aed0f59a236cc0e7cbd1fdbeea470c973dc3cc33061d94e62e0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-intro/(intro)/index.js",
+      "sha256": "e4dc8cdc23add4b314858e78dc361f856251f460ba0210fef6a323ab3c4c940f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-intro/page.js",
+      "sha256": "3235e82f73f197308ac3319d08c90b81c0ad70ac73b9d70343b23a5c3800ad21",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-quiz-result/(quiz-result)/index.js",
+      "sha256": "e609b7c22f7b43755090b91b4b0d1f6b675622e720a7ced1ba308e7c21391dd9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-quiz-result/QuizResultContent.js",
+      "sha256": "7623c48c7164985a7e482ea0394736bd8c36c27812c537b9933ad33796bdc512",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-quiz-result/page.js",
+      "sha256": "e01e04070a910fc94cb44bbb0365510601f4b64683886ddfbab9c7486f1a8200",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-quiz/(quiz)/index.js",
+      "sha256": "62e676f4a38c85343a1d2bfdf3b749868f142ae4f49876ae55bba227296746f2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson-quiz/page.js",
+      "sha256": "88d6df0fb374c57197a9ed28653913b2860ca571c3ff89a3f3b9668ef85bdda4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson/(lesson)/index.js",
+      "sha256": "dbe663b7c176193d4d93e1c6fb7cf40573f124d02b9cc90b5d194e51a2380142",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/lesson/page.js",
+      "sha256": "510114742ba9da1144569187c749cbd57fa6d23ac83cb4d5418774d7515e16a3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/profile/[profileId]/page.js",
+      "sha256": "ca1fac7f0ccb310c28c70fceb120b974d3e3ded839fd79fb765c13918715fdb5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/profile/index.js",
+      "sha256": "0d3a36dd850e0541b3eabdb0fdba060742bafd31440747365d6a4911321a102e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/profile/page.js",
+      "sha256": "a2348e177d14a726ef0c2cabb3f5f8e1aa44c6c7df83b54ae778483c1fb03a7d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/LessonAssignmentsSubmit.js",
+      "sha256": "62a7181b842eec157b22126a541b73a90db8f20c617ffb267ee386a036ec39b4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/LessonQuizResult.js",
+      "sha256": "61a4db7970f82fad5d5dae5ce384f0cf8cbe0e5962a65a730e234c898124a673",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/QuizResult.js",
+      "sha256": "d0fb47fbfa19cf13e1dc692aaa7165097e2c3e8e05c7cca97b5c041aba22d0ff",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/User-Profile/User-Biography.js",
+      "sha256": "571cfd0388ee84c06f9e73c90fb19426a886227a344c518c9d50e133567e3b5e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/User-Profile/User-Courses.js",
+      "sha256": "a44cfb6452537766aaec6a2e441b04dae08d64af574d2429175b6399b4ea34ac",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/User-Profile/User-Profile.js",
+      "sha256": "b5d4bc730a8434025fc51d7e9551d822f30123631e8269022f910e7404726569",
+      "verdict": "deleted"
+    }
+  ],
+  "verdict": "deleted"
+}
