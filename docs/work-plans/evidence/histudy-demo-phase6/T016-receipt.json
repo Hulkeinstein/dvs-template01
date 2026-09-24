@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "phase": 6,
+  "source_commit": "e741d21782d13050cad7496c3e82e62d52cebd85",
+  "source_manifest_sha256": "82a12620eb5226bf23cec43e0bd7cd6238ab5db822a76652625b1dd9883c982f",
+  "file_count": 59,
+  "files": [
+    {
+      "path": "app/(blogs)/blog-details/[slug]/page.js",
+      "sha256": "9a5ed67b0f65621df0d485e6a9aaa1a57b88a079a97b6a6bd0380a1150f3e901",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-details/index.js",
+      "sha256": "c3cf0417ce9480ea4f212a7d4644dbbde2e0cd55d162da76d1a347a15e9f45a3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-details/page.js",
+      "sha256": "b8d0e1d66b5979354db5712586a0478d7e04ee63dfe751972e5190a4b6ae65fd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-grid/(blog-grid)/index.js",
+      "sha256": "85bca12263d8d2ed2713f89de6d1de19b8cff13466904d826d9a181c9096dacc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-grid/page.js",
+      "sha256": "0ecb4d89eb99cd98c7777c5a0e0b8fb5e25ec1a607fcbab87dc591ac914c44bf",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-list/(blog-list)/index.js",
+      "sha256": "594467fe73b8d06767e054f6d8161107cccbff8035bb37308a874ef81c051ed5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-list/page.js",
+      "sha256": "c173a8bf4461701b6305b3dbf5f579167966e3634b2faee82c75f8f28e7a898c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-minimal/(blog-minimal)/index.js",
+      "sha256": "65f6d6e0e097cdcda37ec0e0588670b25c2125b213b14f5d8ff66832412bc88f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-minimal/page.js",
+      "sha256": "5adae49a9ecac8db2a2e4ac3815bd21a9819ffd936f3c862fcc137cdf114fed0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-with-sidebar/(blog-sidebar)/index.js",
+      "sha256": "1056573af090b99660e34fdf549bf955d793c17217725563c4255404f4380c16",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/blog-with-sidebar/page.js",
+      "sha256": "c0b4ea8143f916be717ecf04c79ebc169828beed7d2fe2be509fd266208565db",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-audio/[slug]/page.js",
+      "sha256": "ef68a6b5545bf425cfa88cb68d1d08f2ced3f9723135a35959e0d340320a8665",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-audio/index.js",
+      "sha256": "936ef3e514837a8e0174a5d5f56456390230a64764056d5c8137b45b5457a3d7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-audio/page.js",
+      "sha256": "61ed9180afa1e26e9c5f019168c7d43ae2092bddd3a4584e95a5ca099a1fe7ed",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-gallery/[slug]/page.js",
+      "sha256": "b4a31d6a9e7fad2f3d59289c07d895abfc57332a26f5945383ef107cdf2c6684",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-gallery/index.js",
+      "sha256": "3e80a24d7bf94cc903b488f47ecf1f731968caca0c18b8d2967e35445e751519",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-gallery/page.js",
+      "sha256": "dad46ab6c344252033df5adf2431c5435a3a9ef145b8c736c3d98259cea20d18",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-quote/[slug]/page.js",
+      "sha256": "d453bd3e184002f292d9ccfad24c52037339f800846dba72001daa090dc7ea6a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-quote/index.js",
+      "sha256": "2e8d5059b60761f0d6655a9f192ba7dc2365637e032841f625a37b9396d6e142",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-quote/page.js",
+      "sha256": "fdc77f4c73cdf59d92d310b235b9258f53a58cc0188ed04a3b142f5657734b1a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-standard/[slug]/page.js",
+      "sha256": "ae4b8bf88ee7ffbbdc58e0cb8019e2afd7803c67318b53722f4719b94affa147",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-standard/index.js",
+      "sha256": "4b06a5473f7a8f0011e019979bfd8d8a4e2843395eddeb54a993dc40ec459d3a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-standard/page.js",
+      "sha256": "0a5ff81eba9791eee8cca86e60a643f3b01a11614e248021413a7e04c0726658",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-video/[slug]/page.js",
+      "sha256": "1ceb7413b71ae096e8560b79dfceaa27b97143ef2dd985066dea347fb9f9deaf",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-video/index.js",
+      "sha256": "2c6db1c79d21c46a2315ea87782c1ed739fa85d7858f70549cbc01ed3c0192d0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(blogs)/post-format-video/page.js",
+      "sha256": "a696d2a36e6afbfaaadd02501f9a678c3ee8c706f497c64e2adbcb446b773a34",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/Blog-Author.js",
+      "sha256": "b8b99019e8122eacc5e7d5cac5514f490190db67a6e4eb27bb78693c69ab9a61",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/BlogGrid-Top.js",
+      "sha256": "27babf33fa3afebca764034dd402dd374ed408463a7ec455704de63c8148a0dc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/BlogList-Items.js",
+      "sha256": "0f5d2d2237976ba1971be3c4251d81bdeb5a25521b00ec274d153774b897ecf0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/Comment.js",
+      "sha256": "176c0cdf036cbf3b86880bf6a294c66680facccb707a08bd753d8e6bbe25e45a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/ComntForm.js",
+      "sha256": "d87c45df20f22d349597fa42f91d09158741dccc44a7c23cc7501d42d2c69e7b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/PostSidebar.js",
+      "sha256": "289014ce2c3e3f5ba4f0f5dfa3220d5d54e0d66980d233d5f34ae93181bb5ed6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/Blog-Sections/Sidebar.js",
+      "sha256": "6bb0d55502e4fe805bd5bf01d09569ff5dc0801c90da8ff7a719c59ff626fcf4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/BlogDetails.js",
+      "sha256": "3cda0d378551534bb5d3ae13cf8ff0bb203d2283b6a77dd8a76fc16fe954f4cd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/BlogGrid.js",
+      "sha256": "dbe0be03e6d18cc1414854913f9954c4c2b322d595d409fc0b2a6d6c9b7221b8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/BlogGridMinimal.js",
+      "sha256": "c32380a073eb11d97a9125b8dbed98cf8c9aeb836d6d6178a0c25a7a20167158",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/BlogList.js",
+      "sha256": "56ef11baac657f930f44335a23a6c520f749a63cd29185dc6bca2a88491afc8e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Blogs/BlogSidebar.js",
+      "sha256": "87eb66653ba08cc1b09697cf2d75d1ba787b60984de9ef4699900729091b63ea",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Common/Banner.js",
+      "sha256": "6c601adf58939333d6ec82e09dbb058a35cc8413f0d26e0a4b0d831abe4271dd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Common/Blog-BreadCrumb.js",
+      "sha256": "1cc5b7619cffd8a93b7f36f62c36d4200ad884ac6f039e850e4b270ec5a81d17",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-1.md",
+      "sha256": "6c9d70d9a440ed3bb842df70b3cf8d3ce13e7548f07cd5cde44778f284f272bf",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-10.md",
+      "sha256": "3e3d9173626a3a03a0a846d14e0488ea141ef2d1c7c19869f219fbd885a609ff",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-11.md",
+      "sha256": "35a63a8f900e2cdb6f210c94c2d2ee1a3b74211fca813eea52a5399f786fd16d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-12.md",
+      "sha256": "b275f8c5e843a889270948713edc9bf3180b877b09bd803bb1ca432a2dc01624",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-13.md",
+      "sha256": "33f070a0e9e3ae2a28c0894fe59584b69942a801e489b18495c49c16e954a55d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-14.md",
+      "sha256": "ff1aba36adaedb42f176dac1db78c5909c1835b4c0dcd048d93062cccb917f6d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-15.md",
+      "sha256": "0bd2e95ffc23c5a3affd05349671ef92bb8eb39989d6ae9f480d920b1330e582",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-16.md",
+      "sha256": "8cfe495f2a6c7a6b3823eb66ae0a1e5ded853215656a7038be99316e21c8fba8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-17.md",
+      "sha256": "a95582698e737036380b9705a804b8e90c7b50bcf000eb44f2b6e08d5f896c9d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-2.md",
+      "sha256": "e7972037f3182921d315d32e9ae8c2591ab5c4e44ee982f555d6ba15a525ae8f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-3.md",
+      "sha256": "e76b10a5ec6462f7eb89109ced74e40d5fa3232495378ab6b19c0d4b4825d5d5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-4.md",
+      "sha256": "6bc60cdf3a854ffb473c152d2a82997452d0ffcfb35397ac6aa4b5228b7ec0cd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-5.md",
+      "sha256": "62ac9088a0c0efb48432c72bffd248eb618479b4b50f80ec6ba067162564af0b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-6.md",
+      "sha256": "cff7ca20b6ca3193a704d4f0f6b3b28071f4f681a168ab5f6aa1e33130f64a4c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-7.md",
+      "sha256": "2590ae92fb9b7abba9b87b878dc6a9dfafd1a9a5c1d7b69c6def0da1e2350ba8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-8.md",
+      "sha256": "aee1a020358329fd46a4718b8ce344f3ea1f5946b0fa41fa216612f6365179f5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog-9.md",
+      "sha256": "cdbfa8a4b9b65ddd39ef3fe19814401fe454da93503bbf610f71b82ef080262d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/blog/blog.json",
+      "sha256": "e2153d75141f3f694a9e8433526c955a74183949a580c16598d6fd62283b7127",
+      "verdict": "deleted"
+    },
+    {
+      "path": "mdx/index.js",
+      "sha256": "c76f435aafd758ee1793e66067b051fa33626ace3f91e450abdbad2ecd7dea71",
+      "verdict": "deleted"
+    }
+  ],
+  "verdict": "deleted"
+}
