@@ -1,0 +1,1535 @@
+{
+  "schema_version": 1,
+  "phase": 4,
+  "source_commit": "2665b78a7c9c01ede007fb1a0041cf2b84e26fc5",
+  "source_manifest_sha256": "e030c756e4e8ec47e46d0128275b0b39453ab5e8f2e6c1c4f9b38afcc59291d7",
+  "file_count": 305,
+  "files": [
+    {
+      "path": "app/(courses)/(lessons)/all-questions/(question)/index.js",
+      "sha256": "3de3a576ebc47646b847aee6463e5ebbd7a23ff1c4f9058abeb524d17b75e271",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/all-questions/page.js",
+      "sha256": "4eff2146847ceda5a36329160e112f4f2c3ad59f9cc346dc8029e1e2f0ba59a2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/pagination-quiz/(pagination)/index.js",
+      "sha256": "81c04e07dd2399a92a12df2216fa6f785e4e2c3d49c03d2e4386773a4d525677",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/pagination-quiz/page.js",
+      "sha256": "dacbd877ee8e48bb9927eae748646ba3f13b74ea40cc59c0b35b17484d74516d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/questions-types/(types)/index.js",
+      "sha256": "4dd808c9758a90db8dbe450ac5b8e297cfdcc83464bdc6bf1ec409c54bb58c9e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/questions-types/page.js",
+      "sha256": "6fca3c85f04f10a196aebb9ef56861ffdf200feaa91715041582e6a52e02be11",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/quiz-with-custom-timer/(timer)/index.js",
+      "sha256": "7c7229b1b23d797ecf0134b291ed7dbb4a524fef32611b7f49e1586680786e15",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/quiz-with-custom-timer/page.js",
+      "sha256": "508946ce160ffad1cd05b7f3b6eb5d1f072b65c54654a539b8f40e181f964cf7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/quiz-with-point/(point)/index.js",
+      "sha256": "6b7ed8432f07a081adb914655fe4928e11d02d97de1a23feaf84651ad640d956",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/quiz-with-point/page.js",
+      "sha256": "04f0ac42b7f8dab9004fb13073fb6fd98c4c619223bd39a004b0deb528fda700",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/single-question/(single)/index.js",
+      "sha256": "98523491f51f0ce188c45c78abb123d1a7c0f3c017bed978238d7dbca53eb9f0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/(lessons)/single-question/page.js",
+      "sha256": "66073db217f3a54703fb4b7de22c2c5eef640089f939c9e2e968d020debad538",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-card-2/index.js",
+      "sha256": "b7b68edbfd0e01fd2f6a688d188672da892601b57c3a115a5c73417df286c6a8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-card-2/page.js",
+      "sha256": "41f4d0cf626aa82a9a78d3472c0464cc8478411142f04232980ef9503d0bcb96",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-card-3/index.js",
+      "sha256": "cc082738de4b137c8144fac24153e541d7e7a5e309fdbe87bcf77a0b71685a27",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-card-3/page.js",
+      "sha256": "cdc6262a810c7c1cf784a983c8ab14e260976674a7fa23e311db9b0ce91471db",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-2/[courseId]/page.js",
+      "sha256": "ed77fd8c5e6d3d811ad57fd061af288572b925b2dba705459afb4a1ebfa82c42",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-2/index.js",
+      "sha256": "d98781b3ed74be506ccdc96431e4c2cc12959fea5ade8ea151cab3b2c50924e8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-2/page.js",
+      "sha256": "70a79ff510a4b2e5c889663a0c1dd1b67947625d6176053705d673d02a8fb88b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-3/[courseId]/page.js",
+      "sha256": "49c8ae350e33c0465d318b0daaeeee9c55ea17efa454e59ccf87fa0254fb7cd0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-3/index.js",
+      "sha256": "4b57c495ad48d48b6f2e6b448e74d613b6cb417ba4893a7b0d625bf52899ab14",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-3/page.js",
+      "sha256": "15daf8788c94b19713aaf8288bf5fb739a7f8aeb40372fdbb23b25e6c5dbf6ff",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-4/[courseId]/page.js",
+      "sha256": "49c8ae350e33c0465d318b0daaeeee9c55ea17efa454e59ccf87fa0254fb7cd0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-4/index.js",
+      "sha256": "ed001db4ec399d78607ebbd261638fe69ed7b26c538add7525f4bc9c8e06f05f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-4/page.js",
+      "sha256": "fd5f5e708e53716bd6aa2dd3166f44579942ce0b5c7f11bb43eb61ba203fe05a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-5/[courseId]/page.js",
+      "sha256": "d0640a2c371811aee0cedfa103014b9f1a8037b69e3a6f0767ed46188df41744",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-5/index.js",
+      "sha256": "7bc73562e8659c770ca6f53eac031c7053f22a876e5c55c1f811faf3e4dae24f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-5/page.js",
+      "sha256": "66b440e432bfb0a6dfc7db3db73ae73d1ba1afe95e8bf842abff386542390abe",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-6/[courseId]/page.js",
+      "sha256": "e6b1aa4f27d7fdfd86973d83004cdf1f23832876cb653281d19f2a044a02ffc9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-6/index.js",
+      "sha256": "1e9ed653771fe3e01ad6658c899b7d25d89f87c383e8b5cb7f71f53e18fa2128",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-6/page.js",
+      "sha256": "a228826f84fc3d62f78142b477ef5163dcef70e5c957e3654f25761d7d738694",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-7/[courseId]/page.js",
+      "sha256": "f6788a1ad2a02863a7f9d7aa0aff3d12f44e5b181bd4fd494908ee733c318adc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-7/index.js",
+      "sha256": "3db59989a9a702e744c519bc9319612048170234304b796de90338d6c7e7e200",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-7/page.js",
+      "sha256": "a36e0f5a56f5beb2f310fca2e86819dc58630ed4809a7fb33990460d7a08d5f4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-8/[courseId]/page.js",
+      "sha256": "712083fca10df9b9b9973632c91699df50c55f4b9a442bb5093bf22b9dfdef02",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-8/index.js",
+      "sha256": "5f26ccf548f3b6d6bbda8111b54998e10c9bef27058af8e81ec270501923e18d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-detail-8/page.js",
+      "sha256": "3842a2a15f7000bc604ba04c7c04137c800c3118b9f388c925f23cf3952b8233",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-open/[courseId]/index.js",
+      "sha256": "eefcf037ad95cb77edd880dafa780ced6b00a46e324a141d91cda2752223d836",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-open/[courseId]/page.js",
+      "sha256": "68b24246137358df3026f60ea5ffd677b28d515032c01d74e4e24e496aaf1928",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-open/index.js",
+      "sha256": "5e62c5b2f670b6fc012d065d98dddce33ab41653e62568d3b72d543f9e36edfe",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-open/page.js",
+      "sha256": "a6005b9bb25e654361f7e54eb6c49c08a91e4f9cb0f1626e626fcf20936265a9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-toggle/[courseId]/index.js",
+      "sha256": "eefcf037ad95cb77edd880dafa780ced6b00a46e324a141d91cda2752223d836",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-toggle/[courseId]/page.js",
+      "sha256": "ddbac18a808f6812db251d94c98bea06c10c20d29a1ede9b522a2e1cf83afd7e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-toggle/index.js",
+      "sha256": "61514b85460b4b71091faa3558f87c6c31d8785d26639192bbcb0faf88b5c1ab",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-one-toggle/page.js",
+      "sha256": "1f23c373baaded365cc5b4f30153c52600e1c8e5a330911fe13670c55b93b047",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-open/[courseId]/index.js",
+      "sha256": "eefcf037ad95cb77edd880dafa780ced6b00a46e324a141d91cda2752223d836",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-open/[courseId]/page.js",
+      "sha256": "089a956494585cb7555dd4fd8c43e65b33236862b19b6acc10f0922032fd078b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-open/index.js",
+      "sha256": "c81f345edf09ec62a1e7191ba3646c769e173f9e68dfa31639912ba31d43cb94",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-open/page.js",
+      "sha256": "07ca1a4eaef2afb9299cde2f05162c687a360b8c1f22b6f60d7956d76c46365f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-toggle/[courseId]/index.js",
+      "sha256": "eefcf037ad95cb77edd880dafa780ced6b00a46e324a141d91cda2752223d836",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-toggle/[courseId]/page.js",
+      "sha256": "8f5c247f6245610843354ea353d595deeeb87efc9c848b872ef453bb02ded6c3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-toggle/index.js",
+      "sha256": "709a81308d6495534846bcd1e511ce07920649895cb5ae12ea9e01c0dad726f7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-filter-two-toggle/page.js",
+      "sha256": "2cbc4d4e29f334dc7463564fc47763933081dbe03620499efe7cb0df89fac2f8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-masonry/index.js",
+      "sha256": "c87190e73bbbe2e3fed7c4f45336a0ccaa95ba98ac7cb80b4ec474f0c6622132",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-masonry/page.js",
+      "sha256": "1a8039911dd6df2e04a61f62abf97d76d9e7c357ab8a7f6a51f8127c0e2fbe0f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-with-sidebar/index.js",
+      "sha256": "336925d2f6e8ebdcbb6e5cd80256584bc1cd4153822df9d1769f38dafd1abaf3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-with-sidebar/page.js",
+      "sha256": "480aa07e65defb8c7b49641f4f7adf4f8a3f13434a3dd23c0aea739d3596dd16",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-with-tab/index.js",
+      "sha256": "95019a3b17c1e77d9536dcd1c6f4f2d5fa1cbb36960c82f012375d7c3ba52af4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-with-tab/page.js",
+      "sha256": "dc37a1311f3f821572aceb8ad0c6e4b4f56a560bfad80f734594c7d702aee5c0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-withtab-two/index.js",
+      "sha256": "22d69d050bcb8eba68aa16ec114b069a0a562a68f366bee2da473f6bf96407ef",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(courses)/course-withtab-two/page.js",
+      "sha256": "a999f6a2f95aeb394b195e6c4f2b7d10f4626343e58b190185f0518efaf76b83",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/about/(about)/index.js",
+      "sha256": "448e2cb8b298843abfd24535efba5ba6dfbe35c0f4965542beab79e90feb6ece",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/about/page.js",
+      "sha256": "58333c4824824c31413058cd1b6782bc977632e5dc42025263cc34ca31c59237",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/accordion/(accordion)/index.js",
+      "sha256": "0f3f8e76fa738ae4c9ea6d486a37a03e011a31217fbc8bd8170f26980abe75e9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/accordion/page.js",
+      "sha256": "2e9c6030e656698288efeaa578aae316b948bd672756605de786d052c1b686a0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/advance-tab/(advance-tab)/index.js",
+      "sha256": "4dd7f4f621a4f38459093536df5f3168b192d1d8ff3adc66bb372dc45593e6de",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/advance-tab/page.js",
+      "sha256": "0cd467dca6c2edbf32e0d0ad534b9e2272cc75524decc5945dd72602c7e39961",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/badge/(badge)/index.js",
+      "sha256": "9feaaea3633b5d9a1c4f76acc5e4f8069da151fd2a4301e8897b386bfd1ad51a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/badge/page.js",
+      "sha256": "67dd6de68f70617880a5d9148710ec3692ce5e349da43d5be61df5def4d1629b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/brand/(brand)/index.js",
+      "sha256": "7b5d1bea8548d37824d1f46dc4dafce3b10eb89ab5d703ba752c08bca448cbe7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/brand/page.js",
+      "sha256": "14428d2be3cb7e942d6afcaf5ac9a5f6fc43c734192dd41439aab225a29f5d46",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/button/(button)/index.js",
+      "sha256": "fcd3290a26210dff35060cf3edfef00d6730947b199f37c4a5def86a27cad4f8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/button/page.js",
+      "sha256": "32e806d61890b15b55d8dfe721af37bb1f9a79bb933e63e5406b941122441227",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/call-to-action/(call-to-action)/index.js",
+      "sha256": "2a8d33dab5a5eabd710f4ceac91885f44cca88d1bcaad4fd08e4a4002ae9df3b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/call-to-action/page.js",
+      "sha256": "028d4130e01f7bf052e7849f028924189a002bff8c6577959a68505f1a70fb7f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/card/(card)/index.js",
+      "sha256": "2fc02ce63672be5433ca8b2a1f92a340c25f5f31d8d2181f2142898ee8eba2a5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/card/page.js",
+      "sha256": "ff216262b86377a0903cd9db2b4523bc32ae3dfa1674375bd9fc797fe3e770a2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/categories/(categories)/index.js",
+      "sha256": "640b8868bd4788d01cc5a7d904fe0406821ca3212fe67722726cca8adb70f1b6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/categories/page.js",
+      "sha256": "946b4e7deb78037f0b199b9357343957e975871d29a6da630be9f092dc10741c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/counter/(counter)/index.js",
+      "sha256": "86b3a0c1a992b1a02dafb8bd25fa3b6996266358ed973a59b9e04ba6839df73e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/counter/page.js",
+      "sha256": "dfe0296fa4f00864bf620ee616a4381d5b19de6809c1417c4f3e703e0508399f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/gallery/(gallery)/index.js",
+      "sha256": "1e0c4bf804f0e6ab1a86fdb137c3be3b5d4d4d81ad77a6b895ed3f0d75b379ed",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/gallery/page.js",
+      "sha256": "c67665ca4500774ea3a3d1bbdff5316bc579fbf978c705341e16378c5c3469c0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/header-style/(header-style)/index.js",
+      "sha256": "5b69b1360e816ac3a94950fb41143906fc405dfd3d2bfdb0fe42a10200bd0055",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/header-style/page.js",
+      "sha256": "d5b5869387336e377095f28873d11a84cf86039cb902385a08c3bcf3fd33bebd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/instagram/(instagram)/index.js",
+      "sha256": "882a15afdb349f0fc0aa13223c5f47f4c9fe03fe1f08f44dd3f36b1f530e1221",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/instagram/page.js",
+      "sha256": "dfbac7de526488aa8a6206a39c096584deddfd54eba990543014d6006242343b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/list-style/(list-style)/index.js",
+      "sha256": "c953e31714579dad48b99e9bf35882515fcdcc7029e99a954e6bfda3a7dc8b3c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/list-style/page.js",
+      "sha256": "c032bc6919bfee617362de35749f17ff1a0d8d130cc7580ee131d5c7576d57f7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/newsletter/(newsletter)/index.js",
+      "sha256": "c26e275fd306ec9be6392a3a2118d4ac274f75221568711370ae6faef7b30690",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/newsletter/page.js",
+      "sha256": "0c7ad7e7f90e909486ef4fc80cd1d4491f29e873cd1c7c53b05add7c5727c814",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/pricing/(pricing)/index.js",
+      "sha256": "22eba30b7ae2baf5fb9cae5d2a098567000f1f15ce73ccb7c0373cc1dfcc7b83",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/pricing/page.js",
+      "sha256": "569ed599a9d54c5c09f336c4f214cad18cdd6174902b00ef179993ed13203eee",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/progressbar/(progressbar)/index.js",
+      "sha256": "391253379e1f466f2c60c718f18bf7de79f10da205e3b963d2610f89446d7f08",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/progressbar/page.js",
+      "sha256": "ced2714ba9042cafbe0c767d80af5bbc0e3ff8b32d297351c8b3317c3d83fda0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/search/(search)/index.js",
+      "sha256": "0d83c301383247b29041048cd4cee1a55214479854d36f79e7f9a4edff314ea5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/search/page.js",
+      "sha256": "24fbbd0694ac2a6dedbf960b0b823a68aea4594e4ae91662f2f1768031daabf6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/service/(service)/index.js",
+      "sha256": "9a3cc53a0d920c7c8f0aace12d7cd31f5d7999e3098df352a5ad3b19d49bba88",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/service/page.js",
+      "sha256": "34dc9693da65be82a0caf2782ffaa797d79a84374ab1f360c24c8d573742bc91",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/social/(social)/index.js",
+      "sha256": "f2bd38f6d5f213abc47876487f3c8617f4c09c655c84d438ee1e5963b62f8f2e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/social/page.js",
+      "sha256": "817035075dc93498b70e73cb076de416f563a95709a67a3d09f5088553453e0c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/split/(split)/index.js",
+      "sha256": "a062aa12a0334add4ca4263166c8b89417cbedd7d391fae5c237ff393f0ce948",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/split/page.js",
+      "sha256": "79e454e23850be0db4c4c18bde1aba4f15295fb63821ccab3e4fa4a70011e85c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/style-guide/(style-guide)/index.js",
+      "sha256": "ecbc42a59c7e3fcfa317424c49a35f898253a47ddfbc660ee35db192a2c8ab27",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/style-guide/page.js",
+      "sha256": "815e8cd6de47eba3073e7144c95330723c2b064696c62ec1267d0f75a3143c4e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/team/(team)/index.js",
+      "sha256": "bf0ffb46b7e33a0587a5239a13df8a610ba87212ad473dca9ec20515c8117021",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/team/page.js",
+      "sha256": "80abc005c5c4511b693ec808be4aadd7207cfc2d9692a93d89a2379906d24bfb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/testimonial/(testimonial)/index.js",
+      "sha256": "87f2c5bc9ec7e7710434c756d444d5934450fa62320b62a866b50ac56598f748",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(elements)/testimonial/page.js",
+      "sha256": "df78251b20592b4d08f7928063014591064ca70101f508789143e71f2f2582b7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/about-us-02/(about-us-02)/index.js",
+      "sha256": "b1e88bc9077f98c1fee8c39ed78dbe48078179140c859b96b0b7eba9023ceb67",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/about-us-02/page.js",
+      "sha256": "f84c895d9b98097057f8a2f859244953236974f00fde3255b498cc40379c6964",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/academy-gallery/(academy-gallery)/index.js",
+      "sha256": "7bd19b0be1258e2878a3a5632445e6ac42d1cb571660ac7417d8f95cbc4e07cc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/academy-gallery/page.js",
+      "sha256": "5f0bb5b066c4fc7304e10b5adc458ced2b42b5cd5737ec9d29b7b6da95bdc87e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/admission-guide/(admission-guide)/index.js",
+      "sha256": "a267f392c8aa7c8b4fffb3d351aa5dfb632052f01f6574547dc8e936df5be5fd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/admission-guide/page.js",
+      "sha256": "23a63da1e7c2021c1b660a99b1c1a0ec95a79b11e81017778f3763f10b130bdf",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-details/[eventId]/page.js",
+      "sha256": "69d74c49202ea381ce247a9d3f4058f1baaefb72daa62993f71be92a3f617105",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-details/index.js",
+      "sha256": "fd52b6ad6b7f9ca52676684fb6d4a3993e2e09144ae36949286da843d1ce7f81",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-details/page.js",
+      "sha256": "f7ebb840a77678de70ee9307898b9a58a7d129616088a44d52a908908b0727d8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-grid/(event-grid)/index.js",
+      "sha256": "ad6742f64678b964ddb01c51b3ce983d9afda86ad5c34780f2a88cf5232cfcfb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-grid/page.js",
+      "sha256": "0f7599b766c7f8a91fc937622ebf2463fadca655f0ee39c9fb79429d072d7408",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-list/(event-list)/index.js",
+      "sha256": "46da80d365143721bb33b8771d68be2f6659bdaea2e6d65ef3d0870be6831b5b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-list/page.js",
+      "sha256": "c8e716ef6b53a7d4bfad94dbb93109bd69250d61bd65b962232fe6a1bc07db51",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-sidebar/(event-sidebar)/index.js",
+      "sha256": "80894edab5f030d4336f3b35722b1abf0e34791b0122890b78758a3c87f7af24",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/event-sidebar/page.js",
+      "sha256": "d5634e1c6a421ccc312a62a17197538a9c241e8e9856f383f2f454a2efa8e0a6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/my-account/(my-account)/index.js",
+      "sha256": "570e73c0cb8ebab30db7a3fafae80f510eb00474970a4054b0ec47bc100431c9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/my-account/page.js",
+      "sha256": "0a98e7a9a6e18d5800d6e5df285de926fa1391817bf06c6c2fc2f1488e21aef7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/shop/(shop)/index.js",
+      "sha256": "b9d71affad44475ddae03828e7991fc1af7990be6f03be7f8997387dd0d8db01",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/shop/page.js",
+      "sha256": "4e860d309dc15c50d2f3ddf6daa7575b576c9af31a23652c615b81a556e8cfd3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/single-product/[singleId]/page.js",
+      "sha256": "2556900c587d245309b69c13b3abb7c4c640f86151bbd48f4df5ec0b6b25ae3a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/single-product/index.js",
+      "sha256": "7332befe6bf32f5354e279511d9a3a8dd3259acb89f01df671197405b30e569d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/single-product/page.js",
+      "sha256": "e35908944e351a46d8a264616c6a1ce9f06fccf4276dcb85d7d18a85f2bbe2b6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/subscription/(subscription)/index.js",
+      "sha256": "5e050e08f4ecc70678d99e36493bebf1656344154c81cc7864c9ad64d9e6d6d2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "app/(pages)/subscription/page.js",
+      "sha256": "a8f1a8ff4d4017abf4e49b2f475e73f69884ddfefbc95a43bda09c6ebc30b9c7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/About-Us-02/Banner.js",
+      "sha256": "5e8c71bfd19e6122c178c4462062caa6dcb41d45f8d3540e34f359e4a1299da8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/About-Us-02/Video.js",
+      "sha256": "2bc703f328d612a026f878ea6e424cf82e4ba4f6b76e2d809b101062749890fa",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Abouts/About-Eight.js",
+      "sha256": "8a0baf79520142f3d41b96c84a11d29e81a881b994628b5fc92851c4b2d42fc9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Abouts/About-Five.js",
+      "sha256": "5c9f2cc968d5b67ff48adbdedd6a333b9c3e1286977616d301c01c077c2c71be",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Abouts/About-Four.js",
+      "sha256": "139f87794ba6f277a05e5e5e4871d5ed394ba0819057a2f84d72e502b9600787",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Abouts/About-Saven.js",
+      "sha256": "8e6c74a5c190131b8685d4fcee2ace23a6607db7fa9bb7ac6164a1438457864e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Abouts/About-Six.js",
+      "sha256": "edcabf871b83361a832f6d493199c5e94493845736c2b1857475f83795a06a95",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Abouts/About-Three.js",
+      "sha256": "69c81eb1d52aeb4be68777bc2ce1e31c2a473f32c6d4f9a11edae6f996d79a68",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Academy-Gallery/AcademyGallery-One.js",
+      "sha256": "d8f6c1cee7890dcf0816dc6f16cc9c6959dfa4f3be225dc0f0d9bbce39059be1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Academy-Gallery/AcademyGallery-Three.js",
+      "sha256": "9e0b2351b547b78d37dd1bedc4136e0138c88b3dfb7fa9b84cf48630e4d5cc03",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Academy-Gallery/AcademyGallery-Two.js",
+      "sha256": "887089fe4473d70fb89cbd9de69a3dd6e6301b76a13d0e7b04bc89d6e0a57dff",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Accordions/Accordion-Four.js",
+      "sha256": "61992839e079c78801af41ecf0f386de5a97ab34654a7558151cf33ece8fc977",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Accordions/Accordion-Three.js",
+      "sha256": "64b327ad9f0e04bec5cdf1ac362389cc65e40bd6481c6e647cd883a49116fffc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Accordions/Accordion-Two.js",
+      "sha256": "8f53f7e8d3f61282abb1c14b2db72ef98a08cfe46c9049fa682eaeba6efed898",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Accordions/Accordion.js",
+      "sha256": "fb881fb46b312598674859e36cf4efb6107d77111396b345a4e0840458b4fc4d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Accordions/Course.js",
+      "sha256": "475ab57f6102b80d40e9f84905ab6554cd4682927458f233e77782927ddc67cd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Admission-Guide/AdmissionArea.js",
+      "sha256": "3a9a2a9b3972939bc38efff581da383756e449fdc1ffd84e904a68be10352c18",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Admission-Guide/AdmissionContact.js",
+      "sha256": "bf9a448af657a1627ed0e251fd9faec805308d42c928a1723cca45e539cdcb43",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/AdvanceTab/AdvanceTab-Five.js",
+      "sha256": "6941b1368eb8515a4835c974c004bd24e3f8cf9b075d37e9bb794690a1a5a100",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/AdvanceTab/AdvanceTab-Four.js",
+      "sha256": "219a7cbafae46b42ef919c3f5862e7f0dc05598b192b2f18e22f4fd8759daf22",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/AdvanceTab/AdvanceTab-Three.js",
+      "sha256": "d96ce9f120a32dfc584875d3a48ca22f3ab2b794bb9c56aecb190ce3ef4d89ad",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/AdvanceTab/AdvanceTab-Two.js",
+      "sha256": "73732e33d8ec71f470263ab93da77a4f96c8437d88ae951bd8c8a9b729e71b0d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/AdvanceTab/AdvanceTab.js",
+      "sha256": "9e3ec391d395cf70d3f1ef367d0f9e65c70d32a8728a6faf6dba56d51996ce70",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/AdvanceTab/SectionHead.js",
+      "sha256": "ad8a2181a5aac7fe36a07cc28ff1ddb10c07f661813ba176fc5399ee7fdc5682",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Badge/Badge.js",
+      "sha256": "8c132b8f25c55014f019a498db0059ebe2b2614bb48059e3a47f90a63ba0705d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Brand/Brand-One.js",
+      "sha256": "8ddd5204233685efa2575a1663c97af9ec30917228f68fbcb99cfd6d3032a6f6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Brand/Brand-Three.js",
+      "sha256": "11870b3ff8a44d7a1111711fd0ccab12c47244048bd4e0a37dd1b2cd572a6e27",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Brand/Brand-Two.js",
+      "sha256": "b71a388c14a6ff3803ce4a9a4f87a55e28d9a613afc245c4534e17a322e4f96f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Button/Button.js",
+      "sha256": "b0b108cf11e82f7a4278d999beadc594918e62db37bc90a8e8b35718e4e9b478",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Button/ButtonProps/ColorButton.js",
+      "sha256": "3f660fbfe6793e8b3cf9d41d2ef9b081a1115aded963d1009e0e4694342b0875",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Button/ButtonProps/HoverButton.js",
+      "sha256": "a69471c65178b2177dae258448ecf5ec95dcb980c6b48c02dc092eab73617f1e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Button/ButtonProps/SectionHead.js",
+      "sha256": "de87367db7525db60e8c0b6a9b572791cff36829b2b6307fc3522a610b0f3fc1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Call-To-Action/CallToAction-Five.js",
+      "sha256": "53d9cf05e630d0fdbb89bb281d308ed4c811221ce3824d1d10d963aaa8ed986a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Call-To-Action/CallToAction-Four.js",
+      "sha256": "c919c5969dd193af2665d45c1ddaceb94929acb8a5d2639992710ee2c5d263d7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Call-To-Action/CallToAction-Head.js",
+      "sha256": "ce4ef229d6485b97434b4d8107ccc36871c9fd10e4dbc7144cf24fc09ab9a6be",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Call-To-Action/CallToAction-Six.js",
+      "sha256": "5ef95598cf89008709f19bffccef238ff979a1088d9089c838b671918e5e34ff",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Call-To-Action/CallToAction-Three.js",
+      "sha256": "c32204ae69ee1300ed1fee759d823aa46913d2fe8ebaa5511dc539c826f39146",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Call-To-Action/CallToAction-Two.js",
+      "sha256": "bcb67968fd106e3957c419c8ccb7b6c76903e47919f8bc67a854b604961c2512",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Cards/Card-Five.js",
+      "sha256": "0df5de35fc3c02069fd891264eb8aa62b3a5457354b8d8ded96fc92590748eea",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Cards/Card-Four.js",
+      "sha256": "8151fb903a4e7ea3cb491dbe2c6e5185eed9fc51be71c2b5d19a7e51aef58e80",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Cards/Card-Three.js",
+      "sha256": "9ad38c8b80531109386a1cf0d4c6245e3ff099636929dc49c0e868be90f1b208",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Cards/Card-Two.js",
+      "sha256": "023b5b256aa895afa468e6887cccc99cf01110e623db1dbe3f7d7f0695dcdcc1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Categories.js",
+      "sha256": "e9a278cd51d2a693263530459553e261f54093b112cc0f4113b228b196ded498",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryEight.js",
+      "sha256": "e800dff385b7e3dd8052ed247d14a7ae9923a5c3dfa1784c9f9d5a6f4c1e1b6c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryFive.js",
+      "sha256": "7c315d7f77d0271d7a07d3bf27c923143abe056ab81b432d88686453838ffced",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryFour.js",
+      "sha256": "530e4542606bb1d8224e3b5a66be29a06096718af08837e84f728f7d9cb9d1e5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryHeadTwo.js",
+      "sha256": "c1d3cf34df56227e1331b5ba96491919715767de600a9de31eca55ed0dd03ea4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryNine.js",
+      "sha256": "341cd4a0e273bd1ba1f1a217c23d5ee112bdd0c58dd02f5a607117ebecdfd136",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategorySeven.js",
+      "sha256": "8b74af4b739e8985e19c5b6184598a3cec109f8915ef41c70da7ae823c9749fd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategorySix.js",
+      "sha256": "93b30f4ffa04df9092a933dc8521f2140d422126a197917ada5979d4313ea73e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryTen.js",
+      "sha256": "0cd9f9278a4974705af0e749611a4b9dbd90aa29cbf0b05f2577aa9e1c630444",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryThree.js",
+      "sha256": "6562f713ae6c238c11ff3f20df8e7110c3b99a4abe3f3ddc36179c6f586c4925",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryThreeSlider.js",
+      "sha256": "86ddacacd13d38d2066c7c5b3cdf8d65800aa88e3eb14c9ef3b01a6d6d8f420c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/CategoryTwo.js",
+      "sha256": "aca6c20986e1f3ae8f9117d4004383dccbfec5f345e62a45211cf41ad422cf0f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/CourseCard-Three.js",
+      "sha256": "cc7025b61631407605cf56004dc9ee753d817f0fbbbf5eff23c57b1cf51d8804",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/CourseCard-Two.js",
+      "sha256": "14a43647ef87743c95bccaa65b26979adfbe4b842904947e56b7639cbd0c9e1f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/CourseFilterTwo.js",
+      "sha256": "59f28c60d89bd340221f6b0a9d8309b81f13e2ccbd3d8461192c30dc4beb88ad",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/CourseSidebar.js",
+      "sha256": "036b641153acf67017e5bba1399dbdbc1e01ae36defe1fac10b3304f883062f4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/CourseTab-Two.js",
+      "sha256": "7efc9898487a73673f47d4aae37e89beebaa42e80ab955712def467d30e5105d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Category/Filter/CourseTab.js",
+      "sha256": "1cf8596e26ee989cb1173711ee2718ddabebba82ad4abac9f3c48372968a3137",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Counters/Counter-Five.js",
+      "sha256": "8d8dcbc16e87863d0975136832b43109fba0f6ce6ed4edb5f4a522bed55b24d5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Counters/Counter-Four.js",
+      "sha256": "ae8cb2ee1bcfb1712b31e8662dcacb13018caa57ebc7cc42d4c78703be5e7ac7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Counters/Counter-Six.js",
+      "sha256": "2211147fbde9f8a1154342bda948d482c3042ceb5ea6ebac10b0d07fa65d677a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Counters/Counter-Three.js",
+      "sha256": "4b0ec9c596cdfcf5715fd50f9b63a2c981f9624a3710a2c657ab25baaa50cdbb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Counters/Counter-Two.js",
+      "sha256": "d0c302c17b52cf027ef09e3ae78e5860f75be5b20e979c4062e8f843100aecc2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Eight.js",
+      "sha256": "6ab0957ce7de2b091ed8fdf876cb992044e136c6ad711015a0e691bf1533c728",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Five.js",
+      "sha256": "23fe52ce5691fa5d042a3a5bfeb7075fef39d1542a136068ca604f8def2485d7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Four.js",
+      "sha256": "834044371496b11d3fd00582e4194bd695d3cea8f98f685cccf98fe9d8e2159d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Seven.js",
+      "sha256": "25d74d94e019c87cf6c7b70bb7a2cbb8cb212e7613b32f3ebb6eeb37220fa5da",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Six.js",
+      "sha256": "d645bc0ea3dfce234308928fd2c876728fd923c58e1c42592a8f2c61a19be420",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Three.js",
+      "sha256": "5a1e256abceb3f3a9a929b09b1b4542fac0d61b33c56cb95b9faa5d1b53cb39a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/CourseDetails-Two.js",
+      "sha256": "58c14f2087c7a5b3f4c0dbbff36d10374e8acafe675e2895de97b4f5051512f5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Event-Section/EventContent.js",
+      "sha256": "78e99041a0c5d050f2c26d8f281f0a99f797e967a5c9804c62cf3d964b8f4ca2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Event-Section/EventDescription.js",
+      "sha256": "3c9a11053effac28e78fde508d6b4a56a7bdf540cf18cf109e5c338062b39deb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Event-Section/EventFaq.js",
+      "sha256": "ba2a8b14c362d4f8921cf319a44fa090d8a7f9a6ea34c1dfbb7a7eb458cfd5b3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Event-Section/EventParticipants.js",
+      "sha256": "ddcd575c599862485a294c0e1f63a188f12e6ffae2c6cf04515c9f6bd2b8e28e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Event-Section/EventViedo.js",
+      "sha256": "2d093813ba83dc2ff5f16901dfccc91035034623c6ea2038cc76762c5196977b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Event-Section/SimilarEvent.js",
+      "sha256": "c6909bcf3d302608ebae40748cf105b1ceb9918237b7e20c625f66e11785f0de",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/EventBreadCrumb.js",
+      "sha256": "4ad45cb2a357e145ffc73ebaf6728f66e78d3c545bcf1c93d164ad59a99163cd",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/EventDetails.js",
+      "sha256": "db40308083aa32c235e511fac6fc887753b38469bbaf34e50bb84e874bd80d6a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/EventHead.js",
+      "sha256": "c0ae038e8969b4fef1e0ec2d68dac6cd2b2e641834621f6312fee03baf3a1876",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/EventSidebar.js",
+      "sha256": "b0fa7a54a3d9453e4302449345636c65258ec9af41cd61756a117a6b618f39ab",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Events/Events.js",
+      "sha256": "dd5b11d2ca5fe08cf3da976567bd0e5aac9b6ecd0f0a7603221c2267571439c9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Gallery/Gallery.js",
+      "sha256": "0e422189e8cec00a0696d2a6137548ff74e52ce7f808aca91556c3cadcdcb5f4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/PaginationQuiz.js",
+      "sha256": "b81188416e2f328a5540a4db7ddf625787b3460bd099cf80eb58d0b9d2858846",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/QuestionAll.js",
+      "sha256": "8f172e47edc46f6c62f0361cc17d314b8d87f6283ff32608c31036bba85617d7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/QuestionType.js",
+      "sha256": "668dc00ec6fbda23adb10314faa344367b0e53b849352d871b57a276ec76468b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/FillBlanks.js",
+      "sha256": "8f5836e43e538243d62d4a7cc07f3585f4353e0d57b02d62f0b473ce0f96cb78",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/MutipleSelect.js",
+      "sha256": "1aaa49b63e3f64e606f67178ed34785fe998fd773c1e780a2789189bd4132844",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/Ordering.js",
+      "sha256": "b28aa96aafc0a0e3d6d1a3f9e6a96a90f30b06718ad00d933d182fb037f9e88f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/SingleSelect.js",
+      "sha256": "83f6e2399f4017b2a75035917748a2040c725c34da80b24a05a3d045f1434e23",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/Summary.js",
+      "sha256": "35af0fb5d90bfc039f461b3d07e105080c4f411c7e26a1dda6b3c548bcc4efb6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Quiz/TrueFalse.js",
+      "sha256": "48fd9f184823aaa7931afbac6d0c866150f11ea4e07baf0562746adc41a6f692",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/SingleQuestion.js",
+      "sha256": "f2d0f80e2b67b098e5acecca4f31682542a18518c35f4003038f712f19a6cd94",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Lesson/Timer.js",
+      "sha256": "7328beda0c19e66520fdc6ac1d372f9bde3542847d630e0eb87f64dc27b44bc2",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/ListStyle/List-Style.js",
+      "sha256": "08beed0241735a9b6f7e6c899bfb35c4fdd9a714cad3b7e9f65b52350c81e458",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/My-Account/AccountForm.js",
+      "sha256": "7634e81dc4e11c0757ae03d88e0944469ee1720b8f4c1c8851d41d2bb4b19fde",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/My-Account/AccountSidebar.js",
+      "sha256": "baed81f9d587bb3ec7a5b43632b1bfee981ab0df5e151990be20fbc50f66b7e9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/My-Account/MyAccount.js",
+      "sha256": "28a66b17d95cf13bc91ffcdf4df2f69946efb318dd77ade44ccf12f96e1502ca",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Newsletters/Newsletter-Four.js",
+      "sha256": "c096bc8c422d11bbec73855c719194e61dc5e4338e3e474f688c9eb4076c2e96",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Newsletters/Newsletter.js",
+      "sha256": "4e8c790571491f334c27cac3f9eee06c2184a8912140c832f4e2f4c45a3ffe18",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Plans/BasicPlan-Two.js",
+      "sha256": "9997dbdc371fbfe1aee44468e6b3969da21ad47c5f4c8d291c127452d28bd94f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Plans/BasicPlan.js",
+      "sha256": "89c0d7a7a2970b8bd04846f05f8fb3f25413f1feb63892bfc66e3addef8b5191",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Plans/ExclusivePlan-Two.js",
+      "sha256": "9ec2d13ac9f29fc197f56c8bd4852a59acd5277a63d30e5e08e2eab84a74acae",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Plans/ExclusivePlan.js",
+      "sha256": "47f00a6c9dd743182a27274c030ec4629f0c640561e328f8bdeaa91ea5cbe006",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Plans/StandardPlan-Two.js",
+      "sha256": "cc9f0db626c1b03cceb375e49f0ce73f75950b551eef7795f61c9561767c6720",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Plans/StandardPlan.js",
+      "sha256": "ce0579c51dd281246762eea0150f8ab096477a4366051793030656c21365c8a8",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Pricing-Five.js",
+      "sha256": "953c5666661bec37932e0790995745fb99430d08e5aca956dc958bb74379be53",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Pricing-Four.js",
+      "sha256": "09a2259bf6a3df7e999a5a5d5e6d0b0356d053d5fe461a745c51e4f046c1ecb0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Pricing-Three.js",
+      "sha256": "a073ba7714460cdc4a275ffa47b530c4b5d1677a8d051e5baa9d7ec1c10cc118",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Pricing-Two.js",
+      "sha256": "74eca4310adbb4effe8df0c4d57931a530eb88ecbe87f0c0ba952342b9a81cb1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Pricing/Pricing.js",
+      "sha256": "be4042fd13cab7333099ea018e14d6cc061606a8e9c5889140c2de924f405b7a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Progressbars/Progressbar-Four.js",
+      "sha256": "829bcc7f8f295713aa8490cb2e7c36d581e40b0ca70c7091b85e56befb7fd0ca",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Progressbars/Progressbar-Three.js",
+      "sha256": "d7dcb0afbee207645ea28691030633623622e3c9e17147fbf9f7e8951f9d1de7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Progressbars/Progressbar-Two.js",
+      "sha256": "7b1263ec544d67518abee889749b494db483a27b85cdab2c468fb0ede6c330bb",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Progressbars/Progressbar.js",
+      "sha256": "0dacac6552883b7a98e50b4873a52821ee1329e2984a13ae5d4e30726c4e69ae",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Search/Search-Three.js",
+      "sha256": "6db6a00f5cae691d9830fd6d29acbdac0337033db434825b2f3f8db36e50bd58",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Search/Search-Two.js",
+      "sha256": "e7125cd582fb848370ffee348abe5e767647330027eada70dafb00899a6f47e0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Search/Search.js",
+      "sha256": "fe342055b1ab01caeddc2b54875d3a10b6520a442052122617e597bb7f448b65",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Eight.js",
+      "sha256": "6ab65b22f8e139784ba35c17287722c8cc12f15e27ceeeec1dc5fb9c8f0f9193",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Eleven.js",
+      "sha256": "0b2b43518b5a4076276c0f58abad5b61e4ddf1b15e1fdd7c5f6531aeb73f02f7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Five.js",
+      "sha256": "e4dbb1dcf0173dddfba0d75203753995f6f7caa2764d8c517667e67ea77874ab",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Four.js",
+      "sha256": "d190926c1262c016ccdfeeb7b8325a03e214376f63620ea0a0151d4a5ee8a62a",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Nine.js",
+      "sha256": "dc6cebcb82d80abe7b086060c257d23cac6931113ec69d808aef6466eeedb6ea",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Saven.js",
+      "sha256": "d7311bd3b274d6a183cf8c48de85f9ec37f6364aecbc1fac0bf348f543c2ab33",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Six.js",
+      "sha256": "4032cf695c2e714af2db17967555085c1828d4a50d082a5de0ecacf2fcc166b9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Ten.js",
+      "sha256": "948783a0cd6c7b7ee7aa74b47d43389587bc6b0c0f2ceade14a491c3f5103db1",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Three.js",
+      "sha256": "faa0bf3bce51b5b27e80f1114aa594d0a85fc729dcccae272e9d3725fd09c2e0",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Twelve.js",
+      "sha256": "0eeb99f4a92e44e7a38af92ba6f311f97c99438feda05797dd8df8389d5aaea4",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service-Two.js",
+      "sha256": "e27ca3e343dc9f5eb5d8ae77f957df689d7046a0f916320f8a2828907d7d55f7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Services/Service.js",
+      "sha256": "86342816ede8371a29c2f6c124056418504c77d1199a2d787f13ea286185b57d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Shop/Shop.js",
+      "sha256": "4ef012d6928034bdc3fea8194677d3a07b0555113ab1243fec79fea156839212",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Shop/ShopHead.js",
+      "sha256": "8941d14801bd901ef22c8e16aa0ed05b1e03c642d550f110ae0b80579f9195c9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Single-Product/ProductBody.js",
+      "sha256": "226aaa88228b9d3ed445f136be7015e5b8d54fa6723f770dae0d836ef5e7a105",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Single-Product/RelatedProduct.js",
+      "sha256": "4dddbc87b10b4928ae942297be0f3e57280ba589c1e5ad74785351687415fa47",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Single-Product/ReviewForm.js",
+      "sha256": "81482a199917d7fedb27fd6d20106b4b9bbfcb5ce6f58e941db700cc63ba25bc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Single-Product/SingleProduct.js",
+      "sha256": "e5d3979f64b30b7cd2c451a1cc57c1515b391456966e1f045ab9ddbfa2c2713e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Socials/Social.js",
+      "sha256": "f5f94641a8e1bdb7bef3a25527b15d12e082ba1c7c5343f181cd813469b52743",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Split/Split.js",
+      "sha256": "1b82a736d926f09e7a867d88b179b728c3e5e51aea4728c840f3a0a1b4e8c647",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/AnimatedHeading.js",
+      "sha256": "587dfe2156a27781d7f5a7b84fab5ec2442ea972d08f174ace585c7fd80451e3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/Avatars.js",
+      "sha256": "5faec9a0c462241d2a2d88121d938c7786fba88ed7117b7fffcf06d80d359e6c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/BorderRadius.js",
+      "sha256": "023340664b05aa4fa813ace3122e447f58570ecb696c8a06fd35f4a153aa54d6",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/ColorPalette.js",
+      "sha256": "d4cb6ff1f362cd0e74d38221ae219e6d22e33a2843d8a836437399676cee625d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/ColorPaletteDark.js",
+      "sha256": "c18018bfebb1fe0833eae9a913aa73222c8f94603f71dc639597ee30597255c7",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/FormElements.js",
+      "sha256": "39dcff6eea0ca5f6b3e067f42e0bd31b5371c52a198ce351fbd7f39e4fb14576",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/Gradient.js",
+      "sha256": "c9286295a3e8623cbeadc8777d2b24528bd1b87c7475ac54c65bb3f1be1cdcb5",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/Pagination.js",
+      "sha256": "129d23d1e8ff02e0f5eb08800522a71c5acd32b6ca9b27c31cb9382867e58ac3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/Tooltips.js",
+      "sha256": "38bf1bfe7f0d6653c26f43ac8a8536f97da544d75b806816e3dc5b83f6248d66",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/Sections/Typography.js",
+      "sha256": "838ce13b9cc2cdb93679b52c7976ad5dab6397fecb787d1e4f0de217cf55f55b",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/StyleGuide/StyleGuide.js",
+      "sha256": "c981ed7843cc5fb9d81a9f832f248d605f85b7b1f72a5447447ed3891ad0543e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamEight.js",
+      "sha256": "e23333ad8d1e06db699ebbba506dd3d92b9eabfb7c2ad83e469d2ce1335b3e94",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamFive.js",
+      "sha256": "90982fb64916fcea4da01e166470c3aa10ecaf8e4f01647d228a5d1348595ffe",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamFour.js",
+      "sha256": "fac32fe6089c82a270c6dcf646273d4389e0fa2812669630186dbc2689483702",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamHead.js",
+      "sha256": "d2fc7953f5e70a10d83e7c8af68ad8cae8069f79fd0b90fef182d81ec9545a92",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamNine.js",
+      "sha256": "466c72b056c5b73c2cd298eb0812021c0bb1d6ec2210db0019f961c0d49dabc9",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamOne.js",
+      "sha256": "4dae32676109ec4c1c0408c6e318edccff97f1f4b8b36b0a229e349afbe38e2d",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamSeven.js",
+      "sha256": "1d2fc343c93031f58056936e15f615801d00a883c67a44c899aa3d59a5dcb157",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamSix.js",
+      "sha256": "f123093f82b8f1a8ef41d796af86030bce61dfd73e10d8a15f3703e7c013b11e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamTen.js",
+      "sha256": "29cdfba0907a97fc1f4977b23f8dc726fab276294583140c76e605dbd8067c8c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Team/TeamThree.js",
+      "sha256": "cc1d8c5f9324b1f086aaad641ea6d9165457113dc596ce4e4f39ba74e178b60c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Testimonials/Testimonial-Five.js",
+      "sha256": "2946f674de56c7171d972fe2d1e23185a1e16902e6c1f1cd1e4e8b476b134866",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Testimonials/Testimonial-Four.js",
+      "sha256": "dbfc666ec48c0355b02a23dff2d353657918f19520c3423e8b9bb9a54fae8908",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Testimonials/Testimonial-Three.js",
+      "sha256": "418fa6282c8f21e0ea5548dfd1a83860582be074ea4cbaf128a730eaa69e20fa",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Testimonials/Testimonial-Two.js",
+      "sha256": "a902e9ad046939a6bd678e6a7138ec7af7e3e4dc1817409412c64bce4e5aeb34",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Testimonials/Testimonial.js",
+      "sha256": "6e20ad1b2251d022d8fb90dfd8e3e1731b7f259d03eb450967c2a00c36893323",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/elements/advanceTab.json",
+      "sha256": "55243d91e0d3411a3981420320613a98983c77ecb5b58de8c1635dfdadd49df3",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/elements/brands.json",
+      "sha256": "649d6847e2bcc487fd809f2b8ea73b53137d6ea6ce3d983cde55865383987def",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/elements/card.json",
+      "sha256": "e1c7323c8d4ecdaa4d21b72cc31039844c164140afc27db6ca2ca64286bed895",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/elements/gallery.json",
+      "sha256": "e69d4ee8369bdb881482704dc9914c03d4de43f54a16927ae0399cee64d26d93",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/elements/pricing.json",
+      "sha256": "88af6ce5aea2fa7e8a981d2d2223bbc5ca18fc65f16d5b57b184a13de8056744",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/elements/service.json",
+      "sha256": "430fedc5d8186a713ee015cb163e05df8960199bd69a0a5998d0aefad43e1e8e",
+      "verdict": "deleted"
+    },
+    {
+      "path": "data/myAccount.json",
+      "sha256": "1bdd3b00683d785fcd329676bf5381822afc6996688d95d0318235be13880752",
+      "verdict": "deleted"
+    }
+  ],
+  "verdict": "deleted"
+}
