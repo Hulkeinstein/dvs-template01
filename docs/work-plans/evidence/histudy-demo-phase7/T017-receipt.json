@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "phase": 7,
+  "source_commit": "8356117f2d4cb5939f1ec4a4eeeb355d6e74d8ed",
+  "source_manifest_sha256": "82a12620eb5226bf23cec43e0bd7cd6238ab5db822a76652625b1dd9883c982f",
+  "file_count": 7,
+  "files": [
+    {
+      "path": "components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js",
+      "sha256": "81744767314b333948b3aaac5f89c16f29cbeaefc173ee62e38a6c4686832e50",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js",
+      "sha256": "25c22689a0a72315c54ee714913b0dc531c23ed2a12e90c4ae5cd04868126357",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js",
+      "sha256": "773a68c8aca986a26d6ce87f65d25bf8db33854472fe733ce7463277641902dc",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js",
+      "sha256": "c35657aaab020dee62ca570aedb99f27058195d8355988ab447b8774b624851c",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js",
+      "sha256": "8eb172f879dcae2462d76cd18338ed56b0af408b018f684b2a18a33f633184ad",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js",
+      "sha256": "726fdd664b06d85f02412add330abcbd21980cc86bec913f18461dfbc32c597f",
+      "verdict": "deleted"
+    },
+    {
+      "path": "components/Header/NavProps/ElementsLayout.js",
+      "sha256": "007a2b2a54771eecba40696b60682e7b14dee3f58e3c32bd30d4002088e62956",
+      "verdict": "deleted"
+    }
+  ],
+  "modified_artifacts": [
+    {
+      "path": "scripts/demo-removal/render-doc.mjs",
+      "preimage_sha256": "13e25d104f72985508b8577da0ef4249d8c0f9d3df3838a71dac16d75b932cb5",
+      "postimage_sha256": "60907dd54b4c1368465d3b1a9e375c62d2c04155a1f035b346c60bd4812f4aae",
+      "verdict": "modified"
+    },
+    {
+      "path": "docs/library/histudy-demo-removal.md",
+      "preimage_sha256": "b33d5e6ccdfae6b30c6d6d8aed2e899f030a684fad6b92d1385ea646d6f91ac3",
+      "postimage_sha256": "15d8178ab3045d38a6e32c8976394c4b290f28fb190ec1e4ff053464b28cc64e",
+      "verdict": "modified"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "preimage_sha256": "4fdcf2580f9029cb9b800158cfef201f86aa4faeb29790588a976acb9d679066",
+      "postimage_sha256": "ef576eadb56ed19276bd8445648df8172e341dea240916da48eba526a6ecb7a0",
+      "verdict": "modified"
+    }
+  ],
+  "documented_delete_count": 531,
+  "verdict": "ready-for-review"
+}

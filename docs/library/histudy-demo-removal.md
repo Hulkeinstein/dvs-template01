@@ -3,19 +3,19 @@ title: "HiStudy 데모 삭제 기록 (T2)"
 tags:
   - type/docs
   - component/ui
-  - progress/in-progress
+  - progress/completed
 created: 2026-09-16
-updated: 2026-09-16
-lifecycle: draft
+updated: 2026-09-25
+lifecycle: active
 ---
 
 ## 개요
 
 HiStudy 데모 화면(번호 데모 홈·요소·페이지·코스·퀴즈·lesson·profile·블로그)을 걷어내면서, 어떤 화면이 어떤 컴포넌트·데이터를 함께 썼는지와 되살리는 명령을 기록한다. 화면 하나를 되살려야 하면 이 문서의 해당 라우트 섹션의 **복구 명령**을 그대로 실행하면 된다.
 
-기준 태그: `pre-demo-removal` (커밋 `91d9fd9541217e68312dd6f8c0cca4eb1b80991c`) · 계획 기준: route-map.json의 deleteFiles
+기준 태그: `pre-demo-removal` (커밋 `91d9fd9541217e68312dd6f8c0cca4eb1b80991c`) · 확정 기준: 실제 git diff(D)
 
-생성 명령: `node scripts/demo-removal/render-doc.mjs --date 2026-09-16 --links .tmp/demo-removal/links-baseline.txt`
+생성 명령: `node scripts/demo-removal/render-doc.mjs --date 2026-09-25 --links .tmp/demo-removal/links-final.txt --final`
 
 이 문서는 `scripts/demo-removal/render-doc.mjs`의 생성물이다 — 손으로 고치지 말고 다시 생성한다.
 
@@ -35,7 +35,42 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 
 **(a)** 메뉴·링크·경로 분기는 유지 파일에서 지웠으므로 화면 파일만 되살리면 메뉴에는 나오지 않는다.
 
-수정한 유지 파일 목록: Phase 2 이후 채워짐
+**수정한 유지 파일 목록**:
+
+- app/(courses)/course-details/index.js
+- app/01-main-demo/(main-demo)/index.tsx
+- app/01-main-demo/page.js
+- app/lib/constants/routes.ts
+- components/01-Main-Demo/01-Main-Demo.js
+- components/Abouts/About-Two.js
+- components/Cards/Card.js
+- components/Cart/CartItems.tsx
+- components/Category/CategoryHead.js
+- components/Category/CategoryOne.js
+- components/Category/Filter/CourseFilterOneToggle.tsx
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
+- components/Course-Details/Course-Sections/Content.js
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js
+- components/Course-Details/Course-Sections/Course-Menu.js
+- components/Course-Details/Course-Sections/Featured.js
+- components/Course-Details/Course-Sections/Instructor.js
+- components/Course-Details/Course-Sections/Overview.js
+- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/SimilarCourses.js
+- components/Course-Details/Course-Sections/Viedo.tsx
+- components/Course-Details/Course-Sections/course-head.js
+- components/Events/EventCarouse.js
+- components/Footer/CopyRight.js
+- components/Header/Header-Top/HeaderTop-Eight.js
+- components/Header/HeaderStyle-Ten.js
+- components/Header/Nav.js
+- components/Header/Offcanvas/Cart.js
+- components/Lesson/LessonQuiz.js
+- components/Lesson/LessonSidebar.js
+- data/MegaMenu.json
+- data/course-details/courseData.json
+- data/footer.json
+- data/lesson.json
 
 **(b)** 섹션 복구 명령에는 다른 삭제 화면과 함께 쓰던 파일도 들어 있을 수 있다 — 중복 복구는 무해하다.
 
@@ -43,7 +78,15 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 
 **(d)** SCSS·이미지는 지우지 않았다.
 
-**(e)** `.prettierignore`에서 뺀 항목: 아직 없음(T013 이후 채워짐)
+**(e) `.prettierignore`에서 뺀 항목**:
+
+- components/18-instructors-coaches/
+- components/19-modern-university/
+- components/21-art-design-school/
+- components/23-coaching/
+- components/24-health-wellness-institute/
+- components/25-life-coach/
+- components/26-islamic-center/
 
 **(f)** 화면 파일을 되살려도 그 화면이 쓰던 공유 파일은 T2에서 경로·분기가 수정됐을 수 있다. 섹션의 'T2에서 수정됨' 표시와 `git diff pre-demo-removal -- <파일>`로 확인하고, 태그 시점 그대로 보려면 해당 공유 파일도 함께 되돌려야 한다(유지 화면에 영향이 가므로 주의).
 
@@ -54,8 +97,9 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 | Phase 3 — 번호 데모 홈 | 24 | 24 | 138 |
 | Phase 4 — 요소·페이지·코스·퀴즈 데모 | 58 | 71 | 305 |
 | Phase 5 — lesson 데모·profile | 7 | 8 | 22 |
-| Phase 6 — 블로그 | 10 | 16 | 39 |
-| 합계 | 99 | 119 | 504 |
+| Phase 6 — 블로그 | 10 | 16 | 59 |
+| Phase 7 — 잔여 고아 컴포넌트 | 0 | 0 | 7 |
+| 합계 | 99 | 119 | 531 |
 
 ## Phase 3 — 번호 데모 홈
 
@@ -68,11 +112,13 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 **함께 삭제한 컴포넌트**:
 
 - components/02-course-school/CourseSchool.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Common/CourseTag-Two.js
 - components/Events/Events.js
 - components/Footer/FooterFour.js
 - components/Header/HeaderStyle-Six.js
 - components/Header/Headers/Header-Six.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Three.js
 - components/Team/TeamHead.js
 - components/Team/TeamSix.js
@@ -80,26 +126,6 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 
 **함께 삭제한 데이터**:
 
-- data/elements/service.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/dark-switch.js
-- components/Newsletters/Newsletter-Three.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -118,12 +144,32 @@ awk '/^## 삭제한 파일 전체 목록/{f=1;next} f&&/^```text/{g=1;next} g&&/
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/elements/service.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/dark-switch.js
+- components/Newsletters/Newsletter-Three.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/newsletter.json
 - data/elements/team.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -132,16 +178,37 @@ git checkout pre-demo-removal -- \
   'app/02-course-school/(course-school)/index.js' \
   'app/02-course-school/page.js' \
   'components/02-course-school/CourseSchool.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Common/CourseTag-Two.js' \
   'components/Events/Events.js' \
   'components/Footer/FooterFour.js' \
   'components/Header/HeaderStyle-Six.js' \
   'components/Header/Headers/Header-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Three.js' \
   'components/Team/TeamHead.js' \
   'components/Team/TeamSix.js' \
   'components/Testimonials/Testimonial-Three.js' \
-  'data/elements/service.json'
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'data/elements/service.json' \
+  'mdx/index.js'
 ```
 
 ### /03-online-school
@@ -154,6 +221,7 @@ git checkout pre-demo-removal -- \
 
 - components/03-online-school/OnlineSchool.js
 - components/03-online-school/OnlineSchoolForm.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Call-To-Action/CallToAction-Five.js
 - components/Category/CategoryThree.js
 - components/Category/Filter/Course-Six.js
@@ -161,6 +229,7 @@ git checkout pre-demo-removal -- \
 - components/Events/Events.js
 - components/Header/HeaderStyle-Eleven.js
 - components/Header/Headers/Header-Nine.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Nine.js
 - components/Services/Service-Ten.js
 - components/Team/TeamTen.js
@@ -168,31 +237,6 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 데이터**:
 
-- data/elements/service.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Cards/Card.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Testimonials/Testimonial-Scroll/Scroll.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -211,14 +255,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/elements/service.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Cards/Card.js — T2에서 수정됨
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Testimonials/Testimonial-Scroll/Scroll.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/counter.json
 - data/elements/team.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 7개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -228,6 +297,7 @@ git checkout pre-demo-removal -- \
   'app/03-online-school/page.js' \
   'components/03-online-school/OnlineSchool.js' \
   'components/03-online-school/OnlineSchoolForm.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Call-To-Action/CallToAction-Five.js' \
   'components/Category/CategoryThree.js' \
   'components/Category/Filter/Course-Six.js' \
@@ -235,11 +305,31 @@ git checkout pre-demo-removal -- \
   'components/Events/Events.js' \
   'components/Header/HeaderStyle-Eleven.js' \
   'components/Header/Headers/Header-Nine.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Nine.js' \
   'components/Services/Service-Ten.js' \
   'components/Team/TeamTen.js' \
   'components/Testimonials/Testimonial-Two.js' \
-  'data/elements/service.json'
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'data/elements/service.json' \
+  'mdx/index.js'
 ```
 
 ### /04-kindergarten
@@ -258,6 +348,7 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderTop-Seven.js
 - components/Header/HeaderStyle-Eight.js
 - components/Header/Headers/Header-Six.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Pricing/Plans/BasicPlan.js
 - components/Pricing/Plans/ExclusivePlan.js
 - components/Pricing/Plans/StandardPlan.js
@@ -269,28 +360,6 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 데이터**:
 
-- data/elements/card.json
-- data/elements/gallery.json
-- data/elements/pricing.json
-- data/elements/service.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Call-To-Action/CallToAction.js
-- components/Common/Separator.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -309,11 +378,34 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
+- data/elements/card.json
+- data/elements/gallery.json
+- data/elements/pricing.json
+- data/elements/service.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Call-To-Action/CallToAction.js
+- components/Common/Separator.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/counter.json
 - data/elements/team.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 5개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -329,6 +421,7 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/HeaderTop-Seven.js' \
   'components/Header/HeaderStyle-Eight.js' \
   'components/Header/Headers/Header-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Pricing/Plans/BasicPlan.js' \
   'components/Pricing/Plans/ExclusivePlan.js' \
   'components/Pricing/Plans/StandardPlan.js' \
@@ -337,10 +430,29 @@ git checkout pre-demo-removal -- \
   'components/Team/TeamFour.js' \
   'components/Team/TeamHead.js' \
   'components/Testimonials/Testimonial.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
   'data/elements/card.json' \
   'data/elements/gallery.json' \
   'data/elements/pricing.json' \
-  'data/elements/service.json'
+  'data/elements/service.json' \
+  'mdx/index.js'
 ```
 
 ### /05-classic-lms
@@ -352,41 +464,18 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/05-classic-lms/05-ClassicLms.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Category/CategorySix.js
 - components/Header/Header-Top/Header-Language.js
 - components/Header/Header-Top/HeaderTopMid-Three.js
 - components/Header/HeaderStyle-Nine.js
 - components/Header/Headers/Header-Seven.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Four.js
 
-**함께 삭제한 데이터**: 없음
+**함께 삭제한 데이터**:
 
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/01-Main-Demo/Home-Sections/HomeCourse.js
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Cards/Card.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- components/Newsletters/Newsletter-Three.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -405,13 +494,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/01-Main-Demo/Home-Sections/HomeCourse.js
+- components/Cards/Card.js — T2에서 수정됨
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- components/Newsletters/Newsletter-Three.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
 - data/elements/newsletter.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 7개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -420,13 +535,34 @@ git checkout pre-demo-removal -- \
   'app/05-classic-lms/(classic-lms)/index.js' \
   'app/05-classic-lms/page.js' \
   'components/05-classic-lms/05-ClassicLms.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Category/CategorySix.js' \
   'components/Header/Header-Top/Header-Language.js' \
   'components/Header/Header-Top/HeaderTopMid-Three.js' \
   'components/Header/HeaderStyle-Nine.js' \
   'components/Header/Headers/Header-Seven.js' \
-  'components/Testimonials/Testimonial-Four.js'
+  'components/Header/NavProps/ElementsLayout.js' \
+  'components/Testimonials/Testimonial-Four.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /06-university-status
@@ -450,6 +586,7 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderTop-Four.js
 - components/Header/HeaderStyle-Four.js
 - components/Header/Headers/Header-Four.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Three.js
 - components/Services/Service-Twelve.js
 - components/Split/Split.js
@@ -464,28 +601,29 @@ git checkout pre-demo-removal -- \
 - components/Common/Separator.js
 - components/Counters/Counter-Head.js
 - components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/DashboardNav.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/accordion.json
 - data/elements/calltoaction.json
 - data/elements/counter.json
 - data/elements/split.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -506,6 +644,7 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/HeaderTop-Four.js' \
   'components/Header/HeaderStyle-Four.js' \
   'components/Header/Headers/Header-Four.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Three.js' \
   'components/Services/Service-Twelve.js' \
   'components/Split/Split.js' \
@@ -529,6 +668,7 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderTop-Two.js
 - components/Header/HeaderStyle-Seven.js
 - components/Header/Headers/Header-Two.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Pricing/Pricing-Five.js
 
 **함께 삭제한 데이터**: 없음
@@ -540,21 +680,22 @@ git checkout pre-demo-removal -- \
 - components/Footer/Footer-Two.js
 - components/Header/DashboardNav.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/dark-switch.js
 - components/Newsletters/Newsletter-Three.js
 - components/Testimonials/Testimonial-Scroll/Scroll.js
 - components/Testimonials/Testimonial-Six.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/counter.json
 - data/elements/newsletter.json
 - data/elements/testimonial.json
+
+이 화면이 쓰던 유지 파일 4개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -570,6 +711,7 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/HeaderTop-Two.js' \
   'components/Header/HeaderStyle-Seven.js' \
   'components/Header/Headers/Header-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Pricing/Pricing-Five.js'
 ```
 
@@ -588,29 +730,10 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderTop-Seven.js
 - components/Header/HeaderStyle-Eight.js
 - components/Header/Headers/Header-Six.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Abouts/About-Two.js
-- components/Common/Separator.js
-- components/Counters/Counter-Head.js
-- components/Counters/Counter.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/dark-switch.js
-- components/Maintenance/CountDonw.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -629,10 +752,32 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Abouts/About-Two.js — T2에서 수정됨
+- components/Common/Separator.js
+- components/Counters/Counter-Head.js
+- components/Counters/Counter.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/dark-switch.js
+- components/Maintenance/CountDonw.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/counter.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 7개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -646,7 +791,27 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/Header-Language.js' \
   'components/Header/Header-Top/HeaderTop-Seven.js' \
   'components/Header/HeaderStyle-Eight.js' \
-  'components/Header/Headers/Header-Six.js'
+  'components/Header/Headers/Header-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /10-online-course
@@ -667,6 +832,7 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderMid-One.js
 - components/Header/HeaderStyle-Three.js
 - components/Header/Headers/Header-Ten.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Saven.js
 - components/Testimonials/Testimonial-Two.js
 
@@ -677,30 +843,31 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/DashboardNav.js
-- components/Header/Header-Top/HeaderTop-Eight.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Newsletters/Newsletter-Three.js
 - components/Testimonials/Testimonial-Scroll/Scroll.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/calltoaction.json
 - data/elements/newsletter.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 7개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -718,6 +885,7 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/HeaderMid-One.js' \
   'components/Header/HeaderStyle-Three.js' \
   'components/Header/Headers/Header-Ten.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Saven.js' \
   'components/Testimonials/Testimonial-Two.js' \
   'data/elements/service.json'
@@ -738,6 +906,7 @@ git checkout pre-demo-removal -- \
 - components/11-single-course/SingleCourseProp.js
 - components/Header/HeaderStyle-Eleven.js
 - components/Header/Headers/Header-Nine.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Newsletters/Newsletter-Four.js
 - components/Pricing/Pricing-Five.js
 
@@ -748,28 +917,29 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Testimonials/Testimonial-Seven.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/newsletter.json
 - data/elements/team.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -784,6 +954,7 @@ git checkout pre-demo-removal -- \
   'components/11-single-course/SingleCourseProp.js' \
   'components/Header/HeaderStyle-Eleven.js' \
   'components/Header/Headers/Header-Nine.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Newsletters/Newsletter-Four.js' \
   'components/Pricing/Pricing-Five.js' \
   'data/pages/11-singleCourse.json'
@@ -805,33 +976,12 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderTopMid-Three.js
 - components/Header/HeaderStyle-Nine.js
 - components/Header/Headers/Header-Seven.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Newsletters/Newsletter-Four.js
 - components/Testimonials/Testimonial-Five.js
 
-**함께 삭제한 데이터**: 없음
+**함께 삭제한 데이터**:
 
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Cards/Card.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-Three.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -850,13 +1000,37 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Cards/Card.js — T2에서 수정됨
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-Three.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/counter.json
 - data/elements/newsletter.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 7개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -872,8 +1046,28 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/HeaderTopMid-Three.js' \
   'components/Header/HeaderStyle-Nine.js' \
   'components/Header/Headers/Header-Seven.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Newsletters/Newsletter-Four.js' \
-  'components/Testimonials/Testimonial-Five.js'
+  'components/Testimonials/Testimonial-Five.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /13-university-classic
@@ -889,6 +1083,7 @@ git checkout pre-demo-removal -- \
 - components/Accordions/Course.js
 - components/AdvanceTab/AdvanceTab.js
 - components/AdvanceTab/SectionHead.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Brand/Brand-One.js
 - components/Cards/Card-Three.js
@@ -897,36 +1092,12 @@ git checkout pre-demo-removal -- \
 - components/Header/Header-Top/HeaderTop-Four.js
 - components/Header/HeaderStyle-Four.js
 - components/Header/Headers/Header-Four.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Eight.js
 - components/Testimonials/Testimonial.js
 
 **함께 삭제한 데이터**:
 
-- data/elements/advanceTab.json
-- data/elements/brands.json
-- data/elements/card.json
-- data/elements/gallery.json
-- data/elements/service.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -945,12 +1116,37 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/elements/advanceTab.json
+- data/elements/brands.json
+- data/elements/card.json
+- data/elements/gallery.json
+- data/elements/service.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/accordion.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -963,6 +1159,7 @@ git checkout pre-demo-removal -- \
   'components/Accordions/Course.js' \
   'components/AdvanceTab/AdvanceTab.js' \
   'components/AdvanceTab/SectionHead.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Brand/Brand-One.js' \
   'components/Cards/Card-Three.js' \
@@ -971,13 +1168,33 @@ git checkout pre-demo-removal -- \
   'components/Header/Header-Top/HeaderTop-Four.js' \
   'components/Header/HeaderStyle-Four.js' \
   'components/Header/Headers/Header-Four.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Eight.js' \
   'components/Testimonials/Testimonial.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
   'data/elements/advanceTab.json' \
   'data/elements/brands.json' \
   'data/elements/card.json' \
   'data/elements/gallery.json' \
-  'data/elements/service.json'
+  'data/elements/service.json' \
+  'mdx/index.js'
 ```
 
 ### /14-home-elegant
@@ -995,6 +1212,7 @@ git checkout pre-demo-removal -- \
 - components/Cards/Card-Six.js
 - components/Header/HeaderStyle-Six.js
 - components/Header/Headers/Header-Six.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Two.js
 
 **함께 삭제한 데이터**:
@@ -1004,23 +1222,24 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/DashboardNav.js
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/dark-switch.js
 - components/Testimonials/Testimonial-Scroll/Scroll.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1035,6 +1254,7 @@ git checkout pre-demo-removal -- \
   'components/Cards/Card-Six.js' \
   'components/Header/HeaderStyle-Six.js' \
   'components/Header/Headers/Header-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Testimonials/Testimonial-Two.js' \
   'data/elements/brands.json'
 ```
@@ -1072,18 +1292,20 @@ git checkout pre-demo-removal -- \
 
 - components/Become-a-Teacher/TeacherGallery.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/dark-switch.js
 - data/elements/about.json
 - data/elements/newsletter.json
 - data/elements/team.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/pages/become-A-Teacher.json
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1122,6 +1344,7 @@ git checkout pre-demo-removal -- \
 - components/16-udemy-affiliate/UdemyAffiliate.js
 - components/Abouts/About-Eight.js
 - components/Brand/Brand-One.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Five.js
 
 **함께 삭제한 데이터**:
@@ -1130,37 +1353,38 @@ git checkout pre-demo-removal -- \
 
 **쓰던 유지 파일(삭제 안 함)**:
 
-- components/Cards/Card.js
-- components/Category/CategoryOne.js
+- components/Cards/Card.js — T2에서 수정됨
+- components/Category/CategoryOne.js — T2에서 수정됨
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/category.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 10개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1172,6 +1396,7 @@ git checkout pre-demo-removal -- \
   'components/16-udemy-affiliate/UdemyAffiliate.js' \
   'components/Abouts/About-Eight.js' \
   'components/Brand/Brand-One.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Testimonials/Testimonial-Five.js' \
   'data/elements/brands.json'
 ```
@@ -1186,39 +1411,16 @@ git checkout pre-demo-removal -- \
 
 - components/17-online-academy/OnlineAcademy-Banner.js
 - components/17-online-academy/OnlineAcademy.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Header/Header-Top/HeaderTop-Four.js
 - components/Header/Headers/Header-Four.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Header/package/HeaderType-Container-Four.js
 - components/Testimonials/Testimonial-Four.js
 
-**함께 삭제한 데이터**: 없음
+**함께 삭제한 데이터**:
 
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Abouts/About-Two.js
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Category/CategoryOne.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/Counter-Head.js
-- components/Counters/Counter.js
-- components/Counters/CounterWrap.js
-- components/Events/EventCarouse.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1237,13 +1439,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Abouts/About-Two.js — T2에서 수정됨
+- components/Category/CategoryOne.js — T2에서 수정됨
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/Counter-Head.js
+- components/Counters/Counter.js
+- components/Counters/CounterWrap.js
+- components/Events/EventCarouse.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/counter.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1253,11 +1481,32 @@ git checkout pre-demo-removal -- \
   'app/17-online-academy/page.js' \
   'components/17-online-academy/OnlineAcademy-Banner.js' \
   'components/17-online-academy/OnlineAcademy.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Header/Header-Top/HeaderTop-Four.js' \
   'components/Header/Headers/Header-Four.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Header/package/HeaderType-Container-Four.js' \
-  'components/Testimonials/Testimonial-Four.js'
+  'components/Testimonials/Testimonial-Four.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /18-instructors-coaches
@@ -1270,32 +1519,14 @@ git checkout pre-demo-removal -- \
 
 - components/18-instructors-coaches/InstructorsCoaches-Banner.js
 - components/18-instructors-coaches/InstructorsCoaches.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Header/HeaderStyle-Six.js
 - components/Header/Headers/Header-Six.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-Three.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/dark-switch.js
-- components/Newsletters/Newsletter-Two.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1314,10 +1545,31 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-Three.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/dark-switch.js
+- components/Newsletters/Newsletter-Two.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/newsletter.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1327,9 +1579,30 @@ git checkout pre-demo-removal -- \
   'app/18-instructors-coaches/page.js' \
   'components/18-instructors-coaches/InstructorsCoaches-Banner.js' \
   'components/18-instructors-coaches/InstructorsCoaches.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Header/HeaderStyle-Six.js' \
-  'components/Header/Headers/Header-Six.js'
+  'components/Header/Headers/Header-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /19-modern-university
@@ -1343,33 +1616,16 @@ git checkout pre-demo-removal -- \
 - components/19-modern-university/ModernUniversity-Banner.js
 - components/19-modern-university/ModernUniversity-Props.js
 - components/19-modern-university/ModernUniversity.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Header/Header-Top/HeaderTop-Four.js
 - components/Header/HeaderStyle-Four.js
 - components/Header/Headers/Header-Four.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Four.js
 
-**함께 삭제한 데이터**: 없음
+**함께 삭제한 데이터**:
 
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1388,12 +1644,32 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/accordion.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1404,11 +1680,32 @@ git checkout pre-demo-removal -- \
   'components/19-modern-university/ModernUniversity-Banner.js' \
   'components/19-modern-university/ModernUniversity-Props.js' \
   'components/19-modern-university/ModernUniversity.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Header/Header-Top/HeaderTop-Four.js' \
   'components/Header/HeaderStyle-Four.js' \
   'components/Header/Headers/Header-Four.js' \
-  'components/Testimonials/Testimonial-Four.js'
+  'components/Header/NavProps/ElementsLayout.js' \
+  'components/Testimonials/Testimonial-Four.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /20-multilingual
@@ -1421,37 +1718,18 @@ git checkout pre-demo-removal -- \
 
 - components/20-multilingual/Multilingual-Banner.js
 - components/20-multilingual/Multilingual.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Counters/CountDownTwo.js
 - components/Header/Header-Top/Header-Language.js
 - components/Header/Header-Top/HeaderTop-Seven.js
 - components/Header/HeaderStyle-Five.js
 - components/Header/Headers/Header-Five.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Four.js
 
 **함께 삭제한 데이터**:
 
-- data/elements/advanceTab.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/dark-switch.js
-- components/Maintenance/CountDonw.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1470,9 +1748,30 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/elements/advanceTab.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/dark-switch.js
+- components/Maintenance/CountDonw.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1482,14 +1781,35 @@ git checkout pre-demo-removal -- \
   'app/20-multilingual/page.js' \
   'components/20-multilingual/Multilingual-Banner.js' \
   'components/20-multilingual/Multilingual.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Counters/CountDownTwo.js' \
   'components/Header/Header-Top/Header-Language.js' \
   'components/Header/Header-Top/HeaderTop-Seven.js' \
   'components/Header/HeaderStyle-Five.js' \
   'components/Header/Headers/Header-Five.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Testimonials/Testimonial-Four.js' \
-  'data/elements/advanceTab.json'
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'data/elements/advanceTab.json' \
+  'mdx/index.js'
 ```
 
 ### /21-art-design-school
@@ -1502,32 +1822,16 @@ git checkout pre-demo-removal -- \
 
 - components/21-art-design-school/ArtDesignSchool-Banner.js
 - components/21-art-design-school/ArtDesignSchool.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Cards/Card-Seven.js
 - components/Header/HeaderStyle-Six.js
 - components/Header/Headers/Header-Six.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial.js
 
-**함께 삭제한 데이터**: 없음
+**함께 삭제한 데이터**:
 
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-Three.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1546,11 +1850,30 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-Three.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/instagram.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1560,11 +1883,32 @@ git checkout pre-demo-removal -- \
   'app/21-art-design-school/page.js' \
   'components/21-art-design-school/ArtDesignSchool-Banner.js' \
   'components/21-art-design-school/ArtDesignSchool.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Cards/Card-Seven.js' \
   'components/Header/HeaderStyle-Six.js' \
   'components/Header/Headers/Header-Six.js' \
-  'components/Testimonials/Testimonial.js'
+  'components/Header/NavProps/ElementsLayout.js' \
+  'components/Testimonials/Testimonial.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /22-wishlist
@@ -1580,21 +1924,10 @@ git checkout pre-demo-removal -- \
 - components/Footer/FooterFive.js
 - components/Header/HeaderStyle-Six.js
 - components/Header/Headers/Header-Six.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Header/DashboardNav.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1614,6 +1947,20 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-9.md
 - data/blog/blog.json
 
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Header/DashboardNav.js
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
+
 **복구 명령**:
 
 ```bash
@@ -1624,7 +1971,27 @@ git checkout pre-demo-removal -- \
   'components/22-wishlist/Wishlist.js' \
   'components/Footer/FooterFive.js' \
   'components/Header/HeaderStyle-Six.js' \
-  'components/Header/Headers/Header-Six.js'
+  'components/Header/Headers/Header-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /23-coaching
@@ -1638,35 +2005,16 @@ git checkout pre-demo-removal -- \
 - components/23-coaching/Coaching-Banner.js
 - components/23-coaching/Coaching.js
 - components/23-coaching/CoachingForm.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Header/Header-Right/HeaderRight-Three.js
 - components/Header/HeaderStyle-Thirteen.js
 - components/Header/Headers/Header-Eleven.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service.js
 
 **함께 삭제한 데이터**:
 
-- data/elements/service.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-Three.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1685,9 +2033,30 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/elements/service.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-Three.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1698,12 +2067,33 @@ git checkout pre-demo-removal -- \
   'components/23-coaching/Coaching-Banner.js' \
   'components/23-coaching/Coaching.js' \
   'components/23-coaching/CoachingForm.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Header/Header-Right/HeaderRight-Three.js' \
   'components/Header/HeaderStyle-Thirteen.js' \
   'components/Header/Headers/Header-Eleven.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service.js' \
-  'data/elements/service.json'
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'data/elements/service.json' \
+  'mdx/index.js'
 ```
 
 ### /24-health-wellness-institute
@@ -1719,37 +2109,16 @@ git checkout pre-demo-removal -- \
 - components/24-health-wellness-institute/HealthGoal.js
 - components/24-health-wellness-institute/HealthInstitute.js
 - components/24-health-wellness-institute/InstituteGallery.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Counters/Counter-Six.js
 - components/Header/Header-Top/HeaderTop-Four.js
 - components/Header/HeaderStyle-Four.js
 - components/Header/Headers/Header-Four.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**:
 
-- data/pages/healthInstitute.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/Counter-Head.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1768,12 +2137,35 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/pages/healthInstitute.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/Counter-Head.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/counter.json
 - data/elements/testimonial.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/user.json
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1786,12 +2178,33 @@ git checkout pre-demo-removal -- \
   'components/24-health-wellness-institute/HealthGoal.js' \
   'components/24-health-wellness-institute/HealthInstitute.js' \
   'components/24-health-wellness-institute/InstituteGallery.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Counters/Counter-Six.js' \
   'components/Header/Header-Top/HeaderTop-Four.js' \
   'components/Header/HeaderStyle-Four.js' \
   'components/Header/Headers/Header-Four.js' \
-  'data/pages/healthInstitute.json'
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'data/pages/healthInstitute.json' \
+  'mdx/index.js'
 ```
 
 ### /25-life-coach
@@ -1805,36 +2218,16 @@ git checkout pre-demo-removal -- \
 - components/25-life-coach/LifeCoach-Banner.js
 - components/25-life-coach/LifeCoach.js
 - components/25-life-coach/LifeCoachFeature.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Counters/CountDownTwo.js
 - components/Header/Header-Right/HeaderRight-Three.js
 - components/Header/HeaderStyle-Thirteen.js
 - components/Header/Headers/Header-Eleven.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**:
 
-- data/pages/lifeCoach.json
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-Three.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/dark-switch.js
-- components/Maintenance/CountDonw.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1853,9 +2246,31 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+- data/pages/lifeCoach.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Counters/CounterWrap.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-Three.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/dark-switch.js
+- components/Maintenance/CountDonw.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1866,12 +2281,33 @@ git checkout pre-demo-removal -- \
   'components/25-life-coach/LifeCoach-Banner.js' \
   'components/25-life-coach/LifeCoach.js' \
   'components/25-life-coach/LifeCoachFeature.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Counters/CountDownTwo.js' \
   'components/Header/Header-Right/HeaderRight-Three.js' \
   'components/Header/HeaderStyle-Thirteen.js' \
   'components/Header/Headers/Header-Eleven.js' \
-  'data/pages/lifeCoach.json'
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'data/pages/lifeCoach.json' \
+  'mdx/index.js'
 ```
 
 ### /26-islamic-center
@@ -1884,32 +2320,16 @@ git checkout pre-demo-removal -- \
 
 - components/26-islamic-center/IslamicCenter-Banner.js
 - components/26-islamic-center/IslamicCenter.js
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Header/Header-Right/HeaderRight-Three.js
 - components/Header/HeaderStyle-Thirteen.js
 - components/Header/Headers/Header-Eleven.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Four.js
 
-**함께 삭제한 데이터**: 없음
+**함께 삭제한 데이터**:
 
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/DashboardNav.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -1928,11 +2348,30 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/DashboardNav.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/accordion.json
 - data/elements/team.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 6개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -1942,11 +2381,32 @@ git checkout pre-demo-removal -- \
   'app/26-islamic-center/page.js' \
   'components/26-islamic-center/IslamicCenter-Banner.js' \
   'components/26-islamic-center/IslamicCenter.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
   'components/Header/Header-Right/HeaderRight-Three.js' \
   'components/Header/HeaderStyle-Thirteen.js' \
   'components/Header/Headers/Header-Eleven.js' \
-  'components/Testimonials/Testimonial-Four.js'
+  'components/Header/NavProps/ElementsLayout.js' \
+  'components/Testimonials/Testimonial-Four.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ## Phase 4 — 요소·페이지·코스·퀴즈 데모
@@ -1972,10 +2432,12 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/course-details/courseData.json
-- data/lesson.json
+- data/course-details/courseData.json — T2에서 수정됨
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2013,10 +2475,12 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/course-details/courseData.json
-- data/lesson.json
+- data/course-details/courseData.json — T2에서 수정됨
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2047,9 +2511,11 @@ git checkout pre-demo-removal -- \
 
 **쓰던 유지 파일(삭제 안 함)**:
 
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2082,10 +2548,12 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/course-details/courseData.json
-- data/lesson.json
+- data/course-details/courseData.json — T2에서 수정됨
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2124,10 +2592,12 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/course-details/courseData.json
-- data/lesson.json
+- data/course-details/courseData.json — T2에서 수정됨
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2159,9 +2629,11 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2182,43 +2654,45 @@ git checkout pre-demo-removal -- \
 
 - components/Call-To-Action/CallToAction-Four.js
 - components/Category/Filter/CourseCard-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2227,7 +2701,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-card-2/index.js' \
   'app/(courses)/course-card-2/page.js' \
   'components/Call-To-Action/CallToAction-Four.js' \
-  'components/Category/Filter/CourseCard-Two.js'
+  'components/Category/Filter/CourseCard-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-card-3
@@ -2240,43 +2715,45 @@ git checkout pre-demo-removal -- \
 
 - components/Call-To-Action/CallToAction-Four.js
 - components/Category/Filter/CourseCard-Three.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2285,7 +2762,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-card-3/index.js' \
   'app/(courses)/course-card-3/page.js' \
   'components/Call-To-Action/CallToAction-Four.js' \
-  'components/Category/Filter/CourseCard-Three.js'
+  'components/Category/Filter/CourseCard-Three.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-2
@@ -2297,7 +2775,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2306,51 +2791,46 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/SimilarCourses.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/SimilarCourses.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 19개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2359,7 +2839,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-2/[courseId]/page.js' \
   'app/(courses)/course-detail-2/index.js' \
   'app/(courses)/course-detail-2/page.js' \
-  'components/Course-Details/CourseDetails-Two.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-3
@@ -2371,7 +2858,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Three.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2380,50 +2874,45 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 18개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2432,7 +2921,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-3/[courseId]/page.js' \
   'app/(courses)/course-detail-3/index.js' \
   'app/(courses)/course-detail-3/page.js' \
-  'components/Course-Details/CourseDetails-Three.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Three.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-4
@@ -2444,7 +2940,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Four.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2453,50 +2956,45 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 18개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2505,7 +3003,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-4/[courseId]/page.js' \
   'app/(courses)/course-detail-4/index.js' \
   'app/(courses)/course-detail-4/page.js' \
-  'components/Course-Details/CourseDetails-Four.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Four.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-5
@@ -2517,7 +3022,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Five.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2526,50 +3038,45 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 18개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2578,7 +3085,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-5/[courseId]/page.js' \
   'app/(courses)/course-detail-5/index.js' \
   'app/(courses)/course-detail-5/page.js' \
-  'components/Course-Details/CourseDetails-Five.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Five.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-6
@@ -2590,7 +3104,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Six.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2599,50 +3120,45 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 18개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2651,7 +3167,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-6/[courseId]/page.js' \
   'app/(courses)/course-detail-6/index.js' \
   'app/(courses)/course-detail-6/page.js' \
-  'components/Course-Details/CourseDetails-Six.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-7
@@ -2663,7 +3186,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Seven.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2672,50 +3202,45 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 18개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2724,7 +3249,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-7/[courseId]/page.js' \
   'app/(courses)/course-detail-7/index.js' \
   'app/(courses)/course-detail-7/page.js' \
-  'components/Course-Details/CourseDetails-Seven.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Seven.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-detail-8
@@ -2736,7 +3268,14 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 - components/Course-Details/CourseDetails-Eight.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -2745,50 +3284,45 @@ git checkout pre-demo-removal -- \
 - components/Common/BookmarkButton.tsx
 - components/Common/CourseBadges.js
 - components/Common/Separator.js
-- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
-- components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
-- components/Course-Details/Course-Sections/Content.js
-- components/Course-Details/Course-Sections/Course-Action-Bottom.js
-- components/Course-Details/Course-Sections/Course-Menu.js
-- components/Course-Details/Course-Sections/Featured.js
-- components/Course-Details/Course-Sections/Instructor.js
-- components/Course-Details/Course-Sections/Overview.js
-- components/Course-Details/Course-Sections/RelatedCourse.js
+- components/Course-Details/Course-Sections/Breadcrumb/Course-Breadcrumb.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Content.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Action-Bottom.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Course-Menu.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Featured.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Instructor.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/Overview.js — T2에서 수정됨
+- components/Course-Details/Course-Sections/RelatedCourse.js — T2에서 수정됨
 - components/Course-Details/Course-Sections/Requirements.js
 - components/Course-Details/Course-Sections/Review.js
-- components/Course-Details/Course-Sections/Viedo.tsx
-- components/Course-Details/Course-Sections/course-head.js
-- components/Footer/CopyRight.js
+- components/Course-Details/Course-Sections/Viedo.tsx — T2에서 수정됨
+- components/Course-Details/Course-Sections/course-head.js — T2에서 수정됨
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 18개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2797,7 +3331,14 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-detail-8/[courseId]/page.js' \
   'app/(courses)/course-detail-8/index.js' \
   'app/(courses)/course-detail-8/page.js' \
-  'components/Course-Details/CourseDetails-Eight.js'
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js' \
+  'components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js' \
+  'components/Course-Details/CourseDetails-Eight.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-filter-one-open
@@ -2807,45 +3348,48 @@ git checkout pre-demo-removal -- \
 - app/(courses)/course-filter-one-open/[courseId]/page.js
 - app/(courses)/course-filter-one-open/page.js
 
-**함께 삭제한 컴포넌트**: 없음
+**함께 삭제한 컴포넌트**:
+
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
-- components/Category/Filter/CourseFilterOneToggle.tsx
+- components/Category/Filter/CourseFilterOneToggle.tsx — T2에서 수정됨
 - components/Common/BookmarkButton.tsx
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 10개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2854,7 +3398,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-filter-one-open/[courseId]/index.js' \
   'app/(courses)/course-filter-one-open/[courseId]/page.js' \
   'app/(courses)/course-filter-one-open/index.js' \
-  'app/(courses)/course-filter-one-open/page.js'
+  'app/(courses)/course-filter-one-open/page.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-filter-one-toggle
@@ -2864,45 +3409,48 @@ git checkout pre-demo-removal -- \
 - app/(courses)/course-filter-one-toggle/[courseId]/page.js
 - app/(courses)/course-filter-one-toggle/page.js
 
-**함께 삭제한 컴포넌트**: 없음
+**함께 삭제한 컴포넌트**:
+
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
-- components/Category/Filter/CourseFilterOneToggle.tsx
+- components/Category/Filter/CourseFilterOneToggle.tsx — T2에서 수정됨
 - components/Common/BookmarkButton.tsx
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 10개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2911,7 +3459,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-filter-one-toggle/[courseId]/index.js' \
   'app/(courses)/course-filter-one-toggle/[courseId]/page.js' \
   'app/(courses)/course-filter-one-toggle/index.js' \
-  'app/(courses)/course-filter-one-toggle/page.js'
+  'app/(courses)/course-filter-one-toggle/page.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-filter-two-open
@@ -2925,44 +3474,46 @@ git checkout pre-demo-removal -- \
 
 - components/Category/CategoryHeadTwo.js
 - components/Category/Filter/CourseFilterTwo.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
-- components/Category/Filter/CourseFilterOneToggle.tsx
+- components/Category/Filter/CourseFilterOneToggle.tsx — T2에서 수정됨
 - components/Common/BookmarkButton.tsx
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 10개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -2973,7 +3524,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-filter-two-open/index.js' \
   'app/(courses)/course-filter-two-open/page.js' \
   'components/Category/CategoryHeadTwo.js' \
-  'components/Category/Filter/CourseFilterTwo.js'
+  'components/Category/Filter/CourseFilterTwo.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-filter-two-toggle
@@ -2987,44 +3539,46 @@ git checkout pre-demo-removal -- \
 
 - components/Category/CategoryHeadTwo.js
 - components/Category/Filter/CourseFilterTwo.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
-- components/Category/Filter/CourseFilterOneToggle.tsx
+- components/Category/Filter/CourseFilterOneToggle.tsx — T2에서 수정됨
 - components/Common/BookmarkButton.tsx
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 10개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3035,7 +3589,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-filter-two-toggle/index.js' \
   'app/(courses)/course-filter-two-toggle/page.js' \
   'components/Category/CategoryHeadTwo.js' \
-  'components/Category/Filter/CourseFilterTwo.js'
+  'components/Category/Filter/CourseFilterTwo.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-masonry
@@ -3047,41 +3602,43 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Category/Filter/CourseCard-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3089,7 +3646,8 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(courses)/course-masonry/index.js' \
   'app/(courses)/course-masonry/page.js' \
-  'components/Category/Filter/CourseCard-Two.js'
+  'components/Category/Filter/CourseCard-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-with-sidebar
@@ -3102,42 +3660,44 @@ git checkout pre-demo-removal -- \
 
 - components/Category/Filter/CourseSidebar.js
 - components/Category/Filter/CourseTab.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3146,7 +3706,8 @@ git checkout pre-demo-removal -- \
   'app/(courses)/course-with-sidebar/index.js' \
   'app/(courses)/course-with-sidebar/page.js' \
   'components/Category/Filter/CourseSidebar.js' \
-  'components/Category/Filter/CourseTab.js'
+  'components/Category/Filter/CourseTab.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-with-tab
@@ -3158,41 +3719,43 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Category/Filter/CourseTab.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3200,7 +3763,8 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(courses)/course-with-tab/index.js' \
   'app/(courses)/course-with-tab/page.js' \
-  'components/Category/Filter/CourseTab.js'
+  'components/Category/Filter/CourseTab.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /course-withtab-two
@@ -3212,41 +3776,43 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Category/Filter/CourseTab-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Category/Category-Banner.js
-- components/Category/CategoryHead.js
+- components/Category/CategoryHead.js — T2에서 수정됨
 - components/Category/Filter/CourseFilter.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3254,7 +3820,8 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(courses)/course-withtab-two/index.js' \
   'app/(courses)/course-withtab-two/page.js' \
-  'components/Category/Filter/CourseTab-Two.js'
+  'components/Category/Filter/CourseTab-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /about
@@ -3271,42 +3838,44 @@ git checkout pre-demo-removal -- \
 - components/Abouts/About-Saven.js
 - components/Abouts/About-Six.js
 - components/Abouts/About-Three.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
-- components/Abouts/About-Two.js
+- components/Abouts/About-Two.js — T2에서 수정됨
 - components/Abouts/About.js
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3319,7 +3888,8 @@ git checkout pre-demo-removal -- \
   'components/Abouts/About-Four.js' \
   'components/Abouts/About-Saven.js' \
   'components/Abouts/About-Six.js' \
-  'components/Abouts/About-Three.js'
+  'components/Abouts/About-Three.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /accordion
@@ -3335,6 +3905,7 @@ git checkout pre-demo-removal -- \
 - components/Accordions/Accordion-Two.js
 - components/Accordions/Accordion.js
 - components/Accordions/Course.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3342,33 +3913,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/accordion.json
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3380,7 +3952,8 @@ git checkout pre-demo-removal -- \
   'components/Accordions/Accordion-Three.js' \
   'components/Accordions/Accordion-Two.js' \
   'components/Accordions/Accordion.js' \
-  'components/Accordions/Course.js'
+  'components/Accordions/Course.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /advance-tab
@@ -3397,6 +3970,7 @@ git checkout pre-demo-removal -- \
 - components/AdvanceTab/AdvanceTab-Two.js
 - components/AdvanceTab/AdvanceTab.js
 - components/AdvanceTab/SectionHead.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**:
 
@@ -3406,32 +3980,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3445,6 +4020,7 @@ git checkout pre-demo-removal -- \
   'components/AdvanceTab/AdvanceTab-Two.js' \
   'components/AdvanceTab/AdvanceTab.js' \
   'components/AdvanceTab/SectionHead.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'data/elements/advanceTab.json'
 ```
 
@@ -3457,6 +4033,7 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Badge/Badge.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3464,32 +4041,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3497,7 +4075,8 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/badge/(badge)/index.js' \
   'app/(elements)/badge/page.js' \
-  'components/Badge/Badge.js'
+  'components/Badge/Badge.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /brand
@@ -3511,6 +4090,7 @@ git checkout pre-demo-removal -- \
 - components/Brand/Brand-One.js
 - components/Brand/Brand-Three.js
 - components/Brand/Brand-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**:
 
@@ -3520,32 +4100,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3556,6 +4137,7 @@ git checkout pre-demo-removal -- \
   'components/Brand/Brand-One.js' \
   'components/Brand/Brand-Three.js' \
   'components/Brand/Brand-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'data/elements/brands.json'
 ```
 
@@ -3571,6 +4153,7 @@ git checkout pre-demo-removal -- \
 - components/Button/ButtonProps/ColorButton.js
 - components/Button/ButtonProps/HoverButton.js
 - components/Button/ButtonProps/SectionHead.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3578,32 +4161,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3614,7 +4198,8 @@ git checkout pre-demo-removal -- \
   'components/Button/Button.js' \
   'components/Button/ButtonProps/ColorButton.js' \
   'components/Button/ButtonProps/HoverButton.js' \
-  'components/Button/ButtonProps/SectionHead.js'
+  'components/Button/ButtonProps/SectionHead.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /call-to-action
@@ -3631,6 +4216,7 @@ git checkout pre-demo-removal -- \
 - components/Call-To-Action/CallToAction-Six.js
 - components/Call-To-Action/CallToAction-Three.js
 - components/Call-To-Action/CallToAction-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3639,33 +4225,34 @@ git checkout pre-demo-removal -- \
 - components/Call-To-Action/CallToAction.js
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3678,7 +4265,8 @@ git checkout pre-demo-removal -- \
   'components/Call-To-Action/CallToAction-Head.js' \
   'components/Call-To-Action/CallToAction-Six.js' \
   'components/Call-To-Action/CallToAction-Three.js' \
-  'components/Call-To-Action/CallToAction-Two.js'
+  'components/Call-To-Action/CallToAction-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /card
@@ -3693,6 +4281,7 @@ git checkout pre-demo-removal -- \
 - components/Cards/Card-Four.js
 - components/Cards/Card-Three.js
 - components/Cards/Card-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**:
 
@@ -3700,35 +4289,36 @@ git checkout pre-demo-removal -- \
 
 **쓰던 유지 파일(삭제 안 함)**:
 
-- components/Cards/Card.js
+- components/Cards/Card.js — T2에서 수정됨
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3740,6 +4330,7 @@ git checkout pre-demo-removal -- \
   'components/Cards/Card-Four.js' \
   'components/Cards/Card-Three.js' \
   'components/Cards/Card-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'data/elements/card.json'
 ```
 
@@ -3762,40 +4353,42 @@ git checkout pre-demo-removal -- \
 - components/Category/CategoryThree.js
 - components/Category/CategoryThreeSlider.js
 - components/Category/CategoryTwo.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
-- components/Category/CategoryOne.js
+- components/Category/CategoryOne.js — T2에서 수정됨
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 9개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3813,7 +4406,8 @@ git checkout pre-demo-removal -- \
   'components/Category/CategoryTen.js' \
   'components/Category/CategoryThree.js' \
   'components/Category/CategoryThreeSlider.js' \
-  'components/Category/CategoryTwo.js'
+  'components/Category/CategoryTwo.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /counter
@@ -3829,6 +4423,7 @@ git checkout pre-demo-removal -- \
 - components/Counters/Counter-Six.js
 - components/Counters/Counter-Three.js
 - components/Counters/Counter-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3839,33 +4434,34 @@ git checkout pre-demo-removal -- \
 - components/Counters/Counter-Head.js
 - components/Counters/Counter.js
 - components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/counter.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3877,7 +4473,8 @@ git checkout pre-demo-removal -- \
   'components/Counters/Counter-Four.js' \
   'components/Counters/Counter-Six.js' \
   'components/Counters/Counter-Three.js' \
-  'components/Counters/Counter-Two.js'
+  'components/Counters/Counter-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /gallery
@@ -3889,6 +4486,7 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Gallery/Gallery.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**:
 
@@ -3898,32 +4496,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -3932,6 +4531,7 @@ git checkout pre-demo-removal -- \
   'app/(elements)/gallery/(gallery)/index.js' \
   'app/(elements)/gallery/page.js' \
   'components/Gallery/Gallery.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'data/elements/gallery.json'
 ```
 
@@ -3941,7 +4541,9 @@ git checkout pre-demo-removal -- \
 
 - app/(elements)/header-style/page.js
 
-**함께 삭제한 컴포넌트**: 없음
+**함께 삭제한 컴포넌트**:
+
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3949,39 +4551,41 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
 ```bash
 git checkout pre-demo-removal -- \
   'app/(elements)/header-style/(header-style)/index.js' \
-  'app/(elements)/header-style/page.js'
+  'app/(elements)/header-style/page.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /instagram
@@ -3990,7 +4594,9 @@ git checkout pre-demo-removal -- \
 
 - app/(elements)/instagram/page.js
 
-**함께 삭제한 컴포넌트**: 없음
+**함께 삭제한 컴포넌트**:
+
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -3998,41 +4604,43 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Instagram/Instagram.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
 ```bash
 git checkout pre-demo-removal -- \
   'app/(elements)/instagram/(instagram)/index.js' \
-  'app/(elements)/instagram/page.js'
+  'app/(elements)/instagram/page.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /list-style
@@ -4043,6 +4651,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/ListStyle/List-Style.js
 
 **함께 삭제한 데이터**: 없음
@@ -4051,32 +4660,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4084,6 +4694,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/list-style/(list-style)/index.js' \
   'app/(elements)/list-style/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/ListStyle/List-Style.js'
 ```
 
@@ -4095,6 +4706,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Newsletters/Newsletter-Four.js
 - components/Newsletters/Newsletter.js
 
@@ -4105,35 +4717,36 @@ git checkout pre-demo-removal -- \
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
 - components/Counters/CounterWrap.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Newsletters/Newsletter-Three.js
 - components/Newsletters/Newsletter-Two.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/newsletter.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4141,6 +4754,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/newsletter/(newsletter)/index.js' \
   'app/(elements)/newsletter/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Newsletters/Newsletter-Four.js' \
   'components/Newsletters/Newsletter.js'
 ```
@@ -4153,6 +4767,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Pricing/Plans/BasicPlan-Two.js
 - components/Pricing/Plans/BasicPlan.js
 - components/Pricing/Plans/ExclusivePlan-Two.js
@@ -4173,32 +4788,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4206,6 +4822,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/pricing/(pricing)/index.js' \
   'app/(elements)/pricing/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Pricing/Plans/BasicPlan-Two.js' \
   'components/Pricing/Plans/BasicPlan.js' \
   'components/Pricing/Plans/ExclusivePlan-Two.js' \
@@ -4228,6 +4845,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Progressbars/Progressbar-Four.js
 - components/Progressbars/Progressbar-Three.js
 - components/Progressbars/Progressbar-Two.js
@@ -4239,32 +4857,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4272,6 +4891,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/progressbar/(progressbar)/index.js' \
   'app/(elements)/progressbar/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Progressbars/Progressbar-Four.js' \
   'components/Progressbars/Progressbar-Three.js' \
   'components/Progressbars/Progressbar-Two.js' \
@@ -4286,6 +4906,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Search/Search-Three.js
 - components/Search/Search-Two.js
 - components/Search/Search.js
@@ -4296,32 +4917,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4329,6 +4951,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/search/(search)/index.js' \
   'app/(elements)/search/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Search/Search-Three.js' \
   'components/Search/Search-Two.js' \
   'components/Search/Search.js'
@@ -4342,6 +4965,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Eight.js
 - components/Services/Service-Eleven.js
 - components/Services/Service-Five.js
@@ -4363,32 +4987,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4396,6 +5021,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/service/(service)/index.js' \
   'app/(elements)/service/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Eight.js' \
   'components/Services/Service-Eleven.js' \
   'components/Services/Service-Five.js' \
@@ -4419,6 +5045,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Socials/Social.js
 
 **함께 삭제한 데이터**: 없음
@@ -4427,32 +5054,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4460,6 +5088,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/social/(social)/index.js' \
   'app/(elements)/social/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Socials/Social.js'
 ```
 
@@ -4471,6 +5100,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Split/Split.js
 
 **함께 삭제한 데이터**: 없음
@@ -4479,34 +5109,35 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Split/Split-Two.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/split.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4514,6 +5145,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/split/(split)/index.js' \
   'app/(elements)/split/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Split/Split.js'
 ```
 
@@ -4525,6 +5157,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/StyleGuide/Sections/AnimatedHeading.js
 - components/StyleGuide/Sections/Avatars.js
 - components/StyleGuide/Sections/BorderRadius.js
@@ -4543,32 +5176,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4576,6 +5210,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/style-guide/(style-guide)/index.js' \
   'app/(elements)/style-guide/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/StyleGuide/Sections/AnimatedHeading.js' \
   'components/StyleGuide/Sections/Avatars.js' \
   'components/StyleGuide/Sections/BorderRadius.js' \
@@ -4597,6 +5232,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Team/TeamEight.js
 - components/Team/TeamFive.js
 - components/Team/TeamFour.js
@@ -4614,34 +5250,35 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Team/TeamTwo.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/team.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4649,6 +5286,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(elements)/team/(team)/index.js' \
   'app/(elements)/team/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Team/TeamEight.js' \
   'components/Team/TeamFive.js' \
   'components/Team/TeamFour.js' \
@@ -4670,6 +5308,7 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Call-To-Action/CallToAction-Four.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Testimonials/Testimonial-Five.js
 - components/Testimonials/Testimonial-Four.js
 - components/Testimonials/Testimonial-Three.js
@@ -4682,37 +5321,38 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
 - components/Testimonials/Testimonial-Scroll/Scroll.js
 - components/Testimonials/Testimonial-Seven.js
 - components/Testimonials/Testimonial-Six.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/category.json
 - data/elements/testimonial.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4721,6 +5361,7 @@ git checkout pre-demo-removal -- \
   'app/(elements)/testimonial/(testimonial)/index.js' \
   'app/(elements)/testimonial/page.js' \
   'components/Call-To-Action/CallToAction-Four.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Testimonials/Testimonial-Five.js' \
   'components/Testimonials/Testimonial-Four.js' \
   'components/Testimonials/Testimonial-Three.js' \
@@ -4741,6 +5382,7 @@ git checkout pre-demo-removal -- \
 - components/Abouts/About-Six.js
 - components/Brand/Brand-Three.js
 - components/Call-To-Action/CallToAction-Six.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Services/Service-Twelve.js
 - components/Team/TeamTen.js
 
@@ -4752,35 +5394,36 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/about.json
 - data/elements/calltoaction.json
 - data/elements/category.json
 - data/elements/team.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4793,6 +5436,7 @@ git checkout pre-demo-removal -- \
   'components/Abouts/About-Six.js' \
   'components/Brand/Brand-Three.js' \
   'components/Call-To-Action/CallToAction-Six.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Services/Service-Twelve.js' \
   'components/Team/TeamTen.js' \
   'data/elements/brands.json' \
@@ -4810,6 +5454,7 @@ git checkout pre-demo-removal -- \
 - components/Academy-Gallery/AcademyGallery-One.js
 - components/Academy-Gallery/AcademyGallery-Three.js
 - components/Academy-Gallery/AcademyGallery-Two.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -4817,32 +5462,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4852,7 +5498,8 @@ git checkout pre-demo-removal -- \
   'app/(pages)/academy-gallery/page.js' \
   'components/Academy-Gallery/AcademyGallery-One.js' \
   'components/Academy-Gallery/AcademyGallery-Three.js' \
-  'components/Academy-Gallery/AcademyGallery-Two.js'
+  'components/Academy-Gallery/AcademyGallery-Two.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /admission-guide
@@ -4865,6 +5512,7 @@ git checkout pre-demo-removal -- \
 
 - components/Admission-Guide/AdmissionArea.js
 - components/Admission-Guide/AdmissionContact.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -4872,32 +5520,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4906,7 +5555,8 @@ git checkout pre-demo-removal -- \
   'app/(pages)/admission-guide/(admission-guide)/index.js' \
   'app/(pages)/admission-guide/page.js' \
   'components/Admission-Guide/AdmissionArea.js' \
-  'components/Admission-Guide/AdmissionContact.js'
+  'components/Admission-Guide/AdmissionContact.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /event-details
@@ -4927,40 +5577,42 @@ git checkout pre-demo-removal -- \
 - components/Events/Event-Section/SimilarEvent.js
 - components/Events/EventBreadCrumb.js
 - components/Events/EventDetails.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/calltoaction.json
 - data/elements/category.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -4977,7 +5629,8 @@ git checkout pre-demo-removal -- \
   'components/Events/Event-Section/EventViedo.js' \
   'components/Events/Event-Section/SimilarEvent.js' \
   'components/Events/EventBreadCrumb.js' \
-  'components/Events/EventDetails.js'
+  'components/Events/EventDetails.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /event-grid
@@ -4990,6 +5643,7 @@ git checkout pre-demo-removal -- \
 
 - components/Events/EventHead.js
 - components/Events/Events.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -4997,33 +5651,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5032,7 +5687,8 @@ git checkout pre-demo-removal -- \
   'app/(pages)/event-grid/(event-grid)/index.js' \
   'app/(pages)/event-grid/page.js' \
   'components/Events/EventHead.js' \
-  'components/Events/Events.js'
+  'components/Events/Events.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /event-list
@@ -5045,6 +5701,7 @@ git checkout pre-demo-removal -- \
 
 - components/Events/EventHead.js
 - components/Events/Events.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -5052,33 +5709,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5087,7 +5745,8 @@ git checkout pre-demo-removal -- \
   'app/(pages)/event-list/(event-list)/index.js' \
   'app/(pages)/event-list/page.js' \
   'components/Events/EventHead.js' \
-  'components/Events/Events.js'
+  'components/Events/Events.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /event-sidebar
@@ -5101,6 +5760,7 @@ git checkout pre-demo-removal -- \
 - components/Events/EventHead.js
 - components/Events/EventSidebar.js
 - components/Events/Events.js
+- components/Header/NavProps/ElementsLayout.js
 
 **함께 삭제한 데이터**: 없음
 
@@ -5108,33 +5768,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5144,7 +5805,8 @@ git checkout pre-demo-removal -- \
   'app/(pages)/event-sidebar/page.js' \
   'components/Events/EventHead.js' \
   'components/Events/EventSidebar.js' \
-  'components/Events/Events.js'
+  'components/Events/Events.js' \
+  'components/Header/NavProps/ElementsLayout.js'
 ```
 
 ### /my-account
@@ -5155,6 +5817,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/My-Account/AccountForm.js
 - components/My-Account/AccountSidebar.js
 - components/My-Account/MyAccount.js
@@ -5167,32 +5830,33 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5200,6 +5864,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(pages)/my-account/(my-account)/index.js' \
   'app/(pages)/my-account/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/My-Account/AccountForm.js' \
   'components/My-Account/AccountSidebar.js' \
   'components/My-Account/MyAccount.js' \
@@ -5214,6 +5879,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Shop/Shop.js
 - components/Shop/ShopHead.js
 
@@ -5223,33 +5889,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/Pagination.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/shop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5257,6 +5924,7 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(pages)/shop/(shop)/index.js' \
   'app/(pages)/shop/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Shop/Shop.js' \
   'components/Shop/ShopHead.js'
 ```
@@ -5270,6 +5938,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/Single-Product/ProductBody.js
 - components/Single-Product/RelatedProduct.js
 - components/Single-Product/ReviewForm.js
@@ -5281,33 +5950,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/shop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5316,6 +5986,7 @@ git checkout pre-demo-removal -- \
   'app/(pages)/single-product/[singleId]/page.js' \
   'app/(pages)/single-product/index.js' \
   'app/(pages)/single-product/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Single-Product/ProductBody.js' \
   'components/Single-Product/RelatedProduct.js' \
   'components/Single-Product/ReviewForm.js' \
@@ -5331,6 +6002,7 @@ git checkout pre-demo-removal -- \
 **함께 삭제한 컴포넌트**:
 
 - components/Accordions/Accordion-Three.js
+- components/Header/NavProps/ElementsLayout.js
 - components/Pricing/Plans/BasicPlan.js
 - components/Pricing/Plans/ExclusivePlan.js
 - components/Pricing/Plans/StandardPlan.js
@@ -5344,33 +6016,34 @@ git checkout pre-demo-removal -- \
 
 - components/Common/BreadCrumb.js
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-Three.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/accordion.json
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5379,6 +6052,7 @@ git checkout pre-demo-removal -- \
   'app/(pages)/subscription/(subscription)/index.js' \
   'app/(pages)/subscription/page.js' \
   'components/Accordions/Accordion-Three.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/Pricing/Plans/BasicPlan.js' \
   'components/Pricing/Plans/ExclusivePlan.js' \
   'components/Pricing/Plans/StandardPlan.js' \
@@ -5401,9 +6075,11 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5426,9 +6102,11 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5452,9 +6130,11 @@ git checkout pre-demo-removal -- \
 
 **쓰던 유지 파일(삭제 안 함)**:
 
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5478,9 +6158,11 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5503,10 +6185,12 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonQuiz.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonQuiz.js — T2에서 수정됨
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 3개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5536,9 +6220,11 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Lesson/LessonPagination.js
-- components/Lesson/LessonSidebar.js
+- components/Lesson/LessonSidebar.js — T2에서 수정됨
 - components/Lesson/LessonTop.js
-- data/lesson.json
+- data/lesson.json — T2에서 수정됨
+
+이 화면이 쓰던 유지 파일 2개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5560,6 +6246,7 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Header/NavProps/ElementsLayout.js
 - components/User-Profile/User-Biography.js
 - components/User-Profile/User-Courses.js
 - components/User-Profile/User-Profile.js
@@ -5569,32 +6256,33 @@ git checkout pre-demo-removal -- \
 **쓰던 유지 파일(삭제 안 함)**:
 
 - components/Common/Separator.js
-- components/Footer/CopyRight.js
+- components/Footer/CopyRight.js — T2에서 수정됨
 - components/Footer/Footer-One.js
 - components/Footer/FooterProps/SingleFooter.js
 - components/Header/Category/Category.js
 - components/Header/Category/CategoryProps/SingleCategory.js
 - components/Header/DashboardNav.js
 - components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
 - components/Header/HeaderTopBar/HeaderTopBar.js
 - components/Header/Headers/Header-Eight.js
 - components/Header/MobileMenu.js
-- components/Header/Nav.js
+- components/Header/Nav.js — T2에서 수정됨
 - components/Header/NavProps/CourseLayout.js
-- components/Header/NavProps/ElementsLayout.js
 - components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
 - components/Header/Offcanvas/Search.js
 - components/Header/Offcanvas/User.js
 - components/Header/dark-switch.js
-- data/MegaMenu.json
-- data/course-details/courseData.json
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5603,6 +6291,7 @@ git checkout pre-demo-removal -- \
   'app/(pages)/profile/[profileId]/page.js' \
   'app/(pages)/profile/index.js' \
   'app/(pages)/profile/page.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
   'components/User-Profile/User-Biography.js' \
   'components/User-Profile/User-Courses.js' \
   'components/User-Profile/User-Profile.js'
@@ -5625,34 +6314,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/ComntForm.js
 - components/Blogs/BlogDetails.js
 - components/Common/Blog-BreadCrumb.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -5671,12 +6336,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5690,7 +6382,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/Comment.js' \
   'components/Blogs/Blog-Sections/ComntForm.js' \
   'components/Blogs/BlogDetails.js' \
-  'components/Common/Blog-BreadCrumb.js'
+  'components/Common/Blog-BreadCrumb.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /blog-grid
@@ -5701,37 +6413,13 @@ git checkout pre-demo-removal -- \
 
 **함께 삭제한 컴포넌트**:
 
+- components/Blogs/Blog-Sections/BlogGrid-Top.js
 - components/Blogs/BlogGrid.js
 - components/Common/Banner.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Blogs/Blog-Sections/BlogGrid-Top.js
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -5750,11 +6438,38 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5762,8 +6477,29 @@ git checkout pre-demo-removal -- \
 git checkout pre-demo-removal -- \
   'app/(blogs)/blog-grid/(blog-grid)/index.js' \
   'app/(blogs)/blog-grid/page.js' \
+  'components/Blogs/Blog-Sections/BlogGrid-Top.js' \
   'components/Blogs/BlogGrid.js' \
-  'components/Common/Banner.js'
+  'components/Common/Banner.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /blog-list
@@ -5777,34 +6513,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/BlogList-Items.js
 - components/Blogs/BlogList.js
 - components/Common/Banner.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -5823,11 +6535,38 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5837,7 +6576,27 @@ git checkout pre-demo-removal -- \
   'app/(blogs)/blog-list/page.js' \
   'components/Blogs/Blog-Sections/BlogList-Items.js' \
   'components/Blogs/BlogList.js' \
-  'components/Common/Banner.js'
+  'components/Common/Banner.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /blog-minimal
@@ -5850,34 +6609,10 @@ git checkout pre-demo-removal -- \
 
 - components/Blogs/BlogGridMinimal.js
 - components/Common/Banner.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -5896,11 +6631,38 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5909,7 +6671,27 @@ git checkout pre-demo-removal -- \
   'app/(blogs)/blog-minimal/(blog-minimal)/index.js' \
   'app/(blogs)/blog-minimal/page.js' \
   'components/Blogs/BlogGridMinimal.js' \
-  'components/Common/Banner.js'
+  'components/Common/Banner.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /blog-with-sidebar
@@ -5924,34 +6706,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/Sidebar.js
 - components/Blogs/BlogSidebar.js
 - components/Common/Banner.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Pagination.js
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -5970,12 +6728,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Pagination.js
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/events.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -5986,7 +6771,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/PostSidebar.js' \
   'components/Blogs/Blog-Sections/Sidebar.js' \
   'components/Blogs/BlogSidebar.js' \
-  'components/Common/Banner.js'
+  'components/Common/Banner.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /post-format-audio
@@ -6004,34 +6809,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/ComntForm.js
 - components/Blogs/BlogDetails.js
 - components/Common/Blog-BreadCrumb.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -6050,12 +6831,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -6069,7 +6877,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/Comment.js' \
   'components/Blogs/Blog-Sections/ComntForm.js' \
   'components/Blogs/BlogDetails.js' \
-  'components/Common/Blog-BreadCrumb.js'
+  'components/Common/Blog-BreadCrumb.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /post-format-gallery
@@ -6087,34 +6915,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/ComntForm.js
 - components/Blogs/BlogDetails.js
 - components/Common/Blog-BreadCrumb.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -6133,12 +6937,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -6152,7 +6983,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/Comment.js' \
   'components/Blogs/Blog-Sections/ComntForm.js' \
   'components/Blogs/BlogDetails.js' \
-  'components/Common/Blog-BreadCrumb.js'
+  'components/Common/Blog-BreadCrumb.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /post-format-quote
@@ -6170,34 +7021,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/ComntForm.js
 - components/Blogs/BlogDetails.js
 - components/Common/Blog-BreadCrumb.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -6216,12 +7043,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -6235,7 +7089,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/Comment.js' \
   'components/Blogs/Blog-Sections/ComntForm.js' \
   'components/Blogs/BlogDetails.js' \
-  'components/Common/Blog-BreadCrumb.js'
+  'components/Common/Blog-BreadCrumb.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /post-format-standard
@@ -6253,34 +7127,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/ComntForm.js
 - components/Blogs/BlogDetails.js
 - components/Common/Blog-BreadCrumb.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -6299,12 +7149,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -6318,7 +7195,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/Comment.js' \
   'components/Blogs/Blog-Sections/ComntForm.js' \
   'components/Blogs/BlogDetails.js' \
-  'components/Common/Blog-BreadCrumb.js'
+  'components/Common/Blog-BreadCrumb.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ### /post-format-video
@@ -6336,34 +7233,10 @@ git checkout pre-demo-removal -- \
 - components/Blogs/Blog-Sections/ComntForm.js
 - components/Blogs/BlogDetails.js
 - components/Common/Blog-BreadCrumb.js
-
-**함께 삭제한 데이터**: 없음
-
-**쓰던 유지 파일(삭제 안 함)**:
-
-- components/Common/Separator.js
-- components/Footer/CopyRight.js
-- components/Footer/Footer-One.js
-- components/Footer/FooterProps/SingleFooter.js
-- components/Header/Category/Category.js
-- components/Header/Category/CategoryProps/SingleCategory.js
-- components/Header/DashboardNav.js
-- components/Header/Header-Right/HeaderRight-Two.js
-- components/Header/Header-Top/HeaderTop-Eight.js
-- components/Header/HeaderStyle-Ten.js
-- components/Header/HeaderTopBar/HeaderTopBar.js
-- components/Header/Headers/Header-Eight.js
-- components/Header/MobileMenu.js
-- components/Header/Nav.js
-- components/Header/NavProps/CourseLayout.js
 - components/Header/NavProps/ElementsLayout.js
-- components/Header/NavProps/PageLayout.js
-- components/Header/Offcanvas/Cart.js
-- components/Header/Offcanvas/Search.js
-- components/Header/Offcanvas/User.js
-- components/Header/dark-switch.js
-- components/Instagram/Instagram.js
-- data/MegaMenu.json
+
+**함께 삭제한 데이터**:
+
 - data/blog/blog-1.md
 - data/blog/blog-10.md
 - data/blog/blog-11.md
@@ -6382,12 +7255,39 @@ git checkout pre-demo-removal -- \
 - data/blog/blog-8.md
 - data/blog/blog-9.md
 - data/blog/blog.json
-- data/course-details/courseData.json
+
+**쓰던 유지 파일(삭제 안 함)**:
+
+- components/Common/Separator.js
+- components/Footer/CopyRight.js — T2에서 수정됨
+- components/Footer/Footer-One.js
+- components/Footer/FooterProps/SingleFooter.js
+- components/Header/Category/Category.js
+- components/Header/Category/CategoryProps/SingleCategory.js
+- components/Header/DashboardNav.js
+- components/Header/Header-Right/HeaderRight-Two.js
+- components/Header/Header-Top/HeaderTop-Eight.js — T2에서 수정됨
+- components/Header/HeaderStyle-Ten.js — T2에서 수정됨
+- components/Header/HeaderTopBar/HeaderTopBar.js
+- components/Header/Headers/Header-Eight.js
+- components/Header/MobileMenu.js
+- components/Header/Nav.js — T2에서 수정됨
+- components/Header/NavProps/CourseLayout.js
+- components/Header/NavProps/PageLayout.js
+- components/Header/Offcanvas/Cart.js — T2에서 수정됨
+- components/Header/Offcanvas/Search.js
+- components/Header/Offcanvas/User.js
+- components/Header/dark-switch.js
+- components/Instagram/Instagram.js
+- data/MegaMenu.json — T2에서 수정됨
+- data/course-details/courseData.json — T2에서 수정됨
 - data/elements/category.json
 - data/elements/instagram.json
-- data/footer.json
+- data/footer.json — T2에서 수정됨
 - data/headerTop.json
 - data/user.json
+
+이 화면이 쓰던 유지 파일 8개가 T2에서 수정됐다. 되살려도 태그 시점과 다르게 동작할 수 있으니 `git diff pre-demo-removal -- <파일>`로 차이를 확인한다.
 
 **복구 명령**:
 
@@ -6401,7 +7301,27 @@ git checkout pre-demo-removal -- \
   'components/Blogs/Blog-Sections/Comment.js' \
   'components/Blogs/Blog-Sections/ComntForm.js' \
   'components/Blogs/BlogDetails.js' \
-  'components/Common/Blog-BreadCrumb.js'
+  'components/Common/Blog-BreadCrumb.js' \
+  'components/Header/NavProps/ElementsLayout.js' \
+  'data/blog/blog-1.md' \
+  'data/blog/blog-10.md' \
+  'data/blog/blog-11.md' \
+  'data/blog/blog-12.md' \
+  'data/blog/blog-13.md' \
+  'data/blog/blog-14.md' \
+  'data/blog/blog-15.md' \
+  'data/blog/blog-16.md' \
+  'data/blog/blog-17.md' \
+  'data/blog/blog-2.md' \
+  'data/blog/blog-3.md' \
+  'data/blog/blog-4.md' \
+  'data/blog/blog-5.md' \
+  'data/blog/blog-6.md' \
+  'data/blog/blog-7.md' \
+  'data/blog/blog-8.md' \
+  'data/blog/blog-9.md' \
+  'data/blog/blog.json' \
+  'mdx/index.js'
 ```
 
 ## 화면에 속하지 않는 삭제 파일
@@ -6493,7 +7413,6 @@ git checkout pre-demo-removal -- \
 - components/ui/tooltip.tsx
 - context/useFetch.js
 - context/utilities.js
-- data/blog/blog.json
 - data/dashboard/admin/sidebar.json
 - data/dashboard/instructor/siderbar.json
 - data/dashboard/student/siderbar.json
@@ -6508,6 +7427,7 @@ git checkout pre-demo-removal -- \
 **packagesOnlyInDeleted**:
 
 - framer-motion
+- next-mdx-remote
 - plyr
 - react-circular-progressbar
 - typed.js
@@ -6552,13 +7472,9 @@ git checkout pre-demo-removal -- \
 - `app/lib/constants/routes.ts:80` — `/browse-courses`
 - `app/lib/utils/roleRoutes.ts:165` — `/student-announcements`
 - `app/lib/utils/roleRoutes.ts:172` — `/student-assignments`
-- `components/01-Main-Demo/01-Main-Demo.js:188` — `/blog`
 - `components/Cart/CartPage.tsx:72` — `/course-filter`
-- `components/Category/CategoryHead.js:127` — `/course-with-tab-two`
-- `components/Category/CategoryHead.js:177` — `/course-with-tab-two`
 - `components/Header/DashboardNav.js:21` — `/admin`
 - `components/Header/DashboardNav.js:33` — `/admin`
-- `components/Lesson/LessonSidebar.js:83` — `/quiz-passing-grade`
 - `data/user.json:35` — `/instructor-my-quiz-attempts`
 
 ## 삭제한 파일 전체 목록
@@ -6865,6 +7781,7 @@ components/AdvanceTab/AdvanceTab.js
 components/AdvanceTab/SectionHead.js
 components/Badge/Badge.js
 components/Blogs/Blog-Sections/Blog-Author.js
+components/Blogs/Blog-Sections/BlogGrid-Top.js
 components/Blogs/Blog-Sections/BlogList-Items.js
 components/Blogs/Blog-Sections/Comment.js
 components/Blogs/Blog-Sections/ComntForm.js
@@ -6922,6 +7839,12 @@ components/Counters/Counter-Four.js
 components/Counters/Counter-Six.js
 components/Counters/Counter-Three.js
 components/Counters/Counter-Two.js
+components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Five.js
+components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Four.js
+components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Seven.js
+components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Six.js
+components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Three.js
+components/Course-Details/Course-Sections/Breadcrumb/CourseBreadcrumb-Two.js
 components/Course-Details/CourseDetails-Eight.js
 components/Course-Details/CourseDetails-Five.js
 components/Course-Details/CourseDetails-Four.js
@@ -6969,6 +7892,7 @@ components/Header/Headers/Header-Seven.js
 components/Header/Headers/Header-Six.js
 components/Header/Headers/Header-Ten.js
 components/Header/Headers/Header-Two.js
+components/Header/NavProps/ElementsLayout.js
 components/Header/SideNav.js
 components/Header/package/HeaderType-Container-Four.js
 components/Lesson/LessonAssignmentsSubmit.js
@@ -7058,6 +7982,24 @@ components/Testimonials/Testimonial.js
 components/User-Profile/User-Biography.js
 components/User-Profile/User-Courses.js
 components/User-Profile/User-Profile.js
+data/blog/blog-1.md
+data/blog/blog-10.md
+data/blog/blog-11.md
+data/blog/blog-12.md
+data/blog/blog-13.md
+data/blog/blog-14.md
+data/blog/blog-15.md
+data/blog/blog-16.md
+data/blog/blog-17.md
+data/blog/blog-2.md
+data/blog/blog-3.md
+data/blog/blog-4.md
+data/blog/blog-5.md
+data/blog/blog-6.md
+data/blog/blog-7.md
+data/blog/blog-8.md
+data/blog/blog-9.md
+data/blog/blog.json
 data/elements/advanceTab.json
 data/elements/brands.json
 data/elements/card.json
@@ -7068,4 +8010,5 @@ data/myAccount.json
 data/pages/11-singleCourse.json
 data/pages/healthInstitute.json
 data/pages/lifeCoach.json
+mdx/index.js
 ```

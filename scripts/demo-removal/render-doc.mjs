@@ -11,7 +11,8 @@
  * route-map.json의 `deleteFiles`, `--final`은 `pre-demo-removal` 태그 대비 실제 git diff의
  * 삭제(D) 파일이다.
  *
- * 계약의 원문은 docs/work-plans/histudy-demo-cleanup.md T004 "문서 구조 계약" 1~12이다.
+ * 문서 구조 계약은 docs/work-plans/histudy-demo-cleanup.md T004 1~12이고,
+ * --final diff 계약은 docs/work-plans/histudy-demo-phase7-execution.md를 따른다.
  * NOTE: 이 파일이 문서의 유일한 생성 경로다 — 산출물(docs/library/histudy-demo-removal.md)을
  * 손으로 고치지 않는다. 손으로 고칠 게 있으면 이 생성기를 고친다.
  * NOTE: 결정성 — 같은 입력이면 같은 바이트를 낸다. 시각·절대 경로·사용자명을 넣지 않는다.
@@ -20,10 +21,14 @@
 import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
+import { createHash } from 'crypto';
 import {
   TAG,
+  buildGraph,
   extractImportSpecs,
   isCodeFile,
+  readTagTree,
+  readWorkTree,
   repoTopLevel,
   sorted,
 } from './graph.mjs';
@@ -32,6 +37,25 @@ const USAGE =
   'usage: render-doc.mjs --date YYYY-MM-DD --links FILE [--final] [--out FILE]';
 const OUT_REL = 'docs/library/histudy-demo-removal.md';
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const CONTROL_CHARACTER_RE = /[\u0000-\u001f\u007f-\u009f]/;
+const FROZEN_PLAN_REL = '.tmp/demo-removal/plan.json';
+const FROZEN_PLAN_SHA256 =
+  '82a12620eb5226bf23cec43e0bd7cd6238ab5db822a76652625b1dd9883c982f';
+const FINAL_PHASE_COUNTS = new Map([
+  [3, 138],
+  [4, 305],
+  [5, 22],
+  [6, 59],
+  [7, 7],
+]);
+const FINAL_SUMMARY_ROWS = Object.freeze([
+  '| Phase 3 — 번호 데모 홈 | 24 | 24 | 138 |',
+  '| Phase 4 — 요소·페이지·코스·퀴즈 데모 | 58 | 71 | 305 |',
+  '| Phase 5 — lesson 데모·profile | 7 | 8 | 22 |',
+  '| Phase 6 — 블로그 | 10 | 16 | 59 |',
+  '| Phase 7 — 잔여 고아 컴포넌트 | 0 | 0 | 7 |',
+  '| 합계 | 99 | 119 | 531 |',
+]);
 
 // (B) 실데이터 코드 판정 — import 지정자 접두사(하나라도 시작하면 실데이터로 본다)
 const REAL_DATA_IMPORT_STARTS = [
@@ -48,12 +72,13 @@ const SUPABASE_FROM_RE = /\.from\(\s*['"]([A-Za-z_]+)['"]\s*\)/;
 // Spec 5 (check-route-links.mjs와 동일) — 헤더·푸터 데이터는 nav-missing으로 따로 집계된다
 const NAV_FILES = new Set(['data/MegaMenu.json', 'data/footer.json']);
 
-// 그룹(삭제 Phase) 표시 순서·제목 — route-map.json sections[].phase는 3|4|5|6 고정
+// 그룹(삭제 Phase) 표시 순서·제목
 const PHASE_GROUPS = [
   { phase: 3, title: '번호 데모 홈' },
   { phase: 4, title: '요소·페이지·코스·퀴즈 데모' },
   { phase: 5, title: 'lesson 데모·profile' },
   { phase: 6, title: '블로그' },
+  { phase: 7, title: '잔여 고아 컴포넌트' },
 ];
 
 function parseArgs(argv) {
@@ -76,10 +101,62 @@ function parseArgs(argv) {
     throw new Error(`unknown option ${key}\n${USAGE}`);
   }
   if (!opts.date || !opts.links) throw new Error(USAGE);
-  if (!DATE_RE.test(opts.date)) {
-    throw new Error(`--date must be YYYY-MM-DD, got ${opts.date}`);
+  if (!isCalendarDate(opts.date)) {
+    throw new Error(`--date must be a valid calendar date, got ${opts.date}`);
   }
   return opts;
+}
+
+function isCalendarDate(value) {
+  if (!DATE_RE.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return (
+    !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
+  );
+}
+
+function normalizeLinksInput(root, value) {
+  let canonicalRoot;
+  let absolute;
+  try {
+    canonicalRoot = fs.realpathSync.native(root);
+    absolute = fs.realpathSync.native(path.resolve(root, value));
+  } catch {
+    throw new Error('--links must reference an existing repository file');
+  }
+  const relative = path.relative(canonicalRoot, absolute);
+  if (
+    relative === '' ||
+    relative === '..' ||
+    relative.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relative)
+  ) {
+    throw new Error('--links must point to a file inside the repository');
+  }
+  return { absolute, display: relative.split(path.sep).join('/') };
+}
+
+function isRepositoryRelativePosixPath(value) {
+  if (
+    !value ||
+    value.includes('\\') ||
+    value.startsWith('/') ||
+    /^[A-Za-z]:/.test(value) ||
+    CONTROL_CHARACTER_RE.test(value)
+  ) {
+    return false;
+  }
+  const segments = value.split('/');
+  return (
+    segments.every(
+      (segment) => segment && segment !== '.' && segment !== '..'
+    ) && path.posix.normalize(value) === value
+  );
+}
+
+function shellArg(value) {
+  if (/^[A-Za-z0-9_./-]+$/.test(value)) return value;
+  return `'${value.replaceAll("'", "'\"'\"'")}'`;
 }
 
 function git(root, args) {
@@ -108,71 +185,311 @@ function readRouteMap(root) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
-/** --links 파일: 첫 줄 헤더 제외, `<file>:<line> <kind> <raw>` 줄만 파싱 */
+function readFrozenPlan(root) {
+  const file = path.join(root, FROZEN_PLAN_REL);
+  if (!fs.existsSync(file)) throw new Error(`missing ${FROZEN_PLAN_REL}`);
+  const bytes = fs.readFileSync(file);
+  const actualHash = createHash('sha256').update(bytes).digest('hex');
+  if (actualHash !== FROZEN_PLAN_SHA256) {
+    throw new Error(
+      `${FROZEN_PLAN_REL} SHA256 mismatch: expected ${FROZEN_PLAN_SHA256}, got ${actualHash}`
+    );
+  }
+  const plan = JSON.parse(bytes.toString('utf8'));
+  if (!Array.isArray(plan.deleteFiles)) {
+    throw new Error(`${FROZEN_PLAN_REL} deleteFiles must be an array`);
+  }
+  return plan;
+}
+
+function mergePhaseByPath(sources) {
+  const phaseByPath = new Map();
+  for (const [sourceName, entries] of sources) {
+    for (const entry of entries) {
+      const phase = Number(entry.phase);
+      if (typeof entry.path !== 'string' || !Number.isInteger(phase)) {
+        throw new Error(`invalid phase mapping in ${sourceName}`);
+      }
+      if (
+        phaseByPath.has(entry.path) &&
+        phaseByPath.get(entry.path) !== phase
+      ) {
+        throw new Error(
+          `phase conflict for ${entry.path}: ${phaseByPath.get(entry.path)} vs ${phase}`
+        );
+      }
+      phaseByPath.set(entry.path, phase);
+    }
+  }
+  return phaseByPath;
+}
+
+function assertWorkingTreeDiffArgs(mode, args) {
+  const contracts = {
+    deletedNames: {
+      options: ['--name-only', '--diff-filter=D'],
+      paths: ['app', 'components', 'data', 'mdx'],
+    },
+    modifiedNames: {
+      options: ['--name-only', '--diff-filter=M'],
+      paths: ['app', 'components', 'data', 'mdx'],
+    },
+    sharedModifiedNames: {
+      options: ['--name-only', '--diff-filter=M'],
+      paths: ['app', 'components', 'data', 'mdx'],
+    },
+    patch: { options: [], paths: ['.prettierignore'] },
+  };
+  const contract = contracts[mode];
+  if (!contract) throw new Error(`unsupported diff collector mode: ${mode}`);
+  const separator = args.indexOf('--');
+  const options = args.slice(1, separator - 1);
+  const revision = args[separator - 1];
+  const paths = args.slice(separator + 1);
+  const forbidden = new Set(['HEAD', '--cached', '--staged']);
+  if (
+    args[0] !== 'diff' ||
+    separator < 2 ||
+    args.lastIndexOf('--') !== separator ||
+    revision !== `${TAG}^{commit}` ||
+    args.some((arg) => forbidden.has(arg)) ||
+    options.length !== contract.options.length ||
+    options.some((arg, index) => arg !== contract.options[index]) ||
+    paths.length !== contract.paths.length ||
+    paths.some((arg, index) => arg !== contract.paths[index])
+  ) {
+    throw new Error(`invalid ${mode} working-tree diff argv`);
+  }
+  return args;
+}
+
+function workingTreeDiffArgs(mode) {
+  let args;
+  if (mode === 'deletedNames') {
+    args = [
+      'diff',
+      '--name-only',
+      '--diff-filter=D',
+      `${TAG}^{commit}`,
+      '--',
+      'app',
+      'components',
+      'data',
+      'mdx',
+    ];
+  } else if (mode === 'modifiedNames' || mode === 'sharedModifiedNames') {
+    args = [
+      'diff',
+      '--name-only',
+      '--diff-filter=M',
+      `${TAG}^{commit}`,
+      '--',
+      'app',
+      'components',
+      'data',
+      'mdx',
+    ];
+  } else if (mode === 'patch') {
+    args = ['diff', `${TAG}^{commit}`, '--', '.prettierignore'];
+  } else {
+    throw new Error(`unsupported diff collector mode: ${mode}`);
+  }
+  return assertWorkingTreeDiffArgs(mode, args);
+}
+
+function assertFinalPhaseCounts(deleteFiles) {
+  const actual = new Map();
+  for (const file of deleteFiles) {
+    if (!Number.isInteger(file.phase)) {
+      throw new Error(`actual deletion has no phase: ${file.path}`);
+    }
+    actual.set(file.phase, (actual.get(file.phase) ?? 0) + 1);
+  }
+  for (const [phase, expectedCount] of FINAL_PHASE_COUNTS) {
+    if (actual.get(phase) !== expectedCount) {
+      throw new Error(
+        `Phase ${phase} deletion count mismatch: expected ${expectedCount}, got ${actual.get(phase) ?? 0}`
+      );
+    }
+  }
+  const expectedTotal = [...FINAL_PHASE_COUNTS.values()].reduce(
+    (sum, count) => sum + count,
+    0
+  );
+  if (
+    deleteFiles.length !== expectedTotal ||
+    actual.size !== FINAL_PHASE_COUNTS.size
+  ) {
+    throw new Error(
+      `final deletion phase coverage mismatch: expected ${expectedTotal}, got ${deleteFiles.length}`
+    );
+  }
+}
+
+function assertFinalSummaryRows(summaryRows, totalFiles) {
+  if (summaryRows.length !== FINAL_PHASE_COUNTS.size) {
+    throw new Error('final summary phase count mismatch');
+  }
+  const seen = new Set();
+  for (const row of summaryRows) {
+    const expectedCount = FINAL_PHASE_COUNTS.get(row.phase);
+    if (
+      seen.has(row.phase) ||
+      expectedCount === undefined ||
+      row.fileCount !== expectedCount
+    ) {
+      throw new Error(`Phase ${row.phase} summary count mismatch`);
+    }
+    seen.add(row.phase);
+  }
+  const expectedTotal = [...FINAL_PHASE_COUNTS.values()].reduce(
+    (sum, count) => sum + count,
+    0
+  );
+  const summaryTotal = summaryRows.reduce((sum, row) => sum + row.fileCount, 0);
+  if (summaryTotal !== expectedTotal || totalFiles !== expectedTotal) {
+    throw new Error(
+      `final summary total mismatch: expected ${expectedTotal}, got ${summaryTotal}/${totalFiles}`
+    );
+  }
+}
+
+function assertAlreadyDead(alreadyDead, sourceAlreadyDead, deleteSet) {
+  const expected = sorted(sourceAlreadyDead.filter((p) => !deleteSet.has(p)));
+  if (
+    alreadyDead.length !== expected.length ||
+    alreadyDead.some((pathName, index) => pathName !== expected[index])
+  ) {
+    throw new Error(
+      'alreadyDead must equal the sorted deletion-set difference'
+    );
+  }
+  const overlap = alreadyDead.filter((p) => deleteSet.has(p));
+  if (overlap.length > 0) {
+    throw new Error(
+      `alreadyDead overlaps actual deletions: ${overlap.join(', ')}`
+    );
+  }
+}
+
+function assertFinalDocument(doc, sourceAlreadyDead, deleteSet) {
+  const summary = doc.match(/## 요약\n\n([\s\S]*?)\n\n## Phase 3/);
+  if (!summary) throw new Error('final summary block missing');
+  const summaryRows = summary[1]
+    .split('\n')
+    .filter((line) => /^\| (?:Phase [3-7]|합계) /.test(line));
+  if (
+    summaryRows.length !== FINAL_SUMMARY_ROWS.length ||
+    summaryRows.some((line, index) => line !== FINAL_SUMMARY_ROWS[index])
+  ) {
+    throw new Error('final serialized summary mismatch');
+  }
+
+  const alreadyDeadBlock = doc.match(
+    /\*\*alreadyDead\*\*:\n\n([\s\S]*?)\n\n`packagesOnlyInDeleted`/
+  );
+  if (!alreadyDeadBlock) throw new Error('final alreadyDead block missing');
+  const renderedAlreadyDead = alreadyDeadBlock[1].split('\n').map((line) => {
+    if (!line.startsWith('- ')) {
+      throw new Error(`invalid final alreadyDead row: ${line}`);
+    }
+    return line.slice(2);
+  });
+  assertAlreadyDead(renderedAlreadyDead, sourceAlreadyDead, deleteSet);
+}
+
+/** --links 파일: 헤더 집계와 `<file>:<line> <kind> <raw>` 본문을 함께 검증 */
 function readLinks(file) {
   const raw = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
-  const lines = raw.split('\n').filter((l) => l.length > 0);
+  const lines = raw.split('\n');
+  if (lines[lines.length - 1] === '') lines.pop();
+  const head =
+    /^del-route=(\d+) missing=(\d+) nav-missing=(\d+)(?: new-missing=(\d+))?$/.exec(
+      lines[0] || ''
+    );
+  if (!head) throw new Error(`links: unexpected first line in ${file}`);
   const entries = [];
   for (const line of lines.slice(1)) {
     const m = line.match(/^(.+):(\d+) (del-route|missing) (.*)$/);
-    if (!m) continue;
-    entries.push({ file: m[1], line: Number(m[2]), kind: m[3], raw: m[4] });
+    if (!m) throw new Error('links: invalid body row');
+    const lineNumber = Number(m[2]);
+    if (
+      !isRepositoryRelativePosixPath(m[1]) ||
+      !Number.isSafeInteger(lineNumber) ||
+      lineNumber < 1 ||
+      String(lineNumber) !== m[2] ||
+      !/^\/(?!\/)\S+$/.test(m[4]) ||
+      CONTROL_CHARACTER_RE.test(m[4])
+    ) {
+      throw new Error('links: invalid repository-relative body row');
+    }
+    entries.push({ file: m[1], line: lineNumber, kind: m[3], raw: m[4] });
+  }
+  const delRoute = entries.filter((entry) => entry.kind === 'del-route').length;
+  const missing = entries.filter((entry) => entry.kind === 'missing').length;
+  const navMissing = entries.filter(
+    (entry) => entry.kind === 'missing' && NAV_FILES.has(entry.file)
+  ).length;
+  const newMissing = Number(head[4] ?? 0);
+  if (
+    delRoute !== Number(head[1]) ||
+    missing !== Number(head[2]) ||
+    navMissing !== Number(head[3]) ||
+    newMissing !== 0
+  ) {
+    throw new Error(`links: first line does not match body in ${file}`);
   }
   return entries;
+}
+
+function finalPackagesOnlyInDeleted(root, deleteSet) {
+  const sourceGraph = buildGraph(readTagTree(root));
+  const currentGraph = buildGraph(readWorkTree(root));
+  const usedByDeleted = new Set();
+  const usedByRemaining = new Set();
+
+  for (const file of sourceGraph.nodes) {
+    if (!deleteSet.has(file)) continue;
+    for (const name of sourceGraph.packages.get(file)) usedByDeleted.add(name);
+  }
+  for (const file of currentGraph.nodes) {
+    for (const name of currentGraph.packages.get(file))
+      usedByRemaining.add(name);
+  }
+
+  return sorted(
+    [...usedByDeleted].filter((name) => !usedByRemaining.has(name))
+  );
 }
 
 /** 계획본: route-map.json의 deleteFiles. --final: 실제 git diff 삭제(D) 파일 */
 function buildDeleteFiles(root, routeMap, final) {
   if (!final) return routeMap.deleteFiles;
-  const phaseByPath = new Map(
-    routeMap.deleteFiles.map((f) => [f.path, f.phase])
-  );
-  const paths = gitLines(root, [
-    'diff',
-    '--name-only',
-    '--diff-filter=D',
-    `${TAG}^{commit}`,
-    'HEAD',
-    '--',
-    'app',
-    'components',
-    'data',
-    'mdx',
+  const frozenPlan = readFrozenPlan(root);
+  const phaseByPath = mergePhaseByPath([
+    ['route-map.json', routeMap.deleteFiles],
+    [FROZEN_PLAN_REL, frozenPlan.deleteFiles],
   ]);
-  return paths.map((p) => ({
+  const paths = gitLines(root, workingTreeDiffArgs('deletedNames'));
+  const deleteFiles = paths.map((p) => ({
     path: p,
-    phase: phaseByPath.has(p) ? phaseByPath.get(p) : null,
-    reason: phaseByPath.has(p) ? 'plan' : 'final-only',
+    phase: phaseByPath.get(p),
+    reason: 'plan',
   }));
+  assertFinalPhaseCounts(deleteFiles);
+  return deleteFiles;
 }
 
 /** 되살릴 때 알아둘 점 (a) — 계획본은 아직 없음, --final은 실제 수정된 유지 파일 목록 */
 function modifiedKeepFiles(root, final) {
   if (!final) return null;
-  return gitLines(root, [
-    'diff',
-    '--name-only',
-    '--diff-filter=M',
-    `${TAG}^{commit}`,
-    'HEAD',
-    '--',
-    'app',
-    'components',
-    'data',
-    'mdx',
-  ]);
+  return gitLines(root, workingTreeDiffArgs('modifiedNames'));
 }
 
 /** 되살릴 때 알아둘 점 (e) — 계획본은 아직 없음, --final은 .prettierignore에서 빠진 줄 */
 function removedPrettierIgnoreLines(root, final) {
   if (!final) return null;
-  const raw = git(root, [
-    'diff',
-    `${TAG}^{commit}`,
-    'HEAD',
-    '--',
-    '.prettierignore',
-  ]);
+  const raw = git(root, workingTreeDiffArgs('patch'));
   const removed = [];
   for (const line of raw.split('\n')) {
     if (line.startsWith('---') || line.startsWith('+++')) continue;
@@ -189,19 +506,7 @@ function removedPrettierIgnoreLines(root, final) {
  * HEAD가 아니라 작업 트리와 비교한다(커밋 안 된 변경 포함). --final 여부와 무관하게 항상 계산한다.
  */
 function modifiedSharedFilesFromTag(root) {
-  return new Set(
-    gitLines(root, [
-      'diff',
-      '--name-only',
-      '--diff-filter=M',
-      `${TAG}^{commit}`,
-      '--',
-      'app',
-      'components',
-      'data',
-      'mdx',
-    ])
-  );
+  return new Set(gitLines(root, workingTreeDiffArgs('sharedModifiedNames')));
 }
 
 /** 태그 시점 소스를 읽는다(작업 트리 파일은 읽지 않는다 — 삭제 후에도 같은 결과) */
@@ -322,6 +627,13 @@ function build(root, opts) {
   const links = readLinks(opts.links);
   const deleteFiles = buildDeleteFiles(root, routeMap, opts.final);
   const deleteSet = new Set(deleteFiles.map((f) => f.path));
+  const alreadyDead = sorted(
+    routeMap.alreadyDead.filter((p) => !deleteSet.has(p))
+  );
+  assertAlreadyDead(alreadyDead, routeMap.alreadyDead, deleteSet);
+  const packagesOnlyInDeleted = opts.final
+    ? finalPackagesOnlyInDeleted(root, deleteSet)
+    : routeMap.packagesOnlyInDeleted;
 
   const sectionViews = new Map();
   for (const section of routeMap.sections) {
@@ -360,9 +672,8 @@ function build(root, opts) {
   const generateCmd = [
     'node scripts/demo-removal/render-doc.mjs',
     `--date ${opts.date}`,
-    `--links ${opts.linksArg}`,
+    `--links ${shellArg(opts.linksArg)}`,
     opts.final ? '--final' : null,
-    opts.out ? `--out ${opts.out}` : null,
   ]
     .filter(Boolean)
     .join(' ');
@@ -441,6 +752,7 @@ function build(root, opts) {
     const entryCount = sections.reduce((n, s) => n + s.entries.length, 0);
     const fileCount = deleteFiles.filter((f) => f.phase === phase).length;
     return {
+      phase,
       title: `Phase ${phase} — ${title}`,
       sections: sections.length,
       entryCount,
@@ -450,6 +762,7 @@ function build(root, opts) {
   const totalSections = summaryRows.reduce((n, r) => n + r.sections, 0);
   const totalEntries = summaryRows.reduce((n, r) => n + r.entryCount, 0);
   const totalFiles = summaryRows.reduce((n, r) => n + r.fileCount, 0);
+  if (opts.final) assertFinalSummaryRows(summaryRows, totalFiles);
   chunks.push(
     [
       '| 그룹 | 라우트 섹션 수 | 진입점 수 | 삭제 파일 수 |',
@@ -553,13 +866,11 @@ function build(root, opts) {
     '`alreadyDead`는 태그 시점에 어느 진입점·소비자에서도 import로 닿지 않던 코드 파일이다(예: 이미 죽은 위젯). ' +
       'import로 안 보일 뿐 실제로 쓰일 수 있음(예: `types/*.d.ts`, `components/ui/*`) — 미사용으로 단정하지 말 것.'
   );
-  chunks.push(...labeledList('alreadyDead', routeMap.alreadyDead));
+  chunks.push(...labeledList('alreadyDead', alreadyDead));
   chunks.push(
     '`packagesOnlyInDeleted`는 삭제 파일만 import하던 npm 의존성이다 — 지금 제거하지 않고 후보로만 남긴다(T5 참고).'
   );
-  chunks.push(
-    ...labeledList('packagesOnlyInDeleted', routeMap.packagesOnlyInDeleted)
-  );
+  chunks.push(...labeledList('packagesOnlyInDeleted', packagesOnlyInDeleted));
 
   // ## 기존 링크 결함
   chunks.push(heading(2, '기존 링크 결함'));
@@ -585,7 +896,9 @@ function build(root, opts) {
   const allDeleted = sorted(deleteFiles.map((f) => f.path));
   chunks.push(['```text', ...allDeleted, '```'].join('\n'));
 
-  return `${frontMatter(opts)}\n\n${chunks.join('\n\n')}\n`;
+  const doc = `${frontMatter(opts)}\n\n${chunks.join('\n\n')}\n`;
+  if (opts.final) assertFinalDocument(doc, routeMap.alreadyDead, deleteSet);
+  return doc;
 }
 
 function main() {
@@ -596,12 +909,14 @@ function main() {
     console.error(err.message);
     return 2;
   }
-  opts.linksArg = opts.links;
   try {
     const root = repoTopLevel(process.cwd());
+    const links = normalizeLinksInput(root, opts.links);
+    opts.links = links.absolute;
+    opts.linksArg = links.display;
     const doc = build(root, opts);
     const outRel = opts.out || OUT_REL;
-    const out = path.join(root, outRel);
+    const out = path.resolve(root, outRel);
     fs.mkdirSync(path.dirname(out), { recursive: true });
     fs.writeFileSync(out, doc);
     console.log(`wrote ${outRel}`);

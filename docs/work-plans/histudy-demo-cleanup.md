@@ -5,7 +5,7 @@ tags:
   - component/ui
   - progress/in-progress
 created: 2026-01-01
-updated: 2026-09-16
+updated: 2026-09-25
 lifecycle: active
 ---
 
@@ -812,18 +812,18 @@ console.log("keep-paths", P.length, "conds", C.length, "diff", d); process.exit(
 
 ## Phase 7: 고아 정리·기록 확정·조립 검증
 
-- [ ] T017 편집으로 생긴 고아 삭제 — `plan --phase 7` 목록(예: `components/Header/NavProps/ElementsLayout.js`) (depends on T016) `category:quick`
+- [x] T017 편집으로 생긴 고아 삭제 — `plan --phase 7` 목록(예: `components/Header/NavProps/ElementsLayout.js`) (depends on T016) `category:quick`
   - Goal: Phase 2 편집으로 아무도 안 쓰게 된 파일 삭제
   - DoD 방향: `node scripts/demo-removal/route-map.mjs verify` → exit 0
-- [ ] T018 매핑 문서 최종 재생성 — `docs/library/histudy-demo-removal.md` (depends on T017, T004) `category:writing`
+- [x] T018 매핑 문서 최종 재생성 — `docs/library/histudy-demo-removal.md` (depends on T017, T004) `category:writing`
   - Goal: `node scripts/demo-removal/check-route-links.mjs --report-only > .tmp/demo-removal/links-final.txt` 후 `render-doc.mjs --final --date <작업일> --links .tmp/demo-removal/links-final.txt`로 실제 `git diff` 기준 재생성, `lifecycle: active`, `progress/completed`
   - DoD 방향: F6~F10 통과
-- [ ] T019 ROADMAP T2 상태 갱신 — `docs/ROADMAP.md` (depends on T018) `category:writing`
+- [x] T019 ROADMAP T2 상태 갱신 — `docs/ROADMAP.md` (depends on T018) `category:writing`
   - Goal: `docs/ROADMAP.md:50` T2 행을 완료로, 기록 문서 경로 추가, 변경 이력 한 줄, `updated` 갱신
   - DoD 방향: `git diff docs/ROADMAP.md`가 그 행·이력 표·front-matter·버전 줄만
-- [ ] T020 조립 후 validator — `docs/work-plans/histudy-demo-cleanup.md` (depends on T019) `category:quick`
+- [x] T020 조립 후 validator — `docs/work-plans/histudy-demo-cleanup.md` (depends on T019) `category:quick`
   - Goal: 전체 변경(수정 + 삭제 목록)에 validator PASS, Implementation Log 기록
-- [ ] T021 조립 후 적대축 1회 (opt-in) — `docs/work-plans/histudy-demo-cleanup.md` (depends on T020) `category:quick`
+- [x] T021 조립 후 적대축 1회 (opt-in) — `docs/work-plans/histudy-demo-cleanup.md` (depends on T020) `category:quick`
   - Goal: 사용자 opt-in 시 `adversarial-round` 실행·지적 반영 후 Tier 1 재통과, 거절 시 거절 기록
 
 **Checkpoint**: `route-map.mjs verify` exit 0 · `check-route-links.mjs` exit 0 · Tier 1 통과 · Final Verification 착수 가능
@@ -926,12 +926,12 @@ Critical Path: T002 → T003 → T022 → T007 → T011 → T012 → T013 → T0
 
 ## Final Verification
 
-- [ ] F1. 삭제·보존 판정 — `node scripts/demo-removal/route-map.mjs verify` → exit 0, 출력에 `del-entries-remaining=0`, `delete-candidates-remaining=0`, `keep-entries-present=71/71`
-- [ ] F2. 참조 0건 — `node scripts/demo-removal/check-route-links.mjs --baseline .tmp/demo-removal/links-baseline.txt` → exit 0, 첫 줄 `del-route=0`·`nav-missing=0`·`new-missing=0`, `missing` ≤ 기준선. 그리고 `git grep -nE "data/blog|@/mdx|mdx/index" -- app components scripts __tests__ tests ':!scripts/demo-removal'` → 0줄(Q1 A 기준)
-- [ ] F3. Tier 1 — `npm run type-check && npm run lint && npm run format:check && npm run build` → exit 0, Test Strategy의 jest 명령 → 기준선과 같은 `Test Suites`·`Tests` 수
-- [ ] F4. CI 가드 — `.github/workflows/lint-check.yml:63-110`(글꼴·react-pdf)과 `:130-144`(skip 금지)의 run 스크립트를 Bash로 그대로 실행 → 각 exit 0
-- [ ] F5. 범위 밖 불변 — `git diff --name-only 'pre-demo-removal^{commit}' HEAD -- public progress.json app/lib app/api 'app/(dashboard)' 'app/(auth)' package.json package-lock.json` → `app/lib/constants/routes.ts` 1줄만(U1=A 사용자 승인 예외 — 그 파일의 diff는 `ABOUT` 한 줄 변경뿐: `git diff -U0 'pre-demo-removal^{commit}' HEAD -- app/lib/constants/routes.ts | grep -cE '^[-+] '` → `2`), 그 밖 0줄
-- [ ] F6. 매핑 문서 == 실제 삭제 — 아래 → `SAME`
+- [x] F1. 삭제·보존 판정 — `node scripts/demo-removal/route-map.mjs verify` → exit 0, 출력에 `del-entries-remaining=0`, `delete-candidates-remaining=0`, `keep-entries-present=71/71`
+- [x] F2. 참조 0건 — `node scripts/demo-removal/check-route-links.mjs --baseline .tmp/demo-removal/links-baseline.txt` → exit 0, 첫 줄 `del-route=0`·`nav-missing=0`·`new-missing=0`, `missing` ≤ 기준선. 그리고 `git grep -nE "data/blog|@/mdx|mdx/index" -- app components scripts __tests__ tests ':!scripts/demo-removal'` → 0줄(Q1 A 기준)
+- [x] F3. Tier 1 — `npm run type-check && npm run lint && npm run format:check && npm run build` → exit 0, Test Strategy의 jest 명령 → 기준선과 같은 `Test Suites`·`Tests` 수
+- [x] F4. CI 가드 — `.github/workflows/lint-check.yml:63-110`(글꼴·react-pdf)과 `:130-144`(skip 금지)의 run 스크립트를 Bash로 그대로 실행 → 각 exit 0
+- [x] F5. 범위 밖 불변 — `git diff --name-only 'pre-demo-removal^{commit}' HEAD -- public progress.json app/lib app/api 'app/(dashboard)' 'app/(auth)' package.json package-lock.json` → `app/lib/constants/routes.ts` 1줄만(U1=A 사용자 승인 예외 — 그 파일의 diff는 `ABOUT` 한 줄 변경뿐: `git diff -U0 'pre-demo-removal^{commit}' HEAD -- app/lib/constants/routes.ts | grep -cE '^[-+] '` → `2`), 그 밖 0줄
+- [x] F6. 매핑 문서 == 실제 삭제 — 아래 → `SAME`
 
   ```bash
   git diff --name-only --diff-filter=D 'pre-demo-removal^{commit}' HEAD -- app components data mdx | sort > .tmp/demo-removal/diff-D.txt
@@ -939,8 +939,8 @@ Critical Path: T002 → T003 → T022 → T007 → T011 → T012 → T013 → T0
   diff .tmp/demo-removal/diff-D.txt .tmp/demo-removal/doc-D.txt && echo SAME
   ```
 
-- [ ] F7. 문서의 모든 삭제 경로가 태그에 존재 — `while IFS= read -r p; do git cat-file -e "pre-demo-removal:$p" 2>/dev/null || echo "MISSING $p"; done < .tmp/demo-removal/doc-D.txt | wc -l` → `0`
-- [ ] F8. 복구 실연(읽기 전용 임시 worktree) — 아래 → `RESTORED`, 마지막 줄 `1`
+- [x] F7. 문서의 모든 삭제 경로가 태그에 존재 — `while IFS= read -r p; do git cat-file -e "pre-demo-removal:$p" 2>/dev/null || echo "MISSING $p"; done < .tmp/demo-removal/doc-D.txt | wc -l` → `0`
+- [x] F8. 복구 실연(읽기 전용 임시 worktree) — 아래 → `RESTORED`, 마지막 줄 `1`
 
   ```bash
   WT="$(cygpath -m "$(mktemp -d)")/wt"
@@ -951,9 +951,9 @@ Critical Path: T002 → T003 → T022 → T007 → T011 → T012 → T013 → T0
   git worktree list | wc -l
   ```
 
-- [ ] F9. 문서 검사 — `npx markdownlint-cli2 docs/library/histudy-demo-removal.md` → exit 0 · `node scripts/verify-frontmatter.mjs | grep -cE 'histudy-demo-(removal|cleanup)'` → `0`
-- [ ] F10. 생성 결정성 — T018과 같은 인자로 `node scripts/demo-removal/render-doc.mjs --final --date <T018 날짜> --links .tmp/demo-removal/links-final.txt` 재실행 → `git diff --exit-code docs/library/histudy-demo-removal.md` exit 0
-- [ ] F11. 제3자 검증 기록 — Read로 Implementation Log 확인: validator 판정 2건(T011, T020) PASS, 적대축 결과 또는 사용자 거절 2건(T011, T021)
+- [x] F9. 문서 검사 — `npx markdownlint-cli2 docs/library/histudy-demo-removal.md` → exit 0 · `node scripts/verify-frontmatter.mjs | grep -cE 'histudy-demo-(removal|cleanup)'` → `0`
+- [x] F10. 생성 결정성 — T018과 같은 인자로 `node scripts/demo-removal/render-doc.mjs --final --date <T018 날짜> --links .tmp/demo-removal/links-final.txt` 재실행 → `git diff --exit-code docs/library/histudy-demo-removal.md` exit 0
+- [x] F11. 제3자 검증 기록 — Read로 Implementation Log 확인: validator 판정 2건(T011, T020) PASS, 적대축 결과 또는 사용자 거절 2건(T011, T021)
 - [ ] F12. PR CI (사용자 승인으로 PR 생성 후) — `gh pr checks <PR 번호>` → `ci-checks` pass. `Docs Validation`은 pass이거나, 실패 시 오류 파일 목록에 `docs/library/histudy-demo-removal.md`가 없고 기준선 결론과 같은 기존 원인
 
 ---
@@ -1111,3 +1111,14 @@ R3 명령 마지막 줄: `keep-paths 54 conds 1 diff 0`
 - 범위 밖 기존 버그(편집과 무관): `components/wishlist/Wishlist.js:25` `setCart(!cartToggle)` — `cartToggle` 미정의로 담기 직후 ReferenceError
 - 적대축 T011 — OFF(사용자 거절, 2026-09-16)
 - 재검증: validator·적대축 모두 코드 반영 없음 → Tier 1·Phase 2 Checkpoint 재실행 불필요(위 Checkpoint 표가 최종)
+
+### 2026-09-25 — Phase 7 완료 (T017~T021)
+
+- T017: frozen manifest 순서의 고아 7개만 삭제했다. source preimage hash와 현재 부재 상태는 `T017-receipt.json`으로 확인했다.
+- T018: 최종 문서를 실제 tag-to-working-tree 삭제 531개로 재생성했다. Phase별 삭제 수는 138/305/22/59/7이고, `packagesOnlyInDeleted`에 `next-mdx-remote`를 포함한 5개를 실제 삭제 source와 현재 importer에서 다시 계산했다.
+- T019: ROADMAP을 2026-09-25·Version 2.5·T2 완료·2.5 변경 이력으로만 갱신하고 T5 dependency와 나머지 bytes를 보존했다.
+- T020 validator — `INTENT_PASS`, reviewer `01a0d982-6af9-7361-86a8-94907e44e667`. C0·DEL·C1 전체 control character, 빈 값, root-only, protocol-relative, whitespace, malformed `--links` 행이 출력 생성·원문 노출 없이 거부됨을 포함해 current receipt를 검토했다.
+- T021 installed adversarial round `phase7-t017-a1-controls-final` — `ADVERSARIAL_PASS`, reviewer `01a0d998-624a-7122-b116-60185deea6a6`, `strict:true`, `mutate:false`, `verify:null`, findings 0, runtime `COMPLETE`. Mutation coverage는 주장하지 않는다.
+- `orchestratorMustDo` 직접 판정: ⓐ round 전후 6개 receipt hash가 같아 review 중 target 변경 0줄, ⓑ findings 0이라 추가 조치 불필요, ⓒ 재분류할 심각도 없음, ⓓ 제품 실코드 변화량 0줄로 확인했다.
+- Task verification: exact 12 checks PASS — receipt·route·link·결정성·markdownlint·frontmatter·TypeScript·ESLint·Prettier·Next build·Jest 1/3·Jest 17/133.
+- Final Verification: F1~F11 완료. F12 PR CI는 local-only 범위라 pending으로 유지한다.

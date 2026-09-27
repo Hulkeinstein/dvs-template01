@@ -1,0 +1,26 @@
+{
+  "work_id": "histudy-demo-phase7-execution",
+  "task_id": "T017",
+  "attempt": 1,
+  "axis": "ADVERSARIAL",
+  "reviewer_id": "01a0d998-624a-7122-b116-60185deea6a6",
+  "reviewed_artifacts": [
+    {
+      "path": "scripts/demo-removal/render-doc.mjs",
+      "sha256": "60907dd54b4c1368465d3b1a9e375c62d2c04155a1f035b346c60bd4812f4aae"
+    },
+    {
+      "path": "docs/library/histudy-demo-removal.md",
+      "sha256": "15d8178ab3045d38a6e32c8976394c4b290f28fb190ec1e4ff053464b28cc64e"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "sha256": "ef576eadb56ed19276bd8445648df8172e341dea240916da48eba526a6ecb7a0"
+    },
+    {
+      "path": "docs/work-plans/evidence/histudy-demo-phase7/T017-receipt.json",
+      "sha256": "6e3dbbe3268484ecc33e20c99ac67d1205cd2bf691421ae099759c186874d091"
+    }
+  ],
+  "verdict": "ADVERSARIAL_PASS"
+}

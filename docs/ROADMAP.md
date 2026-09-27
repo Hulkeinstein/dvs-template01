@@ -5,7 +5,7 @@ tags:
   - phase/planning
   - progress/in-progress
 created: 2025-11-08
-updated: 2026-09-16
+updated: 2026-09-25
 lifecycle: active
 related:
   - PROJECT_VISION.md
@@ -14,8 +14,8 @@ related:
 
 # DVS Product Roadmap
 
-**Version**: 2.4 (T1 완료 반영)
-**Last Updated**: 2026-09-16
+**Version**: 2.5 (T2 완료 반영)
+**Last Updated**: 2026-09-25
 **Status**: Active
 
 ---
@@ -47,7 +47,7 @@ related:
 | 유출된 Supabase 키 폐기 및 저장소에서 제거 | ✅ 완료 | #74 |
 | 정리 항목의 순서와 첫 트랙 계획 | ✅ 완료 | 아래 T1~T6 |
 | T1. 저장소 위생·CI 복구 (줄바꿈 정규화, 추적 산출물, 서식, Next 14.2.35 패치, 완료된 work-plan 2개 삭제) | ✅ 완료 | #76 · CI Checks 첫 통과(빌드·테스트 포함) |
-| T2. HiStudy 데모 페이지·컴포넌트 삭제 | 🔜 다음 작업 | 선행 T1 완료 · 보류된 `work-plans/histudy-demo-cleanup.md` 재사용 |
+| T2. HiStudy 데모 페이지·컴포넌트 삭제 | ✅ 완료 | [최종 기록](library/histudy-demo-removal.md) |
 | T3. DB 마이그레이션 기준선 재수립 (운영 DB 스키마 기준) | 📋 계획됨 | 선행 T1 · 새 Supabase 키와 DB 접근 필요 |
 | T4. 보안 후속 조치 (서버 액션·API 인가, DB 권한·RLS 재정비) | 📋 계획됨 | 선행 T3 · 상세는 비공개 점검 보고서 |
 | T5. Next.js 15 이상 · React 19 · Node 22 전환 | 📋 계획됨 | 선행 T2, T4 · 14.2.35 패치는 T1에 포함 |
@@ -540,6 +540,7 @@ export function middleware(request: NextRequest) {
 | 2.2 | 2026-09-16 | 재개 방향 결정(ADR 0003: 정리 후 지속), 정리 항목 계획됨으로 전환 | AI + User |
 | 2.3 | 2026-09-16 | 정리 트랙 T1~T6 순서 확정, 문서 검사 복구 항목 추가, work-plan 상태 정정 | AI + User |
 | 2.4 | 2026-09-16 | T1 완료(CI 첫 통과), T1에서 드러난 결함 기록, 다음 작업 T2로 전환 | AI + User |
+| 2.5 | 2026-09-25 | T2 완료(HiStudy 데모 페이지·컴포넌트 삭제), 최종 복구 기록 확정 | AI + User |
 
 ---
 
