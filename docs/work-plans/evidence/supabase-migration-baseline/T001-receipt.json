@@ -1,0 +1,173 @@
+{
+  "attempt": 3,
+  "boundaries": {
+    "dump_excludes": [
+      "managed auth schema",
+      "managed storage schema",
+      "data (rows)",
+      "custom roles"
+    ],
+    "dump_mode": "default schema-only",
+    "full_schema_closure": "UNVERIFIED",
+    "history_comparison": "timestamp-only",
+    "history_source": "remote-only (isolated empty cwd)"
+  },
+  "classification_counts": {
+    "ambiguous": 55,
+    "ambiguous_local": 55,
+    "ambiguous_remote": 0,
+    "local_classified": 72,
+    "local_total": 72,
+    "local_unmatched": 17,
+    "matched": 0,
+    "remote_classified": 4,
+    "remote_total": 4,
+    "remote_unmatched": 4
+  },
+  "comparisons": {
+    "history_equal": true,
+    "schema_equal": true,
+    "source_bytes_unchanged": true,
+    "unrelated_state_unchanged": true
+  },
+  "evidence": [
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-worktree-before.json",
+      "sha256": "d0672f579b60a4ea7f494416e22b607fe27683c6cc77ed9dc08a52c63391b37a",
+      "size_bytes": 30198
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-history-before.txt",
+      "sha256": "839a0d6f6e84bcefea34f658072eb3db0d352d073713909c8a480afa5d1c03c5",
+      "size_bytes": 319
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-schema-a.sql",
+      "sha256": "f8b13f34f48063e8a014768eeed17f05b073b1e0ed86e5adf4f9304e5e4f6096",
+      "size_bytes": 159262
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-schema-b.sql",
+      "sha256": "f8b13f34f48063e8a014768eeed17f05b073b1e0ed86e5adf4f9304e5e4f6096",
+      "size_bytes": 159262
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-history-after.txt",
+      "sha256": "839a0d6f6e84bcefea34f658072eb3db0d352d073713909c8a480afa5d1c03c5",
+      "size_bytes": 319
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-local-migrations.json",
+      "sha256": "184f2c06db924802aa30d70a2bd5d385192efd4ad27faa74d15334648ccb5198",
+      "size_bytes": 19197
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-reconciliation.json",
+      "sha256": "97aa9bef2fc0827970bdcedda942c30a4160cb1d45bc120a84786a07d96f1fcc",
+      "size_bytes": 21745
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-worktree-after.json",
+      "sha256": "a830b2760fd72eeb735d3a340088d6f58ee3c40914bb9bfb1f31adcf2bcc6a0e",
+      "size_bytes": 30198
+    }
+  ],
+  "executor_id": "sisyphus-junior-T001-worker-3",
+  "remote_reads": [
+    {
+      "argv": [
+        "npx",
+        "--yes",
+        "supabase@2.118.0",
+        "migration",
+        "list",
+        "--db-url",
+        "<DVS_SUPABASE_DB_URL>"
+      ],
+      "artifact": "docs/artifacts/supabase-baseline/T001-remote-history-before.txt",
+      "capture": "stdout-raw-bytes",
+      "cwd_class": "isolated-empty",
+      "exit_code": 0,
+      "operation": "migration list",
+      "sequence": 1
+    },
+    {
+      "argv": [
+        "npx",
+        "--yes",
+        "supabase@2.118.0",
+        "db",
+        "dump",
+        "--db-url",
+        "<DVS_SUPABASE_DB_URL>",
+        "--file",
+        "docs/artifacts/supabase-baseline/T001-remote-schema-a.sql"
+      ],
+      "artifact": "docs/artifacts/supabase-baseline/T001-remote-schema-a.sql",
+      "capture": "cli-file-output",
+      "cwd_class": "workspace",
+      "exit_code": 0,
+      "operation": "db dump",
+      "sequence": 2
+    },
+    {
+      "argv": [
+        "npx",
+        "--yes",
+        "supabase@2.118.0",
+        "db",
+        "dump",
+        "--db-url",
+        "<DVS_SUPABASE_DB_URL>",
+        "--file",
+        "docs/artifacts/supabase-baseline/T001-remote-schema-b.sql"
+      ],
+      "artifact": "docs/artifacts/supabase-baseline/T001-remote-schema-b.sql",
+      "capture": "cli-file-output",
+      "cwd_class": "workspace",
+      "exit_code": 0,
+      "operation": "db dump",
+      "sequence": 3
+    },
+    {
+      "argv": [
+        "npx",
+        "--yes",
+        "supabase@2.118.0",
+        "migration",
+        "list",
+        "--db-url",
+        "<DVS_SUPABASE_DB_URL>"
+      ],
+      "artifact": "docs/artifacts/supabase-baseline/T001-remote-history-after.txt",
+      "capture": "stdout-raw-bytes",
+      "cwd_class": "isolated-empty",
+      "exit_code": 0,
+      "operation": "migration list",
+      "sequence": 4
+    }
+  ],
+  "safety": {
+    "cli_workdir_absent": true,
+    "docker_residue": false,
+    "forbidden_commands": [],
+    "long_running_process": false,
+    "production_mutation": false,
+    "raw_secret_scan": true
+  },
+  "schema_version": 1,
+  "target_fingerprint": {
+    "host_class": "direct",
+    "host_record_sha256": "d97708895cc4e2f43d3e7278ee5dad0749bf296a326496137cdb1d458066813f",
+    "project_ref": "datvqaemqzhgitxxfvar"
+  },
+  "task_id": "T001",
+  "toolchain": {
+    "global_install_used": false,
+    "npm_integrity": "sha512-0aPIlzBSBLwbJZCMZKD1QAwlc4xNnNvvk07QuSuuKBKzGLSeV3GovgTLlMKFTJ4JWfJubWF0URPLuPUr0kZr5g==",
+    "npx_cache_integrity_verified": true,
+    "repo_dependency_changed": false,
+    "supabase_cli_version": "2.118.0"
+  },
+  "work_id": "supabase-migration-baseline-evidence"
+}

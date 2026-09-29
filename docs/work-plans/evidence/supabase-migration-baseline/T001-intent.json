@@ -1,0 +1,46 @@
+{
+  "work_id": "supabase-migration-baseline-evidence",
+  "task_id": "T001",
+  "attempt": 3,
+  "axis": "INTENT",
+  "reviewer_id": "wf_17801a90-6d0:intent-reviewer",
+  "reviewed_artifacts": [
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-worktree-before.json",
+      "sha256": "d0672f579b60a4ea7f494416e22b607fe27683c6cc77ed9dc08a52c63391b37a"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-history-before.txt",
+      "sha256": "839a0d6f6e84bcefea34f658072eb3db0d352d073713909c8a480afa5d1c03c5"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-schema-a.sql",
+      "sha256": "f8b13f34f48063e8a014768eeed17f05b073b1e0ed86e5adf4f9304e5e4f6096"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-schema-b.sql",
+      "sha256": "f8b13f34f48063e8a014768eeed17f05b073b1e0ed86e5adf4f9304e5e4f6096"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-remote-history-after.txt",
+      "sha256": "839a0d6f6e84bcefea34f658072eb3db0d352d073713909c8a480afa5d1c03c5"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-local-migrations.json",
+      "sha256": "184f2c06db924802aa30d70a2bd5d385192efd4ad27faa74d15334648ccb5198"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-reconciliation.json",
+      "sha256": "97aa9bef2fc0827970bdcedda942c30a4160cb1d45bc120a84786a07d96f1fcc"
+    },
+    {
+      "path": "docs/artifacts/supabase-baseline/T001-worktree-after.json",
+      "sha256": "a830b2760fd72eeb735d3a340088d6f58ee3c40914bb9bfb1f31adcf2bcc6a0e"
+    },
+    {
+      "path": "docs/work-plans/evidence/supabase-migration-baseline/T001-receipt.json",
+      "sha256": "f62b6480a4e0c9f21cfd6d1d6e2e02fd8917fb17e0e90631dca4e4c672c9bd9c"
+    }
+  ],
+  "verdict": "INTENT_PASS"
+}

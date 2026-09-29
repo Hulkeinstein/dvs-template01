@@ -5,7 +5,7 @@ tags:
   - phase/planning
   - progress/in-progress
 created: 2025-11-08
-updated: 2026-09-25
+updated: 2026-09-29
 lifecycle: active
 related:
   - PROJECT_VISION.md
@@ -48,7 +48,7 @@ related:
 | 정리 항목의 순서와 첫 트랙 계획 | ✅ 완료 | 아래 T1~T6 |
 | T1. 저장소 위생·CI 복구 (줄바꿈 정규화, 추적 산출물, 서식, Next 14.2.35 패치, 완료된 work-plan 2개 삭제) | ✅ 완료 | #76 · CI Checks 첫 통과(빌드·테스트 포함) |
 | T2. HiStudy 데모 페이지·컴포넌트 삭제 | ✅ 완료 | [최종 기록](library/histudy-demo-removal.md) |
-| T3. DB 마이그레이션 기준선 재수립 (운영 DB 스키마 기준) | 📋 계획됨 | 선행 T1 · 새 Supabase 키와 DB 접근 필요 |
+| T3. DB 마이그레이션 기준선 재수립 (운영 DB 스키마 기준) | 🔄 진행 중 | 선행 T1 · 1단계(운영 DB 읽기 전용 증빙) 완료 · 다음은 기준선 전환 계획 |
 | T4. 보안 후속 조치 (서버 액션·API 인가, DB 권한·RLS 재정비) | 📋 계획됨 | 선행 T3 · 상세는 비공개 점검 보고서 |
 | T5. Next.js 15 이상 · React 19 · Node 22 전환 | 📋 계획됨 | 선행 T2, T4 · 14.2.35 패치는 T1에 포함 |
 | T6. 문서 검사 복구 (markdownlint, front-matter) | 📋 계획됨 | 선행 T1 · 우선순위 낮음 |
@@ -56,6 +56,8 @@ related:
 **T1에서 남긴 결정**: `progress.json`은 `.claude/agents/typescript-migrator.md`가 참조하므로 추적을 유지한다(T2에서 다시 삭제 후보로 올리지 말 것). 그리고 이 저장소를 새로 받으면 husky 훅이 설치되지 않은 상태다 — 훅을 되살리면 `.husky/pre-commit`의 JS/JSX 게이트가 `.js` 파일이 포함된 서식·린트 커밋을 막으므로, 그 충돌은 TypeScript 전환 정책과 함께 정한다.
 
 **T1에서 드러난 것**(CI가 처음으로 빌드·테스트까지 도달하며 발견): 이메일·Supabase 클라이언트를 모듈 로드 시점에 만들어 환경변수 없는 빌드가 실패했고(사용 시점 생성으로 수정), jest 설정이 TS 파일을 ESM으로 취급해 Node 20에서 모든 TS 테스트가 실패했으며, react-pdf 가드가 영수증 기능 추가 이전 경로만 알고 있었다.
+
+**T3 1단계에서 드러난 것**(운영 DB 읽기 전용 증빙, [계획](work-plans/supabase-migration-baseline.md)): 운영 DB의 migration 이력은 4건뿐이고 저장소 SQL 72개 중 번호가 정확히 맞는 파일은 0개다. 운영 스키마 대부분이 이력 밖(Dashboard 등)에서 적용됐다는 뜻이므로, 기준선은 저장소 SQL이 아니라 운영 스키마 백업에서 출발해야 한다. 운영 DB 조회용 읽기 전용 계정을 만들었고, 이 계정으로 이력 읽기·구조 백업이 되는지는 다음 단계에서 먼저 확인한다.
 
 **순서 근거**: T1은 이후 모든 트랙의 자동 검증(CI) 기반이다. T2는 T5의 전환 범위와 T4의 점검 범위를 줄인다. T4의 DB 권한 재정비는 T3의 기준선이 있어야 한다. T5는 호환성 위험이 가장 커서 코드가 줄고 인가가 정리된 뒤에 한다.
 
