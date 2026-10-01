@@ -94,3 +94,7 @@ testsprite_tests/
 # build/debug artifacts
 build_log.txt
 supabase/.temp/
+
+# OMO: 런타임 상태는 제외하고 협업 plan(.omo/plans)만 추적한다
+/.omo/*
+!/.omo/plans/
